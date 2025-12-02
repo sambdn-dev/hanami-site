@@ -1,0 +1,319 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Variables CSS Hanami - Design System */
+:root {
+  /* Couleurs principales */
+  --hanami-green-primary: #2D5016;
+  --hanami-green-accent: #00C896;
+  --hanami-green-light: #E8F2E6;
+  --hanami-orange-primary: #FF8C42;
+  --hanami-orange-light: #FFF4E6;
+  --hanami-orange-accent: #FFA463;
+  
+  /* Backgrounds */
+  --hanami-beige-bg: #F5F3EF;
+  --hanami-beige-border: #E8E5DF;
+  
+  /* Texte */
+  --hanami-gray-text: #666666;
+  --hanami-gray-muted: #999999;
+  --hanami-gray-dark: #1A1A1A;
+  
+  /* Mode Pro */
+  --pro-green: #00D9A3;
+  --pro-dark-bg: #0F1419;
+  --pro-dark-surface: #1A1F29;
+  --pro-dark-border: #2A2F3A;
+  --pro-gray-text: #A0A0A0;
+  --pro-gray-light: #E8E8E8;
+}
+
+/* Base styles */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: var(--hanami-gray-dark);
+  background-color: var(--hanami-beige-bg);
+}
+
+/* Typography classes */
+.font-logo {
+  font-family: 'Fredoka', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Responsive grids - fidèles à l'original */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.products-scroll {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+}
+
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
+
+.offers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+}
+
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 3rem;
+}
+
+.blog-layout {
+  display: flex;
+  gap: 2rem;
+}
+
+.blog-sidebar {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+.shop-layout {
+  display: flex;
+  gap: 2rem;
+}
+
+.shop-sidebar {
+  width: 250px;
+  flex-shrink: 0;
+}
+
+.shop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.product-layout {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 3rem;
+}
+
+.booking-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+}
+
+.reactif-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+/* Responsive breakpoints - fidèles à l'original */
+@media (max-width: 1024px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .offers-grid { grid-template-columns: 1fr; }
+  .steps-grid { grid-template-columns: repeat(2, 1fr); }
+  .testimonials-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: repeat(2, 1fr); }
+  .blog-layout { flex-direction: column; }
+  .blog-sidebar { width: 100%; }
+  .blog-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+  .shop-layout { flex-direction: column; }
+  .shop-sidebar { width: 100%; }
+  .product-layout { grid-template-columns: 1fr; }
+  .booking-layout { grid-template-columns: 1fr; }
+  .reactif-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+  .services-grid { grid-template-columns: 1fr; }
+  .steps-grid { grid-template-columns: 1fr; }
+  .benefits-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+  .shop-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+}
+
+/* Animations et transitions */
+.transition-hanami {
+  transition: all 0.3s ease;
+}
+
+/* Hide scrollbar but keep functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Button styles */
+.btn-primary {
+  background-color: var(--hanami-green-primary);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(45, 80, 22, 0.3);
+}
+
+.btn-secondary {
+  background-color: white;
+  color: var(--hanami-green-primary);
+  border: 2px solid var(--hanami-green-primary);
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.btn-pro {
+  background-color: var(--pro-green);
+  color: var(--pro-dark-bg);
+  border: none;
+  padding: 1.25rem 2.5rem;
+  border-radius: 12px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  box-shadow: 0 4px 16px rgba(0, 217, 163, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-pro:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 217, 163, 0.4);
+}
+
+/* Card styles */
+.card {
+  background-color: white;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.card-pro {
+  background-color: var(--pro-dark-surface);
+  border-radius: 16px;
+  padding: 2rem;
+  border: 1px solid var(--pro-dark-border);
+}
+
+/* Badge styles */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.badge-green {
+  background-color: var(--hanami-green-light);
+  color: var(--hanami-green-primary);
+}
+
+.badge-orange {
+  background-color: var(--hanami-orange-light);
+  color: var(--hanami-orange-primary);
+}
+
+.badge-pro {
+  background: rgba(0, 217, 163, 0.2);
+  color: var(--pro-green);
+}
+
+/* Slider avant/après */
+.before-after-slider {
+  position: relative;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: ew-resize;
+  user-select: none;
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #2D5016, #FF8C42);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-pro {
+  background: linear-gradient(135deg, #00D9A3, #FFA463);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
