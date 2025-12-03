@@ -2,111 +2,122 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, ArrowRight, CheckCircle } from 'lucide-react';
 
 const STORAGE_KEY = 'hanami_onboarding';
 
-const steps = [
-  { id: 1, name: 'Surface', label: 'Surface' },
-  { id: 2, name: 'Usage', label: 'Usage' },
-  { id: 3, name: 'Problèmes', label: 'Problèmes' },
-  { id: 4, name: 'Exposition', label: 'Exposition' },
-  { id: 5, name: 'Budget', label: 'Budget' },
-  { id: 6, name: 'Calendrier', label: 'Calendrier' },
-  { id: 7, name: 'Photos', label: 'Photos' },
-  { id: 8, name: 'Contact', label: 'Contact' },
-];
-
-const questions: Record<number, {
-  title: string;
-  subtitle?: string;
-  options: { key: string; label: string }[];
-}> = {
-  1: {
-    title: 'Quelle est la surface totale de votre pelouse (en m²)',
-    subtitle: 'Si vous ne la connaissez pas précisément, vous pouvez utiliser Google Maps ou Google Earth pour estimer la surface avec leurs outils de mesure.',
-    options: [
-      { key: 'A', label: 'Moins de 100 m²' },
-      { key: 'B', label: 'Entre 100 et 500 m²' },
-      { key: 'C', label: 'Plus de 500 m²' },
-      { key: 'D', label: 'Je ne sais pas, je le préciserai plus tard' },
-    ],
-  },
-  2: {
-    title: 'Quel est l\'usage principal de votre pelouse ?',
-    subtitle: 'Cela nous aide à comprendre le niveau de résistance nécessaire.',
-    options: [
-      { key: 'A', label: 'Ornementale (peu de passage)' },
-      { key: 'B', label: 'Familiale (enfants, animaux)' },
-      { key: 'C', label: 'Sportive (jeux réguliers)' },
-      { key: 'D', label: 'Mixte' },
-    ],
-  },
-  3: {
-    title: 'Quels problèmes rencontrez-vous actuellement ?',
-    subtitle: 'Sélectionnez le problème principal.',
-    options: [
-      { key: 'A', label: 'Zones dégarnies ou clairsemées' },
-      { key: 'B', label: 'Mousse ou mauvaises herbes' },
-      { key: 'C', label: 'Jaunissement ou stress hydrique' },
-      { key: 'D', label: 'Aucun problème particulier' },
-    ],
-  },
-  4: {
-    title: 'Quelle est l\'exposition de votre pelouse ?',
-    subtitle: 'L\'ensoleillement influence le choix des semences.',
-    options: [
-      { key: 'A', label: 'Plein soleil (+ de 6h/jour)' },
-      { key: 'B', label: 'Mi-ombre (3-6h/jour)' },
-      { key: 'C', label: 'Ombre (- de 3h/jour)' },
-      { key: 'D', label: 'Variable selon les zones' },
-    ],
-  },
-  5: {
-    title: 'Quel est votre budget pour l\'entretien ?',
-    subtitle: 'Cela nous aide à vous proposer les produits adaptés.',
-    options: [
-      { key: 'A', label: 'Économique (moins de 50€)' },
-      { key: 'B', label: 'Modéré (50-150€)' },
-      { key: 'C', label: 'Confortable (150-300€)' },
-      { key: 'D', label: 'Pas de limite' },
-    ],
-  },
-  6: {
-    title: 'Quand souhaitez-vous commencer ?',
-    subtitle: 'Le timing peut influencer nos recommandations.',
-    options: [
-      { key: 'A', label: 'Immédiatement' },
-      { key: 'B', label: 'Dans les 2 semaines' },
-      { key: 'C', label: 'Dans le mois' },
-      { key: 'D', label: 'Je me renseigne pour plus tard' },
-    ],
-  },
-  7: {
-    title: 'Avez-vous des photos de votre pelouse ?',
-    subtitle: 'Les photos nous aident à mieux diagnostiquer.',
-    options: [
-      { key: 'A', label: 'Oui, je peux en envoyer' },
-      { key: 'B', label: 'Non, mais je peux en prendre' },
-      { key: 'C', label: 'Non, je préfère ne pas en envoyer' },
-    ],
-  },
-  8: {
-    title: 'Comment souhaitez-vous être contacté ?',
-    subtitle: 'Nous vous recontacterons avec nos recommandations.',
-    options: [
-      { key: 'A', label: 'Par email' },
-      { key: 'B', label: 'Par téléphone' },
-      { key: 'C', label: 'Par WhatsApp' },
-      { key: 'D', label: 'Pas de contact, je veux juste les recommandations' },
-    ],
-  },
-};
-
-export default function OnboardingPage() {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [answers, setAnswers] = useState<Record<number, string>>({});
+export default function DiagnosticPage() {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [answers, setAnswers] = useState<Record<string, any>>({});
+  const [photos, setPhotos] = useState<Array<{file: File, preview: string}>>([]);
+  const [isComplete, setIsComplete] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+
+  const questions = [
+    {
+      id: 'surface',
+      type: 'choice',
+      title: 'Quelle est la surface totale de votre pelouse (en m²)',
+      shortTitle: 'Surface',
+      subtitle: 'Si vous ne la connaissez pas précisément, vous pouvez utiliser Google Maps ou Google Earth pour estimer la surface avec leurs outils de mesure.',
+      options: [
+        { label: 'Moins de 100 m²', value: 'small' },
+        { label: 'Entre 100 et 500 m²', value: 'medium' },
+        { label: 'Plus de 500 m²', value: 'large' },
+        { label: 'Je ne sais pas, je le préciserai plus tard', value: 'unknown' }
+      ]
+    },
+    {
+      id: 'usage',
+      type: 'choice',
+      title: 'Quel est l\'usage principal de votre pelouse ?',
+      shortTitle: 'Usage',
+      subtitle: 'Cela nous aidera à recommander les bonnes semences et le bon entretien.',
+      options: [
+        { label: 'Jardin familial avec enfants/animaux', value: 'family' },
+        { label: 'Jardin décoratif', value: 'decorative' },
+        { label: 'Pelouse sportive', value: 'sport' },
+        { label: 'Autre usage', value: 'other' }
+      ]
+    },
+    {
+      id: 'problems',
+      type: 'multiple',
+      title: 'Quels sont les problèmes actuels de votre pelouse ?',
+      shortTitle: 'Problèmes',
+      subtitle: 'Vous pouvez sélectionner plusieurs réponses.',
+      options: [
+        { label: 'Zones dégarnies/trous', value: 'bare_spots' },
+        { label: 'Jaunissement', value: 'yellowing' },
+        { label: 'Mousse', value: 'moss' },
+        { label: 'Mauvaises herbes', value: 'weeds' },
+        { label: 'Sol compacté', value: 'compacted' },
+        { label: 'Manque de densité', value: 'thin' },
+        { label: 'Pas de problème particulier', value: 'none' }
+      ]
+    },
+    {
+      id: 'sun_exposure',
+      type: 'choice',
+      title: 'Quelle est l\'exposition au soleil de votre pelouse ?',
+      shortTitle: 'Exposition',
+      subtitle: 'L\'ensoleillement influence le choix des semences.',
+      options: [
+        { label: 'Plein soleil toute la journée', value: 'full_sun' },
+        { label: 'Mi-ombre (4-6h de soleil)', value: 'partial_shade' },
+        { label: 'Ombre importante', value: 'shade' },
+        { label: 'Exposition mixte', value: 'mixed' }
+      ]
+    },
+    {
+      id: 'budget',
+      type: 'choice',
+      title: 'Quel budget souhaitez-vous consacrer à la rénovation ?',
+      shortTitle: 'Budget',
+      subtitle: 'Cela nous permettra de vous proposer des solutions adaptées.',
+      options: [
+        { label: 'Moins de 200€', value: 'low' },
+        { label: 'Entre 200€ et 500€', value: 'medium' },
+        { label: 'Entre 500€ et 1000€', value: 'high' },
+        { label: 'Plus de 1000€', value: 'premium' },
+        { label: 'Je ne sais pas', value: 'unknown' }
+      ]
+    },
+    {
+      id: 'timeline',
+      type: 'choice',
+      title: 'Quand souhaitez-vous commencer les travaux ?',
+      shortTitle: 'Calendrier',
+      subtitle: 'Certaines périodes sont plus favorables que d\'autres.',
+      options: [
+        { label: 'Dès maintenant', value: 'now' },
+        { label: 'Dans le mois prochain', value: 'next_month' },
+        { label: 'Dans les 3 prochains mois', value: 'quarter' },
+        { label: 'Je ne sais pas encore', value: 'flexible' }
+      ]
+    },
+    {
+      id: 'photos',
+      type: 'upload',
+      title: 'Prenez votre pelouse en photo',
+      shortTitle: 'Photos',
+      subtitle: 'Ajoutez 3 à 5 photos de votre pelouse pour un diagnostic précis. Montrez-nous les différentes zones, en particulier les zones problématiques.',
+      maxPhotos: 5
+    },
+    {
+      id: 'contact',
+      type: 'form',
+      title: 'Vos coordonnées',
+      shortTitle: 'Contact',
+      subtitle: 'Pour vous envoyer votre diagnostic personnalisé sous 48h.',
+      fields: [
+        { name: 'firstName', label: 'Prénom', type: 'text', required: true },
+        { name: 'lastName', label: 'Nom', type: 'text', required: true },
+        { name: 'email', label: 'Email', type: 'email', required: true },
+        { name: 'phone', label: 'Téléphone', type: 'tel', required: false }
+      ]
+    }
+  ];
 
   // Load saved progress from localStorage
   useEffect(() => {
@@ -114,8 +125,9 @@ export default function OnboardingPage() {
     if (saved) {
       try {
         const data = JSON.parse(saved);
-        if (data.currentStep) setCurrentStep(data.currentStep);
+        if (data.currentStep !== undefined) setCurrentStep(data.currentStep);
         if (data.answers) setAnswers(data.answers);
+        if (data.isComplete) setIsComplete(data.isComplete);
       } catch (e) {
         console.error('Error loading saved progress:', e);
       }
@@ -126,297 +138,642 @@ export default function OnboardingPage() {
   // Save progress to localStorage whenever it changes
   useEffect(() => {
     if (isLoaded) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ currentStep, answers }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ currentStep, answers, isComplete }));
     }
-  }, [currentStep, answers, isLoaded]);
+  }, [currentStep, answers, isComplete, isLoaded]);
 
-  const question = questions[currentStep];
-  const selectedAnswer = answers[currentStep];
+  const currentQuestion = questions[currentStep];
+  const progress = ((currentStep + 1) / questions.length) * 100;
 
-  const handleSelect = (key: string) => {
-    setAnswers(prev => ({ ...prev, [currentStep]: key }));
+  const handleAnswer = (value: string) => {
+    if (currentQuestion.type === 'multiple') {
+      const currentAnswers = answers[currentQuestion.id] || [];
+      if (currentAnswers.includes(value)) {
+        setAnswers({
+          ...answers,
+          [currentQuestion.id]: currentAnswers.filter((v: string) => v !== value)
+        });
+      } else {
+        setAnswers({
+          ...answers,
+          [currentQuestion.id]: [...currentAnswers, value]
+        });
+      }
+    } else {
+      setAnswers({
+        ...answers,
+        [currentQuestion.id]: value
+      });
+    }
   };
 
   const handleNext = () => {
-    if (currentStep < steps.length) {
+    if (currentStep < questions.length - 1) {
       setCurrentStep(currentStep + 1);
+    } else {
+      setIsComplete(true);
     }
   };
 
   const handleBack = () => {
-    if (currentStep > 1) {
+    if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
     }
   };
 
+  const canProceed = () => {
+    if (currentQuestion.type === 'upload') {
+      return photos.length >= 3;
+    }
+    if (currentQuestion.type === 'form') {
+      const formData = answers[currentQuestion.id] || {};
+      const fields = (currentQuestion as any).fields || [];
+      return fields
+        .filter((f: any) => f.required)
+        .every((f: any) => formData[f.name] && formData[f.name].trim() !== '');
+    }
+    if (currentQuestion.type === 'multiple') {
+      return (answers[currentQuestion.id] || []).length > 0;
+    }
+    return answers[currentQuestion.id] !== undefined;
+  };
+
+  const handleFormChange = (fieldName: string, value: string) => {
+    setAnswers({
+      ...answers,
+      [currentQuestion.id]: {
+        ...(answers[currentQuestion.id] || {}),
+        [fieldName]: value
+      }
+    });
+  };
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    const maxPhotos = (currentQuestion as any).maxPhotos || 5;
+    if (photos.length + files.length <= maxPhotos) {
+      const newPhotos = files.map(file => ({
+        file,
+        preview: URL.createObjectURL(file)
+      }));
+      setPhotos([...photos, ...newPhotos]);
+    }
+  };
+
+  const removePhoto = (index: number) => {
+    setPhotos(photos.filter((_, i) => i !== index));
+  };
+
+  if (isComplete) {
+    return <CompletePage />;
+  }
+
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#F5F3EF', position: 'relative', overflow: 'hidden' }}>
-      {/* Decorative blobs */}
-      <div style={{
-        position: 'absolute',
-        top: '-100px',
-        right: '-100px',
-        width: '400px',
-        height: '400px',
-        borderRadius: '50%',
-        background: 'rgba(45, 80, 22, 0.08)',
-        zIndex: 0,
-      }} />
-      <div style={{
-        position: 'absolute',
-        top: '200px',
-        right: '100px',
-        width: '200px',
-        height: '200px',
-        borderRadius: '50%',
-        background: 'rgba(255, 200, 180, 0.3)',
-        zIndex: 0,
-      }} />
-      <div style={{
-        position: 'absolute',
-        bottom: '-50px',
-        left: '-100px',
-        width: '300px',
-        height: '300px',
-        borderRadius: '50%',
-        background: 'rgba(200, 230, 255, 0.4)',
-        zIndex: 0,
-      }} />
-      <div style={{
-        position: 'absolute',
-        bottom: '100px',
-        right: '-50px',
-        width: '250px',
-        height: '250px',
-        borderRadius: '50%',
-        background: 'rgba(255, 230, 200, 0.3)',
-        zIndex: 0,
-      }} />
-      <div style={{
-        position: 'absolute',
-        top: '50%',
-        left: '-80px',
-        width: '200px',
-        height: '200px',
-        borderRadius: '50%',
-        background: 'rgba(200, 255, 220, 0.3)',
-        zIndex: 0,
-      }} />
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: '#FAF9F7',
+      position: 'relative',
+      overflow: 'hidden'
+    }}>
+      {/* Formes organiques de fond */}
+      <div style={{ position: 'absolute', top: '-100px', left: '-100px', width: '300px', height: '300px', borderRadius: '50% 60% 50% 60%', background: '#FFF9C4', opacity: 0.3, zIndex: 0 }} />
+      <div style={{ position: 'absolute', top: '100px', right: '-50px', width: '400px', height: '400px', borderRadius: '60% 50% 60% 50%', background: '#AED581', opacity: 0.2, zIndex: 0 }} />
+      <div style={{ position: 'absolute', top: '-50px', right: '200px', width: '200px', height: '200px', borderRadius: '50% 60% 50% 60%', background: '#FFCCBC', opacity: 0.25, zIndex: 0 }} />
+      <div style={{ position: 'absolute', bottom: '-100px', right: '-100px', width: '350px', height: '350px', borderRadius: '60% 50% 60% 50%', background: '#E1BEE7', opacity: 0.2, zIndex: 0 }} />
+      <div style={{ position: 'absolute', bottom: '100px', left: '-80px', width: '300px', height: '300px', borderRadius: '50% 60% 50% 60%', background: '#B3E5FC', opacity: 0.25, zIndex: 0 }} />
 
-      {/* Header */}
-      <header style={{
-        padding: '1rem 2rem',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        position: 'relative',
-        zIndex: 10,
+      {/* Progress bar */}
+      <div style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '4px',
+        backgroundColor: '#E8E5DF',
+        zIndex: 100
       }}>
-        {/* Logo Hanami - retour accueil */}
-        <Link
-          href="/"
-          style={{
-            textDecoration: 'none',
-          }}
-        >
-          <span style={{ fontSize: '1.5rem', fontWeight: 700, color: '#2D5016' }} className="font-logo">hanami</span>
-        </Link>
+        <div style={{
+          height: '100%',
+          width: `${progress}%`,
+          backgroundColor: '#2D5016',
+          transition: 'width 0.3s ease'
+        }} />
+      </div>
 
-        {/* Steps indicator */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          {steps.map((step, index) => (
-            <React.Fragment key={step.id}>
-              <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '0.25rem',
-              }}>
+      {/* Steps navigation */}
+      <div style={{
+        position: 'fixed',
+        top: '4px',
+        left: 0,
+        right: 0,
+        backgroundColor: 'white',
+        borderBottom: '1px solid #E8E5DF',
+        padding: '1rem 2rem',
+        zIndex: 99,
+        boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
+      }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          {/* Logo Hanami - retour accueil */}
+          <Link
+            href="/"
+            style={{
+              textDecoration: 'none',
+              flexShrink: 0
+            }}
+          >
+            <span style={{ fontSize: '1.5rem', fontWeight: 700, color: '#2D5016' }} className="font-logo">hanami</span>
+          </Link>
+
+          <div style={{
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '0.5rem',
+            overflow: 'auto',
+            padding: '0 1rem'
+          }}>
+            {questions.map((question, index) => {
+              const isCompleted = index < currentStep;
+              const isCurrent = index === currentStep;
+
+              return (
+                <div key={index} style={{ display: 'flex', alignItems: 'center' }}>
+                  <button
+                    onClick={() => setCurrentStep(index)}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '0.25rem',
+                      padding: '0.5rem',
+                      border: 'none',
+                      backgroundColor: 'transparent',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <div style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '50%',
+                      backgroundColor: isCompleted ? '#2D5016' : isCurrent ? '#E8F2E6' : '#F5F3EF',
+                      border: isCurrent ? '2px solid #2D5016' : 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 700,
+                      fontSize: '0.875rem',
+                      color: isCompleted ? 'white' : '#1A1A1A'
+                    }}>
+                      {isCompleted ? '✓' : index + 1}
+                    </div>
+                    <span style={{
+                      fontSize: '0.75rem',
+                      fontWeight: isCurrent ? 600 : 400,
+                      color: isCurrent ? '#2D5016' : '#666666',
+                      whiteSpace: 'nowrap'
+                    }}>
+                      {question.shortTitle}
+                    </span>
+                  </button>
+
+                  {index < questions.length - 1 && (
+                    <div style={{
+                      width: '20px',
+                      height: '2px',
+                      backgroundColor: index < currentStep ? '#2D5016' : '#E8E5DF',
+                      margin: '0 0.25rem',
+                      marginBottom: '1.5rem'
+                    }} />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          <div style={{
+            backgroundColor: '#F5F3EF',
+            padding: '0.5rem 1rem',
+            borderRadius: '20px',
+            fontSize: '0.875rem',
+            fontWeight: 600,
+            color: '#666666',
+            flexShrink: 0
+          }}>
+            {currentStep + 1} / {questions.length}
+          </div>
+        </div>
+      </div>
+
+      {/* Question content */}
+      <div style={{
+        maxWidth: '800px',
+        margin: '0 auto',
+        padding: '10rem 2rem 4rem',
+        position: 'relative',
+        zIndex: 1
+      }}>
+        <div style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: '40px',
+          height: '40px',
+          backgroundColor: '#2D5016',
+          color: 'white',
+          borderRadius: '8px',
+          fontWeight: 700,
+          fontSize: '1.125rem',
+          marginBottom: '2rem'
+        }}>
+          {currentStep + 1}
+        </div>
+
+        <h1 style={{
+          fontSize: '2.5rem',
+          fontWeight: 700,
+          marginBottom: '1rem',
+          color: '#1A1A1A',
+          lineHeight: 1.2,
+          fontFamily: 'Poppins, sans-serif'
+        }}>
+          {currentQuestion.title}
+        </h1>
+
+        <p style={{
+          fontSize: '1.125rem',
+          color: '#666666',
+          marginBottom: '3rem',
+          lineHeight: 1.6,
+          fontFamily: 'Inter, sans-serif'
+        }}>
+          {currentQuestion.subtitle}
+        </p>
+
+        {/* Answer options */}
+        {currentQuestion.type === 'choice' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '3rem' }}>
+            {(currentQuestion as any).options.map((option: any, index: number) => (
+              <button
+                key={index}
+                onClick={() => handleAnswer(option.value)}
+                style={{
+                  padding: '1.5rem 2rem',
+                  backgroundColor: answers[currentQuestion.id] === option.value ? '#E8F2E6' : 'rgba(255, 255, 255, 0.8)',
+                  border: answers[currentQuestion.id] === option.value ? '2px solid #2D5016' : '2px solid #E8E5DF',
+                  borderRadius: '12px',
+                  textAlign: 'left',
+                  cursor: 'pointer',
+                  fontSize: '1.125rem',
+                  color: '#1A1A1A',
+                  fontWeight: answers[currentQuestion.id] === option.value ? 600 : 400,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '1rem',
+                  backdropFilter: 'blur(10px)',
+                  fontFamily: 'Inter, sans-serif'
+                }}
+              >
                 <div style={{
                   width: '28px',
                   height: '28px',
                   borderRadius: '6px',
-                  backgroundColor: step.id === currentStep ? '#2D5016' : step.id < currentStep ? '#2D5016' : 'white',
-                  border: step.id <= currentStep ? 'none' : '1px solid #E8E5DF',
-                  color: step.id <= currentStep ? 'white' : '#666666',
+                  backgroundColor: '#E8E5DF',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
+                  fontSize: '0.875rem',
+                  fontWeight: 700,
+                  color: '#666666',
+                  flexShrink: 0
                 }}>
-                  {step.id}
+                  {String.fromCharCode(65 + index)}
                 </div>
-                <span style={{
-                  fontSize: '0.625rem',
-                  color: step.id === currentStep ? '#2D5016' : '#666666',
-                  fontWeight: step.id === currentStep ? 600 : 400,
-                }}>
-                  {step.label}
-                </span>
-              </div>
-              {index < steps.length - 1 && (
-                <div style={{
-                  width: '24px',
-                  height: '1px',
-                  backgroundColor: step.id < currentStep ? '#2D5016' : '#E8E5DF',
-                  marginBottom: '1rem',
-                }} />
-              )}
-            </React.Fragment>
-          ))}
-        </div>
-
-        {/* Step counter */}
-        <div style={{
-          padding: '0.5rem 1rem',
-          borderRadius: '20px',
-          border: '1px solid #E8E5DF',
-          backgroundColor: 'white',
-          fontSize: '0.875rem',
-          color: '#666666',
-        }}>
-          {currentStep} / {steps.length}
-        </div>
-      </header>
-
-      {/* Main content */}
-      <main style={{
-        maxWidth: '800px',
-        margin: '0 auto',
-        padding: '2rem 2rem 4rem',
-        position: 'relative',
-        zIndex: 5,
-      }}>
-        {/* Back button for steps */}
-        {currentStep > 1 && (
-          <button
-            onClick={handleBack}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.25rem',
-              padding: '0.5rem 0',
-              backgroundColor: 'transparent',
-              border: 'none',
-              color: '#666666',
-              fontSize: '0.875rem',
-              cursor: 'pointer',
-              marginBottom: '1rem',
-            }}
-          >
-            <ChevronLeft size={18} />
-            Retour
-          </button>
+                {option.label}
+              </button>
+            ))}
+          </div>
         )}
 
-        {/* Step number badge */}
+        {currentQuestion.type === 'multiple' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '3rem' }}>
+            {(currentQuestion as any).options.map((option: any, index: number) => {
+              const isSelected = (answers[currentQuestion.id] || []).includes(option.value);
+              return (
+                <button
+                  key={index}
+                  onClick={() => handleAnswer(option.value)}
+                  style={{
+                    padding: '1.5rem 2rem',
+                    backgroundColor: isSelected ? '#E8F2E6' : 'rgba(255, 255, 255, 0.8)',
+                    border: isSelected ? '2px solid #2D5016' : '2px solid #E8E5DF',
+                    borderRadius: '12px',
+                    textAlign: 'left',
+                    cursor: 'pointer',
+                    fontSize: '1.125rem',
+                    color: '#1A1A1A',
+                    fontWeight: isSelected ? 600 : 400,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '1rem',
+                    backdropFilter: 'blur(10px)',
+                    fontFamily: 'Inter, sans-serif'
+                  }}
+                >
+                  <div style={{
+                    width: '28px',
+                    height: '28px',
+                    borderRadius: '6px',
+                    backgroundColor: isSelected ? '#2D5016' : '#E8E5DF',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1rem',
+                    fontWeight: 700,
+                    color: isSelected ? 'white' : '#666666',
+                    flexShrink: 0
+                  }}>
+                    {isSelected ? '✓' : String.fromCharCode(65 + index)}
+                  </div>
+                  {option.label}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {currentQuestion.type === 'upload' && (
+          <div style={{ marginBottom: '3rem' }}>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+              gap: '1rem',
+              marginBottom: '1.5rem'
+            }}>
+              {photos.map((photo, index) => (
+                <div key={index} style={{ position: 'relative', aspectRatio: '1', borderRadius: '12px', overflow: 'hidden', backgroundColor: '#F5F3EF' }}>
+                  <img
+                    src={photo.preview}
+                    alt={`Photo ${index + 1}`}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                  <button
+                    onClick={() => removePhoto(index)}
+                    style={{
+                      position: 'absolute',
+                      top: '0.5rem',
+                      right: '0.5rem',
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '50%',
+                      border: 'none',
+                      backgroundColor: 'rgba(239, 68, 68, 0.9)',
+                      color: 'white',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '1.25rem'
+                    }}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+
+              {photos.length < ((currentQuestion as any).maxPhotos || 5) && (
+                <label style={{
+                  aspectRatio: '1',
+                  border: '2px dashed #E8E5DF',
+                  borderRadius: '12px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                  backdropFilter: 'blur(10px)'
+                }}>
+                  <Plus size={32} color="#2D5016" style={{ marginBottom: '0.5rem' }} />
+                  <span style={{ fontSize: '0.875rem', color: '#666666', textAlign: 'center', padding: '0 1rem', fontFamily: 'Inter, sans-serif' }}>
+                    Ajouter une photo
+                  </span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handlePhotoUpload}
+                    style={{ display: 'none' }}
+                  />
+                </label>
+              )}
+            </div>
+            <p style={{ fontSize: '0.875rem', color: '#666666', textAlign: 'center', fontFamily: 'Inter, sans-serif' }}>
+              {photos.length} / {(currentQuestion as any).maxPhotos || 5} photos - Minimum 3 photos requises
+            </p>
+          </div>
+        )}
+
+        {currentQuestion.type === 'form' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '3rem' }}>
+            {((currentQuestion as any).fields || []).map((field: any, index: number) => (
+              <div key={index}>
+                <label style={{
+                  display: 'block',
+                  fontWeight: 600,
+                  marginBottom: '0.5rem',
+                  color: '#1A1A1A',
+                  fontFamily: 'Inter, sans-serif'
+                }}>
+                  {field.label} {field.required && <span style={{ color: '#EF4444' }}>*</span>}
+                </label>
+                <input
+                  type={field.type}
+                  required={field.required}
+                  value={(answers[currentQuestion.id] || {})[field.name] || ''}
+                  onChange={(e) => handleFormChange(field.name, e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '1rem',
+                    border: '2px solid #E8E5DF',
+                    borderRadius: '12px',
+                    fontSize: '1rem',
+                    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                    color: '#1A1A1A',
+                    backdropFilter: 'blur(10px)',
+                    fontFamily: 'Inter, sans-serif'
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Action buttons */}
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          {currentStep > 0 && (
+            <button
+              onClick={handleBack}
+              style={{
+                backgroundColor: 'white',
+                color: '#2D5016',
+                border: '2px solid #E8E5DF',
+                padding: '1rem 2rem',
+                borderRadius: '12px',
+                fontSize: '1.125rem',
+                fontWeight: 600,
+                cursor: 'pointer',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                fontFamily: 'Inter, sans-serif'
+              }}
+            >
+              <ChevronLeft size={20} />
+              Retour
+            </button>
+          )}
+
+          <button
+            onClick={handleNext}
+            disabled={!canProceed()}
+            style={{
+              backgroundColor: canProceed() ? '#2D5016' : '#E8E5DF',
+              color: canProceed() ? 'white' : '#999999',
+              border: 'none',
+              padding: '1rem 2.5rem',
+              borderRadius: '12px',
+              fontSize: '1.125rem',
+              fontWeight: 600,
+              cursor: canProceed() ? 'pointer' : 'not-allowed',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              boxShadow: canProceed() ? '0 4px 12px rgba(45, 80, 22, 0.3)' : 'none',
+              fontFamily: 'Inter, sans-serif'
+            }}
+          >
+            {currentStep < questions.length - 1 ? 'Suivant' : 'Envoyer'}
+            <ArrowRight size={20} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CompletePage() {
+  useEffect(() => {
+    localStorage.removeItem(STORAGE_KEY);
+  }, []);
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: '#FAF9F7',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '2rem',
+      position: 'relative',
+      overflow: 'hidden'
+    }}>
+      <div style={{ position: 'absolute', top: '-100px', left: '-100px', width: '300px', height: '300px', borderRadius: '50% 60% 50% 60%', background: '#C8E6C9', opacity: 0.3, zIndex: 0 }} />
+      <div style={{ position: 'absolute', bottom: '-100px', right: '-100px', width: '350px', height: '350px', borderRadius: '60% 50% 60% 50%', background: '#AED581', opacity: 0.2, zIndex: 0 }} />
+
+      <div style={{
+        maxWidth: '700px',
+        textAlign: 'center',
+        position: 'relative',
+        zIndex: 1
+      }}>
         <div style={{
-          width: '40px',
-          height: '40px',
-          borderRadius: '8px',
-          backgroundColor: '#2D5016',
-          color: 'white',
+          width: '120px',
+          height: '120px',
+          borderRadius: '50%',
+          background: 'linear-gradient(135deg, #2D5016, #00C896)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: '1rem',
+          margin: '0 auto 2rem',
+          boxShadow: '0 8px 24px rgba(45, 80, 22, 0.2)'
+        }}>
+          <CheckCircle size={64} color="white" />
+        </div>
+
+        <h1 style={{
+          fontSize: '3rem',
           fontWeight: 700,
           marginBottom: '1.5rem',
-        }}>
-          {currentStep}
-        </div>
-
-        {/* Question */}
-        <h1 style={{
-          fontSize: '2.5rem',
-          fontWeight: 700,
           color: '#1A1A1A',
-          marginBottom: '1rem',
-          lineHeight: 1.2,
+          fontFamily: 'Poppins, sans-serif'
         }}>
-          {question.title}
+          Merci pour votre confiance !
         </h1>
 
-        {question.subtitle && (
-          <p style={{
-            fontSize: '1rem',
-            color: '#666666',
-            marginBottom: '2.5rem',
-            lineHeight: 1.6,
-          }}>
-            {question.subtitle}
-          </p>
-        )}
+        <p style={{
+          fontSize: '1.25rem',
+          color: '#666666',
+          marginBottom: '3rem',
+          lineHeight: 1.6,
+          fontFamily: 'Inter, sans-serif'
+        }}>
+          Votre diagnostic personnalisé vous sera envoyé par email <strong>sous 48 heures</strong>.
+          Notre équipe d&apos;experts analyse vos réponses et photos pour vous proposer un plan d&apos;action sur-mesure.
+        </p>
 
-        {/* Options */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginBottom: '2.5rem' }}>
-          {question.options.map((option) => (
-            <button
-              key={option.key}
-              onClick={() => handleSelect(option.key)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1rem',
-                padding: '1.25rem 1.5rem',
-                backgroundColor: selectedAnswer === option.key ? '#E8F2E6' : 'white',
-                border: selectedAnswer === option.key ? '2px solid #2D5016' : '1px solid #E8E5DF',
-                borderRadius: '12px',
-                cursor: 'pointer',
-                textAlign: 'left',
-                transition: 'all 0.2s ease',
-              }}
-            >
-              <span style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: '8px',
-                backgroundColor: selectedAnswer === option.key ? '#2D5016' : '#F5F3EF',
-                color: selectedAnswer === option.key ? 'white' : '#666666',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '0.875rem',
-                fontWeight: 600,
-                flexShrink: 0,
-              }}>
-                {option.key}
-              </span>
-              <span style={{
-                fontSize: '1rem',
-                color: '#1A1A1A',
-                fontWeight: selectedAnswer === option.key ? 600 : 400,
-              }}>
-                {option.label}
-              </span>
-            </button>
-          ))}
+        <div style={{
+          backgroundColor: 'rgba(255, 255, 255, 0.8)',
+          backdropFilter: 'blur(10px)',
+          borderRadius: '16px',
+          padding: '2rem',
+          marginBottom: '3rem',
+          border: '1px solid #E8E5DF'
+        }}>
+          <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '1rem', color: '#2D5016', fontFamily: 'Poppins, sans-serif' }}>
+            Et maintenant ?
+          </h3>
+          <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <span style={{ fontSize: '1.5rem' }}>📧</span>
+              <p style={{ margin: 0, color: '#666666', fontFamily: 'Inter, sans-serif' }}>
+                Vous recevrez un email de confirmation avec votre numéro de diagnostic
+              </p>
+            </div>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <span style={{ fontSize: '1.5rem' }}>🔍</span>
+              <p style={{ margin: 0, color: '#666666', fontFamily: 'Inter, sans-serif' }}>
+                Notre équipe analyse en détail vos photos et vos réponses
+              </p>
+            </div>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <span style={{ fontSize: '1.5rem' }}>📄</span>
+              <p style={{ margin: 0, color: '#666666', fontFamily: 'Inter, sans-serif' }}>
+                Vous recevrez votre plan d&apos;action personnalisé avec produits recommandés
+              </p>
+            </div>
+          </div>
         </div>
 
-        {/* Next button */}
-        <button
-          onClick={handleNext}
-          disabled={!selectedAnswer}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            padding: '1rem 2rem',
-            backgroundColor: selectedAnswer ? '#2D5016' : '#E8E5DF',
-            color: selectedAnswer ? 'white' : '#999999',
-            border: 'none',
-            borderRadius: '8px',
-            fontSize: '1rem',
-            fontWeight: 600,
-            cursor: selectedAnswer ? 'pointer' : 'default',
-            transition: 'all 0.2s ease',
-          }}
-        >
-          Suivant
-          <ChevronRight size={20} />
-        </button>
-      </main>
+        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <Link
+            href="/"
+            style={{
+              backgroundColor: 'white',
+              color: '#2D5016',
+              border: '2px solid #2D5016',
+              padding: '1rem 2rem',
+              borderRadius: '12px',
+              fontSize: '1.125rem',
+              fontWeight: 600,
+              textDecoration: 'none',
+              fontFamily: 'Inter, sans-serif'
+            }}
+          >
+            Retour à l&apos;accueil
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }
