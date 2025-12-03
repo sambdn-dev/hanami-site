@@ -1,7 +1,9 @@
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { productsData } from '@/data/products';
+
+const CART_STORAGE_KEY = 'hanami-cart';
 
 interface CartContextType {
   cart: Record<number, number>;
@@ -10,6 +12,7 @@ interface CartContextType {
   updateQuantity: (productId: number, quantity: number) => void;
   getCartCount: () => number;
   getCartTotal: () => number;
+  clearCart: () => void;
   showCartPanel: boolean;
   setShowCartPanel: (show: boolean) => void;
 }
@@ -19,6 +22,27 @@ const CartContext = createContext<CartContextType | null>(null);
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cart, setCart] = useState<Record<number, number>>({});
   const [showCartPanel, setShowCartPanel] = useState(false);
+  const [isHydrated, setIsHydrated] = useState(false);
+
+  // Charger le panier depuis localStorage au montage
+  useEffect(() => {
+    const savedCart = localStorage.getItem(CART_STORAGE_KEY);
+    if (savedCart) {
+      try {
+        setCart(JSON.parse(savedCart));
+      } catch (e) {
+        console.error('Erreur lors du chargement du panier:', e);
+      }
+    }
+    setIsHydrated(true);
+  }, []);
+
+  // Sauvegarder le panier dans localStorage à chaque modification
+  useEffect(() => {
+    if (isHydrated) {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+    }
+  }, [cart, isHydrated]);
 
   const addToCart = (productId: number, quantity = 1) => {
     setCart(prev => ({
@@ -54,6 +78,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }, 0);
   };
 
+  const clearCart = () => {
+    setCart({});
+  };
+
   return (
     <CartContext.Provider value={{
       cart,
@@ -62,6 +90,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       updateQuantity,
       getCartCount,
       getCartTotal,
+      clearCart,
       showCartPanel,
       setShowCartPanel
     }}>
