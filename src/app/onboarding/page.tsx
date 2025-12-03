@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { ChevronLeft, ChevronRight, Home } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const steps = [
   { id: 1, name: 'Surface', label: 'Surface' },
@@ -101,9 +101,34 @@ const questions: Record<number, {
   },
 };
 
+const STORAGE_KEY = 'hanami_onboarding';
+
 export default function OnboardingPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [answers, setAnswers] = useState<Record<number, string>>({});
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Load saved progress from localStorage
+  useEffect(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        if (data.currentStep) setCurrentStep(data.currentStep);
+        if (data.answers) setAnswers(data.answers);
+      } catch (e) {
+        console.error('Error loading saved progress:', e);
+      }
+    }
+    setIsLoaded(true);
+  }, []);
+
+  // Save progress to localStorage whenever it changes
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ currentStep, answers }));
+    }
+  }, [currentStep, answers, isLoaded]);
 
   const question = questions[currentStep];
   const selectedAnswer = answers[currentStep];
@@ -186,26 +211,21 @@ export default function OnboardingPage() {
         justifyContent: 'space-between',
         position: 'relative',
         zIndex: 10,
+        backgroundColor: 'white',
+        borderBottom: '1px solid #E8E5DF',
       }}>
-        {/* Back button */}
-        <button
-          onClick={handleBack}
-          disabled={currentStep === 1}
+        {/* Logo Hanami - retour accueil */}
+        <Link
+          href="/"
           style={{
-            width: '40px',
-            height: '40px',
-            borderRadius: '50%',
-            border: '1px solid #E8E5DF',
-            backgroundColor: 'white',
-            cursor: currentStep === 1 ? 'default' : 'pointer',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            opacity: currentStep === 1 ? 0.5 : 1,
+            gap: '0.5rem',
+            textDecoration: 'none',
           }}
         >
-          <ChevronLeft size={20} color="#1A1A1A" />
-        </button>
+          <span style={{ fontSize: '1.5rem', fontWeight: 700, color: '#2D5016' }} className="font-logo">hanami</span>
+        </Link>
 
         {/* Steps indicator */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -273,28 +293,27 @@ export default function OnboardingPage() {
         position: 'relative',
         zIndex: 5,
       }}>
-        {/* Home button */}
-        <Link
-          href="/"
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            padding: '0.75rem 1.25rem',
-            backgroundColor: 'white',
-            border: '1px solid #E8E5DF',
-            borderRadius: '8px',
-            color: '#2D5016',
-            textDecoration: 'none',
-            fontSize: '0.875rem',
-            fontWeight: 500,
-            boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-            marginBottom: '2rem',
-          }}
-        >
-          <Home size={18} />
-          Retour à l&apos;accueil
-        </Link>
+        {/* Back button for steps */}
+        {currentStep > 1 && (
+          <button
+            onClick={handleBack}
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.5rem 1rem',
+              backgroundColor: 'transparent',
+              border: 'none',
+              color: '#666666',
+              fontSize: '0.875rem',
+              cursor: 'pointer',
+              marginBottom: '1.5rem',
+            }}
+          >
+            <ChevronLeft size={18} />
+            Retour
+          </button>
+        )}
 
         {/* Step number badge */}
         <div style={{
