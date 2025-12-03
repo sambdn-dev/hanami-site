@@ -317,3 +317,34 @@ h1, h2, h3, h4, h5, h6 {
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+/* Cart page layout */
+.cart-layout {
+  display: flex;
+  gap: 2rem;
+}
+
+.cart-items {
+  flex: 1 1 500px;
+  min-width: 0;
+}
+
+.cart-summary {
+  width: 380px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+  .cart-layout {
+    flex-direction: column;
+  }
+
+  .cart-summary {
+    width: 100%;
+  }
+}
+
+/* Ensure all box-sizing is border-box */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
