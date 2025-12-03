@@ -267,15 +267,16 @@ export default function OnboardingPage() {
 
       {/* Home button */}
       <div style={{
-        position: 'absolute',
-        top: '5rem',
-        left: '2rem',
+        maxWidth: '1200px',
+        margin: '0 auto',
+        padding: '1rem 2rem 0',
+        position: 'relative',
         zIndex: 10,
       }}>
         <Link
           href="/"
           style={{
-            display: 'flex',
+            display: 'inline-flex',
             alignItems: 'center',
             gap: '0.5rem',
             padding: '0.75rem 1.25rem',
