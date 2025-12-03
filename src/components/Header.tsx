@@ -16,6 +16,11 @@ export default function Header() {
   const isPro = pathname === '/pro' || pathname === '/booking';
   const isOnboarding = pathname?.startsWith('/onboarding');
 
+  // Hide header completely on onboarding page (it has its own header)
+  if (isOnboarding) {
+    return null;
+  }
+
   const searchProducts = (query: string) => {
     if (!query.trim()) return [];
     const lowerQuery = query.toLowerCase();
