@@ -16,7 +16,7 @@ export default function Header() {
   const isPro = pathname === '/pro' || pathname === '/booking';
   const isOnboarding = pathname?.startsWith('/onboarding');
 
-  // Hide header completely on onboarding page (it has its own header)
+  // Hide header on onboarding page
   if (isOnboarding) {
     return null;
   }

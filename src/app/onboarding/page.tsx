@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
+const STORAGE_KEY = 'hanami_onboarding';
+
 const steps = [
   { id: 1, name: 'Surface', label: 'Surface' },
   { id: 2, name: 'Usage', label: 'Usage' },
@@ -100,8 +102,6 @@ const questions: Record<number, {
     ],
   },
 };
-
-const STORAGE_KEY = 'hanami_onboarding';
 
 export default function OnboardingPage() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -211,16 +211,11 @@ export default function OnboardingPage() {
         justifyContent: 'space-between',
         position: 'relative',
         zIndex: 10,
-        backgroundColor: 'white',
-        borderBottom: '1px solid #E8E5DF',
       }}>
         {/* Logo Hanami - retour accueil */}
         <Link
           href="/"
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
             textDecoration: 'none',
           }}
         >
@@ -300,14 +295,14 @@ export default function OnboardingPage() {
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.5rem 1rem',
+              gap: '0.25rem',
+              padding: '0.5rem 0',
               backgroundColor: 'transparent',
               border: 'none',
               color: '#666666',
               fontSize: '0.875rem',
               cursor: 'pointer',
-              marginBottom: '1.5rem',
+              marginBottom: '1rem',
             }}
           >
             <ChevronLeft size={18} />
