@@ -265,14 +265,15 @@ export default function OnboardingPage() {
         </div>
       </header>
 
-      {/* Home button */}
-      <div style={{
-        maxWidth: '1200px',
+      {/* Main content */}
+      <main style={{
+        maxWidth: '800px',
         margin: '0 auto',
-        padding: '1rem 2rem 0',
+        padding: '2rem 2rem 4rem',
         position: 'relative',
-        zIndex: 10,
+        zIndex: 5,
       }}>
+        {/* Home button */}
         <Link
           href="/"
           style={{
@@ -288,22 +289,13 @@ export default function OnboardingPage() {
             fontSize: '0.875rem',
             fontWeight: 500,
             boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
-            transition: 'all 0.2s ease',
+            marginBottom: '2rem',
           }}
         >
           <Home size={18} />
           Retour à l&apos;accueil
         </Link>
-      </div>
 
-      {/* Main content */}
-      <main style={{
-        maxWidth: '800px',
-        margin: '0 auto',
-        padding: '4rem 2rem',
-        position: 'relative',
-        zIndex: 5,
-      }}>
         {/* Step number badge */}
         <div style={{
           width: '40px',
