@@ -1665,11 +1665,11 @@ function SprayerCapacitySelector({ value, onChange, inputCls }: { value: string;
 
 function SprayVolumeSelector({ value, onChange, showL100 = false }: { value: string; onChange: (v: string) => void; showL100?: boolean }) {
   const opts = [
-    { value: '400',  lha: '400 L/ha',  l100: '4 L/100m²',  speed: 'Rapide'    },
-    { value: '500',  lha: '500 L/ha',  l100: '5 L/100m²',  speed: 'Normal'    },
-    { value: '600',  lha: '600 L/ha',  l100: '6 L/100m²',  speed: 'Modéré'    },
-    { value: '800',  lha: '800 L/ha',  l100: '8 L/100m²',  speed: 'Lent'      },
-    { value: '1000', lha: '1000 L/ha', l100: '10 L/100m²', speed: 'Très lent' },
+    { value: '400',  lha: '400 L/ha',  l100: '4 L/100m²',  speed: 'Rapide'      },
+    { value: '500',  lha: '500 L/ha',  l100: '5 L/100m²',  speed: 'Normale'     },
+    { value: '600',  lha: '600 L/ha',  l100: '6 L/100m²',  speed: 'Modérée'     },
+    { value: '800',  lha: '800 L/ha',  l100: '8 L/100m²',  speed: 'Lente'       },
+    { value: '1000', lha: '1000 L/ha', l100: '10 L/100m²', speed: 'Très lente'  },
   ]
   return (
     <div className="flex flex-wrap gap-1.5">
