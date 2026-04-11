@@ -530,7 +530,7 @@ export default function HanamiCalculator() {
             </div>
             <div className="min-w-0">
               <h1 className="text-white font-semibold text-base leading-tight truncate" style={{ fontFamily: 'var(--font-fraunces)' }}>
-                Calculatrice de dosages Hanami
+                Dosage Intelligent · Hanami
               </h1>
               <p className="text-hanami-100/60 text-xs mt-0.5">
                 {stepKey === 'zones'            && 'Entrez vos surfaces de gazon'}
@@ -1619,7 +1619,7 @@ export default function HanamiCalculator() {
 
         {/* ── Disclaimer footer ──────────────────────────────────────────────── */}
         <p className="text-center text-xs text-stone-400 mt-4 leading-relaxed px-4">
-          💚 Calculatrice Hanami · Pour des applications précises et responsables
+          💚 Dosage Intelligent · Hanami · Pour des applications précises et responsables
         </p>
         <p className="text-center text-xs text-stone-300 mt-2 leading-relaxed px-4 italic">
           {DISCLAIMER}

@@ -7,7 +7,7 @@ import WhatsAppButton from '@/components/shared/WhatsAppButton'
 import HanamiCalculator from '@/components/calculatrice/HanamiCalculator'
 
 export const metadata: Metadata = {
-  title: 'Calculatrice de dosages',
+  title: 'Dosage Intelligent',
   description:
     'Calculez précisément vos dosages d\'engrais, semences et produits liquides selon la surface de votre jardin. Outil gratuit Hanami.',
 }

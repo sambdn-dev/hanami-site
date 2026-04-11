@@ -77,7 +77,7 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
             {[
               { href: '/',                label: 'Particuliers'  },
               { href: '/pro',             label: 'Professionnels' },
-              { href: '/calculatrice',    label: 'Calculatrice'  },
+              { href: '/calculatrice',    label: 'Dosage Intelligent'  },
               { href: '/pourquoi-hanami', label: 'Pourquoi Hanami ?' },
             ].map(({ href, label }) => {
               const active = pathname === href
@@ -112,7 +112,7 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
                 pathname === '/calculatrice' ? 'text-hanami-600' : textColor
               }`}
             >
-              Calculatrice
+              Dosage Intelligent
             </Link>
             <Link
               href="/pro"
