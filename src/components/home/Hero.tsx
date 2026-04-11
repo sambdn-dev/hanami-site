@@ -104,16 +104,10 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* ── Colonne droite : slider avant/après (masqué sur mobile) ── */}
-          {/*
-            Sur desktop (lg:), le slider sort légèrement de la grille vers la droite.
-            Sur mobile, ce bloc est caché (hidden) pour garder le texte lisible.
-            Les paramètres sont identiques à ceux de la section Cas clients
-            pour garantir le même rendu visuel.
-          */}
-          <div className="hidden lg:block relative">
-            {/* Décalage asymétrique vers la droite */}
-            <div className="relative ml-8 translate-x-8">
+          {/* ── Colonne droite : slider avant/après ── */}
+          <div className="block relative">
+            {/* Décalage asymétrique vers la droite (desktop uniquement) */}
+            <div className="relative lg:ml-8 lg:translate-x-8">
 
               {/* Slider avant/après — mêmes photos et paramètres que Cas clients */}
               <BeforeAfterSlider
