@@ -1,26 +1,28 @@
-/**
- * Arguments.tsx — Section "Ce que la jardinerie ne vous dira jamais"
- *
- * 9 cartes en 3 rangées de 3 (3+3+3).
- * Indices pairs (0,2,4,6,8) = fond vert hanami-900.
- * Indices impairs (1,3,5,7) = fond blanc.
- */
-
 'use client'
 
+/**
+ * Arguments.tsx — Carousel "Ce que la jardinerie ne vous dira jamais"
+ *
+ * 9 cartes, une à la fois.
+ * - Desktop : grande carte pleine largeur, titre + corps en 2 colonnes
+ * - Mobile  : swipe gauche/droite
+ * - Auto-avance toutes les 5s, pause au survol ou au toucher
+ * - Navigation : flèches + dots + compteur
+ */
+
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useFadeIn } from '@/hooks/useFadeIn'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 function Strong({ children }: { children: React.ReactNode }) {
   return <strong className="font-semibold text-hanami-700">{children}</strong>
 }
-
 function StrongInv({ children }: { children: React.ReactNode }) {
   return <strong className="font-semibold text-hanami-100">{children}</strong>
 }
 
-// ── 9 cartes — rangées 3+3+3 ─────────────────────────────────────────────────
+// ── 9 cartes ─────────────────────────────────────────────────────────────────
 const CARDS = [
-  // ── Rangée 1 ──────────────────────────────────────────────────────────────
   {
     quote: '« Je passe mes week-ends à arracher les mauvaises herbes à la main »',
     title: 'Les mauvaises herbes adorent les trous',
@@ -42,8 +44,6 @@ const CARDS = [
       ? <>Un gazon clairsemé laisse le sol exposé. L'eau s'évapore avant d'atteindre les racines. Un gazon dense <StrongInv>couvre le sol et retient l'humidité</StrongInv> : il tient l'été. Vous arrosez <StrongInv>jusqu'à 40 % moins</StrongInv>.</>
       : <>Un gazon clairsemé laisse le sol exposé. L'eau s'évapore avant d'atteindre les racines. Un gazon dense <Strong>couvre le sol et retient l'humidité</Strong> : il tient l'été. Vous arrosez <Strong>jusqu'à 40 % moins</Strong>.</>,
   },
-
-  // ── Rangée 2 ──────────────────────────────────────────────────────────────
   {
     quote: '« Je pensais refaire ma pelouse moi-même »',
     title: 'Une rénovation ratée, c\'est deux fois le prix',
@@ -65,8 +65,6 @@ const CARDS = [
       ? <>Sol <StrongInv>argileux, sableux, calcaire</StrongInv>, ombre, pente : chaque jardin est unique. Hanami analyse votre terrain de manière spécifique, <StrongInv>type de sol, exposition, historique, contraintes</StrongInv>. Votre protocole est adapté à votre réalité, pas celle du voisin.</>
       : <>Sol <Strong>argileux, sableux, calcaire</Strong>, ombre, pente : chaque jardin est unique. Hanami analyse votre terrain de manière spécifique, <Strong>type de sol, exposition, historique, contraintes</Strong>. Votre protocole est adapté à votre réalité, pas celle du voisin.</>,
   },
-
-  // ── Rangée 3 ──────────────────────────────────────────────────────────────
   {
     quote: '« J\'ai déjà quelqu\'un qui s\'occupe de mon jardin, mais le gazon reste décevant »',
     title: 'Votre jardinier entretient. Hanami prescrit. C\'est complémentaire.',
@@ -75,18 +73,18 @@ const CARDS = [
       : <>Il tond, taille et arrose. Hanami diagnostique votre sol et lui remet le <Strong>protocole à appliquer</Strong>. Deux métiers, pas deux factures inutiles. Le résultat, lui, <Strong>s'améliore enfin</Strong>.</>,
   },
   {
-    quote: '« On m\'a dit qu\'il fallait tout retourner le sol, mettre du sable, refaire les fondations. C\'est décourageant et très cher. »',
+    quote: '« On m\'a dit qu\'il fallait tout retourner le sol, mettre du sable, refaire les fondations. »',
     title: 'Non. Scarifier, oui. Démolir votre jardin, non.',
     body: (inv: boolean) => inv
-      ? <>Retourner tout le sol est une idée reçue héritée du potager. Hanami travaille sur l'existant : <StrongInv>scarification</StrongInv> profonde, puis <StrongInv>sur-semis avec des semences professionnelles</StrongInv> auto-régénérantes. Résultat <StrongInv>identique à une reconstruction</StrongInv>, sans boue, sans terrassement et sans repartir de zéro.</>
-      : <>Retourner tout le sol est une idée reçue héritée du potager. Hanami travaille sur l'existant : <Strong>scarification</Strong> profonde, puis <Strong>sur-semis avec des semences professionnelles</Strong> auto-régénérantes. Résultat <Strong>identique à une reconstruction</Strong>, sans boue, sans terrassement et sans repartir de zéro.</>,
+      ? <>Retourner tout le sol est une idée reçue héritée du potager. Hanami travaille sur l'existant : <StrongInv>scarification</StrongInv> profonde, puis <StrongInv>sur-semis avec des semences professionnelles</StrongInv> auto-régénérantes. Résultat <StrongInv>identique à une reconstruction</StrongInv>, sans boue, sans terrassement.</>
+      : <>Retourner tout le sol est une idée reçue héritée du potager. Hanami travaille sur l'existant : <Strong>scarification</Strong> profonde, puis <Strong>sur-semis avec des semences professionnelles</Strong> auto-régénérantes. Résultat <Strong>identique à une reconstruction</Strong>, sans boue, sans terrassement.</>,
   },
   {
     quote: '« J\'ai demandé à une IA comment améliorer mon gazon, j\'ai suivi les conseils… et rien n\'a changé »',
     title: 'Une IA ne connaît pas votre sol. Hanami, si.',
     body: (inv: boolean) => inv
-      ? <>Une IA vous donne des conseils calibrés sur des millions de jardins imaginaires. Elle ne voit pas vos photos, ne connaît pas votre argile, votre exposition nord, ni vos erreurs passées. Elle ne peut pas commander les <StrongInv>bons produits professionnels</StrongInv>, ni ajuster le protocole en septembre. Hanami est un agronome qui connaît <StrongInv>votre terrain par son nom</StrongInv>, saison après saison.</>
-      : <>Une IA vous donne des conseils calibrés sur des millions de jardins imaginaires. Elle ne voit pas vos photos, ne connaît pas votre argile, votre exposition nord, ni vos erreurs passées. Elle ne peut pas commander les <Strong>bons produits professionnels</Strong>, ni ajuster le protocole en septembre. Hanami est un agronome qui connaît <Strong>votre terrain par son nom</Strong>, saison après saison.</>,
+      ? <>Une IA vous donne des conseils calibrés sur des millions de jardins imaginaires. Elle ne voit pas vos photos, ne connaît pas votre argile, votre exposition nord, ni vos erreurs passées. Hanami est un agronome qui connaît <StrongInv>votre terrain par son nom</StrongInv>, saison après saison.</>
+      : <>Une IA vous donne des conseils calibrés sur des millions de jardins imaginaires. Elle ne voit pas vos photos, ne connaît pas votre argile, votre exposition nord, ni vos erreurs passées. Hanami est un agronome qui connaît <Strong>votre terrain par son nom</Strong>, saison après saison.</>,
   },
 ]
 
@@ -94,88 +92,159 @@ const CARDS = [
 
 export default function Arguments() {
   const headerRef = useFadeIn()
+  const [current, setCurrent] = useState(0)
+  const [paused, setPaused] = useState(false)
+  const [cardKey, setCardKey] = useState(0) // force re-mount pour l'animation
+  const touchStartX = useRef<number | null>(null)
+
+  const goTo = useCallback((index: number) => {
+    setCurrent(index)
+    setCardKey(k => k + 1)
+  }, [])
+
+  const prev = useCallback(() => {
+    goTo((current - 1 + CARDS.length) % CARDS.length)
+  }, [current, goTo])
+
+  const next = useCallback(() => {
+    goTo((current + 1) % CARDS.length)
+  }, [current, goTo])
+
+  // Auto-avance toutes les 5s
+  useEffect(() => {
+    if (paused) return
+    const t = setTimeout(next, 5000)
+    return () => clearTimeout(t)
+  }, [current, paused, next])
+
+  // Swipe mobile
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX
+    setPaused(true)
+  }
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return
+    const diff = touchStartX.current - e.changedTouches[0].clientX
+    if (Math.abs(diff) > 48) {
+      if (diff > 0) next()
+      else prev()
+    }
+    touchStartX.current = null
+    setPaused(false)
+  }
+
+  const card = CARDS[current]
+  const inv = current % 2 === 0
 
   return (
-    <section className="py-20 lg:py-28 bg-stone-50">
+    <section
+      className="py-20 lg:py-28 bg-stone-50"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
 
-        {/* En-tête */}
-        <div ref={headerRef} className="fade-in mb-14">
-          <span className="section-label mb-3 block">Le problème</span>
-          <h2 className="font-[family-name:var(--font-fraunces)] text-3xl lg:text-4xl font-semibold text-hanami-900 max-w-xl leading-tight">
-            Ce que la jardinerie ne vous dira jamais
-          </h2>
+        {/* ── En-tête + navigation ─────────────────────────────────── */}
+        <div
+          ref={headerRef}
+          className="fade-in mb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6"
+        >
+          <div>
+            <span className="section-label mb-3 block">Le problème</span>
+            <h2 className="font-[family-name:var(--font-fraunces)] text-3xl lg:text-4xl font-semibold text-hanami-900 max-w-xl leading-tight">
+              Ce que la jardinerie ne vous dira jamais
+            </h2>
+          </div>
+
+          {/* Compteur + flèches */}
+          <div className="flex items-center gap-4 shrink-0">
+            <span className="font-[family-name:var(--font-space-mono)] text-sm text-stone-400 tabular-nums">
+              {String(current + 1).padStart(2, '0')} — {String(CARDS.length).padStart(2, '0')}
+            </span>
+            <div className="flex gap-2">
+              <button
+                onClick={prev}
+                aria-label="Carte précédente"
+                className="w-9 h-9 rounded-full border border-stone-200 bg-white flex items-center justify-center text-stone-500 hover:border-hanami-500 hover:text-hanami-700 transition-colors"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                onClick={next}
+                aria-label="Carte suivante"
+                className="w-9 h-9 rounded-full border border-stone-200 bg-white flex items-center justify-center text-stone-500 hover:border-hanami-500 hover:text-hanami-700 transition-colors"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* ── Rangée 1 : 3 colonnes ── */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
-          {CARDS.slice(0, 3).map((card, i) => (
-            <ArgumentCard key={i} {...card} index={i} />
-          ))}
+        {/* ── Carte active ─────────────────────────────────────────── */}
+        <div
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
+        >
+          <div
+            key={cardKey}
+            className={`carousel-enter rounded-2xl p-8 lg:p-12 ${
+              inv
+                ? 'bg-hanami-900 border border-hanami-900'
+                : 'bg-white border border-stone-200'
+            }`}
+          >
+            {/* Numéro */}
+            <span className={`font-[family-name:var(--font-space-mono)] text-[10px] tracking-widest uppercase ${
+              inv ? 'text-hanami-100/30' : 'text-stone-300'
+            }`}>
+              {String(current + 1).padStart(2, '0')}
+            </span>
+
+            {/* Citation — grande, en Fraunces */}
+            <p className={`mt-4 font-[family-name:var(--font-fraunces)] text-xl sm:text-2xl lg:text-3xl font-semibold italic leading-snug max-w-3xl ${
+              inv ? 'text-hanami-100/85' : 'text-hanami-700'
+            }`}>
+              {card.quote}
+            </p>
+
+            {/* Séparateur */}
+            <div className={`mt-8 mb-8 h-px w-16 ${inv ? 'bg-hanami-100/20' : 'bg-stone-200'}`} />
+
+            {/* Titre + corps en 2 colonnes sur desktop */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12">
+              <h3 className={`font-semibold text-base lg:text-lg leading-snug ${
+                inv ? 'text-white' : 'text-stone-800'
+              }`}>
+                {card.title}
+              </h3>
+              <p className={`text-sm lg:text-base leading-relaxed ${
+                inv ? 'text-hanami-100/70' : 'text-stone-500'
+              }`}>
+                {card.body(inv)}
+              </p>
+            </div>
+          </div>
         </div>
 
-        {/* ── Rangée 2 : 3 colonnes ── */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
-          {CARDS.slice(3, 6).map((card, i) => (
-            <ArgumentCard key={i + 3} {...card} index={i + 3} />
-          ))}
-        </div>
-
-        {/* ── Rangée 3 : 3 colonnes ── */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {CARDS.slice(6, 9).map((card, i) => (
-            <ArgumentCard key={i + 6} {...card} index={i + 6} />
+        {/* ── Dots de navigation ───────────────────────────────────── */}
+        <div className="flex items-center justify-center gap-1.5 mt-6" role="tablist">
+          {CARDS.map((_, i) => (
+            <button
+              key={i}
+              role="tab"
+              aria-selected={i === current}
+              aria-label={`Argument ${i + 1}`}
+              onClick={() => goTo(i)}
+              className={`rounded-full transition-all duration-300 ${
+                i === current
+                  ? 'w-6 h-1.5 bg-hanami-700'
+                  : 'w-1.5 h-1.5 bg-stone-300 hover:bg-stone-400'
+              }`}
+            />
           ))}
         </div>
 
       </div>
     </section>
-  )
-}
-
-// ── ArgumentCard ──────────────────────────────────────────────────────────────
-
-function ArgumentCard({
-  quote,
-  title,
-  body,
-  index,
-}: {
-  quote: string
-  title: string
-  body: (inv: boolean) => React.ReactNode
-  index: number
-}) {
-  const ref = useFadeIn()
-  const inv = index % 2 === 0
-
-  return (
-    <div
-      ref={ref}
-      className={`fade-in rounded-2xl p-6 flex flex-col gap-4 transition-shadow hover:shadow-md ${
-        inv ? 'bg-hanami-900 border border-hanami-900' : 'bg-white border border-stone-200'
-      }`}
-      style={{ transitionDelay: `${(index % 3) * 60}ms` }}
-    >
-      <span className={`text-[10px] font-[family-name:var(--font-space-mono)] tracking-widest uppercase ${
-        inv ? 'text-hanami-100/30' : 'text-stone-300'
-      }`}>
-        {String(index + 1).padStart(2, '0')}
-      </span>
-
-      <p className={`font-[family-name:var(--font-fraunces)] text-base font-semibold leading-snug italic ${
-        inv ? 'text-hanami-100/80' : 'text-hanami-700'
-      }`}>
-        {quote}
-      </p>
-
-      <h3 className={`font-semibold text-sm leading-snug ${inv ? 'text-white' : 'text-stone-800'}`}>
-        {title}
-      </h3>
-
-      <p className={`text-sm leading-relaxed ${inv ? 'text-hanami-100/70' : 'text-stone-500'}`}>
-        {body(inv)}
-      </p>
-    </div>
   )
 }

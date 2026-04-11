@@ -107,6 +107,15 @@ body::before {
   }
 }
 
+/* ─── Carousel card entrance ────────────────────────────────── */
+@keyframes carouselIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+.carousel-enter {
+  animation: carouselIn 0.35s ease forwards;
+}
+
 /* ─── Scroll-triggered fade-in ──────────────────────────────── */
 .fade-in {
   opacity: 0;
