@@ -89,7 +89,7 @@ export default function Footer() {
               Calculatrice
             </Link>
             <Link href="/pourquoi-hanami" className="hover:text-stone-400 transition-colors">
-              Notre histoire
+              Pourquoi Hanami ?
             </Link>
           </div>
         </div>

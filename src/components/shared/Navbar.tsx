@@ -76,7 +76,7 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
               { href: '/',                label: 'Particuliers'  },
               { href: '/pro',             label: 'Professionnels' },
               { href: '/calculatrice',    label: 'Calculatrice'  },
-              { href: '/pourquoi-hanami', label: 'Notre histoire' },
+              { href: '/pourquoi-hanami', label: 'Pourquoi Hanami ?' },
             ].map(({ href, label }) => {
               const active = pathname === href
               return (

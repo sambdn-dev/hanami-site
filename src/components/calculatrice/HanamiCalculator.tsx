@@ -122,11 +122,8 @@ export default function HanamiCalculator() {
 
   // ── Zones
   const [zones, setZones] = useState<Zone[]>([
-    { name: 'Zone 1', surface: '67'  },
-    { name: 'Zone 2', surface: '131' },
-    { name: 'Zone 3', surface: '129' },
-    { name: 'Zone 4', surface: '168' },
-    { name: 'Zone 5', surface: '86'  },
+    { name: 'Zone 1', surface: '' },
+    { name: 'Zone 2', surface: '' },
   ])
 
   // ── Product
