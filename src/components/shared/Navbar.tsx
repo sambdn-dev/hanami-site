@@ -49,6 +49,8 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
     const target = document.getElementById('contact')
     if (target) {
       target.scrollIntoView({ behavior: 'smooth' })
+    } else {
+      window.location.href = '/#contact'
     }
   }
 
