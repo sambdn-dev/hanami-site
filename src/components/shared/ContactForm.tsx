@@ -66,6 +66,7 @@ export default function ContactForm({ variant }: ContactFormProps) {
   const isPro = variant === 'pro'
 
   const [state, formspreeSubmit] = useFormspree('xwvwgyzn')
+  const [submitError, setSubmitError] = useState(false)
 
   // Photos sélectionnées (max 5)
   const [photos, setPhotos] = useState<UploadedPhoto[]>([])
@@ -132,6 +133,7 @@ export default function ContactForm({ variant }: ContactFormProps) {
   // Réinitialise le formulaire une fois la soumission réussie
   useEffect(() => {
     if (!state.succeeded) return
+    setSubmitError(false)
     reset()
     setPhotos(prev => {
       prev.forEach(p => URL.revokeObjectURL(p.preview))
@@ -139,9 +141,15 @@ export default function ContactForm({ variant }: ContactFormProps) {
     })
   }, [state.succeeded, reset])
 
+  // Détecte les erreurs Formspree (SubmissionError n'est pas un tableau)
+  useEffect(() => {
+    if (state.errors) setSubmitError(true)
+  }, [state.errors])
+
   // ── Soumission du formulaire → Formspree ────────────────────────────────
 
   async function onSubmit(data: FormData) {
+    setSubmitError(false)
     const d = data as Record<string, string>
     const fd = new window.FormData()
 
@@ -199,7 +207,7 @@ export default function ContactForm({ variant }: ContactFormProps) {
               <p className="text-sm text-hanami-700">Nous vous recontactons dans les 24h.</p>
             </div>
           )}
-          {state.errors && state.errors.length > 0 && (
+          {submitError && (
             <div className="mb-8 p-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
               Une erreur est survenue. Veuillez réessayer ou nous contacter directement sur WhatsApp.
             </div>
