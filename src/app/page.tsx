@@ -1,65 +1,141 @@
-import Image from "next/image";
+/**
+ * page.tsx — Page d'accueil Particuliers (route /)
+ *
+ * C'est la page principale du site Hanami, destinée aux particuliers
+ * qui souhaitent améliorer leur gazon.
+ *
+ * Les 17 sections s'affichent dans l'ordre défini par le cahier des charges :
+ * 1.  SeasonalBanner   — Bandeau saisonnier (hors main, au-dessus de la nav)
+ * 2.  Navbar           — Navigation fixe
+ * 3.  Hero             — Section principale avec titre et CTA
+ * 4.  gradient-separator — Barre décorative verte→ambrée
+ * 5.  SocialProofBanner — Chiffres clés
+ * 6.  Arguments        — 6 cartes "Ce que la jardinerie ne vous dira jamais"
+ * 7.  IntermediateCTA  — Appel à l'action intermédiaire
+ * 8.  Savings          — Ce que vous économisez (budget, temps, eau)
+ * 9.  Services         — 4 services Hanami (fond vert foncé)
+ * 10. SeasonalMoments  — Carousel 5 moments clés de l'année
+ * 11. IntermediateCTA  — Appel à l'action intermédiaire
+ * 12. CaseStudies      — 3 études de cas clients
+ * 13. Testimonials     — 3 témoignages
+ * 14. IntermediateCTA  — Appel à l'action intermédiaire
+ * 15. HowItWorks       — 4 étapes du processus
+ * 16. FAQ              — 7 questions fréquentes (accordéon)
+ * 17. GuaranteeBlock   — 3 éléments de réassurance
+ * 18. ContactForm      — Formulaire de contact (ancre #contact)
+ * 19. MobileStickyCTA  — Barre fixe mobile (apparaît après 400px de scroll)
+ */
 
-export default function Home() {
+import type { Metadata } from 'next'
+
+// Composants partagés (utilisés aussi sur la page Pro)
+import Navbar from '@/components/shared/Navbar'
+import Footer from '@/components/shared/Footer'
+import WhatsAppButton from '@/components/shared/WhatsAppButton'
+import SeasonalBanner from '@/components/shared/SeasonalBanner'
+import IntermediateCTA from '@/components/shared/IntermediateCTA'
+import GuaranteeBlock from '@/components/shared/GuaranteeBlock'
+import ContactForm from '@/components/shared/ContactForm'
+
+// Composants spécifiques à la page Particuliers
+import Hero from '@/components/home/Hero'
+import SocialProofBanner from '@/components/home/SocialProofBanner'
+import Arguments from '@/components/home/Arguments'
+import Savings from '@/components/home/Savings'
+import Services from '@/components/home/Services'
+import SeasonalMoments from '@/components/home/SeasonalMoments'
+import CaseStudies from '@/components/home/CaseStudies'
+import Testimonials from '@/components/home/Testimonials'
+import HowItWorks from '@/components/home/HowItWorks'
+import FAQ from '@/components/home/FAQ'
+import MobileStickyCTA from '@/components/home/MobileStickyCTA'
+import NewsletterSection from '@/components/home/NewsletterSection'
+
+// Métadonnées SEO spécifiques à cette page
+export const metadata: Metadata = {
+  title: 'Coaching agronomique pour votre gazon — Hanami',
+  description:
+    'Votre gazon mérite un expert, pas une étiquette en jardinerie. Diagnostic personnalisé, protocole daté, produits professionnels. Île-de-France, France, Belgique, Suisse et pays francophones.',
+  openGraph: {
+    title: 'Hanami — Coaching agronomique pour votre gazon',
+    description:
+      'Diagnostic personnalisé, protocole daté, produits professionnels. Des résultats visibles pour votre gazon.',
+  },
+}
+
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+    <>
+      {/* Bandeau saisonnier — au-dessus de tout, fermable */}
+      <SeasonalBanner />
+
+      {/* Navigation fixe — variante claire pour la page Particuliers */}
+      <Navbar variant="light" />
+
+      {/* Contenu principal */}
+      <main className="flex-1">
+
+        {/* 1. Hero — headline + CTA + photo décalée */}
+        <Hero />
+
+        {/* Barre de séparation gradient vert→ambré entre Hero et contenu */}
+        <div className="gradient-separator" />
+
+        {/* 2. Bandeau preuve sociale — chiffres clés */}
+        <SocialProofBanner />
+
+        {/* 3. Arguments — "Ce que la jardinerie ne vous dira jamais" */}
+        <Arguments />
+
+        {/* CTA intermédiaire 1 */}
+        <IntermediateCTA message="Prêt à changer de méthode ? Demandez votre diagnostic gratuit" />
+
+        {/* 4. Ce que vous économisez */}
+        <Savings />
+
+        {/* 5. Services Hanami — fond vert foncé */}
+        <Services />
+
+        {/* 6. Carousel saisonnier — 5 moments clés */}
+        <SeasonalMoments />
+
+        {/* CTA intermédiaire 2 */}
+        <IntermediateCTA message="Vous aussi, passez à la méthode pro. Contactez-nous" />
+
+        {/* 7. Études de cas — Susan, Véronique, Noël */}
+        <CaseStudies />
+
+        {/* 8. Témoignages — Luc, Joséphine, Guy */}
+        <Testimonials />
+
+        {/* CTA intermédiaire 3 */}
+        <IntermediateCTA message="C'est simple. Commencez maintenant." />
+
+        {/* 9. Comment ça marche — 4 étapes */}
+        <HowItWorks />
+
+        {/* 10. FAQ — 7 questions fréquentes */}
+        <FAQ />
+
+        {/* 11. Bloc de réassurance — juste avant le formulaire */}
+        <GuaranteeBlock />
+
+        {/* 12. Section newsletter + CTA diagnostic */}
+        <NewsletterSection />
+
+        {/* 13. Formulaire de contact — ancre #contact */}
+        <ContactForm variant="particulier" />
+
       </main>
-    </div>
-  );
+
+      {/* Footer partagé */}
+      <Footer />
+
+      {/* Bouton WhatsApp flottant — toujours visible */}
+      <WhatsAppButton />
+
+      {/* Barre CTA fixe mobile — apparaît après 400px de scroll */}
+      <MobileStickyCTA />
+    </>
+  )
 }

@@ -1,26 +1,120 @@
 @import "tailwindcss";
 
+/* ─── Design tokens ─────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --hanami-900: #1a2e1a;
+  --hanami-700: #2d5a27;
+  --hanami-500: #4a8c3f;
+  --hanami-100: #e8f0e6;
+  --stone-50:   #fafaf9;
+  --stone-200:  #e7e5e4;
+  --stone-500:  #78716c;
+  --stone-800:  #292524;
+  --amber-500:  #d4a853;
+  --amber-100:  #fef3c7;
 }
 
+/* ─── Tailwind v4 theme extension ───────────────────────────── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Colors */
+  --color-hanami-900: var(--hanami-900);
+  --color-hanami-700: var(--hanami-700);
+  --color-hanami-500: var(--hanami-500);
+  --color-hanami-100: var(--hanami-100);
+  --color-stone-50:   var(--stone-50);
+  --color-stone-200:  var(--stone-200);
+  --color-stone-500:  var(--stone-500);
+  --color-stone-800:  var(--stone-800);
+  --color-amber-500:  var(--amber-500);
+  --color-amber-100:  var(--amber-100);
+
+  /* Typography */
+  --font-fraunces: var(--font-fraunces);
+  --font-dm-sans:  var(--font-dm-sans);
+  --font-mono:     var(--font-space-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ─── Base styles ───────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--stone-50);
+  color: var(--stone-800);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Grain overlay ─────────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 128px 128px;
+}
+
+/* ─── Gradient separator hero/sections ──────────────────────── */
+.gradient-separator {
+  height: 2px;
+  background: linear-gradient(90deg, var(--hanami-700) 0%, var(--amber-500) 100%);
+}
+
+/* ─── Section label (DM Sans) ───────────────────────────────── */
+/* Space Mono est réservé aux données chiffrées (stats, prix, numéros).
+   Les labels textuels ("Services", "Cas clients"…) utilisent DM Sans
+   en semibold uppercase : résultat plus élégant et moins brut. */
+.section-label {
+  font-family: var(--font-dm-sans), sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--hanami-500);
+}
+
+/* ─── Print styles — PDF export calculatrice ────────────────── */
+@media print {
+  /* Masquer le grain de fond et les éléments de mise en page */
+  body::before { display: none !important; }
+  body { background: white !important; }
+
+  /* Masquer navbar, footer, bannière, WhatsApp, cookie banner */
+  nav, footer { display: none !important; }
+  .no-print { display: none !important; }
+
+  /* Isoler le contenu résultats : afficher uniquement .results-print */
+  body * { visibility: hidden !important; }
+  .results-print,
+  .results-print * { visibility: visible !important; }
+
+  .results-print {
+    position: fixed !important;
+    inset: 0 !important;
+    padding: 2rem !important;
+    background: white !important;
+    overflow: visible !important;
+  }
+
+  @page {
+    margin: 1.5cm;
+    size: A4 portrait;
+  }
+}
+
+/* ─── Scroll-triggered fade-in ──────────────────────────────── */
+.fade-in {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
