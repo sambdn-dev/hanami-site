@@ -26,7 +26,7 @@ const spaceMono = Space_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://hanami-gazon.fr'),
   title: {
-    default: 'Hanami — Coaching agronomique pour votre gazon',
+    default: 'Hanami — Coach gazon dans votre poche',
     template: '%s | Hanami',
   },
   description:
@@ -44,13 +44,13 @@ export const metadata: Metadata = {
     url: 'https://hanami-gazon.fr',
     locale: 'fr_FR',
     siteName: 'Hanami',
-    title: 'Hanami — Coaching agronomique pour votre gazon',
+    title: 'Hanami — Coach gazon dans votre poche',
     description:
       'Diagnostic personnalisé, protocole daté, produits professionnels. Des résultats visibles pour votre gazon.',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Hanami — Coaching agronomique pour votre gazon',
+    title: 'Hanami — Coach gazon dans votre poche',
     description:
       'Diagnostic personnalisé, protocole daté, produits professionnels.',
   },

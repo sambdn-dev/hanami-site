@@ -13,7 +13,7 @@
  */
 
 import { useState, useEffect, useRef } from 'react'
-import { Plus, Trash2, AlertTriangle, Info, Calculator, Download, ChevronLeft } from 'lucide-react'
+import { Plus, Trash2, AlertTriangle, Info, Calculator, Download, ChevronLeft, ImageDown } from 'lucide-react'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -165,6 +165,7 @@ export default function HanamiCalculator() {
   // ── Results / UI
   const [results, setResults]                   = useState<Results>(null)
   const [showDownloadMenu, setShowDownloadMenu] = useState(false)
+  const [supportsShare, setSupportsShare]       = useState(false)
   const [newsletterEmail, setNewsletterEmail]   = useState('')
   const [newsletterSubmitted, setNewsletterSubmitted] = useState(false)
   const resultsRef = useRef<HTMLDivElement>(null)
@@ -207,6 +208,11 @@ export default function HanamiCalculator() {
     if (savedZones) setZones(JSON.parse(savedZones))
     const savedCap = sessionStorage.getItem('sprayerCapacity')
     if (savedCap) setSprayerCapacity(savedCap)
+    // Détecte si le Web Share API avec fichiers est disponible (iOS/Android)
+    setSupportsShare(
+      typeof navigator.share === 'function' &&
+      typeof navigator.canShare === 'function'
+    )
   }, [])
 
   useEffect(() => {
@@ -434,6 +440,22 @@ export default function HanamiCalculator() {
     a.href = dataUrl
     a.download = `hanami-dosage-${Date.now()}.png`
     a.click()
+  }
+
+  // Enregistre l'image dans l'application Photos (iOS/Android via Web Share API)
+  const saveToPhotos = async () => {
+    const dataUrl = await captureWithPadding()
+    const blob = await fetch(dataUrl).then(r => r.blob())
+    const file = new File([blob], `hanami-dosage-${Date.now()}.png`, { type: 'image/png' })
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: 'Hanami — Dosages' })
+    } else {
+      // Fallback : téléchargement direct
+      const a = document.createElement('a')
+      a.href = dataUrl
+      a.download = `hanami-dosage-${Date.now()}.png`
+      a.click()
+    }
   }
 
   // ── Dev prefill ───────────────────────────────────────────────────────────
@@ -1573,6 +1595,16 @@ export default function HanamiCalculator() {
                     Nouveau calcul
                   </button>
                 </div>
+
+                {/* ── Enregistrer dans Photos (mobile uniquement) ── */}
+                {supportsShare && (
+                  <button
+                    onClick={saveToPhotos}
+                    className="no-print w-full py-2.5 px-4 bg-stone-50 border border-stone-200 text-stone-600 rounded-lg hover:bg-stone-100 flex items-center justify-center gap-2 text-sm font-medium transition-colors"
+                  >
+                    <ImageDown className="w-4 h-4" /> Enregistrer l&apos;image
+                  </button>
+                )}
               </div>
             )}
           </div>

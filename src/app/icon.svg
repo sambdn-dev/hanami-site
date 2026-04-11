@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Brin gauche — plus court, légèrement penché à gauche -->
+  <path d="M9 28 C8 21 7 13 9.5 6 C11 13 11.5 21 11.5 28 Z" fill="#4a8c3f"/>
+
+  <!-- Brin central — le plus grand, courbe naturelle élégante -->
+  <path d="M15 28 C14 19 14.5 10 16 2 C17.5 10 18 19 17 28 Z" fill="#2d5a27"/>
+
+  <!-- Brin droit — hauteur intermédiaire, penché à droite -->
+  <path d="M20.5 28 C20 21 21 14 22.5 8 C24 14 24.5 21 23.5 28 Z" fill="#4a8c3f"/>
+
+  <!-- Sol — trait discret -->
+  <rect x="5" y="28.5" width="22" height="1.5" rx="0.75" fill="#1a2e1a" opacity="0.25"/>
+</svg>

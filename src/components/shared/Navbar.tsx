@@ -112,12 +112,16 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
             >
               Calculatrice
             </Link>
-            <button
-              onClick={scrollToContact}
-              className="text-xs font-medium px-3 py-1.5 rounded-lg bg-hanami-700 text-white hover:bg-hanami-900 transition-colors cursor-pointer"
+            <Link
+              href="/pro"
+              className={`text-xs font-medium px-3 py-1.5 rounded-lg transition-colors ${
+                pathname === '/pro'
+                  ? 'bg-hanami-900 text-white'
+                  : 'bg-hanami-700 text-white hover:bg-hanami-900'
+              }`}
             >
-              Contact
-            </button>
+              Professionnels
+            </Link>
           </div>
         </div>
       </div>
