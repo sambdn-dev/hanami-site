@@ -184,13 +184,23 @@ export default function Arguments() {
         <div
           onTouchStart={onTouchStart}
           onTouchEnd={onTouchEnd}
+          className="relative pb-5"
         >
+          {/* Carte empilée 3 — la plus en arrière */}
+          <div className={`absolute inset-x-10 top-3 bottom-[-14px] rounded-2xl ${
+            inv ? 'bg-hanami-700/25' : 'bg-stone-200/70'
+          }`} />
+          {/* Carte empilée 2 — juste derrière */}
+          <div className={`absolute inset-x-5 top-1.5 bottom-[-7px] rounded-2xl ${
+            inv ? 'bg-hanami-700/45' : 'bg-stone-300/50'
+          }`} />
+
           <div
             key={cardKey}
-            className={`carousel-enter rounded-2xl p-8 lg:p-12 ${
+            className={`carousel-enter relative rounded-2xl p-8 lg:p-12 ${
               inv
                 ? 'bg-hanami-900 border border-hanami-900'
-                : 'bg-white border border-stone-200'
+                : 'bg-white border border-stone-200 shadow-sm'
             }`}
           >
             {/* Numéro */}
