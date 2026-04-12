@@ -17,7 +17,6 @@
 
 'use client'
 
-import { useForm as useFormspree } from '@formspree/react'
 import { useForm, Controller } from 'react-hook-form'
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { useFadeIn } from '@/hooks/useFadeIn'
@@ -65,8 +64,15 @@ export default function ContactForm({ variant }: ContactFormProps) {
   const fadeRef = useFadeIn()
   const isPro = variant === 'pro'
 
-  const [state, formspreeSubmit] = useFormspree('xwvwgyzn')
+  // États de soumission — remplacent state.submitting/succeeded/errors de Formspree.
+  // On POST directement sur /api/contact (route Resend locale) : plus de dépendance
+  // externe, les photos partent en binaire dans le multipart.
+  const [submitting, setSubmitting] = useState(false)
+  const [succeeded, setSucceeded] = useState(false)
   const [submitError, setSubmitError] = useState(false)
+
+  // Résumé du dernier envoi — sert à pré-remplir le lien WhatsApp si l'API échoue.
+  const [lastFormData, setLastFormData] = useState<Record<string, string> | null>(null)
 
   // Photos sélectionnées (max 5)
   const [photos, setPhotos] = useState<UploadedPhoto[]>([])
@@ -130,59 +136,65 @@ export default function ContactForm({ variant }: ContactFormProps) {
     if (e.dataTransfer.files.length > 0) addPhotos(e.dataTransfer.files)
   }, [addPhotos])
 
-  // Réinitialise le formulaire une fois la soumission réussie
-  useEffect(() => {
-    if (!state.succeeded) return
-    setSubmitError(false)
-    reset()
-    setPhotos(prev => {
-      prev.forEach(p => URL.revokeObjectURL(p.preview))
-      return []
-    })
-  }, [state.succeeded, reset])
-
-  // Détecte les erreurs Formspree (SubmissionError n'est pas un tableau)
-  useEffect(() => {
-    if (state.errors) setSubmitError(true)
-  }, [state.errors])
-
-  // ── Soumission du formulaire → Formspree ────────────────────────────────
-
+  // ── Soumission du formulaire → /api/contact (Resend) ────────────────────
+  //
+  // Contrat attendu par src/app/api/contact/route.ts :
+  //   - formData.get('data')      → JSON.stringify de tous les champs texte
+  //   - formData.get('photo_0..4') → File binaire (max 5, max 10 Mo)
+  //
+  // En cas d'échec (réseau coupé, clé Resend manquante, 500 serveur), on
+  // affiche un bouton WhatsApp de secours pré-rempli avec le résumé du
+  // formulaire — l'utilisateur garde un canal pour nous joindre.
   async function onSubmit(data: FormData) {
     setSubmitError(false)
+    setSucceeded(false)
+    setSubmitting(true)
+
     const d = data as Record<string, string>
+    setLastFormData(d)
+
     const fd = new window.FormData()
+    fd.append('data', JSON.stringify(d))
+    photos.forEach((p, i) => fd.append(`photo_${i}`, p.file))
 
-    // Métadonnées Formspree
-    fd.append('_subject', isPro
-      ? `Nouvelle demande Pro — ${d.companyName ?? d.fullName}`
-      : `Nouvelle demande Particulier — ${d.fullName}`)
-    fd.append('_replyto', d.email)
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        body: fd,
+      })
 
-    // Champs avec labels lisibles dans l'email reçu
-    if (isPro) {
-      if (d.companyName)     fd.append('Entreprise',      d.companyName)
-      if (d.city)            fd.append('Ville',            d.city)
+      if (!res.ok) {
+        setSubmitError(true)
+        return
+      }
+
+      setSucceeded(true)
+      reset()
+      setPhotos(prev => {
+        prev.forEach(p => URL.revokeObjectURL(p.preview))
+        return []
+      })
+    } catch {
+      // Erreur réseau (offline, CORS, DNS…) → WhatsApp fallback
+      setSubmitError(true)
+    } finally {
+      setSubmitting(false)
     }
-    fd.append('Nom',         d.fullName)
-    fd.append('Email',       d.email)
-    fd.append('Téléphone',   d.phone)
-    if (!isPro) {
-      if (d.surface)         fd.append('Surface',         d.surface)
-      if (d.postalCode)      fd.append('Code postal',     d.postalCode)
-    } else {
-      if (d.requestType)     fd.append('Type de demande', d.requestType)
-      if (d.projectsPerYear) fd.append('Chantiers/an',    d.projectsPerYear)
-    }
-    if (d.message)           fd.append('Message',         d.message)
-    fd.append('Source',      d.source)
+  }
 
-    // Photos : on envoie les noms en texte (Formspree plan gratuit ne supporte pas les binaires)
-    if (photos.length > 0) {
-      fd.append('Photos', photos.map(p => p.name).join(', '))
+  // Lien WhatsApp pré-rempli avec le résumé du dernier envoi raté.
+  // Numéro officiel Hanami (+33 6 67 27 76 14 — FR mobile, format wa.me sans + ni espace).
+  function buildWhatsAppUrl(d: Record<string, string> | null): string {
+    const lines: string[] = ['Bonjour, je viens du site hanami-gazon.fr.']
+    if (d) {
+      if (d.fullName)   lines.push(`Nom : ${d.fullName}`)
+      if (d.email)      lines.push(`Email : ${d.email}`)
+      if (d.surface)    lines.push(`Surface : ${d.surface} m²`)
+      if (d.postalCode) lines.push(`Code postal : ${d.postalCode}`)
+      if (d.message)    lines.push(`Message : ${d.message}`)
     }
-
-    await formspreeSubmit(fd)
+    lines.push("J'envoie mes photos dans ce chat.")
+    return `https://wa.me/33667277614?text=${encodeURIComponent(lines.join('\n'))}`
   }
 
   const title   = isPro ? 'Parlons de votre activité' : 'Discutons de votre gazon'
@@ -201,15 +213,30 @@ export default function ContactForm({ variant }: ContactFormProps) {
           <p className="text-stone-500 mb-10">{subtitle}</p>
 
           {/* Messages succès / erreur */}
-          {state.succeeded && (
+          {succeeded && (
             <div className="mb-8 p-5 rounded-xl bg-hanami-100 border border-hanami-500/30">
               <p className="font-semibold text-hanami-800 mb-1">Merci, votre demande a bien été envoyée.</p>
               <p className="text-sm text-hanami-700">Nous vous recontactons dans les 24h.</p>
             </div>
           )}
           {submitError && (
-            <div className="mb-8 p-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
-              Une erreur est survenue. Veuillez réessayer ou nous contacter directement sur WhatsApp.
+            <div className="mb-8 p-5 rounded-xl bg-red-50 border border-red-200">
+              <p className="font-semibold text-red-800 mb-1">L&apos;envoi par email a échoué.</p>
+              <p className="text-sm text-red-700 mb-3">
+                Pas d&apos;inquiétude : cliquez sur le bouton ci-dessous pour nous joindre directement sur WhatsApp
+                avec votre message pré-rempli. Vous pourrez y envoyer vos photos dans la foulée.
+              </p>
+              <a
+                href={buildWhatsAppUrl(lastFormData)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-md bg-[#25D366] text-white text-sm font-medium hover:bg-[#1ebe5b] transition-colors"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M20.52 3.48A11.87 11.87 0 0 0 12.06 0C5.49 0 .16 5.33.16 11.9c0 2.1.55 4.15 1.6 5.96L0 24l6.3-1.65a11.86 11.86 0 0 0 5.76 1.47h.01c6.57 0 11.9-5.33 11.9-11.9 0-3.18-1.24-6.17-3.45-8.44zM12.07 21.8h-.01a9.87 9.87 0 0 1-5.03-1.38l-.36-.21-3.74.98 1-3.65-.23-.37a9.86 9.86 0 0 1-1.5-5.27c0-5.46 4.44-9.9 9.88-9.9 2.64 0 5.12 1.03 6.99 2.9a9.82 9.82 0 0 1 2.9 6.99c0 5.46-4.44 9.9-9.9 9.9zm5.42-7.41c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.39-1.47-.88-.79-1.48-1.76-1.65-2.06-.17-.3-.02-.46.13-.61.14-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51l-.57-.01c-.2 0-.52.07-.8.37-.27.3-1.05 1.02-1.05 2.5 0 1.47 1.07 2.89 1.22 3.09.15.2 2.11 3.22 5.12 4.52.72.31 1.28.49 1.71.63.72.23 1.37.2 1.88.12.58-.09 1.76-.72 2.01-1.41.25-.7.25-1.29.17-1.41-.07-.12-.27-.2-.57-.35z"/>
+                </svg>
+                Continuer sur WhatsApp
+              </a>
             </div>
           )}
 
@@ -376,10 +403,10 @@ export default function ContactForm({ variant }: ContactFormProps) {
                 {/* Bouton submit */}
                 <button
                   type="submit"
-                  disabled={state.submitting}
+                  disabled={submitting}
                   className="mt-2 w-full py-3.5 rounded-md bg-hanami-700 text-white font-medium hover:bg-hanami-900 transition-colors disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer text-sm"
                 >
-                  {state.submitting ? 'Envoi en cours...' : 'Envoyer ma demande'}
+                  {submitting ? 'Envoi en cours...' : 'Envoyer ma demande'}
                 </button>
               </div>
 
