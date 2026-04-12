@@ -14,7 +14,7 @@ export default function NewsletterCapture({ variant = 'section' }: NewsletterCap
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
 
@@ -24,18 +24,18 @@ export default function NewsletterCapture({ variant = 'section' }: NewsletterCap
       return
     }
 
-    // Sauvegarde locale
-    localStorage.setItem(STORAGE_KEY, trimmed)
-
-    // TODO: Envoyer vers l'endpoint de votre service (Mailchimp, Resend, Brevo…)
-    // Exemple Brevo :
-    // fetch('https://api.brevo.com/v3/contacts', {
-    //   method: 'POST',
-    //   headers: { 'api-key': process.env.NEXT_PUBLIC_BREVO_API_KEY!, 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ email: trimmed, listIds: [1] }),
-    // })
-
-    setSubmitted(true)
+    try {
+      const res = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: trimmed }),
+      })
+      if (!res.ok) throw new Error('Erreur serveur')
+      localStorage.setItem(STORAGE_KEY, trimmed)
+      setSubmitted(true)
+    } catch {
+      setError('Une erreur est survenue, veuillez réessayer.')
+    }
   }
 
   if (submitted) {
