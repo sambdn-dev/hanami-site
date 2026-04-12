@@ -1,244 +1,142 @@
 /**
- * GrassDivider.tsx — Délimitation Hero ↔ section suivante
+ * GrassDivider.tsx — Délimitation "pelouse" pleine largeur entre le Hero et la section suivante.
  *
- * Gazon dense 4 couches (brins bezier arrondis, profondeur par paliers
- * de groundY) + une tondeuse animée qui traverse de gauche à droite
- * et coupe le gazon derrière son passage.
+ * SVG 6 couches de profondeur (arrière → avant). Chaque couche est une silhouette
+ * de brins d'herbe générée par 3 sinusoïdes superposées (pas de répétition visible).
+ * Effets 3D obtenus par :
+ *   - brins plus courts + espacement plus serré en arrière-plan
+ *   - brins plus hauts + espacés + clairs au premier plan
+ *   - sol foncé à la base (occlusion ambiante)
+ *   - gradients verticaux par couche (lumière zénithale)
  *
- * Architecture :
- *   1. Sol (rect gradient sombre)
- *   2. Gazon coupé (ras, toujours visible) — ce qu'on voit derrière la tondeuse
- *   3. Gazon long (brins taille pleine) — masqué par `cut-mask` au fil du mouvement
- *   4. Tondeuse + personnage — en CSS `translateX` synchronisé avec le masque
- *
- * Masque : un `<rect>` noir qui se translate de -100% à 0% au sein du
- * `<mask>`, révélant progressivement le "coupé" à gauche. L'animation et la
- * tondeuse partagent la même durée et le même timing, donc le brin tombe
- * pile à l'endroit où passe la lame.
- *
- * Tout est en SVG + CSS — aucun JS, aucune dépendance, SSR complet.
- * Sur mobile / `prefers-reduced-motion`, l'animation est désactivée et seul
- * le gazon long statique reste affiché.
+ * Rendu serveur pur — aucun JS côté client, aucune animation.
+ * Responsive : `preserveAspectRatio="none"` + height CSS clamp.
  */
 
-const W     = 1440
-const SVG_H = 95
+const W = 1440
+const H = 220
 
-/* Paramètres par couche (arrière → premier plan).
- * - step plus petit  = plus dense
- * - bladeH plus grand = brins plus hauts
- * - groundY plus grand = couche plus basse (avant) dans l'image  */
+// Couches : de l'arrière (index 0) au premier plan (index 5).
+// groundY = ligne de sol (depuis le haut du SVG)
+// maxH    = hauteur max des brins
+// step    = espacement entre brins
+// phase   = déphasage sinusoïdal (évite la symétrie)
+// topHex  = couleur haute (pointe des brins, lumière zénithale)
+// botHex  = couleur basse (base des brins, zone d'ombre)
 const LAYERS = [
-  { groundY: 78, bladeH: 26, bladeW: 2.8, step: 5,  phase: 0.00, bladeCol: '#2d5a27', fillCol: '#162916' },
-  { groundY: 82, bladeH: 36, bladeW: 3.6, step: 7,  phase: 1.97, bladeCol: '#3d7332', fillCol: '#1f3a1e' },
-  { groundY: 86, bladeH: 46, bladeW: 4.8, step: 10, phase: 3.61, bladeCol: '#4d9441', fillCol: '#2d5a27' },
-  { groundY: 90, bladeH: 56, bladeW: 6.5, step: 14, phase: 5.14, bladeCol: '#62b254', fillCol: '#3d7332' },
+  { groundY: 175, maxH: 30, step: 10, phase: 0.00, topHex: '#152415', botHex: '#0a100a' },
+  { groundY: 168, maxH: 40, step: 13, phase: 1.73, topHex: '#1c3219', botHex: '#0f1a0e' },
+  { groundY: 160, maxH: 50, step: 17, phase: 3.14, topHex: '#244020', botHex: '#141f13' },
+  { groundY: 150, maxH: 62, step: 22, phase: 4.71, topHex: '#2d5a27', botHex: '#1a2e1a' },
+  { groundY: 138, maxH: 74, step: 28, phase: 5.89, topHex: '#3d7332', botHex: '#24431e' },
+  { groundY: 124, maxH: 88, step: 36, phase: 1.12, topHex: '#4a8c3f', botHex: '#2d5a27' },
 ] as const
 
-/* Ratio de hauteur du gazon "coupé" (après passage tondeuse).
- * 0.66 = on coupe ~1/3 de la hauteur max (règle des 1/3 en jardinage).
- * Les brins restent visiblement hauts : le jardinier marche dans l'herbe. */
-const CUT_RATIO = 0.66
-
-/* ── Forme d'un brin : bezier fermé arrondi, légèrement incliné ─────────── */
-function blade(cx: number, groundY: number, h: number, w: number, lean: number): string {
-  const hw   = w / 2
-  const tipX = cx + lean
-  const tipY = groundY - h
-
-  const lc1x = cx  - hw  + lean * 0.45
-  const lc1y = groundY - h * 0.48
-  const lc2x = tipX - hw * 0.4
-  const lc2y = tipY + h  * 0.18
-
-  const rc1x = tipX + hw * 0.4
-  const rc1y = tipY + h  * 0.18
-  const rc2x = cx   + hw + lean * 0.45
-  const rc2y = groundY - h * 0.48
-
-  return (
-    `M ${cx - hw} ${groundY} ` +
-    `C ${lc1x} ${lc1y}, ${lc2x} ${lc2y}, ${tipX} ${tipY} ` +
-    `C ${rc1x} ${rc1y}, ${rc2x} ${rc2y}, ${cx + hw} ${groundY} Z`
-  )
-}
-
-/* ── Chemin SVG d'une couche complète (scale = facteur de hauteur) ──────── */
-function layerPath(
+/**
+ * Génère le chemin SVG d'une couche.
+ * Algorithme : on avance de gauche à droite, créant des paires de
+ * beziers cubiques (montée + descente) pour chaque brin.
+ * 3 sinusoïdes à fréquences irrégulières → silhouette non répétitive.
+ */
+function makePath(
   groundY: number,
-  bladeH: number,
-  bladeW: number,
+  maxH: number,
   step: number,
   phase: number,
-  scale = 1,
 ): string {
-  const out: string[] = []
+  const d: string[] = [`M 0 ${H}`, `L 0 ${groundY}`]
 
-  for (let i = 0; i * step < W + step; i++) {
-    const baseX = i * step
+  let x = 0
+  while (x < W) {
+    const nextX = Math.min(x + step, W)
+    const s = nextX - x // espacement effectif (peut être < step au dernier brin)
 
-    /* 3 sinusoïdes à fréquences premières → variation non répétitive */
+    // Combinaison de 3 sinusoïdes à fréquences premières → aspect organique
     const r =
-      (Math.sin(baseX * 0.031 + phase) * 0.45 +
-       Math.sin(baseX * 0.017 + phase * 1.37) * 0.35 +
-       Math.sin(baseX * 0.059 + phase * 0.71) * 0.20 +
-       1) / 2
+      (Math.sin(x * 0.027 + phase) * 0.45 +
+        Math.sin(x * 0.011 + phase * 1.37) * 0.35 +
+        Math.sin(x * 0.053 + phase * 0.71) * 0.2 +
+        1) /
+      2 // normalisé [0, 1]
 
-    const cx   = baseX + (r - 0.5) * step * 0.28
-    const h    = bladeH * (0.62 + r * 0.38) * scale
-    /* Le gazon coupé n'est presque pas incliné (herbe tassée) */
-    const lean = (r - 0.5) * bladeH * 0.26 * (scale > 0.5 ? 1 : 0.25)
-    /* Brins coupés très légèrement plus larges pour qu'on les voie */
-    const bw   = bladeW * (scale > 0.5 ? 1 : 1.15)
+    const h = maxH * (0.55 + r * 0.45) // hauteur du brin [55%…100% de maxH]
+    const tipY = groundY - h
+    const lean = (r - 0.5) * s * 0.4 // légère inclinaison latérale
+    const tipX = x + s * 0.5 + lean
 
-    out.push(blade(cx, groundY, h, bw, lean))
+    // Bezier montée : départ (x, groundY) → pointe
+    const ux1 = x + s * 0.2
+    const uy1 = groundY - h * 0.38
+    const ux2 = tipX - s * 0.12
+    const uy2 = tipY + h * 0.22
+
+    // Bezier descente : pointe → (nextX, groundY)
+    const dx1 = tipX + s * 0.12
+    const dy1 = tipY + h * 0.22
+    const dx2 = nextX - s * 0.2
+    const dy2 = groundY - h * 0.38
+
+    d.push(
+      `C ${ux1} ${uy1}, ${ux2} ${uy2}, ${tipX} ${tipY}`,
+      `C ${dx1} ${dy1}, ${dx2} ${dy2}, ${nextX} ${groundY}`,
+    )
+
+    x = nextX
   }
 
-  return out.join(' ')
+  d.push(`L ${W} ${H}`, 'Z')
+  return d.join(' ')
 }
 
-/* Précalculs module-level (au build) */
-const TALL_PATHS  = LAYERS.map((l) => layerPath(l.groundY, l.bladeH, l.bladeW, l.step, l.phase, 1))
-const SHORT_PATHS = LAYERS.map((l) => layerPath(l.groundY, l.bladeH, l.bladeW, l.step, l.phase, CUT_RATIO))
+// Précalcul à la compilation (module-level, server component)
+const PATHS = LAYERS.map((l) => makePath(l.groundY, l.maxH, l.step, l.phase))
 
-/* ── Tondeuse + personnage ──────────────────────────────────────────────── */
-/* Toute la scène est enveloppée dans un wrapper scale 1.8× pivoté sur y=90
- * (la ligne de sol). Le personnage est ainsi visible au-dessus du gazon
- * coupé (qui reste haut avec CUT_RATIO=0.66). Le transform SVG compose
- * avec le translateX CSS de .grass-mower (animations imbriquées).         */
-function Mower() {
-  return (
-    <g className="grass-mower">
-      <g transform="translate(0 90) scale(1.8) translate(0 -90)">
-        {/* Ombre portée au sol */}
-        <ellipse cx="18" cy="90.5" rx="19" ry="1" fill="rgba(0,0,0,0.28)" />
-
-        {/* Guidon (derrière le corps) */}
-        <path d="M -3 69 L 12 84" stroke="#5d4037" strokeWidth="1.6" strokeLinecap="round" fill="none" />
-        <path d="M -7 67 L 1 70" stroke="#5d4037" strokeWidth="1.6" strokeLinecap="round" fill="none" />
-
-        {/* Corps de la tondeuse */}
-        <rect x="6" y="82" width="28" height="7" rx="1.5" fill="#c62828" />
-        <rect x="6" y="82" width="28" height="1.8" rx="0.9" fill="#8e0000" />
-
-        {/* Moteur / capot */}
-        <rect x="14" y="78" width="12" height="4" rx="0.5" fill="#3e3e3e" />
-        <circle cx="20" cy="80" r="0.6" fill="#ffd54f" />
-
-        {/* Carter de lame à l'avant */}
-        <path d="M 33 87 L 38 87 L 38 90 L 33 90 Z" fill="#3e3e3e" />
-
-        {/* Roues */}
-        <circle cx="11" cy="89" r="3.5" fill="#1a1a1a" />
-        <circle cx="11" cy="89" r="1.2" fill="#9e9e9e" />
-        <circle cx="29" cy="89" r="3.5" fill="#1a1a1a" />
-        <circle cx="29" cy="89" r="1.2" fill="#9e9e9e" />
-
-        {/* Personnage — décalé à gauche, pousse la tondeuse */}
-        <g transform="translate(-5 0)">
-          {/* Container "bob" : tout le corps monte/descend très légèrement
-             pour donner le rythme de la marche */}
-          <g className="grass-gardener-bob">
-
-            {/* Jambes alternées — chacune dans son <g> pour l'animation CSS */}
-            <g className="grass-leg-front">
-              <rect x="-5" y="82" width="2.3" height="8" rx="0.5" fill="#1565c0" />
-            </g>
-            <g className="grass-leg-back">
-              <rect x="-1.6" y="82" width="2.3" height="8" rx="0.5" fill="#0d47a1" />
-            </g>
-
-            {/* Torse */}
-            <path d="M -6 74 L 1 74 L 1 83 L -6 83 Z" fill="#fb8c00" />
-
-            {/* Cou */}
-            <rect x="-3.4" y="73" width="1.4" height="1" fill="#ffccbc" />
-
-            {/* Tête */}
-            <circle cx="-2.5" cy="70" r="2.7" fill="#ffccbc" />
-
-            {/* Casquette verte hanami (clin d'œil branding) */}
-            <path d="M -5 69 Q -5 66.8 -2.5 66.8 Q 0 66.8 0 69 Z" fill="#2d5a27" />
-            <rect x="-5" y="69" width="5.5" height="0.7" fill="#2d5a27" />
-
-            {/* Bras tendu vers le guidon */}
-            <path d="M 0 76 L 5 82" stroke="#fb8c00" strokeWidth="1.8" strokeLinecap="round" />
-          </g>
-        </g>
-      </g>
-    </g>
-  )
-}
-
-/* ── Composant principal ────────────────────────────────────────────────── */
 export default function GrassDivider() {
   return (
     <div
       className="relative w-full overflow-hidden"
-      style={{ marginTop: '-1px', marginBottom: '-1px' }}
+      style={{ marginTop: '-1px', marginBottom: '-1px' }} // évite le pixel gap avec Hero/section suivante
       aria-hidden="true"
     >
       <svg
-        viewBox={`0 0 ${W} ${SVG_H}`}
+        viewBox={`0 0 ${W} ${H}`}
         preserveAspectRatio="none"
         width="100%"
         xmlns="http://www.w3.org/2000/svg"
-        style={{ height: 'clamp(42px, 6.3vw, 90px)', display: 'block' }}
+        // clamp responsive : 60 px mobile → 16 vw tablette → 220 px max desktop
+        style={{ height: 'clamp(60px, 15.3vw, 220px)', display: 'block' }}
       >
         <defs>
+          {/* Gradient du sol à la base (occlusion ambiante) */}
           <linearGradient id="gd-soil" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%"   stopColor="#1f3a1e" />
-            <stop offset="100%" stopColor="#0a120a" />
+            <stop offset="0%" stopColor="#111811" />
+            <stop offset="100%" stopColor="#070c07" />
           </linearGradient>
 
-          {/* Masque : tout blanc par défaut (visible), un rect noir glisse
-              depuis la gauche et masque progressivement le gazon long */}
-          <mask id="gd-cut" maskUnits="userSpaceOnUse" x="0" y="0" width={W} height={SVG_H}>
-            <rect x="0" y="0" width={W} height={SVG_H} fill="white" />
-            <rect
-              className="grass-cut-mask"
-              x="0"
-              y="0"
-              width={W}
-              height={SVG_H}
-              fill="black"
-            />
-          </mask>
+          {/* Gradient de lumière zénithale pour chaque couche */}
+          {LAYERS.map((l, i) => (
+            <linearGradient
+              key={i}
+              id={`gd-l${i}`}
+              x1="0"
+              y1={`${l.groundY - l.maxH}`}
+              x2="0"
+              y2={`${H}`}
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop offset="0%" stopColor={l.topHex} />
+              <stop offset="100%" stopColor={l.botHex} />
+            </linearGradient>
+          ))}
         </defs>
 
-        {/* Sol de base (sombre sous toutes les couches) */}
-        <rect
-          x="0"
-          y={LAYERS[0].groundY - 2}
-          width={W}
-          height={SVG_H - LAYERS[0].groundY + 2}
-          fill="url(#gd-soil)"
-        />
+        {/* Sol de base (en dessous de toutes les couches) */}
+        <rect x="0" y={LAYERS[0].groundY - 4} width={W} height={H} fill="url(#gd-soil)" />
 
-        {/* Couches de sol + gazon coupé (visible TOUJOURS — c'est ce qu'on
-            voit derrière la tondeuse) */}
-        {LAYERS.map((l, i) => (
-          <g key={`cut-${i}`}>
-            <rect x="0" y={l.groundY} width={W} height={SVG_H - l.groundY} fill={l.fillCol} />
-            <path d={SHORT_PATHS[i]} fill={l.bladeCol} />
-          </g>
+        {/* Couches d'herbe, arrière → premier plan */}
+        {PATHS.map((d, i) => (
+          <path key={i} d={d} fill={`url(#gd-l${i})`} />
         ))}
-
-        {/* Gazon long — 3 couches arrière (masquées : disparaissent au passage) */}
-        <g mask="url(#gd-cut)">
-          {LAYERS.slice(0, 3).map((l, i) => (
-            <path key={`tall-back-${i}`} d={TALL_PATHS[i]} fill={l.bladeCol} />
-          ))}
-        </g>
-
-        {/* Tondeuse — entre les couches arrière et la couche avant pour le
-            sens de la profondeur (des brins devant passent devant elle) */}
-        <Mower />
-
-        {/* Couche avant (la plus haute, la plus claire) — masquée aussi */}
-        <g mask="url(#gd-cut)">
-          <path d={TALL_PATHS[3]} fill={LAYERS[3].bladeCol} />
-        </g>
       </svg>
     </div>
   )
