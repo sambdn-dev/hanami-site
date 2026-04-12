@@ -27,8 +27,10 @@ export default function ShareButton({ title, excerpt }: ShareButtonProps) {
       url,
     }
 
+    if (typeof navigator === 'undefined') return
+
     // Mobile / navigateurs supportant Web Share
-    if (typeof navigator !== 'undefined' && 'share' in navigator) {
+    if (typeof navigator.share === 'function') {
       try {
         await navigator.share(shareData)
         return
@@ -39,12 +41,14 @@ export default function ShareButton({ title, excerpt }: ShareButtonProps) {
     }
 
     // Fallback desktop : clipboard
-    try {
-      await navigator.clipboard.writeText(url)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch {
-      // clipboard bloquée — rien à faire
+    if (navigator.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(url)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      } catch {
+        // clipboard bloquée — rien à faire
+      }
     }
   }
 

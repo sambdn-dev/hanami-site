@@ -84,10 +84,11 @@ function parseArticle(filename: string): Article {
 
   // Normalisation date : matter parse en objet Date quand le YAML est non-quoté.
   // On force en chaîne ISO `yyyy-mm-dd` pour la comparaison/tri.
+  const rawDate: unknown = fm.date
   const dateStr =
-    fm.date instanceof Date
-      ? (fm.date as Date).toISOString().slice(0, 10)
-      : String(fm.date ?? '')
+    rawDate instanceof Date
+      ? rawDate.toISOString().slice(0, 10)
+      : String(rawDate ?? '')
 
   const stats = readingTime(content)
 
