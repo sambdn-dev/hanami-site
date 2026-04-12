@@ -71,61 +71,42 @@ export default function BeforeAfterSlider({
   // true pendant qu'on glisse le curseur
   const isDragging = useRef(false)
 
-  // ── Hint animation ────────────────────────────────────────────────────────
-  // Refs de contrôle — pas de state pour éviter des re-renders inutiles
-  const hintTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const hintRafRef   = useRef<number | null>(null)
-  const userMoved    = useRef(false)
+  // ── Animation automatique avant/après ────────────────────────────────────
+  // Oscillation sinusoïdale continue et lente — s'arrête au premier clic/toucher.
+  // Onde sinus : démarre au centre, part vers la gauche (révèle l'Après),
+  // puis vers la droite (révèle l'Avant), en boucle.
+  const hintRafRef = useRef<number | null>(null)
+  const userMoved  = useRef(false)
 
   const cancelHint = useCallback(() => {
-    if (hintTimerRef.current) clearTimeout(hintTimerRef.current)
-    if (hintRafRef.current)   cancelAnimationFrame(hintRafRef.current)
+    if (hintRafRef.current) cancelAnimationFrame(hintRafRef.current)
     userMoved.current = true
   }, [])
 
   useEffect(() => {
-    // Démarre après 1,2 s — laisse le temps à la page de se stabiliser
-    hintTimerRef.current = setTimeout(() => {
+    const startTime = performance.now()
+    const PERIOD    = 6000  // ms — durée d'un aller-retour complet (lent)
+    const AMPLITUDE = 38    // ±38% autour de initialPosition
+
+    const CYCLES = 2 // nombre d'allers-retours avant l'arrêt
+
+    const tick = (now: number) => {
       if (userMoved.current) return
-
-      const startTime = performance.now()
-      const TOTAL = 2100 // ms — durée totale de l'animation
-
-      // Keyframes : 50% → 28% → 72% → 50%
-      // 0 % du temps  → position initiale
-      // 28 % du temps → révèle davantage l'Après (curseur à gauche)
-      // 71 % du temps → révèle davantage l'Avant (curseur à droite)
-      // 100 % du temps → revient au centre
-      const KF = [
-        { t: 0,    pos: initialPosition      },
-        { t: 0.28, pos: initialPosition - 22 },
-        { t: 0.71, pos: initialPosition + 22 },
-        { t: 1,    pos: initialPosition      },
-      ]
-
-      const tick = (now: number) => {
-        if (userMoved.current) return // annulé par l'utilisateur
-        const p = Math.min((now - startTime) / TOTAL, 1)
-
-        // Trouve le segment courant dans les keyframes
-        let i = KF.length - 2
-        for (let j = 0; j < KF.length - 1; j++) {
-          if (p <= KF[j + 1].t) { i = j; break }
-        }
-        const seg = KF[i], next = KF[i + 1]
-        const local = (p - seg.t) / (next.t - seg.t)
-        // Courbe ease-in-out pour un mouvement naturel
-        const ease  = local < 0.5 ? 2 * local * local : -1 + (4 - 2 * local) * local
-        setPosition(seg.pos + (next.pos - seg.pos) * ease)
-
-        if (p < 1) hintRafRef.current = requestAnimationFrame(tick)
+      const t = (now - startTime) / PERIOD
+      if (t >= CYCLES) {
+        // Revient exactement à la position initiale après 3 cycles
+        setPosition(initialPosition)
+        return
       }
+      // sin démarre à 0 → va vers -1 (gauche/Après) → +1 (droite/Avant) → boucle
+      const pos = initialPosition - AMPLITUDE * Math.sin(2 * Math.PI * t)
+      setPosition(Math.min(95, Math.max(5, pos)))
       hintRafRef.current = requestAnimationFrame(tick)
-    }, 1200)
+    }
+    hintRafRef.current = requestAnimationFrame(tick)
 
     return () => {
-      if (hintTimerRef.current) clearTimeout(hintTimerRef.current)
-      if (hintRafRef.current)   cancelAnimationFrame(hintRafRef.current)
+      if (hintRafRef.current) cancelAnimationFrame(hintRafRef.current)
     }
   }, [initialPosition])
 
