@@ -1,7 +1,10 @@
 import type { Metadata } from 'next'
-import { Fraunces, DM_Sans, Space_Mono } from 'next/font/google'
+import { Fraunces, DM_Sans, Space_Mono, Geist } from 'next/font/google'
 import './globals.css'
 import CookieBanner from '@/components/shared/CookieBanner'
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const fraunces = Fraunces({
   subsets: ['latin'],
@@ -81,7 +84,7 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
-      className={`${fraunces.variable} ${dmSans.variable} ${spaceMono.variable}`}
+      className={cn(fraunces.variable, dmSans.variable, spaceMono.variable, "font-sans", geist.variable)}
     >
       <body className="min-h-screen flex flex-col font-[family-name:var(--font-dm-sans)]">
         {children}
