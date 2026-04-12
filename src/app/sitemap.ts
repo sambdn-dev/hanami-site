@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next'
+import { getAllArticles } from '@/lib/blog'
 
 const BASE_URL = 'https://hanami-gazon.fr'
 
@@ -9,13 +10,13 @@ const BASE_URL = 'https://hanami-gazon.fr'
  * à l'URL https://hanami-gazon.fr/sitemap.xml. Utilisé par Google, Bing
  * et les autres moteurs de recherche pour indexer les pages du site.
  *
- * Les articles de blog seront ajoutés dynamiquement à cette liste
- * quand la route /blog sera mise en place (Étape 5).
+ * Les articles du blog sont ajoutés dynamiquement depuis `content/blog/`.
  */
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date()
+  const articles = getAllArticles()
 
-  return [
+  const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: `${BASE_URL}/`,
       lastModified: now,
@@ -41,10 +42,25 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.7,
     },
     {
+      url: `${BASE_URL}/blog`,
+      lastModified: now,
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
       url: `${BASE_URL}/mentions-legales`,
       lastModified: now,
       changeFrequency: 'yearly',
       priority: 0.1,
     },
   ]
+
+  const articleRoutes: MetadataRoute.Sitemap = articles.map(article => ({
+    url: `${BASE_URL}/blog/${article.slug}`,
+    lastModified: new Date(article.date),
+    changeFrequency: 'monthly',
+    priority: 0.6,
+  }))
+
+  return [...staticRoutes, ...articleRoutes]
 }

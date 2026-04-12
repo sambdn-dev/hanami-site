@@ -88,6 +88,9 @@ export default function Footer() {
             <Link href="/calculatrice" className="hover:text-stone-400 transition-colors">
               Dosage Intelligent
             </Link>
+            <Link href="/blog" className="hover:text-stone-400 transition-colors">
+              Journal
+            </Link>
             <Link href="/pourquoi-hanami" className="hover:text-stone-400 transition-colors">
               Pourquoi Hanami ?
             </Link>

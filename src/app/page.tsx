@@ -50,6 +50,7 @@ import HowItWorks from '@/components/home/HowItWorks'
 import FAQ from '@/components/home/FAQ'
 import MobileStickyCTA from '@/components/home/MobileStickyCTA'
 import NewsletterSection from '@/components/home/NewsletterSection'
+import LatestArticles from '@/components/home/LatestArticles'
 
 // Métadonnées SEO spécifiques à cette page
 export const metadata: Metadata = {
@@ -114,7 +115,10 @@ export default function HomePage() {
         {/* 9. Comment ça marche — 4 étapes */}
         <HowItWorks />
 
-        {/* 10. FAQ — 7 questions fréquentes */}
+        {/* 10. Articles récents — 3 derniers billets du Journal */}
+        <LatestArticles />
+
+        {/* 11. FAQ — 7 questions fréquentes */}
         <FAQ />
 
         {/* 11. Bloc de réassurance — juste avant le formulaire */}
