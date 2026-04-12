@@ -51,6 +51,7 @@ import FAQ from '@/components/home/FAQ'
 import MobileStickyCTA from '@/components/home/MobileStickyCTA'
 import NewsletterSection from '@/components/home/NewsletterSection'
 import LatestArticles from '@/components/home/LatestArticles'
+import GrassDivider from '@/components/shared/GrassDivider'
 
 // Métadonnées SEO spécifiques à cette page
 export const metadata: Metadata = {
@@ -79,8 +80,8 @@ export default function HomePage() {
         {/* 1. Hero — headline + CTA + photo décalée */}
         <Hero />
 
-        {/* Barre de séparation gradient vert→ambré entre Hero et contenu */}
-        <div className="gradient-separator" />
+        {/* Délimitation "pelouse" SVG pleine largeur entre Hero et contenu */}
+        <GrassDivider />
 
         {/* 2. Bandeau preuve sociale — chiffres clés */}
         <SocialProofBanner />

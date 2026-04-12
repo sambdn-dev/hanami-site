@@ -209,6 +209,18 @@ body::before {
   transform: translateY(0);
 }
 
+/* ─── Ancres rehype-autolink-headings ───────────────────────── */
+/* h2 garde le soulignage (gros titre, lien de section notable).  */
+/* h3 : on supprime — trop chargé visuellement sur les sous-titres. */
+h2 .anchor-heading {
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--hanami-500) 40%, transparent);
+  text-underline-offset: 5px;
+}
+h3 .anchor-heading {
+  text-decoration: none;
+}
+
 /* ─── Flottement 3D (illustrations) ─────────────────────────── */
 @keyframes float-3d {
   0%, 100% { transform: translateY(0) rotate(-1deg); }
