@@ -53,8 +53,8 @@ const CARDS = [
     quote: '« Mon gazon jaunit en été malgré l\'arrosage »',
     title: 'Un gazon dense, c\'est jusqu\'à 40 % d\'eau en moins',
     body: (inv: boolean) => inv
-      ? <>Un gazon clairsemé laisse le sol exposé. L'eau s'évapore avant d'atteindre les racines. Un gazon dense <StrongInv>couvre le sol et retient l'humidité</StrongInv> : il tient l'été. Vous arrosez <StrongInv>jusqu'à 40 % moins</StrongInv>.</>
-      : <>Un gazon clairsemé laisse le sol exposé. L'eau s'évapore avant d'atteindre les racines. Un gazon dense <Strong>couvre le sol et retient l'humidité</Strong> : il tient l'été. Vous arrosez <Strong>jusqu'à 40 % moins</Strong>.</>,
+      ? <>Un gazon clairsemé laisse le sol exposé. Le sol capte la chaleur, l'eau s'évapore avant d'atteindre les racines. Un gazon dense <StrongInv>couvre le sol et retient l'humidité</StrongInv> : il tient l'été. Vous arrosez <StrongInv>jusqu'à 40 % moins</StrongInv> avec le protocole Hanami.</>
+      : <>Un gazon clairsemé laisse le sol exposé. Le sol capte la chaleur, l'eau s'évapore avant d'atteindre les racines. Un gazon dense <Strong>couvre le sol et retient l'humidité</Strong> : il tient l'été. Vous arrosez <Strong>jusqu'à 40 % moins</Strong> avec le protocole Hanami.</>,
   },
   {
     quote: '« J\'ai fait pareil que mon voisin, ça ne marche pas chez moi »',
