@@ -87,6 +87,9 @@ export default function RootLayout({
       className={cn(fraunces.variable, dmSans.variable, spaceMono.variable, "font-sans", geist.variable)}
     >
       <body className="min-h-screen flex flex-col font-[family-name:var(--font-dm-sans)]">
+        {/* Texture grain — élément DOM réel (pas body::before) pour que
+            pointer-events: none fonctionne correctement sur iOS Safari */}
+        <div className="grain-overlay" aria-hidden="true" />
         {children}
         <CookieBanner />
       </body>

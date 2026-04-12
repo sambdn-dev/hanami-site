@@ -29,8 +29,8 @@ export default function LatestArticles() {
               Nos derniers articles agronomiques
             </h2>
             <p className="mt-4 text-base md:text-lg text-stone-600 leading-relaxed">
-              Techniques de saison, cas clients, mythes démontés.
-              Du contenu utile, pas du remplissage.
+              Techniques de saison, cas clients réels, mythes jardinerie démontés.
+              Un article nouveau par semaine.
             </p>
           </div>
 

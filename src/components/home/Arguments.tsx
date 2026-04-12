@@ -209,7 +209,7 @@ export default function Arguments() {
 
           <div
             key={cardKey}
-            className={`carousel-enter relative rounded-2xl p-8 lg:p-12 ${
+            className={`carousel-enter relative rounded-2xl p-8 lg:p-12 min-h-[360px] sm:min-h-[320px] lg:min-h-[280px] ${
               inv
                 ? 'bg-hanami-900 border border-hanami-900'
                 : 'bg-white border border-stone-200 shadow-sm'

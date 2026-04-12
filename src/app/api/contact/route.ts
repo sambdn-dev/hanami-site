@@ -184,7 +184,10 @@ export async function POST(request: NextRequest) {
 
     // ── 5. Envoi via Resend ───────────────────────────────────────────────
     await resend.emails.send({
-      from: 'Hanami Contact <noreply@hanami-gazon.fr>',
+      /* Temporaire : onboarding@resend.dev est un expéditeur vérifié par Resend
+         qui fonctionne sans DNS. À remplacer par noreply@hanami-gazon.fr une
+         fois le domaine vérifié dans le dashboard Resend. */
+      from: 'Hanami Contact <onboarding@resend.dev>',
       to: [CONTACT_EMAIL],
       replyTo: data.email,
       subject,

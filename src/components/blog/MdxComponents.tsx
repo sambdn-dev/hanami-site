@@ -87,7 +87,18 @@ export const mdxComponents = {
       {...props}
     />
   ),
-  a: ({ href = '#', children, ...rest }: ElementProps<'a'>) => {
+  a: ({ href = '#', children, className, ...rest }: ElementProps<'a'>) => {
+    // Les ancres de titre injectées par rehype-autolink-headings ont la classe
+    // "anchor-heading". On les passe telles quelles (sans underline).
+    const isAnchorHeading = typeof className === 'string' && className.includes('anchor-heading')
+    if (isAnchorHeading) {
+      return (
+        <a href={href} className={className} {...rest}>
+          {children}
+        </a>
+      )
+    }
+
     const isExternal = /^https?:\/\//.test(href)
     if (isExternal) {
       return (

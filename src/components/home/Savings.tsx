@@ -18,9 +18,9 @@ const items = [
   {
     icon: PiggyBank,
     title: 'Votre budget',
-    stat: '200€/an',
+    stat: '400€/an',
     statLabel: 'vs 500–1 500€ de rénovation ratée',
-    body: 'Plus besoin d\'acheter des produits inutiles ou d\'engager des interventions coûteuses. Le coaching Hanami coûte moins cher qu\'un seul passage de paysagiste à 50€/h.',
+    body: 'Plus besoin d\'acheter des produits inutiles ou d\'engager des interventions coûteuses. Le coaching Hanami coûte moins cher que deux passages de paysagiste, et vous devenez 100% autonome.',
   },
   {
     icon: Clock,

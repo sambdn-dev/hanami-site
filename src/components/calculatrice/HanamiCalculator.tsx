@@ -122,8 +122,7 @@ export default function HanamiCalculator() {
 
   // ── Zones
   const [zones, setZones] = useState<Zone[]>([
-    { name: 'Zone 1', surface: '' },
-    { name: 'Zone 2', surface: '' },
+    { name: '', surface: '' },
   ])
 
   // ── Product
@@ -162,7 +161,7 @@ export default function HanamiCalculator() {
   // ── Results / UI
   const [results, setResults]                   = useState<Results>(null)
   const [showDownloadMenu, setShowDownloadMenu] = useState(false)
-  const [supportsShare, setSupportsShare]       = useState(false)
+  const [isMobile, setIsMobile]                 = useState(false)
   const [newsletterEmail, setNewsletterEmail]   = useState('')
   const [newsletterSubmitted, setNewsletterSubmitted] = useState(false)
   const resultsRef = useRef<HTMLDivElement>(null)
@@ -205,11 +204,8 @@ export default function HanamiCalculator() {
     if (savedZones) setZones(JSON.parse(savedZones))
     const savedCap = sessionStorage.getItem('sprayerCapacity')
     if (savedCap) setSprayerCapacity(savedCap)
-    // Détecte si le Web Share API avec fichiers est disponible (iOS/Android)
-    setSupportsShare(
-      typeof navigator.share === 'function' &&
-      typeof navigator.canShare === 'function'
-    )
+    // Détecte si l'appareil est tactile (mobile/tablette)
+    setIsMobile('ontouchstart' in window || navigator.maxTouchPoints > 0)
   }, [])
 
   useEffect(() => {
@@ -241,7 +237,9 @@ export default function HanamiCalculator() {
   const addZone    = () => setZones([...zones, { name: '', surface: '' }])
   const removeZone = (i: number) => zones.length > 1 && setZones(zones.filter((_, idx) => idx !== i))
   const updateZone = (i: number, field: keyof Zone, v: string) => {
-    const z = [...zones]; z[i][field] = v; setZones(z)
+    // Spread pour créer un nouvel objet zone — évite la mutation en place
+    // qui empêche React de détecter le changement (shallow copy insuffisant).
+    setZones(zones.map((z, idx) => idx === i ? { ...z, [field]: v } : z))
   }
   const getTotalSurface    = () => zones.reduce((s, z) => s + (parseFloat(z.surface) || 0), 0)
   const getSelectedSurface = () =>
@@ -439,19 +437,39 @@ export default function HanamiCalculator() {
     a.click()
   }
 
-  // Enregistre l'image dans l'application Photos (iOS/Android via Web Share API)
+  // Enregistre l'image dans l'application Photos (iOS/Android)
+  // Sur HTTPS (prod) : ouvre la feuille de partage native via Web Share API
+  // Sur HTTP (dev local) : ouvre l'image dans un nouvel onglet → long-press → "Enregistrer"
   const saveToPhotos = async () => {
+    // On ouvre un onglet AVANT l'opération async pour contourner le
+    // bloqueur de popups d'iOS (le geste utilisateur doit rester synchrone)
+    const newTab = window.open('', '_blank')
+
     const dataUrl = await captureWithPadding()
     const blob = await fetch(dataUrl).then(r => r.blob())
     const file = new File([blob], `hanami-dosage-${Date.now()}.png`, { type: 'image/png' })
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+
+    // Web Share API avec fichiers — disponible sur HTTPS (iOS 15+, Android)
+    if (typeof navigator.share === 'function' &&
+        typeof navigator.canShare === 'function' &&
+        navigator.canShare({ files: [file] })) {
+      newTab?.close()
       await navigator.share({ files: [file], title: 'Hanami — Dosages' })
-    } else {
-      // Fallback : téléchargement direct
-      const a = document.createElement('a')
-      a.href = dataUrl
-      a.download = `hanami-dosage-${Date.now()}.png`
-      a.click()
+      return
+    }
+
+    // Fallback : affiche l'image dans le nouvel onglet déjà ouvert
+    // iOS Safari : appuie longuement → "Enregistrer l'image"
+    if (newTab) {
+      const html =
+        `<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1">` +
+        `<title>Hanami — Dosage</title><style>body{margin:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:12px}` +
+        `img{max-width:100%;height:auto}p{font-family:sans-serif;font-size:13px;color:#666;text-align:center;margin:0;padding:0 12px}</style></head>` +
+        `<body><img src="${dataUrl}" alt="Hanami dosage"><p>Appuyez longuement sur l'image → "Enregistrer l'image"</p></body></html>`
+      const htmlBlob = new Blob([html], { type: 'text/html' })
+      const htmlUrl = URL.createObjectURL(htmlBlob)
+      newTab.location.href = htmlUrl
+      setTimeout(() => URL.revokeObjectURL(htmlUrl), 10_000)
     }
   }
 
@@ -602,6 +620,7 @@ export default function HanamiCalculator() {
                       <div className="relative w-20 shrink-0">
                         <input
                           type="number"
+                          inputMode="decimal"
                           placeholder="0"
                           value={zone.surface}
                           onChange={(e) => updateZone(i, 'surface', e.target.value)}
@@ -610,8 +629,12 @@ export default function HanamiCalculator() {
                         <span className="absolute right-2 top-1.5 text-xs text-stone-400 pointer-events-none">m²</span>
                       </div>
                       {zones.length > 1 && (
-                        <button onClick={() => removeZone(i)} className="text-stone-300 hover:text-red-400 transition-colors shrink-0 p-0.5">
-                          <Trash2 className="w-3.5 h-3.5" />
+                        <button
+                          onClick={() => removeZone(i)}
+                          className="text-stone-300 active:text-red-400 hover:text-red-400 transition-colors shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center -mr-2"
+                          aria-label="Supprimer cette zone"
+                        >
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       )}
                     </div>
@@ -842,7 +865,7 @@ export default function HanamiCalculator() {
                     </label>
                     <div className="flex gap-2">
                       <input
-                        type="number" step="0.1" value={dosage}
+                        type="number" inputMode="decimal" step="0.1" value={dosage}
                         onChange={(e) => setDosage(e.target.value)}
                         className={`flex-1 px-3 py-2 ${inputCls}`}
                         placeholder="Ex : 30"
@@ -885,7 +908,7 @@ export default function HanamiCalculator() {
                       <div>
                         <label className="block text-xs font-medium text-stone-500 mb-1">Quantité en stock</label>
                         <div className="flex gap-2">
-                          <input type="number" step="0.1" value={stockQuantity} onChange={(e) => setStockQuantity(e.target.value)} className={`flex-1 px-3 py-2 ${inputCls}`} placeholder="Ex : 3" />
+                          <input type="number" inputMode="decimal" step="0.1" value={stockQuantity} onChange={(e) => setStockQuantity(e.target.value)} className={`flex-1 px-3 py-2 ${inputCls}`} placeholder="Ex : 3" />
                           <select value={stockUnit} onChange={(e) => setStockUnit(e.target.value)} className={`px-2 py-2 ${inputCls}`}>
                             <option value="kg">kg</option>
                             <option value="g">g</option>
@@ -944,7 +967,7 @@ export default function HanamiCalculator() {
                       <div>
                         <label className="block text-xs font-medium text-stone-500 mb-1">Dose recommandée du produit</label>
                         <div className="relative">
-                          <input type="number" step="0.1" value={liquidDoseSimple} onChange={(e) => setLiquidDoseSimple(e.target.value)} className={`w-full px-3 py-2 pr-14 ${inputCls}`} placeholder="Ex : 10" />
+                          <input type="number" inputMode="decimal" step="0.1" value={liquidDoseSimple} onChange={(e) => setLiquidDoseSimple(e.target.value)} className={`w-full px-3 py-2 pr-14 ${inputCls}`} placeholder="Ex : 10" />
                           <span className="absolute right-3 top-2 text-xs text-stone-400">ml/L</span>
                         </div>
                       </div>
@@ -957,7 +980,7 @@ export default function HanamiCalculator() {
                     <>
                       <div>
                         <label className="block text-xs font-medium text-stone-500 mb-1">Dose produit pur (L/ha)</label>
-                        <input type="number" step="0.1" value={liquidDose} onChange={(e) => setLiquidDose(e.target.value)} className={`w-full px-3 py-2 ${inputCls}`} placeholder="Ex : 10" />
+                        <input type="number" inputMode="decimal" step="0.1" value={liquidDose} onChange={(e) => setLiquidDose(e.target.value)} className={`w-full px-3 py-2 ${inputCls}`} placeholder="Ex : 10" />
                         <p className="text-xs text-stone-400 mt-1">Ex : H2Pro Trismart 10 L/ha · Kamasol 40–60 L/ha</p>
                       </div>
                       {liquidDose && sprayVolume && (
@@ -991,7 +1014,7 @@ export default function HanamiCalculator() {
                       <div>
                         <label className="block text-xs font-medium text-stone-500 mb-1">Stock disponible</label>
                         <div className="flex gap-2">
-                          <input type="number" step="0.1" value={stockQuantity} onChange={(e) => setStockQuantity(e.target.value)} className={`flex-1 px-3 py-2 ${inputCls}`} placeholder="Ex : 5" />
+                          <input type="number" inputMode="decimal" step="0.1" value={stockQuantity} onChange={(e) => setStockQuantity(e.target.value)} className={`flex-1 px-3 py-2 ${inputCls}`} placeholder="Ex : 5" />
                           <select value={stockUnit} onChange={(e) => setStockUnit(e.target.value)} className={`px-2 py-2 ${inputCls}`}>
                             <option value="L">L</option>
                             <option value="ml">ml</option>
@@ -1063,7 +1086,7 @@ export default function HanamiCalculator() {
                   </div>
                   <div className="relative">
                     <input
-                      type="number" step="1" min="1"
+                      type="number" inputMode="decimal" step="1" min="1"
                       placeholder="Ou entrez une profondeur personnalisée (mm)"
                       value={tdCustomDepth}
                       onChange={(e) => { setTdCustomDepth(e.target.value); setTdDepth('custom') }}
@@ -1147,7 +1170,7 @@ export default function HanamiCalculator() {
                     </div>
                     <div className="relative flex-1">
                       <input
-                        type="number" step="1" min="1"
+                        type="number" inputMode="decimal" step="1" min="1"
                         placeholder="Autre"
                         value={['25', '40', '50'].includes(tdBagSize) ? '' : tdBagSize}
                         onChange={(e) => e.target.value && setTdBagSize(e.target.value)}
@@ -1594,7 +1617,7 @@ export default function HanamiCalculator() {
                 </div>
 
                 {/* ── Enregistrer dans Photos (mobile uniquement) ── */}
-                {supportsShare && (
+                {isMobile && (
                   <button
                     onClick={saveToPhotos}
                     className="no-print w-full py-2.5 px-4 bg-stone-50 border border-stone-200 text-stone-600 rounded-lg hover:bg-stone-100 flex items-center justify-center gap-2 text-sm font-medium transition-colors"
@@ -1651,7 +1674,7 @@ function SprayerCapacitySelector({ value, onChange, inputCls }: { value: string;
       </div>
       <div className="relative flex-1">
         <input
-          type="number" step="0.5" min="1"
+          type="number" inputMode="decimal" step="0.5" min="1"
           placeholder="Autre"
           value={isPreset ? '' : value}
           onChange={(e) => e.target.value && onChange(e.target.value)}

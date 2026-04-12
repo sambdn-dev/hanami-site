@@ -128,8 +128,12 @@ body {
 }
 
 /* ─── Grain overlay ─────────────────────────────────────────── */
-body::before {
-  content: '';
+/* NOTE : le grain est rendu par un <div> React dans layout.tsx
+   (classe .grain-overlay) plutôt que body::before.
+   Raison : pointer-events: none est buggé sur les pseudo-éléments
+   CSS dans iOS Safari — il bloque les clics sur toute la page.
+   Un vrai élément DOM est fiable partout. */
+.grain-overlay {
   position: fixed;
   inset: 0;
   z-index: 9999;
@@ -234,6 +238,76 @@ h3 .anchor-heading {
   .float-3d { animation: none; }
 }
 
+/* ─── GrassDivider : tondeuse + masque "coupé" ──────────────── */
+/* La tondeuse traverse l'écran de gauche à droite, et le masque noir
+   qui cache le gazon long se rétracte en même temps, révélant le gazon
+   coupé. Les deux animations partagent durée + timing pour que la lame
+   et la coupe restent synchronisées.
+
+   Phases (sur 14s) :
+   0–78 %  : passe de gauche à droite, coupe en même temps
+   78–86 % : pause hors-champ à droite (gazon entièrement coupé)
+   86–100 %: repousse du gazon (le masque revient, masquant à nouveau
+             le coupé — on voit le long réapparaître de droite à gauche) */
+@keyframes grass-mower-anim {
+  0%   { transform: translateX(-80px); }
+  78%  { transform: translateX(1500px); }
+  86%  { transform: translateX(1500px); }
+  100% { transform: translateX(-80px); }
+}
+@keyframes grass-cut-mask-anim {
+  0%   { transform: translateX(-100%); }
+  78%  { transform: translateX(0%); }
+  86%  { transform: translateX(0%); }
+  100% { transform: translateX(-100%); }
+}
+.grass-mower {
+  animation: grass-mower-anim 14s linear infinite;
+  will-change: transform;
+}
+.grass-cut-mask {
+  animation: grass-cut-mask-anim 14s linear infinite;
+  will-change: transform;
+}
+
+/* Marche du jardinier :
+   - Jambes alternées (une en l'air pendant que l'autre pose)
+   - Torse qui bobe doucement pour donner le rythme des pas          */
+@keyframes grass-walk-leg-a {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-1.5px); }
+}
+@keyframes grass-walk-leg-b {
+  0%, 100% { transform: translateY(-1.5px); }
+  50%      { transform: translateY(0); }
+}
+/* Le bob est à 2× la fréquence des jambes : le corps descend à chaque
+   foulée (pose d'un pied), remonte entre deux.                       */
+@keyframes grass-gardener-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-0.4px); }
+}
+.grass-leg-front    { animation: grass-walk-leg-a 0.6s ease-in-out infinite; }
+.grass-leg-back     { animation: grass-walk-leg-b 0.6s ease-in-out infinite; }
+.grass-gardener-bob { animation: grass-gardener-bob 0.3s ease-in-out infinite; }
+/* Mobile : sur petit écran la tondeuse serait écrasée par le
+   preserveAspectRatio="none" et illisible. On affiche seulement le
+   gazon long statique. */
+@media (max-width: 639px) {
+  .grass-mower { display: none; }
+  .grass-cut-mask {
+    animation: none;
+    transform: translateX(-100%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .grass-mower { display: none; }
+  .grass-cut-mask {
+    animation: none;
+    transform: translateX(-100%);
+  }
+}
+
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -266,6 +340,22 @@ h3 .anchor-heading {
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+}
+
+/* ─── Anti-zoom iOS sur les inputs ──────────────────────────────
+   iOS Safari zoome automatiquement sur tout input dont la font-size
+   est inférieure à 16px. On force 16px sur mobile uniquement —
+   aucun impact visuel sur desktop (breakpoint < 640px).            */
+@media (max-width: 639px) {
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="search"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
 }
 
 @layer base {

@@ -77,29 +77,35 @@ export default function ProPage() {
         {/* 3. Pain points — 4 cartes */}
         <ProPainPoints />
 
-        {/* CTA intermédiaire 1 */}
+        {/* CTA intermédiaire 1 — Calendly (prise de RDV directe, pas de friction) */}
         <IntermediateCTA
-          message="On en parle ? Premier échange offert."
-          ctaLabel="Premier échange offert"
+          message="On en parle ? 30 min offertes pour cadrer votre besoin."
+          ctaLabel="Réserver un appel"
+          useCalendly
+          utmSource="pro-cta-1"
         />
 
         {/* 4. Services Pro — fond vert foncé */}
         <ProServices />
 
-        {/* CTA intermédiaire 2 */}
+        {/* CTA intermédiaire 2 — Calendly */}
         <IntermediateCTA
           message="Testez sur votre prochain chantier."
-          ctaLabel="Premier échange offert"
+          ctaLabel="Réserver un appel"
           variant="dark"
+          useCalendly
+          utmSource="pro-cta-2"
         />
 
         {/* 5. Cas terrain — Ronan + Baptiste */}
         <ProCaseStudies />
 
-        {/* CTA intermédiaire 3 */}
+        {/* CTA intermédiaire 3 — Calendly */}
         <IntermediateCTA
           message="Prêt à gagner du temps sur vos chantiers ?"
-          ctaLabel="Premier échange offert"
+          ctaLabel="Réserver un appel"
+          useCalendly
+          utmSource="pro-cta-3"
         />
 
         {/* 6. Pourquoi Hanami — 5 raisons */}

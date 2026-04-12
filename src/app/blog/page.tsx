@@ -46,7 +46,7 @@ export default function BlogIndexPage() {
             </h1>
             <p className="mt-6 text-lg text-stone-600 leading-relaxed">
               Techniques de saison, cas clients réels, mythes jardinerie démontés.
-              Un article nouveau par mois, sans remplissage.
+              Un article nouveau par semaine.
             </p>
           </header>
 
