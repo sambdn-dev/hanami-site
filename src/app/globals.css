@@ -16,24 +16,27 @@
   --stone-800:  #292524;
   --amber-500:  #d4a853;
   --amber-100:  #fef3c7;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  /* Mappage shadcn/ui → palette Hanami.
+     Les composants shadcn (Button, Card, Dialog, etc.) utilisent ces tokens ;
+     on les branche sur nos variables existantes pour rester cohérent. */
+  --background: var(--stone-50);           /* crème du site */
+  --foreground: var(--stone-800);          /* texte corps */
+  --card: #ffffff;
+  --card-foreground: var(--stone-800);
+  --popover: #ffffff;
+  --popover-foreground: var(--stone-800);
+  --primary: var(--hanami-700);            /* vert sombre — boutons principaux */
+  --primary-foreground: #ffffff;
+  --secondary: var(--amber-500);           /* ambre — accents */
+  --secondary-foreground: var(--hanami-900);
+  --muted: var(--stone-200);
+  --muted-foreground: var(--stone-500);
+  --accent: var(--hanami-100);             /* vert clair — survol, badges */
+  --accent-foreground: var(--hanami-900);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: var(--stone-200);
+  --input: var(--stone-200);
+  --ring: var(--hanami-500);               /* focus ring vert */
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
@@ -68,8 +71,10 @@
   --font-fraunces: var(--font-fraunces);
   --font-dm-sans:  var(--font-dm-sans);
   --font-mono:     var(--font-space-mono);
-  --font-heading: var(--font-sans);
-  --font-sans: var(--font-sans);
+  /* shadcn/ui s'attend à --font-sans et --font-heading — on les branche
+     sur nos polices existantes : DM Sans pour le corps, Fraunces pour les titres. */
+  --font-heading: var(--font-fraunces);
+  --font-sans: var(--font-dm-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
