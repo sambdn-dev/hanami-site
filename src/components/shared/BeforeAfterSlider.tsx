@@ -27,7 +27,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 interface BeforeAfterSliderProps {
   beforeSrc: string
@@ -71,6 +71,64 @@ export default function BeforeAfterSlider({
   // true pendant qu'on glisse le curseur
   const isDragging = useRef(false)
 
+  // ── Hint animation ────────────────────────────────────────────────────────
+  // Refs de contrôle — pas de state pour éviter des re-renders inutiles
+  const hintTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const hintRafRef   = useRef<number | null>(null)
+  const userMoved    = useRef(false)
+
+  const cancelHint = useCallback(() => {
+    if (hintTimerRef.current) clearTimeout(hintTimerRef.current)
+    if (hintRafRef.current)   cancelAnimationFrame(hintRafRef.current)
+    userMoved.current = true
+  }, [])
+
+  useEffect(() => {
+    // Démarre après 1,2 s — laisse le temps à la page de se stabiliser
+    hintTimerRef.current = setTimeout(() => {
+      if (userMoved.current) return
+
+      const startTime = performance.now()
+      const TOTAL = 2100 // ms — durée totale de l'animation
+
+      // Keyframes : 50% → 28% → 72% → 50%
+      // 0 % du temps  → position initiale
+      // 28 % du temps → révèle davantage l'Après (curseur à gauche)
+      // 71 % du temps → révèle davantage l'Avant (curseur à droite)
+      // 100 % du temps → revient au centre
+      const KF = [
+        { t: 0,    pos: initialPosition      },
+        { t: 0.28, pos: initialPosition - 22 },
+        { t: 0.71, pos: initialPosition + 22 },
+        { t: 1,    pos: initialPosition      },
+      ]
+
+      const tick = (now: number) => {
+        if (userMoved.current) return // annulé par l'utilisateur
+        const p = Math.min((now - startTime) / TOTAL, 1)
+
+        // Trouve le segment courant dans les keyframes
+        let i = KF.length - 2
+        for (let j = 0; j < KF.length - 1; j++) {
+          if (p <= KF[j + 1].t) { i = j; break }
+        }
+        const seg = KF[i], next = KF[i + 1]
+        const local = (p - seg.t) / (next.t - seg.t)
+        // Courbe ease-in-out pour un mouvement naturel
+        const ease  = local < 0.5 ? 2 * local * local : -1 + (4 - 2 * local) * local
+        setPosition(seg.pos + (next.pos - seg.pos) * ease)
+
+        if (p < 1) hintRafRef.current = requestAnimationFrame(tick)
+      }
+      hintRafRef.current = requestAnimationFrame(tick)
+    }, 1200)
+
+    return () => {
+      if (hintTimerRef.current) clearTimeout(hintTimerRef.current)
+      if (hintRafRef.current)   cancelAnimationFrame(hintRafRef.current)
+    }
+  }, [initialPosition])
+
   /**
    * Calcule la nouvelle position du curseur en % à partir d'une position X en pixels.
    */
@@ -86,6 +144,7 @@ export default function BeforeAfterSlider({
   // ── Gestion souris ────────────────────────────────────────────────────────
 
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    cancelHint()
     isDragging.current = true
     updatePosition(e.clientX)
 
@@ -99,14 +158,15 @@ export default function BeforeAfterSlider({
     }
     window.addEventListener('mousemove', onMouseMove)
     window.addEventListener('mouseup', onMouseUp)
-  }, [updatePosition])
+  }, [cancelHint, updatePosition])
 
   // ── Gestion tactile (mobile) ──────────────────────────────────────────────
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    cancelHint()
     isDragging.current = true
     updatePosition(e.touches[0].clientX)
-  }, [updatePosition])
+  }, [cancelHint, updatePosition])
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     if (isDragging.current) {
