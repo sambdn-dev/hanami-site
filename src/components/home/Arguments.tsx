@@ -22,6 +22,18 @@ function StrongInv({ children }: { children: React.ReactNode }) {
 }
 
 // ── 9 cartes ─────────────────────────────────────────────────────────────────
+//
+// Ordre optimisé pour la conversion : les plus gros pain points d'abord
+// (hebdomadaires + universels), puis différenciation, puis objections.
+//   1. Mauvaises herbes         — pain n°1 viscéral, temps perdu chaque week-end
+//   2. Tout essayé, rien ne dure — valide la dépense déjà engagée → prêt à payer
+//   3. Jaunit en été            — urgence saisonnière + économie d'eau
+//   4. Pareil que le voisin     — amorce le besoin de diagnostic personnalisé
+//   5. IA                       — objection 2026, différencie d'un chat gratuit
+//   6. Rénovation ratée         — réduction de risque financier
+//   7. Retourner le sol         — contre-mythe technique
+//   8. Jardinier existant       — objection niche, frame complémentarité
+//   9. Payer quelqu'un          — closing pour fence-sitters DIY
 const CARDS = [
   {
     quote: '« Je passe mes week-ends à arracher les mauvaises herbes à la main »',
@@ -45,20 +57,6 @@ const CARDS = [
       : <>Un gazon clairsemé laisse le sol exposé. L'eau s'évapore avant d'atteindre les racines. Un gazon dense <Strong>couvre le sol et retient l'humidité</Strong> : il tient l'été. Vous arrosez <Strong>jusqu'à 40 % moins</Strong>.</>,
   },
   {
-    quote: '« Je pensais refaire ma pelouse moi-même »',
-    title: 'Une rénovation ratée, c\'est deux fois le prix',
-    body: (inv: boolean) => inv
-      ? <>Mauvais moment, mauvaise semence, sol non préparé : vous perdez <StrongInv>3 à 6 semaines</StrongInv>, <StrongInv>200 à 500 €</StrongInv> et vous recommencez à zéro. Une rénovation ratée coûte <StrongInv>le double</StrongInv> d'une rénovation bien faite.</>
-      : <>Mauvais moment, mauvaise semence, sol non préparé : vous perdez <Strong>3 à 6 semaines</Strong>, <Strong>200 à 500 €</Strong> et vous recommencez à zéro. Une rénovation ratée coûte <Strong>le double</Strong> d'une rénovation bien faite.</>,
-  },
-  {
-    quote: '« Je n\'ai pas envie de payer quelqu\'un pour tondre ma pelouse »',
-    title: 'Vous pouvez le faire vous-même. Il faut juste les bonnes instructions.',
-    body: (inv: boolean) => inv
-      ? <>On ne tond pas votre gazon. Si vous avez un <StrongInv>épandeur et un tuyau d'arrosage</StrongInv>, vous pouvez obtenir un résultat de luxe. Ce qui vous manque, c'est <StrongInv>le savoir</StrongInv>. C'est ce que le protocole Hanami vous donne.</>
-      : <>On ne tond pas votre gazon. Si vous avez un <Strong>épandeur et un tuyau d'arrosage</Strong>, vous pouvez obtenir un résultat de luxe. Ce qui vous manque, c'est <Strong>le savoir</Strong>. C'est ce que le protocole Hanami vous donne.</>,
-  },
-  {
     quote: '« J\'ai fait pareil que mon voisin, ça ne marche pas chez moi »',
     title: 'Votre sol ne fonctionne pas comme celui du voisin',
     body: (inv: boolean) => inv
@@ -66,11 +64,18 @@ const CARDS = [
       : <>Sol <Strong>argileux, sableux, calcaire</Strong>, ombre, pente : chaque jardin est unique. Hanami analyse votre terrain de manière spécifique, <Strong>type de sol, exposition, historique, contraintes</Strong>. Votre protocole est adapté à votre réalité, pas celle du voisin.</>,
   },
   {
-    quote: '« J\'ai déjà quelqu\'un qui s\'occupe de mon jardin, mais le gazon reste décevant »',
-    title: 'Votre jardinier entretient. Hanami prescrit. C\'est complémentaire.',
+    quote: '« J\'ai demandé à une IA comment améliorer mon gazon, j\'ai suivi les conseils… et rien n\'a changé »',
+    title: 'Une IA ne connaît pas votre sol. Hanami, si.',
     body: (inv: boolean) => inv
-      ? <>Il tond, taille et arrose. Hanami diagnostique votre sol et lui remet le <StrongInv>protocole à appliquer</StrongInv>. Deux métiers, pas deux factures inutiles. Le résultat, lui, <StrongInv>s'améliore enfin</StrongInv>.</>
-      : <>Il tond, taille et arrose. Hanami diagnostique votre sol et lui remet le <Strong>protocole à appliquer</Strong>. Deux métiers, pas deux factures inutiles. Le résultat, lui, <Strong>s'améliore enfin</Strong>.</>,
+      ? <>Une IA vous donne des conseils calibrés sur des millions de jardins imaginaires. Elle ne sait pas qu'en France <StrongInv>les produits contre les mauvaises herbes sont interdits</StrongInv>. Elle voit vos photos mais ne connaît pas le contexte, l'historique de ce que vous avez fait sur votre gazon, votre composition de sol, votre exposition nord, ni vos erreurs passées. Hanami est un agronome qui connaît <StrongInv>votre terrain</StrongInv>, saison après saison.</>
+      : <>Une IA vous donne des conseils calibrés sur des millions de jardins imaginaires. Elle ne sait pas qu'en France <Strong>les produits contre les mauvaises herbes sont interdits</Strong>. Elle voit vos photos mais ne connaît pas le contexte, l'historique de ce que vous avez fait sur votre gazon, votre composition de sol, votre exposition nord, ni vos erreurs passées. Hanami est un agronome qui connaît <Strong>votre terrain</Strong>, saison après saison.</>,
+  },
+  {
+    quote: '« Je pensais refaire ma pelouse moi-même »',
+    title: 'Une rénovation ratée, c\'est deux fois le prix',
+    body: (inv: boolean) => inv
+      ? <>Mauvais moment, mauvaise semence, sol non préparé : vous perdez <StrongInv>3 à 6 semaines</StrongInv>, <StrongInv>200 à 500 €</StrongInv> et vous recommencez à zéro. Une rénovation ratée coûte <StrongInv>le double</StrongInv> d'une rénovation bien faite.</>
+      : <>Mauvais moment, mauvaise semence, sol non préparé : vous perdez <Strong>3 à 6 semaines</Strong>, <Strong>200 à 500 €</Strong> et vous recommencez à zéro. Une rénovation ratée coûte <Strong>le double</Strong> d'une rénovation bien faite.</>,
   },
   {
     quote: '« On m\'a dit qu\'il fallait tout retourner le sol, mettre du sable, refaire les fondations. »',
@@ -80,11 +85,18 @@ const CARDS = [
       : <>Retourner tout le sol est une idée reçue héritée du potager. Hanami travaille sur l'existant : <Strong>scarification</Strong> profonde, puis <Strong>sur-semis avec des semences professionnelles</Strong> auto-régénérantes. Résultat <Strong>identique à une reconstruction</Strong>, sans boue, sans terrassement.</>,
   },
   {
-    quote: '« J\'ai demandé à une IA comment améliorer mon gazon, j\'ai suivi les conseils… et rien n\'a changé »',
-    title: 'Une IA ne connaît pas votre sol. Hanami, si.',
+    quote: '« J\'ai déjà quelqu\'un qui s\'occupe de mon jardin, mais le gazon reste décevant »',
+    title: 'Votre jardinier entretient. Hanami prescrit. C\'est complémentaire.',
     body: (inv: boolean) => inv
-      ? <>Une IA vous donne des conseils calibrés sur des millions de jardins imaginaires. Elle ne voit pas vos photos, ne connaît pas votre argile, votre exposition nord, ni vos erreurs passées. Hanami est un agronome qui connaît <StrongInv>votre terrain par son nom</StrongInv>, saison après saison.</>
-      : <>Une IA vous donne des conseils calibrés sur des millions de jardins imaginaires. Elle ne voit pas vos photos, ne connaît pas votre argile, votre exposition nord, ni vos erreurs passées. Hanami est un agronome qui connaît <Strong>votre terrain par son nom</Strong>, saison après saison.</>,
+      ? <>Il tond, taille et arrose. Hanami diagnostique votre sol et lui remet le <StrongInv>protocole à appliquer</StrongInv>. Deux métiers, pas deux factures inutiles. Le résultat, lui, <StrongInv>s'améliore enfin</StrongInv>.</>
+      : <>Il tond, taille et arrose. Hanami diagnostique votre sol et lui remet le <Strong>protocole à appliquer</Strong>. Deux métiers, pas deux factures inutiles. Le résultat, lui, <Strong>s'améliore enfin</Strong>.</>,
+  },
+  {
+    quote: '« Je n\'ai pas envie de payer quelqu\'un pour tondre ma pelouse »',
+    title: 'Vous pouvez le faire vous-même. Il faut juste les bonnes instructions.',
+    body: (inv: boolean) => inv
+      ? <>On ne tond pas votre gazon. Si vous avez un <StrongInv>épandeur et un tuyau d'arrosage</StrongInv>, vous pouvez obtenir un résultat de luxe. Ce qui vous manque, c'est <StrongInv>le savoir</StrongInv>. C'est ce que le protocole Hanami vous donne.</>
+      : <>On ne tond pas votre gazon. Si vous avez un <Strong>épandeur et un tuyau d'arrosage</Strong>, vous pouvez obtenir un résultat de luxe. Ce qui vous manque, c'est <Strong>le savoir</Strong>. C'est ce que le protocole Hanami vous donne.</>,
   },
 ]
 
