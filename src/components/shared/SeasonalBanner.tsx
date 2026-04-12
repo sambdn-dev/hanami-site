@@ -5,7 +5,7 @@ import { useState } from 'react'
 function getSeasonalMessage(): string {
   const month = new Date().getMonth() + 1 // 1-12
   if (month >= 3 && month <= 5) {
-    return 'Les semis de printemps se préparent maintenant — places limitées en Île-de-France & France'
+    return 'Les semis de printemps se préparent maintenant — places limitées en France'
   } else if (month >= 6 && month <= 8) {
     return "Canicule : protégez votre gazon avant qu'il ne soit trop tard"
   } else if (month >= 9 && month <= 11) {
