@@ -30,14 +30,15 @@ export const metadata: Metadata = {
     template: '%s | Hanami',
   },
   description:
-    'Diagnostic personnalisé, protocole daté, produits professionnels. Des résultats visibles pour votre gazon — Île-de-France, France, Belgique, Suisse et pays francophones.',
+    'Diagnostic personnalisé, protocole daté, produits professionnels. Des résultats visibles pour votre gazon — partout en France.',
   keywords: [
     'coaching gazon',
     'agronomie pelouse',
     'diagnostic gazon',
     'entretien pelouse',
     'engrais professionnel',
-    'Île-de-France', 'Belgique', 'Suisse', 'pays francophones',
+    'Île-de-France',
+    'France',
   ],
   openGraph: {
     type: 'website',

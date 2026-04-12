@@ -55,7 +55,7 @@ import NewsletterSection from '@/components/home/NewsletterSection'
 export const metadata: Metadata = {
   title: 'Coaching agronomique pour votre gazon — Hanami',
   description:
-    'Votre gazon mérite un expert, pas une étiquette en jardinerie. Diagnostic personnalisé, protocole daté, produits professionnels. Île-de-France, France, Belgique, Suisse et pays francophones.',
+    'Votre gazon mérite un expert, pas une étiquette en jardinerie. Diagnostic personnalisé, protocole daté, produits professionnels. Partout en France.',
   openGraph: {
     title: 'Hanami — Coaching agronomique pour votre gazon',
     description:

@@ -60,7 +60,7 @@ export default function Hero() {
 
             {/* Tag de catégorie en Space Mono */}
             <span className="section-label mb-6 block">
-              Coaching agronomique · Île-de-France &amp; pays francophones
+              Coaching agronomique · Partout en France
             </span>
 
             {/* Titre principal — police Fraunces, grande taille, aligné à gauche */}

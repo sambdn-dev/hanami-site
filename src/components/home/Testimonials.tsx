@@ -29,7 +29,7 @@ const testimonials = [
   {
     quote: 'Récent propriétaire, je n\'avais pas le budget pour un paysagiste. J\'ai trouvé une solution abordable et clé en main pour le faire moi-même.',
     name: 'Guy',
-    region: 'Languedoc-Roussillon',
+    region: 'Occitanie',
   },
 ]
 
