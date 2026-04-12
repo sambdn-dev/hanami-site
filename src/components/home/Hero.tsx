@@ -30,25 +30,35 @@ export default function Hero() {
     // pt-36 = 144px : bandeau (32px) + navbar (64px) + 48px de respiration
     <section className="relative min-h-screen flex items-center overflow-hidden bg-stone-50 pt-36 pb-16 lg:pt-44 lg:pb-24">
 
-      {/* ── Cercles décoratifs en arrière-plan ───────────────────────────────
-          Ces cercles floutés créent une ambiance douce sans être agressifs.
-          Ils sont en position absolue et pointer-events:none (non cliquables). */}
+      {/* ── Décor d'arrière-plan ─────────────────────────────────────────────
+          Deux cercles verts flous en radial gradient pour l'ambiance, plus
+          une illustration 3D (brins d'herbe stylisés) qui remplace l'ancien
+          cercle ambré — effet "clay render" type Stripe/Linear. */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
         {/* Grand cercle vert en haut à gauche */}
         <div
           className="absolute -top-32 -left-32 w-[600px] h-[600px] rounded-full opacity-20"
           style={{ background: 'radial-gradient(circle, #4a8c3f 0%, transparent 70%)' }}
         />
-        {/* Cercle ambré en bas à droite */}
-        <div
-          className="absolute bottom-0 right-1/3 w-[400px] h-[400px] rounded-full opacity-10"
-          style={{ background: 'radial-gradient(circle, #d4a853 0%, transparent 70%)' }}
-        />
         {/* Petit cercle vert foncé en haut à droite */}
         <div
           className="absolute top-1/4 right-0 w-[300px] h-[300px] rounded-full opacity-15"
           style={{ background: 'radial-gradient(circle, #2d5a27 0%, transparent 70%)' }}
         />
+        {/* Illustration 3D "brins d'herbe" — remplace l'ancien cercle ambré.
+            Placeholder SVG à terme remplacé par un rendu PNG isométrique
+            (Midjourney/DALL-E type Stripe/Linear). Cachée < lg pour le mobile. */}
+        <div className="hidden lg:block absolute -bottom-10 left-[38%] w-[380px] h-[380px] opacity-50 float-3d">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/3d/hero-grass.svg"
+            alt=""
+            width={380}
+            height={380}
+            className="w-full h-full object-contain"
+            loading="eager"
+          />
+        </div>
       </div>
 
       {/* ── Contenu principal ────────────────────────────────────────────── */}

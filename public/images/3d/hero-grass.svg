@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <!--
+    Placeholder 3D-style grass illustration for the Hero section.
+    À remplacer par un rendu Midjourney/DALL-E PNG isométrique
+    (voir plan « Illustrations 3D — Étape 4 »).
+  -->
+  <defs>
+    <radialGradient id="ground" cx="50%" cy="85%" r="55%">
+      <stop offset="0%" stop-color="#d9ead0" />
+      <stop offset="100%" stop-color="#b9d2a6" />
+    </radialGradient>
+    <linearGradient id="blade-dark" x1="50%" y1="100%" x2="50%" y2="0%">
+      <stop offset="0%" stop-color="#1a2e1a" />
+      <stop offset="100%" stop-color="#2d5a27" />
+    </linearGradient>
+    <linearGradient id="blade-mid" x1="50%" y1="100%" x2="50%" y2="0%">
+      <stop offset="0%" stop-color="#2d5a27" />
+      <stop offset="100%" stop-color="#4a8c3f" />
+    </linearGradient>
+    <linearGradient id="blade-light" x1="50%" y1="100%" x2="50%" y2="0%">
+      <stop offset="0%" stop-color="#4a8c3f" />
+      <stop offset="100%" stop-color="#7fb069" />
+    </linearGradient>
+    <radialGradient id="flower" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f4d58d" />
+      <stop offset="100%" stop-color="#d4a853" />
+    </radialGradient>
+    <filter id="soft-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="6" />
+      <feOffset dx="0" dy="6" result="offsetblur" />
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.25" />
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Sol en disque clair (effet terrarium / clay render) -->
+  <ellipse cx="256" cy="430" rx="220" ry="60" fill="url(#ground)" opacity="0.85" />
+  <ellipse cx="256" cy="428" rx="200" ry="48" fill="#c8dcb8" opacity="0.6" />
+
+  <g filter="url(#soft-shadow)">
+    <!-- Brins arrière (foncé) -->
+    <path d="M140 430 C130 360 135 280 155 200 C165 280 160 360 158 430 Z" fill="url(#blade-dark)" />
+    <path d="M175 430 C170 370 180 290 195 220 C200 290 190 370 195 430 Z" fill="url(#blade-dark)" />
+    <path d="M350 430 C345 370 340 290 325 220 C320 290 345 370 365 430 Z" fill="url(#blade-dark)" />
+    <path d="M380 430 C385 370 385 280 375 200 C370 280 395 360 400 430 Z" fill="url(#blade-dark)" />
+
+    <!-- Brins médians -->
+    <path d="M200 430 C195 350 205 250 225 160 C235 250 215 350 220 430 Z" fill="url(#blade-mid)" />
+    <path d="M305 430 C305 350 305 240 290 150 C285 240 295 350 285 430 Z" fill="url(#blade-mid)" />
+    <path d="M240 430 C235 360 245 270 250 180 C260 270 250 360 260 430 Z" fill="url(#blade-mid)" />
+
+    <!-- Brins avant-plan (clairs) -->
+    <path d="M270 430 C270 350 275 240 265 130 C258 240 258 350 255 430 Z" fill="url(#blade-light)" />
+    <path d="M220 430 C215 360 225 270 235 190 C245 270 240 360 242 430 Z" fill="url(#blade-light)" />
+    <path d="M315 430 C320 360 315 270 300 180 C310 270 305 360 305 430 Z" fill="url(#blade-light)" />
+
+    <!-- Fleur sauvage ambrée (petit détail) -->
+    <circle cx="340" cy="200" r="10" fill="url(#flower)" />
+    <circle cx="340" cy="200" r="3" fill="#b8893d" />
+    <path d="M340 210 C342 260 344 320 345 400" stroke="#4a8c3f" stroke-width="2.5" stroke-linecap="round" fill="none" />
+  </g>
+
+  <!-- Goutte de rosée sur un brin (highlight) -->
+  <ellipse cx="265" cy="240" rx="3.5" ry="5" fill="#ffffff" opacity="0.85" />
+  <ellipse cx="225" cy="290" rx="2.5" ry="4" fill="#ffffff" opacity="0.7" />
+</svg>

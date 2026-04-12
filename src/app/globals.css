@@ -209,6 +209,19 @@ body::before {
   transform: translateY(0);
 }
 
+/* ─── Flottement 3D (illustrations) ─────────────────────────── */
+@keyframes float-3d {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50%      { transform: translateY(-8px) rotate(1deg); }
+}
+.float-3d {
+  animation: float-3d 6s ease-in-out infinite;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .float-3d { animation: none; }
+}
+
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
