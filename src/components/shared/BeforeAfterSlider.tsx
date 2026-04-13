@@ -142,6 +142,9 @@ export default function BeforeAfterSlider({
   }, [cancelHint, updatePosition])
 
   // ── Gestion tactile (mobile) ──────────────────────────────────────────────
+  // onTouchMove React est passif par défaut → preventDefault() n'y fonctionne pas.
+  // On attache un listener natif { passive: false } pour bloquer le scroll pendant
+  // le glissement, et on le nettoie au démontage.
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     cancelHint()
@@ -149,16 +152,23 @@ export default function BeforeAfterSlider({
     updatePosition(e.touches[0].clientX)
   }, [cancelHint, updatePosition])
 
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    if (isDragging.current) {
-      e.preventDefault()
-      updatePosition(e.touches[0].clientX)
-    }
-  }, [updatePosition])
-
   const handleTouchEnd = useCallback(() => {
     isDragging.current = false
   }, [])
+
+  useEffect(() => {
+    const el = containerRef.current
+    if (!el) return
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (!isDragging.current) return
+      e.preventDefault()
+      updatePosition(e.touches[0].clientX)
+    }
+
+    el.addEventListener('touchmove', onTouchMove, { passive: false })
+    return () => el.removeEventListener('touchmove', onTouchMove)
+  }, [updatePosition])
 
   return (
     <div
@@ -166,7 +176,6 @@ export default function BeforeAfterSlider({
       className="relative w-full aspect-[4/3] overflow-hidden rounded-2xl shadow-lg select-none cursor-ew-resize"
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       style={{ WebkitUserSelect: 'none', userSelect: 'none' }}
       role="img"
