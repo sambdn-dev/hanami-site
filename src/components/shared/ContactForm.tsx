@@ -400,14 +400,6 @@ export default function ContactForm({ variant }: ContactFormProps) {
                   />
                 </FormField>
 
-                {/* Bouton submit */}
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="mt-2 w-full py-3.5 rounded-md bg-hanami-700 text-white font-medium hover:bg-hanami-900 transition-colors disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer text-sm"
-                >
-                  {submitting ? 'Envoi en cours...' : 'Envoyer ma demande'}
-                </button>
               </div>
 
               {/* ── Colonne droite : zone upload photos ──────────────── */}
@@ -510,6 +502,16 @@ export default function ContactForm({ variant }: ContactFormProps) {
                   </p>
                 </div>
               </div>
+
+              {/* Bouton submit — 3e enfant du grid : après champs et photos sur mobile,
+                  positionné en col 1 row 2 sur desktop grâce à l'auto-placement */}
+              <button
+                type="submit"
+                disabled={submitting}
+                className="w-full py-3.5 rounded-md bg-hanami-700 text-white font-medium hover:bg-hanami-900 transition-colors disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer text-sm lg:col-start-1 lg:row-start-2 lg:self-start"
+              >
+                {submitting ? 'Envoi en cours...' : 'Envoyer ma demande'}
+              </button>
 
             </div>
           </form>
