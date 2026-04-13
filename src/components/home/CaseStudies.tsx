@@ -37,11 +37,11 @@ export default function CaseStudies() {
           <CaseStudyRowWithSlider
             index={0}
             name="Susan D."
-            tag="Rénovation · 800 m²"
+            tag="Rénovation · 600 m²"
             title="« Un gazon méconnaissable en une saison »"
-            body="800 m² au Vésinet envahis de mousse et clairsemés. Diagnostic terrain complet, rénovation avec semences professionnelles auto-régénérantes adaptées aux sous-bois, et fertilisation à libération lente adaptée à chaque saison. Résultat en 6 semaines."
+            body="600 m² au Vésinet envahis de mousse et clairsemés. Diagnostic terrain complet, rénovation avec semences professionnelles auto-régénérantes adaptées aux sous-bois, et fertilisation à libération lente adaptée à chaque saison. Résultat en 6 semaines."
             stats={[
-              { value: '800 m²', label: 'rénovés' },
+              { value: '600 m²', label: 'rénovés' },
               { value: '6 semaines', label: 'résultat visible' },
               { value: '12 mois', label: 'de suivi' },
             ]}
