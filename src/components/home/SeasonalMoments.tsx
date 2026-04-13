@@ -129,7 +129,7 @@ export default function SeasonalMoments() {
               </div>
 
               {/* ── Contenu textuel ─────────────────────────────────────── */}
-              <div className="flex flex-col justify-center px-8 lg:px-0 pb-10 lg:py-14 lg:pr-14 gap-4">
+              <div className="flex flex-col justify-center px-14 lg:px-0 pb-10 lg:py-14 lg:pr-14 gap-4">
 
                 {/* Tag période */}
                 <span
