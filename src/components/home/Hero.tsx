@@ -138,7 +138,7 @@ export default function Hero() {
                   Surface
                 </p>
                 <p className="font-[family-name:var(--font-fraunces)] text-lg font-semibold text-white">
-                  800 m²
+                  600 m²
                 </p>
               </div>
             </div>
