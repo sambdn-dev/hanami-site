@@ -88,7 +88,7 @@ export default function BeforeAfterSlider({
     const PERIOD    = 6000  // ms — durée d'un aller-retour complet (lent)
     const AMPLITUDE = 38    // ±38% autour de initialPosition
 
-    const CYCLES = 2 // nombre d'allers-retours avant l'arrêt
+    const CYCLES = 1 // nombre d'allers-retours avant l'arrêt
 
     const tick = (now: number) => {
       if (userMoved.current) return
