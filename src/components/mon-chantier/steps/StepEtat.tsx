@@ -103,7 +103,10 @@ export default function StepEtat({ state, onUpdate, onNext, onBack }: Props) {
                 <div className="absolute inset-0 bg-hanami-900/30 pointer-events-none" />
               )}
 
-              {/* Bouton "agrandir" en haut à droite — z-index supérieur au bouton principal */}
+              {/* Bouton "agrandir" en haut à droite.
+                  - Desktop (lg+) : invisible par défaut, apparaît au hover de la vignette
+                  - Mobile/tablette : visible discrètement (pas de hover possible
+                    sur écrans tactiles, sinon le bouton serait inaccessible). */}
               <button
                 type="button"
                 onClick={(e) => {
@@ -112,7 +115,7 @@ export default function StepEtat({ state, onUpdate, onNext, onBack }: Props) {
                 }}
                 aria-label={`Agrandir la photo : ${photo.label}`}
                 title="Agrandir"
-                className="absolute top-1.5 right-1.5 z-10 w-7 h-7 rounded-full bg-black/55 backdrop-blur-sm text-white flex items-center justify-center opacity-70 group-hover:opacity-100 hover:bg-black/75 transition-all cursor-pointer"
+                className="absolute top-1.5 right-1.5 z-10 w-7 h-7 rounded-full bg-black/55 backdrop-blur-sm text-white flex items-center justify-center opacity-60 lg:opacity-0 lg:group-hover:opacity-100 hover:bg-black/75 transition-all cursor-pointer"
               >
                 <Expand className="w-3.5 h-3.5" strokeWidth={2.2} />
               </button>
