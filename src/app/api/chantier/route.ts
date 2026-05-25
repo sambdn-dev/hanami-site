@@ -201,7 +201,22 @@ export async function POST(request: NextRequest) {
         </tr>
         <tr>
           <td style="padding:8px;border:1px solid #e7e5e4;font-weight:600;background:#f5f5f4;">Téléphone</td>
-          <td style="padding:8px;border:1px solid #e7e5e4;"><a href="tel:${safe.tel.replace(/\s/g,'')}">${safe.tel}</a></td>
+          <td style="padding:8px;border:1px solid #e7e5e4;">
+            <div>${safe.tel}</div>
+            ${payload.telephone ? `
+              <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">
+                <a href="tel:${payload.telephone.replace(/\s/g, '').replace(/^\+/, '+')}"
+                   style="display:inline-block;padding:3px 9px;background:#2d5a27;color:white;text-decoration:none;border-radius:4px;font-size:11px;font-weight:500;">
+                  📞 Appeler
+                </a>
+                <a href="https://wa.me/${payload.telephone.replace(/\D/g, '')}"
+                   style="display:inline-block;padding:3px 9px;background:#25D366;color:white;text-decoration:none;border-radius:4px;font-size:11px;font-weight:500;"
+                   target="_blank" rel="noopener">
+                  💬 WhatsApp
+                </a>
+              </div>
+            ` : ''}
+          </td>
         </tr>
         <tr>
           <td style="padding:8px;border:1px solid #e7e5e4;font-weight:600;background:#f5f5f4;vertical-align:top;">Localisation</td>
