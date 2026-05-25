@@ -54,7 +54,7 @@ export default function StepEtat({ state, onUpdate, onNext, onBack }: Props) {
       </p>
 
       {/* Grille de photos */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mt-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-4">
         {ETAT_PHOTOS.map(photo => {
           const isSelected = selected.includes(photo.id)
           const disabled = !isSelected && !canSelectMore
