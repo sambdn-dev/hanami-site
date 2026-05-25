@@ -49,8 +49,10 @@ export default function ProgressBar({ steps, currentStep, maxVisitedStep, onStep
   useEffect(() => { setOpen(false) }, [currentStep])
 
   function handleStepTap(i: number) {
-    // Navigation libre vers n'importe quelle étape (sauf depuis l'écran final)
+    // Navigation libre vers les étapes de saisie (sauf l'Estimation finale,
+    // qui nécessite la soumission pour avoir un résultat à afficher).
     if (onFinalStep || i === currentStep) return
+    if (i === steps.length - 1) return
     onStepClick(i)
   }
 
@@ -104,7 +106,8 @@ export default function ProgressBar({ steps, currentStep, maxVisitedStep, onStep
               i === currentStep ? 'active'
               : isVisited ? 'done'
               : 'pending'
-            const tappable = i !== currentStep && !onFinalStep
+            const isFinalStep = i === steps.length - 1
+            const tappable = i !== currentStep && !onFinalStep && !isFinalStep
 
             return (
               <li key={step.index}>

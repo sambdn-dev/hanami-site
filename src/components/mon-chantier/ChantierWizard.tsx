@@ -119,16 +119,16 @@ export default function ChantierWizard() {
     setCurrentStep(s => Math.max(s - 1, 0))
   }
 
-  /** Saut direct via le panneau : navigation libre entre toutes les étapes.
-   *  L'utilisateur peut explorer dans l'ordre qu'il veut — chaque étape gère
-   *  sa propre validation et bloque "Continuer" si données manquantes.
-   *  Seule restriction : pas de retour depuis l'écran Résultat (envoi fait,
-   *  modification post-soumission incohérente). */
+  /** Saut direct via le panneau : navigation libre entre les étapes de SAISIE
+   *  (Surface → Coordonnées, index 0-6). L'étape Estimation (index 7) reste
+   *  bloquée — elle n'est atteignable qu'après soumission via "Voir mon
+   *  estimation", sinon la page serait vide (pas de résultat calculé).
+   *  Pas non plus de retour depuis Estimation (envoi déjà fait). */
   function jumpTo(stepIndex: number) {
     if (currentStep >= STEP_DEFS.length - 1) return
+    // Bloque toute tentative d'accès direct à l'écran Estimation
+    if (stepIndex >= STEP_DEFS.length - 1) return
     setCurrentStep(stepIndex)
-    // Met à jour maxVisitedStep si on saute en avant pour que le visuel
-    // (panneau + barre) reflète l'étape la plus haute atteinte.
     setMaxVisitedStep(m => Math.max(m, stepIndex))
   }
 

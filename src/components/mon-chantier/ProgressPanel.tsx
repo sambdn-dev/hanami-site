@@ -56,12 +56,12 @@ export default function ProgressPanel({ steps, currentStep, maxVisitedStep, onSt
             : isVisited ? 'done'
             : 'pending'
 
-          // Navigation libre vers TOUTES les étapes (sauf depuis l'écran
-          // final où la modification post-soumission serait incohérente).
-          // Les étapes "pending" deviennent aussi cliquables — l'utilisateur
-          // peut explorer dans l'ordre qu'il veut.
+          // Navigation libre vers les étapes de SAISIE (0 à length-2).
+          // L'étape Estimation (dernière) reste verrouillée jusqu'à la
+          // soumission — un accès direct afficherait une page vide.
           const onFinalStep = currentStep >= steps.length - 1
-          const clickable = i !== currentStep && !onFinalStep
+          const isFinalStep = i === steps.length - 1
+          const clickable = i !== currentStep && !onFinalStep && !isFinalStep
 
           const Tag = clickable ? 'button' : 'div'
 
