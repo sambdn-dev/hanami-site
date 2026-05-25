@@ -13,7 +13,7 @@
  */
 
 import { useState, useEffect, useRef } from 'react'
-import { Plus, Trash2, AlertTriangle, Info, Calculator, Download, ChevronLeft, ImageDown, Camera, Loader2 } from 'lucide-react'
+import { Plus, Trash2, AlertTriangle, Info, Calculator, Download, ChevronLeft, ImageDown, Camera, Loader2, Share2 } from 'lucide-react'
 import { compressPhoto } from '@/lib/photo-utils'
 import PhotoLightbox from '@/components/shared/PhotoLightbox'
 
@@ -702,13 +702,33 @@ export default function HanamiCalculator() {
 
   // ── Export ────────────────────────────────────────────────────────────────
 
-  // Capture le bloc résultats et ajoute une marge blanche autour via canvas
+  /** Capture le bloc résultats en image PNG dataUrl.
+   *  - Largeur forcée à 720 px → rendu cohérent peu importe le viewport
+   *    (très lisible sur mobile, pas écrasé sur desktop).
+   *  - Filter exclut les éléments .no-print (chronomètre, boutons UI, etc.)
+   *    car html-to-image ne respecte pas le CSS @media print.
+   *  - Marge blanche autour via canvas pour aérer le rendu final. */
   const captureWithPadding = async (pad = 40): Promise<string> => {
     const el = resultsRef.current
     if (!el) throw new Error('no ref')
     const { toPng } = await import('html-to-image')
     const pixelRatio = 2
-    const raw = await toPng(el, { pixelRatio, backgroundColor: '#ffffff', skipFonts: false })
+    const targetWidth = 720
+    const raw = await toPng(el, {
+      pixelRatio,
+      backgroundColor: '#ffffff',
+      skipFonts: false,
+      width: targetWidth,
+      canvasWidth: targetWidth * pixelRatio,
+      style: { width: `${targetWidth}px` },
+      // Skip tout élément qui a la classe .no-print (chronomètre, etc.)
+      filter: (node) => {
+        if (node instanceof Element) {
+          if (node.classList?.contains('no-print')) return false
+        }
+        return true
+      },
+    })
     const img = new window.Image()
     img.src = raw
     await new Promise<void>(resolve => { img.onload = () => resolve() })
@@ -722,6 +742,19 @@ export default function HanamiCalculator() {
     ctx.drawImage(img, padPx, padPx)
     return canvas.toDataURL('image/png')
   }
+
+  /** True si l'utilisateur est sur iOS, iPadOS ou macOS Safari. Sur ces
+   *  appareils, navigator.share() ouvre la feuille de partage native
+   *  incluant AirDrop, Messages, Mail, etc. */
+  const [isApple, setIsApple] = useState(false)
+  useEffect(() => {
+    if (typeof navigator === 'undefined') return
+    const ua = navigator.userAgent
+    const isiOS = /iPad|iPhone|iPod/.test(ua)
+    const isiPadDesktopUA = /Macintosh/.test(ua) && navigator.maxTouchPoints > 1
+    const isMac = /Macintosh/.test(ua) && !isiPadDesktopUA
+    setIsApple(isiOS || isiPadDesktopUA || isMac)
+  }, [])
 
   const downloadPDF = async () => {
     const dataUrl = await captureWithPadding()
@@ -763,7 +796,11 @@ export default function HanamiCalculator() {
         typeof navigator.canShare === 'function' &&
         navigator.canShare({ files: [file] })) {
       newTab?.close()
-      await navigator.share({ files: [file], title: 'Hanami — Dosages' })
+      await navigator.share({
+        files: [file],
+        title: 'Plan de dosage Hanami',
+        text: 'Mon plan de dosage Hanami — Dosage Intelligent',
+      })
       return
     }
 
@@ -2396,8 +2433,21 @@ export default function HanamiCalculator() {
                   </button>
                 </div>
 
-                {/* ── Enregistrer dans Photos (mobile uniquement) ── */}
-                {isMobile && (
+                {/* ── Partage Apple (AirDrop, Messages, Mail…) ──
+                    Visible uniquement sur iPhone/iPad/Mac où la feuille
+                    de partage native existe et inclut AirDrop. */}
+                {isApple && (
+                  <button
+                    onClick={saveToPhotos}
+                    className="no-print w-full py-2.5 px-4 bg-stone-50 border border-stone-200 text-stone-700 rounded-lg hover:bg-stone-100 flex items-center justify-center gap-2 text-sm font-medium transition-colors"
+                    title="Ouvre la feuille de partage Apple (AirDrop, Messages, Photos…)"
+                  >
+                    <Share2 className="w-4 h-4" /> Partager via AirDrop
+                  </button>
+                )}
+
+                {/* ── Enregistrer dans Photos (Android / autres mobiles) ── */}
+                {isMobile && !isApple && (
                   <button
                     onClick={saveToPhotos}
                     className="no-print w-full py-2.5 px-4 bg-stone-50 border border-stone-200 text-stone-600 rounded-lg hover:bg-stone-100 flex items-center justify-center gap-2 text-sm font-medium transition-colors"
