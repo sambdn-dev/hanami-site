@@ -13,13 +13,66 @@
  */
 
 import { useState, useEffect, useRef } from 'react'
-import { Plus, Trash2, AlertTriangle, Info, Calculator, Download, ChevronLeft, ImageDown } from 'lucide-react'
+import { Plus, Trash2, AlertTriangle, Info, Calculator, Download, ChevronLeft, ImageDown, Camera, Loader2 } from 'lucide-react'
+import { compressPhoto } from '@/lib/photo-utils'
+import PhotoLightbox from './PhotoLightbox'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
-type Zone = { name: string; surface: string }
+/** Une zone de pelouse avec optionnellement une photo pour la différencier visuellement.
+ *  La photo est compressée côté client (cf. lib/photo-utils.ts) avant d'arriver ici. */
+type Zone = {
+  name: string
+  surface: string
+  /** Photo optionnelle de la zone (data: URL JPEG compressée) */
+  photo?: {
+    dataUrl: string
+    width: number
+    height: number
+  }
+}
 type ProductType = 'seeds' | 'fertilizer' | 'liquid' | 'topdressing' | ''
 type StepKey = 'zones' | 'type' | 'seeds_scenario' | 'fertilizer_scenario' | 'dosage' | 'topdressing_config' | 'results'
+
+/**
+ * Un produit liquide dans le mélange. Peut y en avoir plusieurs (ex: H2Pro
+ * Trismart + Vitalnova StressBuster appliqués ensemble dans le même
+ * pulvérisateur). Chaque produit a sa propre dose, l'eau remplit le reste.
+ */
+type LiquidProduct = {
+  id: string
+  name: string
+  /** Dose en mode simplifié, ml/L */
+  doseSimple: string
+  /** Dose en mode expert, L/ha */
+  doseExpert: string
+}
+
+/**
+ * Un produit solide (semences ou engrais). Plusieurs produits peuvent être
+ * calculés en parallèle pour la même surface — chacun aura sa propre quantité
+ * affichée dans les résultats. Contrairement aux liquides, ils ne sont pas
+ * mélangés mais appliqués séparément.
+ */
+type SolidProduct = {
+  id: string
+  name: string
+  /** Dose */
+  dose: string
+  /** Unité — g/m² ou kg/ha (affichage) */
+  doseUnit: 'g/m2' | 'kg/ha'
+}
+
+let _idCounter = 0
+const makeUid = () => `${Date.now()}-${++_idCounter}-${Math.random().toString(36).slice(2, 6)}`
+
+const makeProduct = (name = '', doseSimple = '10', doseExpert = '10'): LiquidProduct => ({
+  id: makeUid(), name, doseSimple, doseExpert,
+})
+
+const makeSolidProduct = (name = '', dose = '20', doseUnit: 'g/m2' | 'kg/ha' = 'g/m2'): SolidProduct => ({
+  id: makeUid(), name, dose, doseUnit,
+})
 
 const STEPS: Record<string, StepKey[]> = {
   '':            ['zones', 'type'],
@@ -68,28 +121,57 @@ const TD_MATERIALS = [
 
 // ── Result types ──────────────────────────────────────────────────────────────
 
+/** Photo optionnelle d'une zone — copiée depuis les input zones pour
+ *  réaffichage dans les résultats sans avoir à matcher les index. */
+type ZonePhoto = { dataUrl: string; width: number; height: number } | undefined
+
 type SolidResults = {
   type: 'solid'
   totalSurface: number
-  totalKg: string
-  dosePerM2: string
-  zones: Array<{ name: string; surface: number; quantity: string }>
+  /** Liste des produits avec leur quantité totale en kg */
+  products: Array<{
+    name: string
+    dosePerM2: string
+    totalKg: string
+  }>
+  zones: Array<{
+    name: string
+    surface: number
+    photo?: ZonePhoto
+    /** Quantité de chaque produit pour cette zone (kg) */
+    productsQuantities: Array<{ name: string; quantity: string }>
+  }>
   numberOfZones: number
+}
+
+/** Quantité d'un produit donné (total ou par plein), avec son unité */
+type ProductQuantity = {
+  /** Nom du produit (peut être vide → "Produit 1") */
+  name: string
+  /** Quantité totale TTC pour la surface */
+  totalAmount: string | number
+  totalUnit: string
+  /** Quantité par plein du pulvérisateur */
+  perFillAmount: string | number
+  perFillUnit: string
 }
 
 type LiquidResults = {
   type: 'liquid'
   totalSurface: number
   totalSprayVolume: string
-  totalProductAmount: string | number
-  unit: string
+  /** Liste des produits dans le mélange — peut contenir 1 à N éléments */
+  products: ProductQuantity[]
   numberOfFills: number
-  productPerFill: string | number
-  productPerFillUnit: string
   zones: Array<{
-    name: string; surface: number; sprayVolume: string
-    productAmount: string | number; productUnit: string
-    waterAmount: string; fills: string
+    name: string
+    surface: number
+    photo?: ZonePhoto
+    sprayVolume: string
+    /** Pour chaque produit, la quantité dans cette zone */
+    productsAmounts: Array<{ name: string; amount: string | number; unit: string }>
+    waterAmount: string
+    fills: string
   }>
   numberOfZones: number
 }
@@ -102,7 +184,7 @@ type TopdressingResults = {
   totalLitres: number
   bagSize: number
   bagsCount: number
-  zones: Array<{ name: string; surface: number; litres: number }>
+  zones: Array<{ name: string; surface: number; photo?: ZonePhoto; litres: number }>
 }
 
 type Results = SolidResults | LiquidResults | TopdressingResults | null
@@ -127,7 +209,6 @@ export default function HanamiCalculator() {
 
   // ── Product
   const [productType, setProductType] = useState<ProductType>('')
-  const [productName, setProductName] = useState('')
 
   // ── Fertilizer scenario
   const [fertScenario, setFertScenario] = useState<string | null>(null)
@@ -136,21 +217,46 @@ export default function HanamiCalculator() {
   const [seedObjective, setSeedObjective]   = useState<string | null>('regarnissage')
   const [lawnCondition, setLawnCondition]   = useState<string | null>(null)
 
-  // ── Dosage (solid)
-  const [dosage, setDosage]           = useState('20')
-  const [dosageUnit, setDosageUnit]   = useState('g/m2')
+  // ── Dosage (solid) — multi-produits : liste de produits avec leur dose individuelle.
+  //    Le 1er produit est créé d'office. Les scénarios (seeds/fertilizer) règlent
+  //    le doseur du produit 1 ; les produits suivants sont saisis manuellement.
+  const [solidProducts, setSolidProducts] = useState<SolidProduct[]>([makeSolidProduct()])
   const [reverseMode, setReverseMode] = useState(false)
   const [stockQuantity, setStockQuantity] = useState('')
   const [stockUnit, setStockUnit]         = useState('kg')
   const [selectedZones, setSelectedZones] = useState<number[]>([])
 
+  // Helpers SolidProduct
+  const updateSolidProduct = (id: string, patch: Partial<SolidProduct>) =>
+    setSolidProducts(prods => prods.map(p => p.id === id ? { ...p, ...patch } : p))
+  const addSolidProduct = () => setSolidProducts(prods => [...prods, makeSolidProduct()])
+  const removeSolidProduct = (id: string) =>
+    setSolidProducts(prods => prods.length > 1 ? prods.filter(p => p.id !== id) : prods)
+
+  /** Met à jour la dose du produit 1 (utilisé par les scénarios seeds/fert) */
+  const setMainSolidDose = (dose: string, doseUnit: 'g/m2' | 'kg/ha' = 'g/m2') => {
+    setSolidProducts(prods => prods.length > 0
+      ? prods.map((p, i) => i === 0 ? { ...p, dose, doseUnit } : p)
+      : [makeSolidProduct('', dose, doseUnit)]
+    )
+  }
+
   // ── Dosage (liquid)
   const [sprayerCapacity, setSprayerCapacity]   = useState('15')
   const [sprayVolume, setSprayVolume]           = useState('600')
-  const [liquidDose, setLiquidDose]             = useState('10')
-  const [liquidDoseSimple, setLiquidDoseSimple] = useState('10')
+  /** Liste des produits liquides dans le mélange (1 à N).
+   *  Le 1er produit est créé d'office ; l'utilisateur peut en ajouter d'autres
+   *  pour pulvériser un mélange (ex: H2Pro Trismart + Vitalnova StressBuster). */
+  const [liquidProducts, setLiquidProducts] = useState<LiquidProduct[]>([makeProduct()])
   const [expertMode, setExpertMode]             = useState(false)
   const [showVolumeConverter, setShowVolumeConverter] = useState(false)
+
+  // Helpers de manipulation de la liste de produits
+  const updateLiquidProduct = (id: string, patch: Partial<LiquidProduct>) =>
+    setLiquidProducts(prods => prods.map(p => p.id === id ? { ...p, ...patch } : p))
+  const addLiquidProduct = () => setLiquidProducts(prods => [...prods, makeProduct()])
+  const removeLiquidProduct = (id: string) =>
+    setLiquidProducts(prods => prods.length > 1 ? prods.filter(p => p.id !== id) : prods)
 
   // ── Top dressing
   const [tdDepth, setTdDepth]             = useState('5')
@@ -171,6 +277,17 @@ export default function HanamiCalculator() {
   const [zonesDone, setZonesDone]                 = useState<Set<number>>(new Set())
   const [zoneTimers, setZoneTimers]               = useState<Record<number, number>>({})
   const timerRefs = useRef<Record<number, ReturnType<typeof setInterval>>>({})
+
+  /** Trigger pour relancer le calcul après que tous les setState d'un prefill
+   *  dev soient flushés. Incrémenté à chaque clic [Dev]. */
+  const [devCalcTrigger, setTriggerDevCalc] = useState(0)
+
+  /** Lightbox photo : null = fermé. Source = dataUrl, caption = nom de zone. */
+  const [lightbox, setLightbox] = useState<{ src: string; caption: string } | null>(null)
+  /** Index de la zone en cours de compression (UI loader sur la carte) */
+  const [photoLoadingIdx, setPhotoLoadingIdx] = useState<number | null>(null)
+  /** Erreur de compression (rare — affichée brièvement sous la carte) */
+  const [photoError, setPhotoError] = useState<{ idx: number; msg: string } | null>(null)
 
   const startTimer = (i: number) => {
     if (timerRefs.current[i]) return
@@ -197,21 +314,75 @@ export default function HanamiCalculator() {
     return `${m}:${s}`
   }
 
-  // ── Persistence ───────────────────────────────────────────────────────────
+  // ── Persistence localStorage ──────────────────────────────────────────────
+  //
+  // On stocke les zones + la capacité du pulvérisateur dans localStorage pour
+  // que le visiteur retrouve ses données entre les sessions (idéal pour les
+  // gestionnaires de plusieurs zones qui reviennent semaine après semaine).
+  //
+  // Migration douce depuis sessionStorage (ancienne version) : à la 1ère visite
+  // après mise à jour, on lit la valeur sessionStorage en fallback.
+  //
+  // Gestion du quota (5-10 MB selon navigateur) : les photos en base64 peuvent
+  // saturer rapidement. Si l'écriture échoue, on retombe sur une sauvegarde
+  // sans les photos pour préserver au moins les noms + surfaces.
+
+  const LS_ZONES_KEY = 'hanami-calc-zones-v2'   // v2 = photos incluses
+  const LS_SPRAYER_KEY = 'hanami-calc-sprayer-cap'
+
+  /** Sauve les zones avec gestion du quota. Si le storage est plein, on retire
+   *  les photos et on retente — mieux vaut garder noms/surfaces que tout perdre. */
+  function safeSaveZones(zonesToSave: Zone[]) {
+    try {
+      localStorage.setItem(LS_ZONES_KEY, JSON.stringify(zonesToSave))
+    } catch (err) {
+      // QuotaExceededError sur la plupart des navigateurs
+      console.warn('[HanamiCalc] localStorage plein, on retire les photos pour sauver', err)
+      const zonesNoPhoto = zonesToSave.map(z => ({ name: z.name, surface: z.surface }))
+      try {
+        localStorage.setItem(LS_ZONES_KEY, JSON.stringify(zonesNoPhoto))
+      } catch {
+        // Si même sans photos ça échoue, on abandonne silencieusement
+      }
+    }
+  }
 
   useEffect(() => {
-    const savedZones = sessionStorage.getItem('lawnZones')
-    if (savedZones) setZones(JSON.parse(savedZones))
-    const savedCap = sessionStorage.getItem('sprayerCapacity')
-    if (savedCap) setSprayerCapacity(savedCap)
-    // Détecte si l'appareil est tactile (mobile/tablette)
+    // 1. Tentative localStorage v2
+    let savedZones = localStorage.getItem(LS_ZONES_KEY)
+    // 2. Migration depuis sessionStorage (ancienne version)
+    if (!savedZones) {
+      const legacy = sessionStorage.getItem('lawnZones')
+      if (legacy) {
+        savedZones = legacy
+        sessionStorage.removeItem('lawnZones')
+      }
+    }
+    if (savedZones) {
+      try {
+        const parsed = JSON.parse(savedZones) as Zone[]
+        if (Array.isArray(parsed) && parsed.length > 0) setZones(parsed)
+      } catch {
+        // JSON invalide → on ignore et démarre vierge
+      }
+    }
+
+    const savedCap = localStorage.getItem(LS_SPRAYER_KEY) ?? sessionStorage.getItem('sprayerCapacity')
+    if (savedCap) {
+      setSprayerCapacity(savedCap)
+      sessionStorage.removeItem('sprayerCapacity')  // migration
+    }
+
     setIsMobile('ontouchstart' in window || navigator.maxTouchPoints > 0)
   }, [])
 
   useEffect(() => {
-    if (zones.length > 0 && zones.some(z => z.surface))
-      sessionStorage.setItem('lawnZones', JSON.stringify(zones))
-  }, [zones])
+    // On ne sauve que s'il y a au moins une zone avec une surface saisie,
+    // pour ne pas écraser une session précédente avec un état vierge.
+    if (zones.length > 0 && zones.some(z => z.surface)) {
+      safeSaveZones(zones)
+    }
+  }, [zones]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (zones.length > 0 && selectedZones.length === 0)
@@ -219,8 +390,24 @@ export default function HanamiCalculator() {
   }, [zones]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (sprayerCapacity) sessionStorage.setItem('sprayerCapacity', sprayerCapacity)
+    if (sprayerCapacity) {
+      try { localStorage.setItem(LS_SPRAYER_KEY, sprayerCapacity) } catch { /* quota — ignorable */ }
+    }
   }, [sprayerCapacity])
+
+  // Lance le calcul après que les states soient flushés par le prefillDev.
+  // Ce useEffect n'est déclenché que par devCalcTrigger pour éviter les
+  // re-calculs en boucle — les autres deps sont lues via closure.
+  useEffect(() => {
+    if (devCalcTrigger === 0) return
+    console.log('[Dev] Trigger calc — type=', productType, 'liquidProducts=', liquidProducts.length, 'solidProducts=', solidProducts.length)
+    if (productType === 'liquid' && !expertMode) {
+      calculateResults(undefined, '1000')
+    } else {
+      calculateResults()
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [devCalcTrigger])
 
   // ── Navigation helpers ────────────────────────────────────────────────────
 
@@ -236,10 +423,32 @@ export default function HanamiCalculator() {
 
   const addZone    = () => setZones([...zones, { name: '', surface: '' }])
   const removeZone = (i: number) => zones.length > 1 && setZones(zones.filter((_, idx) => idx !== i))
-  const updateZone = (i: number, field: keyof Zone, v: string) => {
+  const updateZone = (i: number, field: 'name' | 'surface', v: string) => {
     // Spread pour créer un nouvel objet zone — évite la mutation en place
     // qui empêche React de détecter le changement (shallow copy insuffisant).
     setZones(zones.map((z, idx) => idx === i ? { ...z, [field]: v } : z))
+  }
+  const setZonePhoto = (i: number, photo: Zone['photo']) =>
+    setZones(zones.map((z, idx) => idx === i ? { ...z, photo } : z))
+
+  /** Handler upload/capture photo pour une zone donnée. Compresse via
+   *  photo-utils (gère HEIC sur tous navigateurs) et stocke en data: URL. */
+  const handleZonePhotoUpload = async (i: number, file: File) => {
+    setPhotoLoadingIdx(i)
+    setPhotoError(null)
+    try {
+      const compressed = await compressPhoto(file)
+      setZonePhoto(i, {
+        dataUrl: compressed.dataUrl,
+        width: compressed.width,
+        height: compressed.height,
+      })
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Photo invalide'
+      setPhotoError({ idx: i, msg })
+    } finally {
+      setPhotoLoadingIdx(null)
+    }
   }
   const getTotalSurface    = () => zones.reduce((s, z) => s + (parseFloat(z.surface) || 0), 0)
   const getSelectedSurface = () =>
@@ -249,9 +458,18 @@ export default function HanamiCalculator() {
 
   // ── Dosage helpers ────────────────────────────────────────────────────────
 
+  /** Convertit une dose + unité en g/m² (référence canonique) */
+  const doseToGperM2 = (dose: string, unit: 'g/m2' | 'kg/ha') => {
+    const d = parseFloat(dose)
+    if (isNaN(d)) return 0
+    return unit === 'kg/ha' ? d / 10 : d
+  }
+
+  /** Wrapper legacy pour les warnings — utilise le 1er produit solide */
   const convertDosageToGperM2 = () => {
-    const d = parseFloat(dosage)
-    return dosageUnit === 'kg/ha' ? d / 10 : d
+    const p = solidProducts[0]
+    if (!p) return 0
+    return doseToGperM2(p.dose, p.doseUnit)
   }
 
   const calculateReverseDosage = () => {
@@ -353,7 +571,7 @@ export default function HanamiCalculator() {
         bagSize, bagsCount: Math.ceil((totalSurface * depth) / bagSize),
         zones: zonesToCalc.map((z, i) => {
           const surf = parseFloat(z.surface) || 0
-          return { name: z.name || `Zone ${i + 1}`, surface: surf, litres: surf * depth }
+          return { name: z.name || `Zone ${i + 1}`, surface: surf, photo: z.photo, litres: surf * depth }
         }),
       })
       setStepKey('results')
@@ -361,30 +579,121 @@ export default function HanamiCalculator() {
     }
 
     if (productType === 'liquid') {
-      const ldv  = parseFloat(overrideLiquidDose || liquidDose)
-      const svn  = parseFloat(overrideSprayVol   || sprayVolume)
-      const sc   = parseFloat(sprayerCapacity)
-      const tsv  = (totalSurface * svn) / 10000
-      const tpa  = (overrideSprayVol === '1000' && overrideLiquidDose)
-        ? tsv * ldv
-        : (ldv * totalSurface / 10000) * 1000
+      // Modes :
+      //  - Reverse  : 1 seul produit (override fourni), passé via overrideLiquidDose
+      //  - Simplifié: chaque produit a sa dose en ml/L (overrideSprayVol='1000' = ml/L)
+      //  - Expert   : chaque produit a sa dose en L/ha (sprayVolume = bouillie L/ha)
+      const svn = parseFloat(overrideSprayVol ?? sprayVolume)
+      const sc  = parseFloat(sprayerCapacity)
+      const tsv = (totalSurface * svn) / 10000  // total spray volume en L
       const fills = Math.ceil(tsv / sc)
+
+      // Construit la liste des produits à calculer, normalisée en "L/ha équivalent"
+      // pour pouvoir multiplier par la surface uniformément.
+      type ProdInput = { name: string; doseLperHa: number }
+      let prodInputs: ProdInput[]
+
+      if (overrideLiquidDose !== undefined) {
+        // Cas reverse mode : un seul "produit" issu du stock disponible
+        // (la valeur passée est déjà en L/ha)
+        prodInputs = [{ name: liquidProducts[0]?.name || '', doseLperHa: parseFloat(overrideLiquidDose) }]
+      } else if (overrideSprayVol === '1000') {
+        // Mode simplifié : dose en ml/L → on la convertit en L/ha sachant que
+        // svn=1000 L/ha (10 L/100m²). 10 ml/L × 1000 L/ha = 10 L/ha.
+        prodInputs = liquidProducts.map(p => ({
+          name: p.name,
+          doseLperHa: (parseFloat(p.doseSimple) * svn) / 1000,
+        }))
+      } else {
+        // Mode expert : dose en L/ha directement
+        prodInputs = liquidProducts.map(p => ({
+          name: p.name,
+          doseLperHa: parseFloat(p.doseExpert),
+        }))
+      }
+
+      // Quantité totale de produit pour la surface (en ml)
+      const productAmountsMl = prodInputs.map(p => (p.doseLperHa * totalSurface / 10000) * 1000)
+      const totalProductsMl = productAmountsMl.reduce((s, v) => s + v, 0)
+
+      const products: ProductQuantity[] = prodInputs.map((p, idx) => {
+        const totalMl = productAmountsMl[idx]
+        const perFillMl = totalMl / fills
+        const tf = fmtLiquid(totalMl)
+        const pf = fmtLiquid(perFillMl)
+        return {
+          name: p.name || `Produit ${idx + 1}`,
+          totalAmount: tf.value, totalUnit: tf.unit,
+          perFillAmount: pf.value, perFillUnit: pf.unit,
+        }
+      })
+
       const zoneResults = zonesToCalc.map((z, i) => {
         const surf = parseFloat(z.surface) || 0
         const zsv  = (surf * svn) / 10000
-        const zpa  = (overrideSprayVol === '1000' && overrideLiquidDose) ? zsv * ldv : (ldv * surf / 10000) * 1000
-        const fp   = fmtLiquid(zpa)
-        return { name: z.name || `Zone ${i + 1}`, surface: surf, sprayVolume: zsv.toFixed(2), productAmount: fp.value, productUnit: fp.unit, waterAmount: ((zsv * 1000 - zpa) / 1000).toFixed(1), fills: (zsv / sc).toFixed(2) }
+        // Quantité de chaque produit dans cette zone
+        const zoneProdsMl = prodInputs.map(p => (p.doseLperHa * surf / 10000) * 1000)
+        const zoneProdsTotalMl = zoneProdsMl.reduce((s, v) => s + v, 0)
+        const productsAmounts = prodInputs.map((p, idx) => {
+          const fp = fmtLiquid(zoneProdsMl[idx])
+          return { name: p.name || `Produit ${idx + 1}`, amount: fp.value, unit: fp.unit }
+        })
+        return {
+          name: z.name || `Zone ${i + 1}`,
+          surface: surf,
+          photo: z.photo,
+          sprayVolume: zsv.toFixed(2),
+          productsAmounts,
+          // Eau = volume bouillie - somme des produits
+          waterAmount: ((zsv * 1000 - zoneProdsTotalMl) / 1000).toFixed(1),
+          fills: (zsv / sc).toFixed(2),
+        }
       })
-      const tf = fmtLiquid(tpa), pf = fmtLiquid(tpa / fills)
-      setResults({ type: 'liquid', totalSurface, totalSprayVolume: tsv.toFixed(2), totalProductAmount: tf.value, unit: tf.unit, numberOfFills: fills, productPerFill: pf.value, productPerFillUnit: pf.unit, zones: zoneResults, numberOfZones })
-    } else {
-      const dg = convertDosageToGperM2()
+
+      // Avertissement console si trop de produit pour le pulvérisateur (rare,
+      // mais on prévient le visiteur en silence — ne bloque pas le calcul)
+      if (totalProductsMl / fills / 1000 > sc * 0.5) {
+        console.warn('[HanamiCalculator] mélange concentré — vérifier la compatibilité produits')
+      }
+
       setResults({
-        type: 'solid', totalSurface,
-        totalKg: ((totalSurface * dg) / 1000).toFixed(2),
-        dosePerM2: dg.toFixed(1),
-        zones: zonesToCalc.map((z, i) => ({ name: z.name || `Zone ${i + 1}`, surface: parseFloat(z.surface) || 0, quantity: ((parseFloat(z.surface) || 0) * dg / 1000).toFixed(2) })),
+        type: 'liquid',
+        totalSurface,
+        totalSprayVolume: tsv.toFixed(2),
+        products,
+        numberOfFills: fills,
+        zones: zoneResults,
+        numberOfZones,
+      })
+    } else {
+      // Solid (seeds + fertilizer) — multi-produits
+      // Chaque produit est calculé indépendamment pour la même surface.
+      const productsCalc = solidProducts.map((p, idx) => {
+        const dg = doseToGperM2(p.dose, p.doseUnit)
+        return {
+          name: p.name || `Produit ${idx + 1}`,
+          dosePerM2: dg.toFixed(1),
+          totalKg: ((totalSurface * dg) / 1000).toFixed(2),
+          dgValue: dg,
+        }
+      })
+
+      setResults({
+        type: 'solid',
+        totalSurface,
+        products: productsCalc.map(({ dgValue, ...p }) => p),
+        zones: zonesToCalc.map((z, i) => {
+          const surf = parseFloat(z.surface) || 0
+          return {
+            name: z.name || `Zone ${i + 1}`,
+            surface: surf,
+            photo: z.photo,
+            productsQuantities: productsCalc.map(p => ({
+              name: p.name,
+              quantity: ((surf * p.dgValue) / 1000).toFixed(2),
+            })),
+          }
+        }),
         numberOfZones,
       })
     }
@@ -475,35 +784,107 @@ export default function HanamiCalculator() {
 
   // ── Dev prefill ───────────────────────────────────────────────────────────
 
+  /** Listes de produits Hanami pour les pré-remplissages aléatoires (mode dev) */
+  const DEV_LIQUID_NAMES = [
+    'H2Pro Trismart', 'H2Pro FlowSmart', 'Vitalnova StressBuster',
+    'Kick Pro 0,5L', 'Kick Pro 2,5L', 'Kamasol Brillant Grün', 'Vitanica Si',
+  ]
+  const DEV_SEED_NAMES = [
+    'Barenbrug Pro 12', 'Barenbrug RES+ RPR', 'Barenbrug RES+ Elite',
+    'Barenbrug PRO SOS', 'Barenbrug RPR traçant',
+  ]
+  const DEV_FERT_NAMES = [
+    'Floranid Twin Permanent', 'Floranid Twin Club', 'Floranid Twin Racines',
+    'Super Floranid Twin BS', 'Sierraform GT Stress Control',
+    'Bacteriosol Universel', 'Orgasyl Regarnissage',
+  ]
+  /** Renvoie N éléments distincts pris au hasard dans une liste */
+  const sampleN = <T,>(arr: T[], n: number): T[] => {
+    const copy = [...arr]
+    const out: T[] = []
+    for (let i = 0; i < n && copy.length > 0; i++) {
+      const idx = Math.floor(Math.random() * copy.length)
+      out.push(copy.splice(idx, 1)[0])
+    }
+    return out
+  }
+
+  /** Pré-remplit la calculatrice avec un scénario aléatoire et lance le calcul.
+   *  Choisit aléatoirement le type (semences / engrais / liquide / topdressing),
+   *  pré-remplit avec 1 à 3 produits du catalogue Hanami avec des doses
+   *  réalistes, et atterrit directement sur l'écran de résultats. */
   const prefillDev = () => {
-    const devZones: Zone[] = [{ name: 'Pelouse principale', surface: '200' }, { name: 'Jardin arrière', surface: '150' }]
+    // Zones aléatoires
+    const devZones: Zone[] = [
+      { name: 'Pelouse principale', surface: String(150 + Math.floor(Math.random() * 200)) },
+      { name: 'Jardin arrière',     surface: String(80  + Math.floor(Math.random() * 120)) },
+    ]
     setZones(devZones)
-    setProductType('seeds')
-    setProductName('Barenbrug RSP Elite')
-    setDosage('25'); setDosageUnit('g/m2')
-    setSeedObjective('regarnissage'); setLawnCondition('patchy')
-    const dg = 25
-    setResults({
-      type: 'solid', totalSurface: 350,
-      totalKg: (350 * dg / 1000).toFixed(2), dosePerM2: dg.toFixed(1),
-      zones: [
-        { name: 'Pelouse principale', surface: 200, quantity: (200 * dg / 1000).toFixed(2) },
-        { name: 'Jardin arrière',     surface: 150, quantity: (150 * dg / 1000).toFixed(2) },
-      ],
-      numberOfZones: 2,
-    })
-    setStepKey('results')
+
+    // Type aléatoire
+    const types: ProductType[] = ['seeds', 'fertilizer', 'liquid', 'topdressing']
+    const t = types[Math.floor(Math.random() * types.length)]
+    setProductType(t)
+    setReverseMode(false)
+
+    if (t === 'liquid') {
+      const nProducts = 1 + Math.floor(Math.random() * 3)  // 1 à 3 produits
+      const names = sampleN(DEV_LIQUID_NAMES, nProducts)
+      setLiquidProducts(names.map(name => makeProduct(
+        name,
+        String(5 + Math.floor(Math.random() * 16)),  // doseSimple 5-20 ml/L (entier)
+        String(5 + Math.floor(Math.random() * 30)),  // doseExpert 5-34 L/ha (entier)
+      )))
+      setExpertMode(Math.random() > 0.5)
+    } else if (t === 'seeds') {
+      const objId = ['regarnissage', 'creation', 'reparation'][Math.floor(Math.random() * 3)]
+      const obj = SEED_OBJECTIVES.find(o => o.id === objId)!
+      setSeedObjective(objId)
+      if (objId === 'regarnissage') {
+        const condId = ['bare', 'patchy', 'thin'][Math.floor(Math.random() * 3)]
+        const cond = LAWN_CONDITIONS.find(c => c.id === condId)!
+        setLawnCondition(condId)
+        // La dose découle de la condition (pas un random)
+        const nProducts = 1 + Math.floor(Math.random() * 2)
+        const names = sampleN(DEV_SEED_NAMES, nProducts)
+        setSolidProducts(names.map(name => makeSolidProduct(name, String(cond.dosage), 'g/m2')))
+      } else {
+        setLawnCondition(null)
+        const nProducts = 1 + Math.floor(Math.random() * 2)
+        const names = sampleN(DEV_SEED_NAMES, nProducts)
+        // Dose = celle de l'objectif sélectionné (cohérent avec le label affiché)
+        setSolidProducts(names.map(name => makeSolidProduct(name, String(obj.dosage), 'g/m2')))
+      }
+    } else if (t === 'fertilizer') {
+      const scId = ['monthly', 'bimonthly', 'quarterly', 'biannual'][Math.floor(Math.random() * 4)]
+      const scenario = FERT_SCENARIOS.find(s => s.id === scId)!
+      setFertScenario(scId)
+      const nProducts = 1 + Math.floor(Math.random() * 3)
+      const names = sampleN(DEV_FERT_NAMES, nProducts)
+      // Dose = celle du scénario sélectionné (pas un random) → header cohérent
+      setSolidProducts(names.map(name => makeSolidProduct(name, String(scenario.dosage), 'g/m2')))
+    } else if (t === 'topdressing') {
+      setTdDepth(['3', '5', '8'][Math.floor(Math.random() * 3)])
+      setTdCustomDepth('')
+      setTdMaterial(['sand', 'compost', 'mix'][Math.floor(Math.random() * 3)])
+    }
+
+    // Toutes les setters ci-dessus sont batchées par React 19 dans un seul
+    // re-render. Le useEffect qui watch devCalcTrigger fire APRÈS commit, donc
+    // les states sont déjà à jour au moment où il appelle calculateResults().
+    setTriggerDevCalc(Date.now())
   }
 
   // ── Reset ─────────────────────────────────────────────────────────────────
 
   const reset = () => {
-    setStepKey('zones'); setProductType(''); setProductName('')
-    setDosage(''); setDosageUnit('g/m2')
+    setStepKey('zones'); setProductType('')
+    setSolidProducts([makeSolidProduct()])
+    setLiquidProducts([makeProduct()])
     setFertScenario(null)
     setSeedObjective(null); setLawnCondition(null)
     setSprayerCapacity(''); setSprayVolume('600')
-    setLiquidDose(''); setLiquidDoseSimple(''); setExpertMode(false)
+    setExpertMode(false)
     setReverseMode(false); setStockQuantity(''); setStockUnit('kg')
     setTdDepth('5'); setTdCustomDepth(''); setTdMaterial('sand'); setTdBagSize('40')
     setSelectedZones(zones.map((_, i) => i))
@@ -557,7 +938,17 @@ export default function HanamiCalculator() {
                 {stepKey === 'fertilizer_scenario' && `${getTotalSurface().toFixed(0)} m² · Engrais`}
                 {stepKey === 'dosage'           && `${getTotalSurface().toFixed(0)} m² · ${productType === 'seeds' ? 'Semences' : productType === 'fertilizer' ? 'Engrais' : 'Liquide'}`}
                 {stepKey === 'topdressing_config' && `${getTotalSurface().toFixed(0)} m² · Top dressing`}
-                {stepKey === 'results'          && (productName || 'Résultats')}
+                {stepKey === 'results'          && (() => {
+                  if (productType === 'liquid') {
+                    if (liquidProducts.length > 1) return `Mélange · ${liquidProducts.length} produits`
+                    return liquidProducts[0]?.name || 'Résultats'
+                  }
+                  if (productType === 'seeds' || productType === 'fertilizer') {
+                    if (solidProducts.length > 1) return `${solidProducts.length} produits`
+                    return solidProducts[0]?.name || 'Résultats'
+                  }
+                  return 'Résultats'
+                })()}
               </p>
             </div>
           </div>
@@ -606,39 +997,109 @@ export default function HanamiCalculator() {
                   </p>
                 </div>
 
-                {/* Zone list */}
+                {/* Zone list — ligne horizontale compacte avec slot photo carré
+                    à gauche du nom. Slot vide = icône caméra (tap pour ajouter).
+                    Slot rempli = miniature de la photo (tap = lightbox). */}
                 <div className="divide-y divide-stone-100 border border-stone-100 rounded-xl overflow-hidden">
-                  {zones.map((zone, i) => (
-                    <div key={i} className="flex items-center gap-2 px-3 py-2 bg-white hover:bg-stone-50 transition-colors">
-                      <input
-                        type="text"
-                        placeholder={`Zone ${i + 1}`}
-                        value={zone.name}
-                        onChange={(e) => updateZone(i, 'name', e.target.value)}
-                        className={`flex-1 min-w-0 px-2 py-1.5 text-xs ${inputCls}`}
-                      />
-                      <div className="relative w-20 shrink-0">
-                        <input
-                          type="number"
-                          inputMode="decimal"
-                          placeholder="0"
-                          value={zone.surface}
-                          onChange={(e) => updateZone(i, 'surface', e.target.value)}
-                          className={`w-full pl-2 pr-7 py-1.5 text-xs text-right ${inputCls}`}
-                        />
-                        <span className="absolute right-2 top-1.5 text-xs text-stone-400 pointer-events-none">m²</span>
+                  {zones.map((zone, i) => {
+                    const isLoading = photoLoadingIdx === i
+                    const errMsg = photoError?.idx === i ? photoError.msg : null
+                    return (
+                      <div key={i} className="bg-white">
+                        <div className="flex items-center gap-2 px-3 py-2 hover:bg-stone-50 transition-colors">
+
+                          {/* Slot photo carré — 56×56 px, à gauche du nom */}
+                          <div className="shrink-0 relative w-14 h-14">
+                            {zone.photo ? (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => setLightbox({ src: zone.photo!.dataUrl, caption: zone.name || `Zone ${i + 1}` })}
+                                  aria-label={`Voir la photo de ${zone.name || `Zone ${i + 1}`}`}
+                                  className="w-full h-full rounded-lg overflow-hidden bg-stone-100 cursor-zoom-in border border-stone-200"
+                                >
+                                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                                  <img
+                                    src={zone.photo.dataUrl}
+                                    alt={zone.name || `Zone ${i + 1}`}
+                                    className="w-full h-full object-cover"
+                                    draggable={false}
+                                  />
+                                </button>
+                                {/* Mini bouton retirer la photo en superposition */}
+                                <button
+                                  type="button"
+                                  onClick={() => setZonePhoto(i, undefined)}
+                                  aria-label="Retirer la photo"
+                                  className="no-print absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-stone-700 text-white flex items-center justify-center shadow-md hover:bg-red-500 transition-colors text-[10px] leading-none"
+                                >
+                                  ×
+                                </button>
+                              </>
+                            ) : (
+                              /* Slot vide tappable — input file caché */
+                              <label
+                                htmlFor={`zone-photo-${i}`}
+                                title="Ajouter une photo de la zone"
+                                className="no-print w-full h-full rounded-lg border-2 border-dashed border-stone-200 bg-stone-50 hover:border-hanami-500 hover:bg-hanami-100/40 hover:text-hanami-700 text-stone-400 flex items-center justify-center cursor-pointer transition-colors"
+                              >
+                                {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-5 h-5" strokeWidth={1.6} />}
+                                <input
+                                  id={`zone-photo-${i}`}
+                                  type="file"
+                                  accept="image/*,.heic,.heif"
+                                  capture="environment"
+                                  className="sr-only"
+                                  onChange={(e) => {
+                                    const f = e.target.files?.[0]
+                                    if (f) handleZonePhotoUpload(i, f)
+                                    e.target.value = ''
+                                  }}
+                                />
+                              </label>
+                            )}
+                          </div>
+
+                          {/* Champ nom */}
+                          <input
+                            type="text"
+                            placeholder={`Zone ${i + 1}`}
+                            value={zone.name}
+                            onChange={(e) => updateZone(i, 'name', e.target.value)}
+                            className={`flex-1 min-w-0 px-2 py-1.5 text-xs ${inputCls}`}
+                          />
+                          {/* Champ surface */}
+                          <div className="relative w-20 shrink-0">
+                            <input
+                              type="number"
+                              inputMode="decimal"
+                              placeholder="0"
+                              value={zone.surface}
+                              onChange={(e) => updateZone(i, 'surface', e.target.value)}
+                              className={`w-full pl-2 pr-7 py-1.5 text-xs text-right ${inputCls}`}
+                            />
+                            <span className="absolute right-2 top-1.5 text-xs text-stone-400 pointer-events-none">m²</span>
+                          </div>
+                          {zones.length > 1 && (
+                            <button
+                              onClick={() => removeZone(i)}
+                              className="text-stone-300 active:text-red-400 hover:text-red-400 transition-colors shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center -mr-2"
+                              aria-label="Supprimer cette zone"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Erreur de compression (rare) */}
+                        {errMsg && (
+                          <div className="px-3 pb-2 -mt-1">
+                            <p className="text-[11px] text-red-600">⚠ {errMsg}</p>
+                          </div>
+                        )}
                       </div>
-                      {zones.length > 1 && (
-                        <button
-                          onClick={() => removeZone(i)}
-                          className="text-stone-300 active:text-red-400 hover:text-red-400 transition-colors shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center -mr-2"
-                          aria-label="Supprimer cette zone"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      )}
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
 
                 <div className="flex items-center justify-between">
@@ -679,7 +1140,13 @@ export default function HanamiCalculator() {
                       key={type}
                       onClick={() => {
                         setProductType(type)
-                        setProductName(product)
+                        // Pré-remplit le nom du 1er produit solide à titre de placeholder
+                        if (type === 'seeds' || type === 'fertilizer') {
+                          setSolidProducts(prev => prev.length > 0
+                            ? prev.map((p, i) => i === 0 && !p.name ? { ...p, name: '' } : p)
+                            : [makeSolidProduct(product)]
+                          )
+                        }
                         const nextSteps = STEPS[type]
                         setStepKey(nextSteps[2])
                       }}
@@ -710,8 +1177,7 @@ export default function HanamiCalculator() {
                       key={obj.id}
                       onClick={() => {
                         setSeedObjective(obj.id)
-                        setDosage(obj.dosage.toString())
-                        setDosageUnit('g/m2')
+                        setMainSolidDose(obj.dosage.toString(), 'g/m2')
                         // Les conditions de gazon n'ont pas de sens pour création/réparation
                         if (obj.id !== 'regarnissage') setLawnCondition(null)
                       }}
@@ -746,8 +1212,7 @@ export default function HanamiCalculator() {
                           key={cond.id}
                           onClick={() => {
                             setLawnCondition(cond.id)
-                            setDosage(cond.dosage.toString())
-                            setDosageUnit('g/m2')
+                            setMainSolidDose(cond.dosage.toString(), 'g/m2')
                           }}
                           className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all ${
                             lawnCondition === cond.id
@@ -796,8 +1261,7 @@ export default function HanamiCalculator() {
                       key={s.id}
                       onClick={() => {
                         setFertScenario(s.id)
-                        setDosage(s.dosage.toString())
-                        setDosageUnit('g/m2')
+                        setMainSolidDose(s.dosage.toString(), 'g/m2')
                       }}
                       className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border-2 transition-all text-left ${
                         fertScenario === s.id
@@ -832,22 +1296,10 @@ export default function HanamiCalculator() {
             {stepKey === 'dosage' && productType !== 'liquid' && (
               <div className="space-y-4">
                 <h2 className="text-base font-semibold text-stone-800" style={{ fontFamily: 'var(--font-fraunces)' }}>
-                  {productType === 'seeds' ? 'Confirmer le dosage' : 'Dosage du produit'}
+                  {productType === 'seeds' ? 'Confirmer le dosage' : 'Dosage des produits'}
                 </h2>
 
                 <div className="space-y-3">
-                  {/* Product name */}
-                  <div>
-                    <label className="block text-xs font-medium text-stone-500 mb-1">Nom du produit</label>
-                    <input
-                      type="text"
-                      value={productName}
-                      onChange={(e) => setProductName(e.target.value)}
-                      className={`w-full px-3 py-2 ${inputCls}`}
-                      placeholder="Ex : Barenbrug RSP Elite"
-                    />
-                  </div>
-
                   {/* Seeds info */}
                   {productType === 'seeds' && (
                     <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 flex gap-2">
@@ -858,26 +1310,91 @@ export default function HanamiCalculator() {
                     </div>
                   )}
 
-                  {/* Dosage input */}
-                  <div>
-                    <label className="block text-xs font-medium text-stone-500 mb-1">
-                      Dosage recommandé (sur l'emballage)
-                    </label>
-                    <div className="flex gap-2">
-                      <input
-                        type="number" inputMode="decimal" step="0.1" value={dosage}
-                        onChange={(e) => setDosage(e.target.value)}
-                        className={`flex-1 px-3 py-2 ${inputCls}`}
-                        placeholder="Ex : 30"
-                      />
-                      <select value={dosageUnit} onChange={(e) => setDosageUnit(e.target.value)} className={`px-2 py-2 ${inputCls}`}>
-                        <option value="g/m2">g/m²</option>
-                        <option value="kg/ha">kg/ha</option>
-                      </select>
-                    </div>
+                  {/* Liste des produits — chacun a son nom + sa dose individuelle.
+                      En mode reverse, seul le 1er produit est éditable (basé sur stock). */}
+                  <div className="space-y-2.5">
+                    {solidProducts.map((p, idx) => {
+                      const isReverseProduct = reverseMode && idx === 0
+                      return (
+                        <div key={p.id} className="border border-stone-200 rounded-xl p-3 bg-white space-y-2.5">
+                          <div className="flex items-center justify-between">
+                            <p className="text-xs font-semibold text-stone-700">
+                              Produit {idx + 1}
+                              {solidProducts.length > 1 && (
+                                <span className="ml-1 text-[10px] text-stone-400 font-normal">
+                                  (appliqué séparément, même surface)
+                                </span>
+                              )}
+                            </p>
+                            {solidProducts.length > 1 && !reverseMode && (
+                              <button
+                                type="button"
+                                onClick={() => removeSolidProduct(p.id)}
+                                aria-label={`Retirer le produit ${idx + 1}`}
+                                className="text-stone-400 hover:text-red-500 transition-colors"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] font-medium text-stone-500 mb-1">Nom du produit</label>
+                            <input
+                              type="text"
+                              value={p.name}
+                              onChange={(e) => updateSolidProduct(p.id, { name: e.target.value })}
+                              className={`w-full px-3 py-2 ${inputCls}`}
+                              placeholder={
+                                productType === 'seeds'
+                                  ? (idx === 0 ? 'Ex : Barenbrug RSP Elite' : 'Ex : Pro 12')
+                                  : (idx === 0 ? 'Ex : Floranid Twin Permanent' : 'Ex : Bacteriosol Universel')
+                              }
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] font-medium text-stone-500 mb-1">
+                              Dosage {isReverseProduct ? '(calculé depuis le stock)' : 'recommandé'}
+                            </label>
+                            <div className="flex gap-2">
+                              <input
+                                type="number" inputMode="decimal" step="1"
+                                value={p.dose}
+                                onChange={(e) => updateSolidProduct(p.id, { dose: e.target.value })}
+                                disabled={isReverseProduct}
+                                className={`flex-1 px-3 py-2 ${inputCls} ${isReverseProduct ? 'opacity-60' : ''}`}
+                                placeholder="Ex : 30"
+                              />
+                              <select
+                                value={p.doseUnit}
+                                onChange={(e) => updateSolidProduct(p.id, { doseUnit: e.target.value as 'g/m2' | 'kg/ha' })}
+                                disabled={isReverseProduct}
+                                className={`px-2 py-2 ${inputCls} ${isReverseProduct ? 'opacity-60' : ''}`}
+                              >
+                                <option value="g/m2">g/m²</option>
+                                <option value="kg/ha">kg/ha</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })}
+
+                    {/* Bouton ajouter — caché en mode reverse (1 seul produit) */}
+                    {!reverseMode && (
+                      <button
+                        type="button"
+                        onClick={addSolidProduct}
+                        className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-dashed border-stone-200 text-sm font-medium text-stone-500 hover:border-hanami-500 hover:text-hanami-700 transition-colors"
+                      >
+                        <Plus className="w-4 h-4" />
+                        Ajouter un produit
+                      </button>
+                    )}
                   </div>
 
-                  {/* Warning */}
+                  {/* Warning sur le produit 1 */}
                   {getWarning() && (
                     <div className={`flex items-start gap-2 p-3 rounded-lg border text-xs ${
                       getWarning()!.type === 'error'   ? 'bg-red-50 border-red-200 text-red-800'     :
@@ -898,17 +1415,17 @@ export default function HanamiCalculator() {
                     />
                     <div>
                       <p className="text-xs font-semibold text-stone-700">📦 Calcul inversé</p>
-                      <p className="text-xs text-stone-500">Calculer avec votre stock disponible</p>
+                      <p className="text-xs text-stone-500">Calculer avec votre stock (un seul produit)</p>
                     </div>
                   </label>
 
                   {/* Reverse mode fields */}
-                  {reverseMode && dosage && (
+                  {reverseMode && (
                     <div className="space-y-3 border-l-4 border-blue-200 pl-3">
                       <div>
                         <label className="block text-xs font-medium text-stone-500 mb-1">Quantité en stock</label>
                         <div className="flex gap-2">
-                          <input type="number" inputMode="decimal" step="0.1" value={stockQuantity} onChange={(e) => setStockQuantity(e.target.value)} className={`flex-1 px-3 py-2 ${inputCls}`} placeholder="Ex : 3" />
+                          <input type="number" inputMode="decimal" step="1" value={stockQuantity} onChange={(e) => setStockQuantity(e.target.value)} className={`flex-1 px-3 py-2 ${inputCls}`} placeholder="Ex : 3" />
                           <select value={stockUnit} onChange={(e) => setStockUnit(e.target.value)} className={`px-2 py-2 ${inputCls}`}>
                             <option value="kg">kg</option>
                             <option value="g">g</option>
@@ -926,12 +1443,15 @@ export default function HanamiCalculator() {
                 <button
                   onClick={() => {
                     if (reverseMode && stockQuantity) {
-                      setDosage(calculateReverseDosage().toString())
-                      setDosageUnit('g/m2')
+                      const newDose = calculateReverseDosage().toString()
+                      setMainSolidDose(newDose, 'g/m2')
                     }
                     calculateResults()
                   }}
-                  disabled={!dosage || (reverseMode && (!stockQuantity || selectedZones.length === 0))}
+                  disabled={(() => {
+                    if (reverseMode) return !stockQuantity || selectedZones.length === 0
+                    return solidProducts.some(p => !p.dose || parseFloat(p.dose) <= 0)
+                  })()}
                   className={btnPrimary}
                 >
                   Calculer les quantités
@@ -939,19 +1459,14 @@ export default function HanamiCalculator() {
               </div>
             )}
 
-            {/* ══ STEP: Dosage (liquid) ═════════════════════════════════════ */}
+            {/* ══ STEP: Dosage (liquid) — multi-produits ═══════════════════ */}
             {stepKey === 'dosage' && productType === 'liquid' && (
               <div className="space-y-4">
                 <h2 className="text-base font-semibold text-stone-800" style={{ fontFamily: 'var(--font-fraunces)' }}>
-                  Dosage du produit liquide
+                  Dosage des produits liquides
                 </h2>
 
                 <div className="space-y-3">
-                  <div>
-                    <label className="block text-xs font-medium text-stone-500 mb-1">Nom du produit</label>
-                    <input type="text" value={productName} onChange={(e) => setProductName(e.target.value)} className={`w-full px-3 py-2 ${inputCls}`} placeholder="Ex : H2Pro Trismart" />
-                  </div>
-
                   {/* Mode toggle */}
                   <div className="flex gap-1 p-1 bg-stone-100 rounded-lg">
                     {[{ v: false, l: 'Simplifié' }, { v: true, l: '⚙️ Expert' }].map(({ v, l }) => (
@@ -959,62 +1474,142 @@ export default function HanamiCalculator() {
                     ))}
                   </div>
 
-                  {!reverseMode ? (!expertMode ? (
+                  {!reverseMode ? (
                     <>
-                      <div className="bg-blue-50 border border-blue-100 rounded-lg p-3">
-                        <p className="text-xs text-blue-700">Mode simplifié : calcul basé sur 10L de bouillie / 100m² (vitesse de marche normale).</p>
-                      </div>
-                      <div>
-                        <label className="block text-xs font-medium text-stone-500 mb-1">Dose recommandée du produit</label>
-                        <div className="relative">
-                          <input type="number" inputMode="decimal" step="0.1" value={liquidDoseSimple} onChange={(e) => setLiquidDoseSimple(e.target.value)} className={`w-full px-3 py-2 pr-14 ${inputCls}`} placeholder="Ex : 10" />
-                          <span className="absolute right-3 top-2 text-xs text-stone-400">ml/L</span>
+                      {!expertMode ? (
+                        <div className="bg-blue-50 border border-blue-100 rounded-lg p-3">
+                          <p className="text-xs text-blue-700">Mode simplifié : calcul basé sur 10L de bouillie / 100m² (vitesse de marche normale).</p>
                         </div>
+                      ) : null}
+
+                      {/* Liste des produits — chacun avec son nom + sa dose.
+                          Tous sont mélangés dans le même pulvérisateur. */}
+                      <div className="space-y-2.5">
+                        {liquidProducts.map((p, idx) => (
+                          <div key={p.id} className="border border-stone-200 rounded-xl p-3 bg-white space-y-2.5">
+                            <div className="flex items-center justify-between">
+                              <p className="text-xs font-semibold text-stone-700">
+                                Produit {idx + 1}
+                                {liquidProducts.length > 1 && (
+                                  <span className="ml-1 text-[10px] text-stone-400 font-normal">
+                                    (mélangé dans le pulvérisateur)
+                                  </span>
+                                )}
+                              </p>
+                              {liquidProducts.length > 1 && (
+                                <button
+                                  type="button"
+                                  onClick={() => removeLiquidProduct(p.id)}
+                                  aria-label={`Retirer le produit ${idx + 1}`}
+                                  className="text-stone-400 hover:text-red-500 transition-colors"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              )}
+                            </div>
+
+                            <div>
+                              <label className="block text-[11px] font-medium text-stone-500 mb-1">Nom du produit</label>
+                              <input
+                                type="text"
+                                value={p.name}
+                                onChange={(e) => updateLiquidProduct(p.id, { name: e.target.value })}
+                                className={`w-full px-3 py-2 ${inputCls}`}
+                                placeholder={idx === 0 ? 'Ex : H2Pro Trismart' : 'Ex : Vitalnova StressBuster'}
+                              />
+                            </div>
+
+                            {!expertMode ? (
+                              <div>
+                                <label className="block text-[11px] font-medium text-stone-500 mb-1">Dose recommandée</label>
+                                <div className="relative">
+                                  <input
+                                    type="number" inputMode="decimal" step="1"
+                                    value={p.doseSimple}
+                                    onChange={(e) => updateLiquidProduct(p.id, { doseSimple: e.target.value })}
+                                    className={`w-full px-3 py-2 pr-14 ${inputCls}`}
+                                    placeholder="Ex : 10"
+                                  />
+                                  <span className="absolute right-3 top-2 text-xs text-stone-400">ml/L</span>
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                <div>
+                                  <label className="block text-[11px] font-medium text-stone-500 mb-1">Dose produit pur (L/ha)</label>
+                                  <input
+                                    type="number" inputMode="decimal" step="1"
+                                    value={p.doseExpert}
+                                    onChange={(e) => updateLiquidProduct(p.id, { doseExpert: e.target.value })}
+                                    className={`w-full px-3 py-2 ${inputCls}`}
+                                    placeholder="Ex : 10"
+                                  />
+                                </div>
+                                {p.doseExpert && sprayVolume && (
+                                  <div className="bg-green-50 border border-green-100 rounded-lg p-2">
+                                    <p className="text-[10px] text-green-600 mb-0.5">Concentration calculée</p>
+                                    <p className="text-base font-bold text-hanami-700 font-[family-name:var(--font-space-mono)]">
+                                      {((parseFloat(p.doseExpert) * 1000) / parseFloat(sprayVolume)).toFixed(1)} ml/L
+                                    </p>
+                                  </div>
+                                )}
+                              </>
+                            )}
+                          </div>
+                        ))}
+
+                        {/* Bouton "Ajouter un produit" */}
+                        <button
+                          type="button"
+                          onClick={addLiquidProduct}
+                          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border-2 border-dashed border-stone-200 text-sm font-medium text-stone-500 hover:border-hanami-500 hover:text-hanami-700 transition-colors"
+                        >
+                          <Plus className="w-4 h-4" />
+                          Ajouter un produit au mélange
+                        </button>
                       </div>
+
+                      {/* Volume bouillie (mode expert seulement) + capacité pulvérisateur — partagés */}
+                      {expertMode && (
+                        <div>
+                          <div className="flex items-center justify-between mb-2">
+                            <label className="text-xs font-medium text-stone-500">Volume de bouillie (et vitesse de marche)</label>
+                            <button
+                              onClick={() => setShowVolumeConverter(!showVolumeConverter)}
+                              className={`text-xs font-medium transition-colors ${showVolumeConverter ? 'text-hanami-700' : 'text-stone-400 hover:text-stone-600'}`}
+                            >
+                              {showVolumeConverter ? 'L/100m²' : 'L/ha'} ⇄
+                            </button>
+                          </div>
+                          <SprayVolumeSelector value={sprayVolume} onChange={setSprayVolume} showL100={showVolumeConverter} />
+                        </div>
+                      )}
+
                       <div>
                         <label className="block text-xs font-medium text-stone-500 mb-1.5">Capacité pulvérisateur (L)</label>
                         <SprayerCapacitySelector value={sprayerCapacity} onChange={setSprayerCapacity} inputCls={inputCls} />
                       </div>
                     </>
                   ) : (
+                    // Reverse liquid — un seul produit (le stock disponible)
                     <>
-                      <div>
-                        <label className="block text-xs font-medium text-stone-500 mb-1">Dose produit pur (L/ha)</label>
-                        <input type="number" inputMode="decimal" step="0.1" value={liquidDose} onChange={(e) => setLiquidDose(e.target.value)} className={`w-full px-3 py-2 ${inputCls}`} placeholder="Ex : 10" />
-                        <p className="text-xs text-stone-400 mt-1">Ex : H2Pro Trismart 10 L/ha · Kamasol 40–60 L/ha</p>
-                      </div>
-                      {liquidDose && sprayVolume && (
-                        <div className="bg-green-50 border border-green-100 rounded-lg p-3">
-                          <p className="text-xs text-green-600 mb-0.5">Concentration calculée automatiquement</p>
-                          <p className="text-xl font-bold text-hanami-700 font-[family-name:var(--font-space-mono)]">
-                            {((parseFloat(liquidDose) * 1000) / parseFloat(sprayVolume)).toFixed(1)} ml/L
-                          </p>
-                        </div>
-                      )}
-                      <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <label className="text-xs font-medium text-stone-500">Volume de bouillie (et vitesse de marche)</label>
-                          <button
-                            onClick={() => setShowVolumeConverter(!showVolumeConverter)}
-                            className={`text-xs font-medium transition-colors ${showVolumeConverter ? 'text-hanami-700' : 'text-stone-400 hover:text-stone-600'}`}
-                          >
-                            {showVolumeConverter ? 'L/100m²' : 'L/ha'} ⇄
-                          </button>
-                        </div>
-                        <SprayVolumeSelector value={sprayVolume} onChange={setSprayVolume} showL100={showVolumeConverter} />
+                      <div className="bg-amber-50 border border-amber-100 rounded-lg p-3">
+                        <p className="text-xs text-amber-700">📦 Mode calcul inversé : un seul produit (votre stock).</p>
                       </div>
                       <div>
-                        <label className="block text-xs font-medium text-stone-500 mb-1.5">Capacité pulvérisateur (L)</label>
-                        <SprayerCapacitySelector value={sprayerCapacity} onChange={setSprayerCapacity} inputCls={inputCls} />
+                        <label className="block text-xs font-medium text-stone-500 mb-1">Nom du produit</label>
+                        <input
+                          type="text"
+                          value={liquidProducts[0]?.name ?? ''}
+                          onChange={(e) => updateLiquidProduct(liquidProducts[0]?.id ?? '', { name: e.target.value })}
+                          className={`w-full px-3 py-2 ${inputCls}`}
+                          placeholder="Ex : H2Pro Trismart"
+                        />
                       </div>
-                    </>
-                  )) : (
-                    // Reverse liquid
-                    <>
                       <div>
                         <label className="block text-xs font-medium text-stone-500 mb-1">Stock disponible</label>
                         <div className="flex gap-2">
-                          <input type="number" inputMode="decimal" step="0.1" value={stockQuantity} onChange={(e) => setStockQuantity(e.target.value)} className={`flex-1 px-3 py-2 ${inputCls}`} placeholder="Ex : 5" />
+                          <input type="number" inputMode="decimal" step="1" value={stockQuantity} onChange={(e) => setStockQuantity(e.target.value)} className={`flex-1 px-3 py-2 ${inputCls}`} placeholder="Ex : 5" />
                           <select value={stockUnit} onChange={(e) => setStockUnit(e.target.value)} className={`px-2 py-2 ${inputCls}`}>
                             <option value="L">L</option>
                             <option value="ml">ml</option>
@@ -1036,7 +1631,7 @@ export default function HanamiCalculator() {
                     <input type="checkbox" checked={reverseMode} onChange={(e) => { setReverseMode(e.target.checked); if (e.target.checked) setSelectedZones(zones.map((_, i) => i)) }} className="w-4 h-4 accent-hanami-700 rounded shrink-0" />
                     <div>
                       <p className="text-xs font-semibold text-stone-700">📦 Calcul inversé</p>
-                      <p className="text-xs text-stone-500">Calculer avec votre stock</p>
+                      <p className="text-xs text-stone-500">Calculer avec votre stock (un seul produit)</p>
                     </div>
                   </label>
                 </div>
@@ -1044,13 +1639,17 @@ export default function HanamiCalculator() {
                 <button
                   onClick={() => {
                     if (reverseMode && stockQuantity) calculateResults(calculateReverseDosage().toString(), sprayVolume)
-                    else if (!expertMode) calculateResults(liquidDoseSimple, '1000')
+                    else if (!expertMode) calculateResults(undefined, '1000')
                     else calculateResults()
                   }}
-                  disabled={reverseMode
-                    ? !stockQuantity || !sprayerCapacity || selectedZones.length === 0
-                    : expertMode ? !liquidDose || !sprayerCapacity : !liquidDoseSimple || !sprayerCapacity
-                  }
+                  disabled={(() => {
+                    if (reverseMode) return !stockQuantity || !sprayerCapacity || selectedZones.length === 0
+                    if (!sprayerCapacity) return true
+                    return liquidProducts.some(p => {
+                      const v = expertMode ? p.doseExpert : p.doseSimple
+                      return !v || parseFloat(v) <= 0
+                    })
+                  })()}
                   className={btnPrimary}
                 >
                   Calculer les quantités
@@ -1218,35 +1817,121 @@ export default function HanamiCalculator() {
                   <h2 className="text-base font-semibold text-stone-800" style={{ fontFamily: 'var(--font-fraunces)' }}>
                     Résultats
                   </h2>
-                  {productName && (
-                    <span className="text-xs text-stone-400 bg-stone-100 px-2 py-1 rounded-full truncate max-w-[120px]">
-                      {productName}
-                    </span>
-                  )}
+                  {(() => {
+                    let label: string | null = null
+                    if (productType === 'liquid') {
+                      label = liquidProducts.length > 1
+                        ? `Mélange · ${liquidProducts.length} produits`
+                        : (liquidProducts[0]?.name || null)
+                    } else if (productType === 'seeds' || productType === 'fertilizer') {
+                      label = solidProducts.length > 1
+                        ? `${solidProducts.length} produits`
+                        : (solidProducts[0]?.name || null)
+                    }
+                    return label ? (
+                      <span className="text-xs text-stone-400 bg-stone-100 px-2 py-1 rounded-full truncate max-w-[160px]">
+                        {label}
+                      </span>
+                    ) : null
+                  })()}
                 </div>
 
                 {/* ── Results content (screenshottable + imprimable) ── */}
                 <div ref={resultsRef} className="results-container results-print space-y-3">
 
-                  {/* ── Solid (seeds + fertilizer) ── */}
+                  {/* ── Header export — visible aussi à l'écran, donne un aspect "document" ── */}
+                  <div className="bg-gradient-to-br from-hanami-900 to-hanami-700 rounded-xl p-4 text-white relative overflow-hidden">
+                    {/* Logo herbe en filigrane derrière */}
+                    <svg viewBox="0 0 32 32" className="absolute -right-2 -bottom-2 w-24 h-24 opacity-10" aria-hidden="true">
+                      <path d="M9 28 C8 21 7 13 9.5 6 C11 13 11.5 21 11.5 28 Z" fill="white" />
+                      <path d="M15 28 C14 19 14.5 10 16 2 C17.5 10 18 19 17 28 Z" fill="white" />
+                      <path d="M20.5 28 C20 21 21 14 22.5 8 C24 14 24.5 21 23.5 28 Z" fill="white" />
+                    </svg>
+                    <div className="relative">
+                      <div className="flex items-baseline justify-between gap-3">
+                        <span className="font-[family-name:var(--font-space-mono)] text-[10px] font-semibold tracking-[0.18em] uppercase text-amber-200">
+                          Plan de dosage
+                        </span>
+                        <span className="text-[10px] text-white/60 font-[family-name:var(--font-space-mono)]">
+                          {new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                        </span>
+                      </div>
+                      <h2 className="font-[family-name:var(--font-fraunces)] text-2xl font-semibold mt-1 leading-tight">
+                        Hanami · Dosage Intelligent
+                      </h2>
+                      {/* Ligne de configuration : type + scénario + état */}
+                      <div className="mt-3 pt-3 border-t border-white/15 flex flex-wrap gap-x-4 gap-y-1 text-xs text-white/80">
+                        <span className="font-[family-name:var(--font-space-mono)] font-semibold text-amber-200">
+                          {getTotalSurface().toFixed(0)} m²
+                        </span>
+                        {results.type === 'solid' && productType === 'seeds' && (
+                          <>
+                            <span>Semences</span>
+                            {seedObjective && (
+                              <span>{SEED_OBJECTIVES.find(o => o.id === seedObjective)?.label}</span>
+                            )}
+                            {lawnCondition && (
+                              <span>État : {LAWN_CONDITIONS.find(c => c.id === lawnCondition)?.label}</span>
+                            )}
+                          </>
+                        )}
+                        {results.type === 'solid' && productType === 'fertilizer' && (
+                          <span>Engrais</span>
+                        )}
+                        {results.type === 'liquid' && (
+                          <>
+                            <span>Liquide{results.products.length > 1 ? ` · mélange ${results.products.length} produits` : ''}</span>
+                            <span>{expertMode ? 'Mode expert' : 'Mode simplifié'}</span>
+                            <span>Pulvérisateur {sprayerCapacity} L</span>
+                          </>
+                        )}
+                        {results.type === 'topdressing' && (
+                          <>
+                            <span>Top dressing</span>
+                            <span>{tdCustomDepth || tdDepth} mm</span>
+                            <span>{TD_MATERIALS.find(m => m.id === tdMaterial)?.label}</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* ── Solid (seeds + fertilizer) — multi-produits ── */}
                   {results.type === 'solid' && (
                     <>
                       <div className="bg-amber-50 border border-amber-100 rounded-xl p-3 flex gap-2">
                         <Info className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
                         <p className="text-xs text-amber-800">
-                          💡 Épandez en passes croisées à réglage faible (2–3 passages) pour une répartition homogène.
+                          {results.products.length > 1
+                            ? '💡 Appliquez chaque produit en passes croisées (2–3 passages) pour une répartition homogène.'
+                            : '💡 Épandez en passes croisées à réglage faible (2–3 passages) pour une répartition homogène.'}
                         </p>
                       </div>
 
-                      {/* Total */}
-                      <div className="bg-hanami-900 rounded-xl p-4 flex items-center justify-between">
-                        <div>
-                          <p className="text-xs text-hanami-100/50 uppercase tracking-wider mb-1">Quantité totale</p>
-                          <p className="text-3xl font-bold text-white font-[family-name:var(--font-space-mono)]">{results.totalKg} kg</p>
-                        </div>
-                        <div className="text-right text-xs text-hanami-100/50 space-y-0.5">
-                          <p>{results.totalSurface} m²</p>
-                          <p>{Math.round(parseFloat(results.dosePerM2))} g/m²</p>
+                      {/* Total — détail par produit si plusieurs */}
+                      <div className="bg-hanami-900 rounded-xl p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1">
+                            <p className="text-xs text-hanami-100/50 uppercase tracking-wider mb-2">
+                              {results.products.length > 1 ? 'Quantités totales' : 'Quantité totale'}
+                            </p>
+                            <ul className="space-y-1.5">
+                              {results.products.map((p, i) => (
+                                <li key={i}>
+                                  <div className="flex items-baseline gap-2">
+                                    <span className="text-2xl font-bold text-white font-[family-name:var(--font-space-mono)]">
+                                      {p.totalKg}&nbsp;kg
+                                    </span>
+                                    <span className="text-xs text-hanami-100/70 truncate">{p.name}</span>
+                                  </div>
+                                  <p className="text-[10px] text-hanami-100/40 font-[family-name:var(--font-space-mono)]">
+                                    {Math.round(parseFloat(p.dosePerM2))} g/m²
+                                  </p>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          <p className="text-xs text-hanami-100/50 shrink-0">{results.totalSurface} m²</p>
                         </div>
                       </div>
 
@@ -1258,12 +1943,34 @@ export default function HanamiCalculator() {
                           </div>
                           <div className="divide-y divide-stone-50">
                             {results.zones.map((z, i) => (
-                              <div key={i} className="flex items-center justify-between px-3 py-2.5">
-                                <div>
-                                  <p className="text-sm font-medium text-stone-800">{z.name}</p>
-                                  <p className="text-xs text-stone-400">{z.surface} m²</p>
+                              <div key={i} className="px-3 py-2.5 flex gap-3 items-start">
+                                {z.photo && (
+                                  <button
+                                    type="button"
+                                    onClick={() => setLightbox({ src: z.photo!.dataUrl, caption: z.name })}
+                                    className="shrink-0 w-14 h-14 rounded-lg overflow-hidden bg-stone-100 cursor-zoom-in"
+                                    aria-label={`Voir la photo de ${z.name}`}
+                                  >
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img src={z.photo.dataUrl} alt={z.name} className="w-full h-full object-cover" />
+                                  </button>
+                                )}
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center justify-between mb-1">
+                                    <p className="text-sm font-medium text-stone-800 truncate">{z.name}</p>
+                                    <p className="text-xs text-stone-400 shrink-0 ml-2">{z.surface} m²</p>
+                                  </div>
+                                  <ul className="space-y-0.5">
+                                    {z.productsQuantities.map((pq, j) => (
+                                      <li key={j} className="flex items-center justify-between text-xs">
+                                        <span className="text-stone-500 truncate">{pq.name}</span>
+                                        <span className="font-semibold text-hanami-700 font-[family-name:var(--font-space-mono)] shrink-0 ml-2">
+                                          {pq.quantity} kg
+                                        </span>
+                                      </li>
+                                    ))}
+                                  </ul>
                                 </div>
-                                <span className="font-semibold text-hanami-700 font-[family-name:var(--font-space-mono)] text-sm">{z.quantity} kg</span>
                               </div>
                             ))}
                           </div>
@@ -1272,26 +1979,41 @@ export default function HanamiCalculator() {
                     </>
                   )}
 
-                  {/* ── Liquid ── */}
+                  {/* ── Liquid (multi-produits) ── */}
                   {results.type === 'liquid' && (
                     <>
                       <div className="bg-amber-50 border border-amber-100 rounded-xl p-3 flex gap-2">
                         <Info className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
-                        <p className="text-xs text-amber-800">💡 Utilisez un traceur bleu pour éviter les doubles passages.</p>
+                        <p className="text-xs text-amber-800">
+                          {results.products.length > 1
+                            ? '💡 Mélangez tous les produits dans la même bouillie. Vérifiez la compatibilité chimique avant.'
+                            : '💡 Utilisez un traceur bleu pour éviter les doubles passages.'}
+                        </p>
                       </div>
 
-                      {/* Summary banner */}
-                      <div className="bg-hanami-900 rounded-xl p-4 flex items-center justify-between">
-                        <div>
-                          <p className="text-xs text-hanami-100/50 uppercase tracking-wider mb-1">Produit nécessaire</p>
-                          <p className="text-3xl font-bold text-white font-[family-name:var(--font-space-mono)]">
-                            {results.totalProductAmount} {results.unit}
-                          </p>
-                        </div>
-                        <div className="text-right text-xs text-hanami-100/50 space-y-0.5">
-                          <p>{results.totalSurface} m²</p>
-                          <p>{results.totalSprayVolume} L bouillie</p>
-                          <p>{results.numberOfFills} plein{results.numberOfFills > 1 ? 's' : ''}</p>
+                      {/* Summary banner — total + détail par produit si plusieurs */}
+                      <div className="bg-hanami-900 rounded-xl p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex-1">
+                            <p className="text-xs text-hanami-100/50 uppercase tracking-wider mb-2">
+                              {results.products.length > 1 ? 'Mélange à préparer' : 'Produit nécessaire'}
+                            </p>
+                            <ul className="space-y-1">
+                              {results.products.map((p, i) => (
+                                <li key={i} className="flex items-baseline gap-2">
+                                  <span className="text-2xl font-bold text-white font-[family-name:var(--font-space-mono)]">
+                                    {p.totalAmount}&nbsp;{p.totalUnit}
+                                  </span>
+                                  <span className="text-xs text-hanami-100/70 truncate">{p.name}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          <div className="text-right text-xs text-hanami-100/50 space-y-0.5 shrink-0">
+                            <p>{results.totalSurface} m²</p>
+                            <p>{results.totalSprayVolume} L bouillie</p>
+                            <p>{results.numberOfFills} plein{results.numberOfFills > 1 ? 's' : ''}</p>
+                          </div>
                         </div>
                       </div>
 
@@ -1343,10 +2065,21 @@ export default function HanamiCalculator() {
                               key={zoneIndex}
                               className="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden"
                             >
-                              {/* Header */}
-                              <div className="px-5 py-4 flex items-start justify-between">
-                                <div>
-                                  <p className="font-semibold text-base text-stone-900 leading-tight" style={{ fontFamily: 'var(--font-fraunces)' }}>
+                              {/* Header — photo miniature à gauche, nom à droite */}
+                              <div className="px-5 py-4 flex items-start gap-3">
+                                {z.photo && (
+                                  <button
+                                    type="button"
+                                    onClick={() => setLightbox({ src: z.photo!.dataUrl, caption: z.name })}
+                                    aria-label={`Voir la photo de ${z.name}`}
+                                    className="shrink-0 w-14 h-14 rounded-lg overflow-hidden bg-stone-100 cursor-zoom-in border border-stone-200"
+                                  >
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img src={z.photo.dataUrl} alt={z.name} className="w-full h-full object-cover" />
+                                  </button>
+                                )}
+                                <div className="flex-1 min-w-0">
+                                  <p className="font-semibold text-base text-stone-900 leading-tight truncate" style={{ fontFamily: 'var(--font-fraunces)' }}>
                                     {z.name}
                                   </p>
                                   <p className="text-sm text-stone-400 mt-0.5">{z.surface} m²</p>
@@ -1373,12 +2106,16 @@ export default function HanamiCalculator() {
                                 </p>
                               </div>
 
-                              {/* Produit */}
-                              <div className="mx-4 mb-3 bg-stone-50 rounded-xl px-4 py-3">
-                                <p className="text-xs text-stone-400 mb-0.5">{productName || 'Produit'}</p>
-                                <p className="text-lg font-bold text-hanami-900 font-[family-name:var(--font-space-mono)]">
-                                  {z.productAmount} {z.productUnit}
-                                </p>
+                              {/* Produits — un bloc par produit du mélange */}
+                              <div className="mx-4 mb-3 bg-stone-50 rounded-xl px-4 py-3 space-y-2.5">
+                                {z.productsAmounts.map((pa, i) => (
+                                  <div key={i} className={i > 0 ? 'pt-2.5 border-t border-stone-200/70' : ''}>
+                                    <p className="text-xs text-stone-400 mb-0.5">{pa.name || `Produit ${i + 1}`}</p>
+                                    <p className="text-lg font-bold text-hanami-900 font-[family-name:var(--font-space-mono)]">
+                                      {pa.amount} {pa.unit}
+                                    </p>
+                                  </div>
+                                ))}
                               </div>
 
                               {/* Pulvérisateur */}
@@ -1436,17 +2173,22 @@ export default function HanamiCalculator() {
                         })}
                       </div>
 
-                      {/* Recette par plein complet */}
+                      {/* Recette par plein complet — détail par produit */}
                       {(() => {
                         const cap       = parseFloat(sprayerCapacity) || 15
                         const totalVol  = parseFloat(results.totalSprayVolume)
                         const n         = results.numberOfFills
                         const lastVol   = totalVol - (n - 1) * cap
                         const isPartial = n > 1 && lastVol < cap * 0.98
-                        const prodMl    = results.productPerFillUnit === 'L'
-                          ? parseFloat(results.productPerFill.toString()) * 1000
-                          : parseFloat(results.productPerFill.toString())
-                        const waterFull = cap - prodMl / 1000
+
+                        // Somme des produits par plein, pour calculer l'eau restante
+                        const totalProductMlPerFill = results.products.reduce((s, p) => {
+                          const ml = p.perFillUnit === 'L'
+                            ? parseFloat(p.perFillAmount.toString()) * 1000
+                            : parseFloat(p.perFillAmount.toString())
+                          return s + ml
+                        }, 0)
+                        const waterFull = cap - totalProductMlPerFill / 1000
 
                         return (
                           <div className="bg-stone-50 border border-stone-100 rounded-xl p-4">
@@ -1454,12 +2196,14 @@ export default function HanamiCalculator() {
                               Recette par plein complet ({sprayerCapacity} L)
                             </p>
                             <div className="grid grid-cols-2 gap-2">
-                              <div className="bg-white border border-stone-100 rounded-lg px-3 py-2.5">
-                                <p className="text-[10px] text-stone-400 mb-0.5">🧪 Produit / plein</p>
-                                <p className="text-sm font-semibold text-blue-700 font-[family-name:var(--font-space-mono)]">
-                                  {results.productPerFill} {results.productPerFillUnit}
-                                </p>
-                              </div>
+                              {results.products.map((p, i) => (
+                                <div key={i} className="bg-white border border-stone-100 rounded-lg px-3 py-2.5">
+                                  <p className="text-[10px] text-stone-400 mb-0.5 truncate">🧪 {p.name}</p>
+                                  <p className="text-sm font-semibold text-blue-700 font-[family-name:var(--font-space-mono)]">
+                                    {p.perFillAmount} {p.perFillUnit}
+                                  </p>
+                                </div>
+                              ))}
                               <div className="bg-white border border-stone-100 rounded-lg px-3 py-2.5">
                                 <p className="text-[10px] text-stone-400 mb-0.5">💧 Eau / plein</p>
                                 <p className="text-sm font-semibold text-blue-700 font-[family-name:var(--font-space-mono)]">
@@ -1521,12 +2265,23 @@ export default function HanamiCalculator() {
                             <p className="text-xs font-medium text-stone-500">Détail par zone</p>
                           </div>
                           {results.zones.map((z, i) => (
-                            <div key={i} className="flex items-center justify-between px-3 py-2.5 border-b border-stone-50 last:border-b-0">
-                              <div>
-                                <p className="text-sm font-medium text-stone-800">{z.name}</p>
+                            <div key={i} className="flex items-center gap-3 px-3 py-2.5 border-b border-stone-50 last:border-b-0">
+                              {z.photo && (
+                                <button
+                                  type="button"
+                                  onClick={() => setLightbox({ src: z.photo!.dataUrl, caption: z.name })}
+                                  aria-label={`Voir la photo de ${z.name}`}
+                                  className="shrink-0 w-12 h-12 rounded-lg overflow-hidden bg-stone-100 cursor-zoom-in border border-stone-200"
+                                >
+                                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                                  <img src={z.photo.dataUrl} alt={z.name} className="w-full h-full object-cover" />
+                                </button>
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-stone-800 truncate">{z.name}</p>
                                 <p className="text-xs text-stone-400">{z.surface} m²</p>
                               </div>
-                              <div className="text-right">
+                              <div className="text-right shrink-0">
                                 <p className="font-semibold text-hanami-700 font-[family-name:var(--font-space-mono)] text-sm">{z.litres.toFixed(0)} L · {(z.litres / 1000).toFixed(2)} m³</p>
                                 <p className="text-xs text-stone-400">≈ {Math.ceil(z.litres / results.bagSize)} sac{Math.ceil(z.litres / results.bagSize) > 1 ? 's' : ''}</p>
                               </div>
@@ -1542,15 +2297,40 @@ export default function HanamiCalculator() {
                     {DISCLAIMER}
                   </p>
 
-                  {/* ── Hanami watermark — visible dans les exports PNG/PDF ── */}
-                  <div className="flex items-center justify-center gap-2 pt-1">
-                    <span
-                      className="text-xs text-stone-300 font-semibold tracking-tight"
-                      style={{ fontFamily: 'var(--font-fraunces)' }}
-                    >
-                      Hanami.
-                    </span>
-                    <span className="text-xs text-stone-300">· hanami-gazon.fr</span>
+                  {/* ── Footer enrichi pour exports PDF/PNG ─────────────────
+                      Identité Hanami + coordonnées de contact + mention légale.
+                      Le visiteur sait qui contacter, et le PDF est suffisant
+                      en lui-même comme support à transmettre / archiver. */}
+                  <div className="bg-stone-50 border border-stone-100 rounded-xl px-4 py-3.5 mt-2">
+                    <div className="flex items-baseline justify-between gap-3 mb-2">
+                      <span
+                        className="text-base font-semibold tracking-tight text-hanami-900"
+                        style={{ fontFamily: 'var(--font-fraunces)' }}
+                      >
+                        Hanami.
+                      </span>
+                      <span className="font-[family-name:var(--font-space-mono)] text-[9px] font-semibold tracking-[0.18em] uppercase text-hanami-500">
+                        Expert Gazon
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-y-1.5 gap-x-3 text-xs text-stone-600">
+                      <a href="https://wa.me/33667277614" className="flex items-center gap-1.5 hover:text-hanami-700 transition-colors">
+                        <span className="text-[#25D366]">●</span>
+                        <span className="font-[family-name:var(--font-space-mono)]">06 67 27 76 14</span>
+                      </a>
+                      <a href="mailto:samibouden@gmail.com" className="flex items-center gap-1.5 hover:text-hanami-700 transition-colors min-w-0">
+                        <span className="text-hanami-500">✉</span>
+                        <span className="truncate">samibouden@gmail.com</span>
+                      </a>
+                      <a href="https://hanami-gazon.fr" className="flex items-center gap-1.5 hover:text-hanami-700 transition-colors">
+                        <span className="text-hanami-500">🌐</span>
+                        <span>hanami-gazon.fr</span>
+                      </a>
+                    </div>
+                    <p className="text-[10px] text-stone-400 mt-2.5 pt-2.5 border-t border-stone-100 leading-relaxed">
+                      Sami Bouden · TROTT SASU · SIREN 891 868 143 · Le Vésinet, Île-de-France ·
+                      Coaching agronomique partout en France
+                    </p>
                   </div>
                 </div>
 
@@ -1629,15 +2409,17 @@ export default function HanamiCalculator() {
             )}
           </div>
 
-          {/* ── Dev button (development only) ─────────────────────────────── */}
-          {process.env.NODE_ENV === 'development' && (
-            <button
-              onClick={prefillDev}
-              className="absolute bottom-3 left-4 text-xs text-stone-300 opacity-40 hover:opacity-100 transition-opacity font-[family-name:var(--font-space-mono)]"
-            >
-              [Dev]
-            </button>
-          )}
+          {/* ── Dev button — toujours visible, discret en haut à droite.
+                Clic = pré-remplit aléatoirement zones + type + produits + dose
+                avec des valeurs réalistes du catalogue Hanami, et lance le
+                calcul. Pratique pour tester rapidement le rendu des résultats. */}
+          <button
+            onClick={prefillDev}
+            title="Pré-remplir avec un scénario aléatoire"
+            className="absolute top-3 right-3 px-2.5 py-1 text-[10px] font-semibold tracking-widest uppercase rounded-md bg-amber-500/20 text-amber-700 hover:bg-amber-500/30 transition-colors font-[family-name:var(--font-space-mono)]"
+          >
+            🎲 Dev
+          </button>
         </div>
 
         {/* ── Disclaimer footer ──────────────────────────────────────────────── */}
@@ -1648,6 +2430,14 @@ export default function HanamiCalculator() {
           {DISCLAIMER}
         </p>
       </div>
+
+      {/* Lightbox photo — affiché en overlay par-dessus tout, fermé par défaut.
+          Préserve toujours le ratio d'origine via object-contain → zéro étirement. */}
+      <PhotoLightbox
+        src={lightbox?.src ?? null}
+        caption={lightbox?.caption}
+        onClose={() => setLightbox(null)}
+      />
     </div>
   )
 }

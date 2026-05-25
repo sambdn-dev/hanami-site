@@ -176,7 +176,7 @@ function ToggleRow({ label, description, checked, disabled, onChange }: ToggleRo
         <p className="text-[11px] text-stone-400 leading-relaxed mt-0.5">{description}</p>
       </div>
 
-      {/* Switch */}
+      {/* Switch — positionnement via `left` (plus robuste que translate-x) */}
       <button
         role="switch"
         aria-checked={checked}
@@ -185,7 +185,8 @@ function ToggleRow({ label, description, checked, disabled, onChange }: ToggleRo
         className={[
           'relative flex-shrink-0 w-10 h-5 rounded-full transition-colors duration-200',
           disabled
-            ? 'bg-stone-600 cursor-not-allowed'
+            // Disabled + ON (Fonctionnels) → vert atténué pour montrer "actif verrouillé"
+            ? 'bg-[#4a8c3f]/50 cursor-not-allowed'
             : checked
               ? 'bg-[#4a8c3f] cursor-pointer'
               : 'bg-stone-600 cursor-pointer',
@@ -194,8 +195,8 @@ function ToggleRow({ label, description, checked, disabled, onChange }: ToggleRo
       >
         <span
           className={[
-            'absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform duration-200',
-            checked ? 'translate-x-5' : 'translate-x-0.5',
+            'absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-[left] duration-200',
+            checked ? 'left-[22px]' : 'left-0.5',
           ].join(' ')}
         />
       </button>
