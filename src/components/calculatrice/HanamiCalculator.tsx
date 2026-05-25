@@ -16,6 +16,13 @@ import { useState, useEffect, useRef } from 'react'
 import { Plus, Trash2, AlertTriangle, Info, Calculator, Download, ChevronLeft, ImageDown, Camera, Loader2, Share2 } from 'lucide-react'
 import { compressPhoto } from '@/lib/photo-utils'
 import PhotoLightbox from '@/components/shared/PhotoLightbox'
+import ProductAutocomplete from './ProductAutocomplete'
+import {
+  searchSolidCatalog,
+  searchLiquidCatalog,
+  type SolidCatalogProduct,
+  type LiquidCatalogProduct,
+} from '@/lib/products-catalog'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -1377,16 +1384,33 @@ export default function HanamiCalculator() {
 
                           <div>
                             <label className="block text-[11px] font-medium text-stone-500 mb-1">Nom du produit</label>
-                            <input
-                              type="text"
+                            <ProductAutocomplete
                               value={p.name}
-                              onChange={(e) => updateSolidProduct(p.id, { name: e.target.value })}
-                              className={`w-full px-3 py-2 ${inputCls}`}
+                              onChange={(v) => updateSolidProduct(p.id, { name: v })}
+                              onSelect={(prod: { id: string; name: string; brand: string; hint: string; raw: SolidCatalogProduct }) => {
+                                // Auto-remplissage : nom + dose en g/m² depuis le catalogue
+                                updateSolidProduct(p.id, {
+                                  name: prod.raw.name,
+                                  dose: String(prod.raw.doseG_m2),
+                                  doseUnit: 'g/m2',
+                                })
+                              }}
+                              search={(q, limit) => {
+                                const cat = productType === 'seeds' ? 'seeds' : 'fertilizer'
+                                return searchSolidCatalog(q, limit, cat).map(prod => ({
+                                  id: prod.id,
+                                  name: prod.name,
+                                  brand: prod.brand,
+                                  hint: `Dès ${prod.doseG_m2} g/m²`,
+                                  raw: prod,
+                                }))
+                              }}
                               placeholder={
                                 productType === 'seeds'
-                                  ? (idx === 0 ? 'Ex : Barenbrug RSP Elite' : 'Ex : Pro 12')
+                                  ? (idx === 0 ? 'Ex : Barenbrug Pro 12' : 'Ex : RES+ RPR')
                                   : (idx === 0 ? 'Ex : Floranid Twin Permanent' : 'Ex : Bacteriosol Universel')
                               }
+                              inputClass={`w-full px-3 py-2 ${inputCls}`}
                             />
                           </div>
 
@@ -1547,12 +1571,26 @@ export default function HanamiCalculator() {
 
                             <div>
                               <label className="block text-[11px] font-medium text-stone-500 mb-1">Nom du produit</label>
-                              <input
-                                type="text"
+                              <ProductAutocomplete
                                 value={p.name}
-                                onChange={(e) => updateLiquidProduct(p.id, { name: e.target.value })}
-                                className={`w-full px-3 py-2 ${inputCls}`}
+                                onChange={(v) => updateLiquidProduct(p.id, { name: v })}
+                                onSelect={(prod: { id: string; name: string; brand: string; hint: string; raw: LiquidCatalogProduct }) => {
+                                  // Auto-remplit nom + doses simplifié/expert depuis catalogue
+                                  updateLiquidProduct(p.id, {
+                                    name: prod.raw.name,
+                                    doseSimple: String(prod.raw.doseMl_L),
+                                    doseExpert: String(prod.raw.doseL_ha),
+                                  })
+                                }}
+                                search={(q, limit) => searchLiquidCatalog(q, limit).map(prod => ({
+                                  id: prod.id,
+                                  name: prod.name,
+                                  brand: prod.brand,
+                                  hint: `${prod.doseL_ha} L/ha`,
+                                  raw: prod,
+                                }))}
                                 placeholder={idx === 0 ? 'Ex : H2Pro Trismart' : 'Ex : Vitalnova StressBuster'}
+                                inputClass={`w-full px-3 py-2 ${inputCls}`}
                               />
                             </div>
 
@@ -2433,9 +2471,20 @@ export default function HanamiCalculator() {
                   </button>
                 </div>
 
-                {/* ── Partage Apple (AirDrop, Messages, Mail…) ──
-                    Visible uniquement sur iPhone/iPad/Mac où la feuille
-                    de partage native existe et inclut AirDrop. */}
+                {/* Les 2 boutons sont indépendants :
+                    - "Enregistrer l'image" → tous les mobiles (iPhone + Android)
+                    - "Partager via AirDrop" → appareils Apple (iPhone + Mac).
+                    iPhone affiche donc les deux : enregistrer en local OU envoyer
+                    via AirDrop à un autre appareil. Mac affiche uniquement AirDrop
+                    (pour envoyer au téléphone qui sera utilisé sur le terrain). */}
+                {isMobile && (
+                  <button
+                    onClick={saveToPhotos}
+                    className="no-print w-full py-2.5 px-4 bg-stone-50 border border-stone-200 text-stone-600 rounded-lg hover:bg-stone-100 flex items-center justify-center gap-2 text-sm font-medium transition-colors"
+                  >
+                    <ImageDown className="w-4 h-4" /> Enregistrer l&apos;image
+                  </button>
+                )}
                 {isApple && (
                   <button
                     onClick={saveToPhotos}
@@ -2443,16 +2492,6 @@ export default function HanamiCalculator() {
                     title="Ouvre la feuille de partage Apple (AirDrop, Messages, Photos…)"
                   >
                     <Share2 className="w-4 h-4" /> Partager via AirDrop
-                  </button>
-                )}
-
-                {/* ── Enregistrer dans Photos (Android / autres mobiles) ── */}
-                {isMobile && !isApple && (
-                  <button
-                    onClick={saveToPhotos}
-                    className="no-print w-full py-2.5 px-4 bg-stone-50 border border-stone-200 text-stone-600 rounded-lg hover:bg-stone-100 flex items-center justify-center gap-2 text-sm font-medium transition-colors"
-                  >
-                    <ImageDown className="w-4 h-4" /> Enregistrer l&apos;image
                   </button>
                 )}
               </div>
