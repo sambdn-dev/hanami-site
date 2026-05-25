@@ -205,7 +205,7 @@ export default function StepResultat({ state, result, submissionStatus }: Props)
       )}
 
       {/* ── Cross-sell inverse : si Coaching, mention rénovation ── */}
-      {isCoaching && !result.zoneType === 'out' && (
+      {isCoaching && result.zoneType !== 'out' && (
         <div className="mt-10 p-6 rounded-2xl bg-stone-100 border border-stone-200">
           <p className="font-[family-name:var(--font-space-mono)] text-[10px] font-semibold tracking-widest uppercase text-stone-500">
             Vous préférez ne pas vous en occuper ?
