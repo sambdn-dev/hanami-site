@@ -21,7 +21,8 @@ import { SERVICES } from '@/lib/chantier/services'
 import { OBJECTIFS } from '@/lib/chantier/objectifs'
 import { ETAT_PHOTOS } from '@/lib/chantier/etats-photos'
 import { formatPrice, formatNumber } from '@/lib/chantier/pricing'
-import type { ServiceId, ObjectifId, ArrosageReponse } from '@/lib/chantier/types'
+import { COMPLEXITES, ACCES, getCombinedCoefficient } from '@/lib/chantier/complexite'
+import type { ServiceId, ObjectifId, ArrosageReponse, ComplexiteId, AccesId } from '@/lib/chantier/types'
 
 const CONTACT_EMAIL = process.env.CONTACT_EMAIL ?? 'samibouden@gmail.com'
 const FROM_EMAIL = 'Hanami <onboarding@resend.dev>'
@@ -36,6 +37,8 @@ interface ChantierPayload {
   etatPhotos: string[]
   objectif: ObjectifId | null
   arrosageAuto: ArrosageReponse | null
+  complexite: ComplexiteId | null
+  acces: AccesId | null
   adresseComplete: string
   ville: string
   codePostal: string
@@ -155,6 +158,9 @@ export async function POST(request: NextRequest) {
     }
 
     // 4. Variables sécurisées pour l'HTML
+    const complexiteOpt = COMPLEXITES.find(c => c.id === payload.complexite)
+    const accesOpt = ACCES.find(a => a.id === payload.acces)
+    const coeff = getCombinedCoefficient(payload.complexite, payload.acces)
     const safe = {
       prenom: escapeHtml(payload.prenom),
       email: escapeHtml(payload.email),
@@ -165,6 +171,9 @@ export async function POST(request: NextRequest) {
       surface: formatNumber(payload.surface),
       objectif: escapeHtml(getObjectifLabel(payload.objectif)),
       etats: getEtatLabels(payload.etatPhotos).map(escapeHtml),
+      complexite: escapeHtml(complexiteOpt?.label ?? '—'),
+      acces: escapeHtml(accesOpt?.label ?? '—'),
+      coeff: coeff.value.toFixed(2),
       service: escapeHtml(SERVICES[payload.serviceRecommande].nom),
       estimation: escapeHtml(formatEstimationLine(payload)),
     }
@@ -245,6 +254,13 @@ export async function POST(request: NextRequest) {
         <tr>
           <td style="padding:8px;border:1px solid #e7e5e4;font-weight:600;background:#f5f5f4;">Objectif</td>
           <td style="padding:8px;border:1px solid #e7e5e4;">${safe.objectif}</td>
+        </tr>
+        <tr>
+          <td style="padding:8px;border:1px solid #e7e5e4;font-weight:600;background:#f5f5f4;">Complexité &amp; accès</td>
+          <td style="padding:8px;border:1px solid #e7e5e4;">
+            <div>Complexité : <strong>${safe.complexite}</strong> &nbsp;·&nbsp; Accès : <strong>${safe.acces}</strong></div>
+            <div style="color:#78716c;font-size:12px;margin-top:4px;">Coefficient appliqué : <strong>×${safe.coeff}</strong></div>
+          </td>
         </tr>
         <tr>
           <td style="padding:8px;border:1px solid #e7e5e4;font-weight:600;background:#f5f5f4;">Arrosage automatique</td>

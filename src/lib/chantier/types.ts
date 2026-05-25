@@ -17,6 +17,12 @@ export type ObjectifId =
 
 export type ArrosageReponse = 'oui' | 'non' | 'je-ne-sais-pas'
 
+/** Niveau de complexité du terrain — impact sur la durée de travail */
+export type ComplexiteId = 'simple' | 'moyenne' | 'elevee' | 'tres_elevee'
+
+/** Niveau d'accès au jardin — impact sur la logistique (livraison, allers-retours) */
+export type AccesId = 'facile' | 'moyen' | 'difficile'
+
 export interface ChantierFormState {
   /** m² de pelouse */
   surface: number | null
@@ -26,6 +32,10 @@ export interface ChantierFormState {
   objectif: ObjectifId | null
   /** Système d'arrosage automatique — qualification commerciale */
   arrosageAuto: ArrosageReponse | null
+  /** Complexité du terrain (formes, arbres, massifs) — coefficient prix */
+  complexite: ComplexiteId | null
+  /** Facilité d'accès au jardin (escaliers, passage) — coefficient prix */
+  acces: AccesId | null
   /** Adresse complète (label autocomplete BAN) — utile pour Sami dans l'email */
   adresseComplete: string
   /** Ville extraite de l'autocomplete (séparée pour le récap email) */

@@ -24,6 +24,7 @@ import ProgressBar from './ProgressBar'
 import StepSurface from './steps/StepSurface'
 import StepEtat from './steps/StepEtat'
 import StepObjectif from './steps/StepObjectif'
+import StepComplexiteAcces from './steps/StepComplexiteAcces'
 import StepArrosage from './steps/StepArrosage'
 import StepCodePostal from './steps/StepCodePostal'
 import StepPhotos from './steps/StepPhotos'
@@ -41,11 +42,12 @@ const STEP_DEFS: StepDefinition[] = [
   { index: 0, label: 'Surface',           hint: "Quelques m² près suffisent." },
   { index: 1, label: 'État du gazon',     hint: 'Sélectionnez jusqu\'à 6 photos qui ressemblent au vôtre.' },
   { index: 2, label: 'Objectif',          hint: 'Une seule réponse — la plus importante pour vous.' },
-  { index: 3, label: 'Arrosage',          hint: 'Information clé pour la réussite de votre rénovation.' },
-  { index: 4, label: 'Ville',             hint: 'Pour vérifier la zone d\'intervention. L\'adresse précise sera demandée plus tard.' },
-  { index: 5, label: 'Photos (facultatif)', hint: 'Optionnel. Vos photos affineront mon devis.' },
-  { index: 6, label: 'Coordonnées',       hint: 'Pour vous envoyer le récap et vous recontacter.' },
-  { index: 7, label: 'Estimation',        hint: 'Votre service recommandé et son tarif TTC.' },
+  { index: 3, label: 'Complexité & accès', hint: 'Forme du terrain et logistique du chantier.' },
+  { index: 4, label: 'Arrosage',          hint: 'Information clé pour la réussite de votre rénovation.' },
+  { index: 5, label: 'Ville',             hint: 'Pour vérifier la zone d\'intervention. L\'adresse précise sera demandée plus tard.' },
+  { index: 6, label: 'Photos (facultatif)', hint: 'Optionnel. Vos photos affineront mon devis.' },
+  { index: 7, label: 'Coordonnées',       hint: 'Pour vous envoyer le récap et vous recontacter.' },
+  { index: 8, label: 'Estimation',        hint: 'Votre service recommandé et son tarif TTC.' },
 ]
 
 // ── État initial ────────────────────────────────────────────────────────────
@@ -55,6 +57,8 @@ const INITIAL_STATE: ChantierFormState = {
   etatPhotos: [],
   objectif: null,
   arrosageAuto: null,
+  complexite: null,
+  acces: null,
   adresseComplete: '',
   ville: '',
   codePostal: '',
@@ -98,10 +102,10 @@ export default function ChantierWizard() {
     return {
       serviceId: finalReco.serviceId,
       alternativeServiceId: finalReco.alternativeServiceId,
-      estimation: computeEstimation(finalReco.serviceId, state.surface, zoneType),
+      estimation: computeEstimation(finalReco.serviceId, state.surface, zoneType, state.complexite, state.acces),
       zoneType,
     }
-  }, [state.surface, state.etatPhotos, state.objectif, state.codePostal])
+  }, [state.surface, state.etatPhotos, state.objectif, state.codePostal, state.complexite, state.acces])
 
   function update(patch: Partial<ChantierFormState>) {
     setState(prev => ({ ...prev, ...patch }))
@@ -146,6 +150,8 @@ export default function ChantierWizard() {
       etatPhotos: state.etatPhotos,
       objectif: state.objectif,
       arrosageAuto: state.arrosageAuto,
+      complexite: state.complexite,
+      acces: state.acces,
       adresseComplete: state.adresseComplete,
       ville: state.ville,
       codePostal: state.codePostal,
@@ -187,12 +193,14 @@ export default function ChantierWizard() {
       case 2:
         return <StepObjectif state={state} onUpdate={update} onNext={next} onBack={back} />
       case 3:
-        return <StepArrosage state={state} onUpdate={update} onNext={next} onBack={back} />
+        return <StepComplexiteAcces state={state} onUpdate={update} onNext={next} onBack={back} />
       case 4:
-        return <StepCodePostal state={state} onUpdate={update} onNext={next} onBack={back} />
+        return <StepArrosage state={state} onUpdate={update} onNext={next} onBack={back} />
       case 5:
-        return <StepPhotos state={state} onUpdate={update} onNext={next} onBack={back} />
+        return <StepCodePostal state={state} onUpdate={update} onNext={next} onBack={back} />
       case 6:
+        return <StepPhotos state={state} onUpdate={update} onNext={next} onBack={back} />
+      case 7:
         return (
           <StepCoordonnees
             state={state}
@@ -202,7 +210,7 @@ export default function ChantierWizard() {
             loading={submitting}
           />
         )
-      case 7:
+      case 8:
         if (!result) return null
         return (
           <StepResultat

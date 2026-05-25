@@ -20,8 +20,9 @@
  * de milliers, pas de décimales sauf si nécessaire).
  */
 
-import type { PriceEstimation, ServiceId } from './types'
+import type { PriceEstimation, ServiceId, ComplexiteId, AccesId } from './types'
 import { TRAVEL_FEE_PAID_ZONE, type ZoneType } from './postal-codes'
+import { getCombinedCoefficient } from './complexite'
 
 const PRIX_EXPRESS_BASE_M2 = 6
 const PRIX_EXPRESS_TERREAU_M2 = 10
@@ -39,39 +40,48 @@ export function computeEstimation(
   serviceId: ServiceId,
   surface: number,
   zoneType: ZoneType = 'free',
+  complexite: ComplexiteId | null = null,
+  acces: AccesId | null = null,
 ): PriceEstimation {
   const needsTravel = serviceId !== 'coaching' && zoneType === 'paid'
   const fraisDeplacement = needsTravel ? TRAVEL_FEE_PAID_ZONE : 0
   const travelSuffix = needsTravel ? ` + ${TRAVEL_FEE_PAID_ZONE} € forfait déplacement` : ''
 
+  // Coefficient complexité × accès appliqué aux services sur place uniquement
+  const coeffInfo = getCombinedCoefficient(complexite, acces)
+  const coeff = serviceId === 'coaching' ? 1 : coeffInfo.value
+  const coeffSuffix = serviceId !== 'coaching' && coeff !== 1
+    ? ` × ${coeff.toFixed(2)} (complexité ${coeffInfo.complexiteLabel.toLowerCase()} · accès ${coeffInfo.accesLabel.toLowerCase()})`
+    : ''
+
   switch (serviceId) {
     case 'express': {
-      const base = surface * PRIX_EXPRESS_BASE_M2
-      const withTerreauTotal = surface * PRIX_EXPRESS_TERREAU_M2
+      const base = surface * PRIX_EXPRESS_BASE_M2 * coeff
+      const withTerreauTotal = surface * PRIX_EXPRESS_TERREAU_M2 * coeff
       return {
-        min: base + fraisDeplacement,
-        max: base + fraisDeplacement,
+        min: Math.round(base) + fraisDeplacement,
+        max: Math.round(base) + fraisDeplacement,
         unit: 'forfait',
-        formula: `${formatNumber(surface)} m² × ${PRIX_EXPRESS_BASE_M2} €/m² TTC${travelSuffix}`,
+        formula: `${formatNumber(surface)} m² × ${PRIX_EXPRESS_BASE_M2} €/m² TTC${coeffSuffix}${travelSuffix}`,
         fromOnly: true,
         fraisDeplacement,
         withTerreau: {
-          min: withTerreauTotal + fraisDeplacement,
-          max: withTerreauTotal + fraisDeplacement,
-          formula: `${formatNumber(surface)} m² × ${PRIX_EXPRESS_TERREAU_M2} €/m² TTC${travelSuffix}`,
-          surcout: withTerreauTotal - base,
+          min: Math.round(withTerreauTotal) + fraisDeplacement,
+          max: Math.round(withTerreauTotal) + fraisDeplacement,
+          formula: `${formatNumber(surface)} m² × ${PRIX_EXPRESS_TERREAU_M2} €/m² TTC${coeffSuffix}${travelSuffix}`,
+          surcout: Math.round(withTerreauTotal - base),
         },
       }
     }
 
     case 'reconstruction': {
-      const min = surface * PRIX_RECO_MIN_M2
-      const max = surface * PRIX_RECO_MAX_M2
+      const min = surface * PRIX_RECO_MIN_M2 * coeff
+      const max = surface * PRIX_RECO_MAX_M2 * coeff
       return {
-        min: min + fraisDeplacement,
-        max: max + fraisDeplacement,
+        min: Math.round(min) + fraisDeplacement,
+        max: Math.round(max) + fraisDeplacement,
         unit: 'forfait',
-        formula: `${formatNumber(surface)} m² × ${PRIX_RECO_MIN_M2}–${PRIX_RECO_MAX_M2} €/m² TTC selon la complexité du terrain${travelSuffix}`,
+        formula: `${formatNumber(surface)} m² × ${PRIX_RECO_MIN_M2}–${PRIX_RECO_MAX_M2} €/m² TTC selon la complexité${coeffSuffix}${travelSuffix}`,
         fromOnly: false,
         fraisDeplacement,
       }
