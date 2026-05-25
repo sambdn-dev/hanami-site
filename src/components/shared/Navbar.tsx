@@ -15,6 +15,7 @@ const BANNER_H = 40
 const NAV_LINKS = [
   { href: '/',                label: 'Particuliers'       },
   { href: '/pro',             label: 'Professionnels'     },
+  { href: '/mon-chantier',    label: 'Mon chantier'       },
   { href: '/calculatrice',    label: 'Dosage Intelligent' },
   { href: '/blog',            label: 'Journal'            },
   { href: '/pourquoi-hanami', label: 'Pourquoi Hanami ?'  },
@@ -113,15 +114,19 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
               </div>
             </Link>
 
-            {/* Desktop nav */}
-            <div className={`hidden md:flex items-center gap-7 ${textColor}`}>
+            {/* Desktop nav — visible uniquement à partir de lg (1024px).
+                En dessous, on bascule sur le drawer hamburger pour éviter
+                les wraps multi-lignes inesthétiques (constatés à 768-1023px
+                avec 6 items qui ne tenaient plus sur une seule ligne).
+                Sur lg+ : whitespace-nowrap garantit une seule ligne. */}
+            <div className={`hidden lg:flex items-center gap-5 xl:gap-7 ${textColor}`}>
               {NAV_LINKS.map(({ href, label }) => {
                 const active = pathname === href
                 return (
                   <Link
                     key={href}
                     href={href}
-                    className={`relative text-sm font-medium transition-colors hover:text-hanami-600 ${
+                    className={`relative text-sm font-medium whitespace-nowrap transition-colors hover:text-hanami-600 ${
                       active ? 'text-hanami-600' : ''
                     }`}
                   >
@@ -132,17 +137,17 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
                   </Link>
                 )
               })}
-              <button
-                onClick={scrollToContact}
+              <Link
+                href="/mon-chantier"
                 className="text-sm font-medium px-4 py-2 rounded-lg bg-hanami-700 text-white hover:bg-hanami-900 transition-colors cursor-pointer shadow-sm"
               >
-                Contact
-              </button>
+                Faire ma simulation
+              </Link>
             </div>
 
             {/* Mobile — bouton hamburger */}
             <button
-              className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg transition-colors"
+              className="lg:hidden flex items-center justify-center w-9 h-9 rounded-lg transition-colors"
               onClick={() => setMenuOpen(true)}
               aria-label="Ouvrir le menu"
             >
@@ -156,7 +161,7 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
       {/* ── Drawer mobile plein écran ───────────────────────────────────── */}
       {/* Fond semi-transparent */}
       <div
-        className={`fixed inset-0 z-[90] bg-black/30 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
+        className={`fixed inset-0 z-[90] bg-black/30 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${
           menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
         onClick={() => setMenuOpen(false)}
@@ -165,7 +170,7 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
 
       {/* Panneau coulissant depuis la droite */}
       <div
-        className={`fixed top-0 right-0 bottom-0 w-[85vw] max-w-sm bg-white z-[100] shadow-2xl flex flex-col transition-transform duration-300 ease-out md:hidden ${
+        className={`fixed top-0 right-0 bottom-0 w-[85vw] max-w-sm bg-white z-[100] shadow-2xl flex flex-col transition-transform duration-300 ease-out lg:hidden ${
           menuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         role="dialog"
@@ -219,12 +224,13 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
 
         {/* CTA en bas */}
         <div className="px-6 py-6 border-t border-stone-100 flex flex-col gap-3">
-          <button
-            onClick={scrollToContact}
-            className="w-full py-3.5 rounded-xl bg-hanami-700 text-white font-semibold text-sm hover:bg-hanami-900 transition-colors"
+          <Link
+            href="/mon-chantier"
+            onClick={() => setMenuOpen(false)}
+            className="w-full py-3.5 rounded-xl bg-hanami-700 text-white font-semibold text-sm hover:bg-hanami-900 transition-colors text-center"
           >
-            Demander un diagnostic gratuit
-          </button>
+            Faire ma simulation gratuite
+          </Link>
           <a
             href="https://wa.me/33667277614"
             target="_blank"

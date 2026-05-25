@@ -13,18 +13,13 @@
 
 'use client'
 
+import Link from 'next/link'
 import { useFadeIn } from '@/hooks/useFadeIn'
 import BeforeAfterSlider from '@/components/shared/BeforeAfterSlider'
 
 export default function Hero() {
   // Référence pour l'animation fade-in au chargement
   const fadeRef = useFadeIn()
-
-  // Scroll fluide vers le formulaire de contact (ancre #contact)
-  function scrollToContact(e: React.MouseEvent) {
-    e.preventDefault()
-    document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })
-  }
 
   return (
     // pt-36 = 144px : bandeau (32px) + navbar (64px) + 48px de respiration
@@ -80,13 +75,13 @@ export default function Hero() {
             {/* ── Boutons CTA ─────────────────────────────────────────── */}
             <div className="flex flex-col sm:flex-row gap-4">
 
-              {/* CTA principal : scroll vers le formulaire */}
-              <button
-                onClick={scrollToContact}
+              {/* CTA principal : wizard de simulation */}
+              <Link
+                href="/mon-chantier"
                 className="inline-flex items-center justify-center px-6 py-3 rounded-md bg-hanami-700 text-white font-medium hover:bg-hanami-900 transition-colors cursor-pointer text-sm"
               >
-                Demander un diagnostic gratuit
-              </button>
+                Faire ma simulation gratuite
+              </Link>
 
               {/* CTA secondaire : WhatsApp */}
               <a
