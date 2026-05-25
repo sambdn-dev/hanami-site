@@ -141,7 +141,7 @@ export default function StepCoordonnees({ state, onUpdate, onNext, onBack, loadi
       </h1>
       <p className="text-stone-500 mt-3 max-w-lg">
         Une fois validé, vous obtenez votre estimation et recevez le récap par email.
-        Sami vous recontacte sous 24 h pour valider le devis (WhatsApp ou téléphone).
+        Hanami vous recontacte sous 24 h pour valider le devis (WhatsApp ou téléphone).
       </p>
 
       <form
@@ -166,7 +166,7 @@ export default function StepCoordonnees({ state, onUpdate, onNext, onBack, loadi
             value={state.prenom}
             onChange={e => onUpdate({ prenom: e.target.value })}
             onBlur={() => setTouched(t => ({ ...t, prenom: true }))}
-            placeholder="Sami"
+            placeholder="Jean"
             className={inputClass(touched.prenom && !prenomOk)}
           />
           {touched.prenom && !prenomOk && (
@@ -191,7 +191,7 @@ export default function StepCoordonnees({ state, onUpdate, onNext, onBack, loadi
             value={state.email}
             onChange={e => onUpdate({ email: e.target.value })}
             onBlur={() => setTouched(t => ({ ...t, email: true }))}
-            placeholder="sami@exemple.fr"
+            placeholder="jean@exemple.fr"
             className={inputClass(touched.email && !emailOk)}
           />
           {touched.email && !emailOk && (
