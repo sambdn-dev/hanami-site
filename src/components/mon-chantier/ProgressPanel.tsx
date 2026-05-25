@@ -56,10 +56,12 @@ export default function ProgressPanel({ steps, currentStep, maxVisitedStep, onSt
             : isVisited ? 'done'
             : 'pending'
 
-          // Navigation autorisée sur toute étape déjà visitée (avant ou après
-          // la courante), bloquée si on est sur l'écran final.
+          // Navigation libre vers TOUTES les étapes (sauf depuis l'écran
+          // final où la modification post-soumission serait incohérente).
+          // Les étapes "pending" deviennent aussi cliquables — l'utilisateur
+          // peut explorer dans l'ordre qu'il veut.
           const onFinalStep = currentStep >= steps.length - 1
-          const clickable = status === 'done' && !onFinalStep
+          const clickable = i !== currentStep && !onFinalStep
 
           const Tag = clickable ? 'button' : 'div'
 
@@ -117,7 +119,7 @@ export default function ProgressPanel({ steps, currentStep, maxVisitedStep, onSt
                   )}
                   {clickable && (
                     <p className="text-[10px] text-white/40 mt-1 group-hover:text-amber-100/60 transition-colors">
-                      Modifier ma réponse
+                      {status === 'done' ? 'Modifier ma réponse' : 'Aller à cette étape'}
                     </p>
                   )}
                 </div>

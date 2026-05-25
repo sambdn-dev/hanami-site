@@ -119,12 +119,17 @@ export default function ChantierWizard() {
     setCurrentStep(s => Math.max(s - 1, 0))
   }
 
-  /** Saut direct via le panneau : autorisé sur toute étape ≤ maxVisitedStep.
-   *  Bloqué une fois sur l'écran final (résultat envoyé, modification incohérente). */
+  /** Saut direct via le panneau : navigation libre entre toutes les étapes.
+   *  L'utilisateur peut explorer dans l'ordre qu'il veut — chaque étape gère
+   *  sa propre validation et bloque "Continuer" si données manquantes.
+   *  Seule restriction : pas de retour depuis l'écran Résultat (envoi fait,
+   *  modification post-soumission incohérente). */
   function jumpTo(stepIndex: number) {
-    if (stepIndex > maxVisitedStep) return
     if (currentStep >= STEP_DEFS.length - 1) return
     setCurrentStep(stepIndex)
+    // Met à jour maxVisitedStep si on saute en avant pour que le visuel
+    // (panneau + barre) reflète l'étape la plus haute atteinte.
+    setMaxVisitedStep(m => Math.max(m, stepIndex))
   }
 
   /** Soumet le formulaire à /api/chantier puis avance vers le résultat.

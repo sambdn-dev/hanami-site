@@ -48,8 +48,9 @@ export default function ProgressBar({ steps, currentStep, maxVisitedStep, onStep
   // Ferme le menu quand l'étape change
   useEffect(() => { setOpen(false) }, [currentStep])
 
-  function handleStepTap(i: number, isVisited: boolean) {
-    if (!isVisited || onFinalStep || i === currentStep) return
+  function handleStepTap(i: number) {
+    // Navigation libre vers n'importe quelle étape (sauf depuis l'écran final)
+    if (onFinalStep || i === currentStep) return
     onStepClick(i)
   }
 
@@ -103,13 +104,13 @@ export default function ProgressBar({ steps, currentStep, maxVisitedStep, onStep
               i === currentStep ? 'active'
               : isVisited ? 'done'
               : 'pending'
-            const tappable = status === 'done' && !onFinalStep
+            const tappable = i !== currentStep && !onFinalStep
 
             return (
               <li key={step.index}>
                 <button
                   type="button"
-                  onClick={() => handleStepTap(i, isVisited)}
+                  onClick={() => handleStepTap(i)}
                   disabled={!tappable}
                   className={`w-full flex items-center gap-3 px-4 py-3.5 text-left border-b border-stone-100 last:border-b-0 transition-colors ${
                     tappable ? 'hover:bg-hanami-100/40 active:bg-hanami-100/60 cursor-pointer' : 'cursor-default'
@@ -136,7 +137,9 @@ export default function ProgressBar({ steps, currentStep, maxVisitedStep, onStep
                       {step.label}
                     </p>
                     {tappable && (
-                      <p className="text-[10px] text-stone-400 mt-0.5">Modifier ma réponse</p>
+                      <p className="text-[10px] text-stone-400 mt-0.5">
+                        {status === 'done' ? 'Modifier ma réponse' : 'Aller à cette étape'}
+                      </p>
                     )}
                   </div>
                 </button>
