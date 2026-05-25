@@ -31,22 +31,19 @@ interface ProgressPanelProps {
 
 export default function ProgressPanel({ steps, currentStep, maxVisitedStep, onStepClick }: ProgressPanelProps) {
   return (
-    <aside className="hidden lg:flex flex-col bg-hanami-900 text-white p-10 sticky top-24 h-[calc(100vh-6rem)]">
+    <aside className="hidden lg:flex flex-col bg-hanami-900 text-white px-8 py-8 sticky top-24 h-[calc(100vh-6rem)] overflow-hidden">
       {/* En-tête */}
-      <div className="mb-12">
+      <div className="mb-6 shrink-0">
         <span className="font-[family-name:var(--font-space-mono)] text-[10px] font-semibold tracking-[0.18em] uppercase text-hanami-100/60">
           Mon chantier
         </span>
-        <h2 className="font-[family-name:var(--font-fraunces)] text-3xl font-semibold leading-tight mt-2">
+        <h2 className="font-[family-name:var(--font-fraunces)] text-2xl font-semibold leading-tight mt-2">
           Votre estimation Hanami en 2 minutes.
         </h2>
-        <p className="text-sm text-white/70 mt-3 leading-relaxed">
-          Sept étapes pour cibler le bon service, le bon protocole, le bon prix.
-        </p>
       </div>
 
-      {/* Liste des étapes — cliquables si déjà visitées */}
-      <ol className="flex flex-col gap-1 flex-1">
+      {/* Liste des étapes — scrollable si trop hautes pour le viewport */}
+      <ol className="flex flex-col gap-1 flex-1 overflow-y-auto min-h-0 pr-2 -mr-2">
         {steps.map((step, i) => {
           // Une étape est "done" si on l'a déjà dépassée OU si on est revenu en
           // arrière mais qu'on était allé plus loin (maxVisitedStep > i).
@@ -129,9 +126,9 @@ export default function ProgressPanel({ steps, currentStep, maxVisitedStep, onSt
         })}
       </ol>
 
-      {/* Footer rassurant */}
-      <div className="mt-8 pt-6 border-t border-white/10">
-        <p className="text-xs text-white/50 leading-relaxed">
+      {/* Footer rassurant — toujours visible en bas du panneau, hors scroll */}
+      <div className="mt-4 pt-4 border-t border-white/10 shrink-0">
+        <p className="text-[11px] text-white/50 leading-relaxed">
           Vos réponses servent uniquement à établir votre estimation.
           Elles ne sont jamais partagées sans votre accord.
         </p>

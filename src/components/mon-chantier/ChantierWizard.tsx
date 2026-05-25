@@ -225,7 +225,7 @@ export default function ChantierWizard() {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] min-h-screen bg-stone-50">
+    <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] bg-stone-50">
       {/* Panneau de progression (desktop) */}
       <ProgressPanel
         steps={STEP_DEFS}
