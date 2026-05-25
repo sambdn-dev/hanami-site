@@ -1,14 +1,20 @@
 /**
- * StepEtat.tsx — Étape 2 : sélection 1-4 photos parmi 10 états types
+ * StepEtat.tsx — Étape 2 : sélection 1-6 photos parmi 10 états types
  *
- * Grille 2 col × 5 lignes mobile, 5 col × 2 lignes desktop.
- * Sélection : tap pour ajouter, retap pour retirer. Max 4 photos.
+ * Grille adaptative : 2 cols mobile, 3 cols tablette, 4-5 cols desktop.
+ * Sélection : tap pour ajouter, retap pour retirer. Max 6 photos.
+ *
+ * Chaque vignette a un bouton "loupe" en haut à droite qui ouvre la
+ * photo en grand via PhotoLightbox (modal portail). Tap sur la vignette
+ * = sélectionner ; tap sur la loupe = agrandir (propagation stoppée).
  */
 
 'use client'
 
-import { Check } from 'lucide-react'
+import { useState } from 'react'
+import { Check, Expand } from 'lucide-react'
 import StepNav from '../StepNav'
+import PhotoLightbox from '@/components/shared/PhotoLightbox'
 import { ETAT_PHOTOS } from '@/lib/chantier/etats-photos'
 import type { ChantierFormState } from '@/lib/chantier/types'
 
@@ -25,6 +31,9 @@ export default function StepEtat({ state, onUpdate, onNext, onBack }: Props) {
   const selected = state.etatPhotos
   const isValid = selected.length >= 1 && selected.length <= MAX_SELECTION
   const canSelectMore = selected.length < MAX_SELECTION
+
+  // État du lightbox (modal photo agrandie)
+  const [lightbox, setLightbox] = useState<{ src: string; caption: string } | null>(null)
 
   function toggle(id: string) {
     if (selected.includes(id)) {
@@ -44,6 +53,7 @@ export default function StepEtat({ state, onUpdate, onNext, onBack }: Props) {
       </h1>
       <p className="text-stone-500 mt-3 max-w-lg">
         Sélectionnez jusqu&apos;à 6 photos qui correspondent le mieux à l&apos;état actuel de votre pelouse.
+        Touchez l&apos;icône <Expand className="inline w-3.5 h-3.5 -mt-0.5" /> pour agrandir.
       </p>
 
       {/* Compteur */}
@@ -59,50 +69,80 @@ export default function StepEtat({ state, onUpdate, onNext, onBack }: Props) {
           const isSelected = selected.includes(photo.id)
           const disabled = !isSelected && !canSelectMore
           return (
-            <button
+            <div
               key={photo.id}
-              type="button"
-              onClick={() => toggle(photo.id)}
-              disabled={disabled}
-              className={`group relative aspect-square rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${
+              className={`group relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${
                 isSelected
                   ? 'border-hanami-500 ring-2 ring-hanami-500/30'
                   : disabled
-                    ? 'border-stone-200 opacity-40 cursor-not-allowed'
+                    ? 'border-stone-200 opacity-40'
                     : 'border-stone-200 hover:border-hanami-400 hover:scale-[1.02]'
               }`}
-              aria-pressed={isSelected}
-              aria-label={photo.alt}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={photo.src}
-                alt={photo.alt}
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
+              {/* Bouton principal — toggle sélection sur toute la surface */}
+              <button
+                type="button"
+                onClick={() => toggle(photo.id)}
+                disabled={disabled}
+                className="absolute inset-0 w-full h-full cursor-pointer disabled:cursor-not-allowed"
+                aria-pressed={isSelected}
+                aria-label={`${isSelected ? 'Désélectionner' : 'Sélectionner'} : ${photo.alt}`}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={photo.src}
+                  alt={photo.alt}
+                  className="w-full h-full object-cover"
+                  loading="lazy"
+                  draggable={false}
+                />
+              </button>
 
-              {/* Overlay sombre + badge "sélectionné" */}
+              {/* Overlay sombre + badge sélectionné (au-dessus du bouton mais pointer-events:none) */}
               {isSelected && (
-                <div className="absolute inset-0 bg-hanami-900/30 flex items-start justify-end p-2">
-                  <span className="w-6 h-6 rounded-full bg-hanami-500 flex items-center justify-center shadow-lg">
-                    <Check className="w-4 h-4 text-white" strokeWidth={3} />
-                  </span>
-                </div>
+                <div className="absolute inset-0 bg-hanami-900/30 pointer-events-none" />
               )}
 
-              {/* Label en bas */}
-              <div className="absolute bottom-0 left-0 right-0 px-2 py-1.5 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+              {/* Bouton "agrandir" en haut à droite — z-index supérieur au bouton principal */}
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setLightbox({ src: photo.src, caption: photo.label })
+                }}
+                aria-label={`Agrandir la photo : ${photo.label}`}
+                title="Agrandir"
+                className="absolute top-1.5 right-1.5 z-10 w-7 h-7 rounded-full bg-black/55 backdrop-blur-sm text-white flex items-center justify-center opacity-70 group-hover:opacity-100 hover:bg-black/75 transition-all cursor-pointer"
+              >
+                <Expand className="w-3.5 h-3.5" strokeWidth={2.2} />
+              </button>
+
+              {/* Badge "sélectionné" en haut à droite quand actif (sous le bouton expand) */}
+              {isSelected && (
+                <span className="absolute top-1.5 left-1.5 z-10 w-7 h-7 rounded-full bg-hanami-500 flex items-center justify-center shadow-lg pointer-events-none">
+                  <Check className="w-4 h-4 text-white" strokeWidth={3} />
+                </span>
+              )}
+
+              {/* Label en bas — non interactif */}
+              <div className="absolute bottom-0 left-0 right-0 px-2 py-1.5 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none">
                 <p className="text-white text-[11px] font-medium leading-tight text-left line-clamp-2">
                   {photo.label}
                 </p>
               </div>
-            </button>
+            </div>
           )
         })}
       </div>
 
       <StepNav onBack={onBack} onNext={onNext} canProceed={isValid} />
+
+      {/* Lightbox plein écran portail vers <body> */}
+      <PhotoLightbox
+        src={lightbox?.src ?? null}
+        caption={lightbox?.caption}
+        onClose={() => setLightbox(null)}
+      />
     </div>
   )
 }

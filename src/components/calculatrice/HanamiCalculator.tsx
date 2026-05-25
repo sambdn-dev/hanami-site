@@ -15,7 +15,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Plus, Trash2, AlertTriangle, Info, Calculator, Download, ChevronLeft, ImageDown, Camera, Loader2 } from 'lucide-react'
 import { compressPhoto } from '@/lib/photo-utils'
-import PhotoLightbox from './PhotoLightbox'
+import PhotoLightbox from '@/components/shared/PhotoLightbox'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
