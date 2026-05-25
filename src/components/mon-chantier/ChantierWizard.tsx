@@ -234,10 +234,12 @@ export default function ChantierWizard() {
         onStepClick={jumpTo}
       />
 
-      {/* Contenu de l'étape */}
-      <main className="px-5 py-8 sm:px-8 lg:px-16 lg:py-16 max-w-3xl">
+      {/* Contenu de l'étape — `<section>` plutôt que `<main>` pour ne pas
+          imbriquer deux balises main (la page de route a déjà son main).
+          Le HTML invalide casse certains comportements de scroll Safari/Chrome. */}
+      <section className="px-5 py-8 sm:px-8 lg:px-16 lg:py-16 max-w-3xl w-full">
         {renderStep()}
-      </main>
+      </section>
     </div>
   )
 }

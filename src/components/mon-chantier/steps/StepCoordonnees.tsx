@@ -81,6 +81,7 @@ export default function StepCoordonnees({ state, onUpdate, onNext, onBack, loadi
             name="given-name"
             type="text"
             autoComplete="given-name"
+            enterKeyHint="next"
             value={state.prenom}
             onChange={e => onUpdate({ prenom: e.target.value })}
             onBlur={() => setTouched(t => ({ ...t, prenom: true }))}
@@ -102,6 +103,10 @@ export default function StepCoordonnees({ state, onUpdate, onNext, onBack, loadi
             name="email"
             type="email"
             autoComplete="email"
+            inputMode="email"
+            enterKeyHint="next"
+            spellCheck={false}
+            autoCapitalize="off"
             value={state.email}
             onChange={e => onUpdate({ email: e.target.value })}
             onBlur={() => setTouched(t => ({ ...t, email: true }))}
@@ -124,6 +129,7 @@ export default function StepCoordonnees({ state, onUpdate, onNext, onBack, loadi
             type="tel"
             inputMode="tel"
             autoComplete="tel-national"
+            enterKeyHint="done"
             value={state.telephone}
             onChange={e => onUpdate({ telephone: formatTelephone(e.target.value) })}
             onBlur={() => setTouched(t => ({ ...t, telephone: true }))}
