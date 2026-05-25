@@ -349,3 +349,15 @@ h3 .anchor-heading {
     @apply font-sans;
   }
 }
+
+/* ─── Scrollbar masquée (utilitaire) ────────────────────────────────────
+   Pour les zones scrollables où on ne veut pas voir la barre standard du
+   navigateur (panneaux internes, sliders, etc.). Le scroll reste fonctionnel
+   via la molette, le drag tactile et les flèches clavier. */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE / vieux Edge */
+  scrollbar-width: none;     /* Firefox */
+}

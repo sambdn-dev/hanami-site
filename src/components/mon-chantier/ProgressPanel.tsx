@@ -42,8 +42,8 @@ export default function ProgressPanel({ steps, currentStep, maxVisitedStep, onSt
         </h2>
       </div>
 
-      {/* Liste des étapes — scrollable si trop hautes pour le viewport */}
-      <ol className="flex flex-col gap-1 flex-1 overflow-y-auto min-h-0 pr-2 -mr-2">
+      {/* Liste des étapes — scrollable mais barre masquée pour rester épuré */}
+      <ol className="flex flex-col gap-1 flex-1 overflow-y-auto min-h-0 scrollbar-hide">
         {steps.map((step, i) => {
           // Une étape est "done" si on l'a déjà dépassée OU si on est revenu en
           // arrière mais qu'on était allé plus loin (maxVisitedStep > i).
