@@ -192,13 +192,16 @@ export default function AdresseAutocomplete({
         const { latitude, longitude } = pos.coords
         setUserCoords({ lat: latitude, lon: longitude })
         try {
-          // Reverse en mode municipality : on récupère la commune, pas la rue
-          const res = await fetch(`${BAN_REVERSE}?lon=${longitude}&lat=${latitude}&type=municipality`)
+          // /reverse retourne l'adresse la plus proche (housenumber, street, locality).
+          // On ne passe PAS type=municipality car cet endpoint ne supporte pas ce
+          // filtre en reverse — on extrait juste la ville (`city`) du résultat.
+          const res = await fetch(`${BAN_REVERSE}?lon=${longitude}&lat=${latitude}`)
           const json = await res.json() as BanResponse
           const first = json.features?.[0]
-          if (first) {
+          if (first?.properties?.city && first?.properties?.postcode) {
             const adr: SelectedAdresse = {
-              // Pour une commune, label = "Le Vésinet" + postcode séparé
+              // Affiche juste "Ville CP" (pas la rue) pour rester cohérent avec
+              // la sélection commune-seule attendue côté UI.
               label: `${first.properties.city} ${first.properties.postcode}`,
               postcode: first.properties.postcode,
               city: first.properties.city,
