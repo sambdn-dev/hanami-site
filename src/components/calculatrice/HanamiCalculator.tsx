@@ -17,9 +17,14 @@ import { Plus, Trash2, AlertTriangle, Info, Calculator, Download, ChevronLeft, I
 import { compressPhoto } from '@/lib/photo-utils'
 import PhotoLightbox from '@/components/shared/PhotoLightbox'
 import ProductAutocomplete from './ProductAutocomplete'
+import UsageSwitcher from './UsageSwitcher'
 import {
   searchSolidCatalog,
   searchLiquidCatalog,
+  getDefaultSolidUsage,
+  getDefaultLiquidUsage,
+  SOLID_CATALOG,
+  LIQUID_CATALOG,
   type SolidCatalogProduct,
   type LiquidCatalogProduct,
 } from '@/lib/products-catalog'
@@ -53,6 +58,10 @@ type LiquidProduct = {
   doseSimple: string
   /** Dose en mode expert, L/ha */
   doseExpert: string
+  /** Si vient du catalogue : id du produit + id de l'usage sélectionné.
+   *  Sert à afficher le UsageSwitcher et à recalculer la dose à chaque switch. */
+  catalogProductId?: string
+  catalogUsageId?: string
 }
 
 /**
@@ -68,6 +77,9 @@ type SolidProduct = {
   dose: string
   /** Unité — g/m² ou kg/ha (affichage) */
   doseUnit: 'g/m2' | 'kg/ha'
+  /** Si vient du catalogue : référence produit + usage sélectionné */
+  catalogProductId?: string
+  catalogUsageId?: string
 }
 
 let _idCounter = 0
@@ -1386,24 +1398,30 @@ export default function HanamiCalculator() {
                             <label className="block text-[11px] font-medium text-stone-500 mb-1">Nom du produit</label>
                             <ProductAutocomplete
                               value={p.name}
-                              onChange={(v) => updateSolidProduct(p.id, { name: v })}
+                              onChange={(v) => updateSolidProduct(p.id, { name: v, catalogProductId: undefined, catalogUsageId: undefined })}
                               onSelect={(prod: { id: string; name: string; brand: string; hint: string; raw: SolidCatalogProduct }) => {
-                                // Auto-remplissage : nom + dose en g/m² depuis le catalogue
+                                // Auto-remplissage : nom + dose de l'usage par défaut du catalogue
+                                const u = getDefaultSolidUsage(prod.raw)
                                 updateSolidProduct(p.id, {
                                   name: prod.raw.name,
-                                  dose: String(prod.raw.doseG_m2),
+                                  dose: String(u.doseG_m2),
                                   doseUnit: 'g/m2',
+                                  catalogProductId: prod.raw.id,
+                                  catalogUsageId: u.id,
                                 })
                               }}
                               search={(q, limit) => {
                                 const cat = productType === 'seeds' ? 'seeds' : 'fertilizer'
-                                return searchSolidCatalog(q, limit, cat).map(prod => ({
-                                  id: prod.id,
-                                  name: prod.name,
-                                  brand: prod.brand,
-                                  hint: `Dès ${prod.doseG_m2} g/m²`,
-                                  raw: prod,
-                                }))
+                                return searchSolidCatalog(q, limit, cat).map(prod => {
+                                  const u = getDefaultSolidUsage(prod)
+                                  return {
+                                    id: prod.id,
+                                    name: prod.name,
+                                    brand: prod.brand,
+                                    hint: `Dès ${u.doseG_m2} g/m²`,
+                                    raw: prod,
+                                  }
+                                })
                               }}
                               placeholder={
                                 productType === 'seeds'
@@ -1437,6 +1455,32 @@ export default function HanamiCalculator() {
                                 <option value="kg/ha">kg/ha</option>
                               </select>
                             </div>
+
+                            {/* Usage switcher — affiché si le produit vient du catalogue Hanami */}
+                            {p.catalogProductId && (() => {
+                              const cp = SOLID_CATALOG.find(c => c.id === p.catalogProductId)
+                              if (!cp) return null
+                              return (
+                                <UsageSwitcher
+                                  usages={cp.usages.map(u => ({
+                                    id: u.id,
+                                    label: u.label,
+                                    doseDisplay: `${u.doseG_m2} g/m²`,
+                                    note: u.note,
+                                  }))}
+                                  selectedId={p.catalogUsageId ?? cp.defaultUsageId}
+                                  onChange={(newUsageId) => {
+                                    const u = cp.usages.find(x => x.id === newUsageId)
+                                    if (!u) return
+                                    updateSolidProduct(p.id, {
+                                      dose: String(u.doseG_m2),
+                                      doseUnit: 'g/m2',
+                                      catalogUsageId: newUsageId,
+                                    })
+                                  }}
+                                />
+                              )
+                            })()}
                           </div>
                         </div>
                       )
@@ -1573,22 +1617,27 @@ export default function HanamiCalculator() {
                               <label className="block text-[11px] font-medium text-stone-500 mb-1">Nom du produit</label>
                               <ProductAutocomplete
                                 value={p.name}
-                                onChange={(v) => updateLiquidProduct(p.id, { name: v })}
+                                onChange={(v) => updateLiquidProduct(p.id, { name: v, catalogProductId: undefined, catalogUsageId: undefined })}
                                 onSelect={(prod: { id: string; name: string; brand: string; hint: string; raw: LiquidCatalogProduct }) => {
-                                  // Auto-remplit nom + doses simplifié/expert depuis catalogue
+                                  const u = getDefaultLiquidUsage(prod.raw)
                                   updateLiquidProduct(p.id, {
                                     name: prod.raw.name,
-                                    doseSimple: String(prod.raw.doseMl_L),
-                                    doseExpert: String(prod.raw.doseL_ha),
+                                    doseSimple: String(u.doseMl_L),
+                                    doseExpert: String(u.doseL_ha),
+                                    catalogProductId: prod.raw.id,
+                                    catalogUsageId: u.id,
                                   })
                                 }}
-                                search={(q, limit) => searchLiquidCatalog(q, limit).map(prod => ({
-                                  id: prod.id,
-                                  name: prod.name,
-                                  brand: prod.brand,
-                                  hint: `${prod.doseL_ha} L/ha`,
-                                  raw: prod,
-                                }))}
+                                search={(q, limit) => searchLiquidCatalog(q, limit).map(prod => {
+                                  const u = getDefaultLiquidUsage(prod)
+                                  return {
+                                    id: prod.id,
+                                    name: prod.name,
+                                    brand: prod.brand,
+                                    hint: `${u.doseL_ha} L/ha`,
+                                    raw: prod,
+                                  }
+                                })}
                                 placeholder={idx === 0 ? 'Ex : H2Pro Trismart' : 'Ex : Vitalnova StressBuster'}
                                 inputClass={`w-full px-3 py-2 ${inputCls}`}
                               />
@@ -1630,6 +1679,32 @@ export default function HanamiCalculator() {
                                 )}
                               </>
                             )}
+
+                            {/* Usage switcher liquide — si le produit vient du catalogue */}
+                            {p.catalogProductId && (() => {
+                              const cp = LIQUID_CATALOG.find(c => c.id === p.catalogProductId)
+                              if (!cp) return null
+                              return (
+                                <UsageSwitcher
+                                  usages={cp.usages.map(u => ({
+                                    id: u.id,
+                                    label: u.label,
+                                    doseDisplay: expertMode ? `${u.doseL_ha} L/ha` : `${u.doseMl_L} ml/L`,
+                                    note: u.note,
+                                  }))}
+                                  selectedId={p.catalogUsageId ?? cp.defaultUsageId}
+                                  onChange={(newUsageId) => {
+                                    const u = cp.usages.find(x => x.id === newUsageId)
+                                    if (!u) return
+                                    updateLiquidProduct(p.id, {
+                                      doseSimple: String(u.doseMl_L),
+                                      doseExpert: String(u.doseL_ha),
+                                      catalogUsageId: newUsageId,
+                                    })
+                                  }}
+                                />
+                              )
+                            })()}
                           </div>
                         ))}
 
