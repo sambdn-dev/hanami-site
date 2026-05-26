@@ -211,9 +211,9 @@ type Results = SolidResults | LiquidResults | TopdressingResults | null
 // ── Disclaimer ────────────────────────────────────────────────────────────────
 
 const DISCLAIMER =
-  'Les indications portées sur cette calculatrice sont fournies à titre informatif uniquement. ' +
-  'Respectez toujours les dosages indiqués par le fabricant. ' +
-  'Ces résultats ne sauraient engager la responsabilité de Hanami.'
+  'Les dosages sont donnés à titre indicatif. ' +
+  'Vérifiez toujours le dosage avant application sur l\'étiquette du fabricant. ' +
+  'En cas de doute, contactez Hanami.'
 
 // ─────────────────────────────────────────────────────────────────────────────
 

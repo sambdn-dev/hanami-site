@@ -71,16 +71,15 @@ export const SOLID_CATALOG: SolidCatalogProduct[] = [
   // Semences Barenbrug
   {
     id: 'pro12',
-    name: 'Pro 12',
+    name: 'PRO 12',
     brand: 'Barenbrug',
     category: 'seeds',
     defaultUsageId: 'renovation',
     usages: [
-      { id: 'creation', label: 'Création (sol nu)', doseG_m2: 32, doseRange: '30–35 g/m²', note: 'Semis complet sur terre amendée' },
-      { id: 'renovation', label: 'Rénovation après scarif', doseG_m2: 25, doseRange: '25–35 g/m²' },
-      { id: 'regarnissage', label: 'Regarnissage léger', doseG_m2: 18, doseRange: '15–20 g/m²' },
+      { id: 'creation', label: 'Création (sol nu)', doseG_m2: 30, doseRange: '25–30 g/m²', note: 'Semis complet sur terre amendée' },
+      { id: 'renovation', label: 'Rénovation / regarnissage', doseG_m2: 20, doseRange: '15–20 g/m²', note: 'Après scarif ou sursemis' },
     ],
-    note: 'Création et rénovation — finesse et densité',
+    note: 'Mélange Ray-grass + Fétuques fines (75%) — finesse, densité, autoréparation. Polyvalent piétinement léger',
   },
   {
     id: 'res-rpr',
@@ -89,35 +88,55 @@ export const SOLID_CATALOG: SolidCatalogProduct[] = [
     category: 'seeds',
     defaultUsageId: 'renovation',
     usages: [
-      { id: 'creation', label: 'Création', doseG_m2: 32, doseRange: '30–35 g/m²' },
-      { id: 'renovation', label: 'Rénovation après scarif', doseG_m2: 25, doseRange: '25–35 g/m²' },
-      { id: 'regarnissage', label: 'Regarnissage sport', doseG_m2: 22, note: 'Auto-réparation RPR' },
+      { id: 'creation', label: 'Création (sol nu)', doseG_m2: 30, doseRange: '30 g/m²' },
+      { id: 'renovation', label: 'Rénovation / regarnissage', doseG_m2: 20, doseRange: '15–20 g/m²', note: 'Après scarif ou sursemis' },
     ],
-    note: 'RPR traçant — auto-réparation, indice sport élevé',
+    note: '100% Ray-grass anglais dont 3 traçants — autoréparation par stolons, indice sport 7,2. Idéal terrains sport / golf / ornement résistant',
   },
   {
     id: 'res-elite',
-    name: 'RES+ Elite',
+    name: 'RES+ ÉLITE',
     brand: 'Barenbrug',
     category: 'seeds',
     defaultUsageId: 'renovation',
     usages: [
-      { id: 'creation', label: 'Création', doseG_m2: 32, doseRange: '30–35 g/m²' },
-      { id: 'renovation', label: 'Rénovation', doseG_m2: 25, doseRange: '25–35 g/m²' },
+      { id: 'creation', label: 'Création (sol nu)', doseG_m2: 30, doseRange: '30 g/m²' },
+      { id: 'renovation', label: 'Rénovation / regarnissage', doseG_m2: 20, doseRange: '15–20 g/m²', note: 'Après scarif ou sursemis' },
     ],
-    note: 'Tolérance pyriculariose — résistance piétinement',
+    note: '100% Ray-grass anglais — tolérance pyriculariose (maladie estivale), réduction azote possible, excellente résistance piétinement',
   },
   {
     id: 'pro-sos',
     name: 'PRO SOS',
     brand: 'Barenbrug',
     category: 'seeds',
-    defaultUsageId: 'regarnissage',
+    defaultUsageId: 'regarnissage_hivernal',
     usages: [
-      { id: 'regarnissage', label: 'Regarnissage hivernal', doseG_m2: 22, doseRange: '15–30 g/m²', note: 'Germination basse température' },
-      { id: 'reparation', label: 'Réparation zones', doseG_m2: 30, doseRange: '25–35 g/m²' },
+      { id: 'regarnissage_hivernal', label: 'Regarnissage hivernal', doseG_m2: 45, doseRange: '35–45 g/m²', note: 'Saison froide (oct→mars) — germe dès 5°C grâce au Ray-grass multiflorum' },
     ],
-    note: 'Regarnissage hivernal — germination basse température',
+    note: 'Spécial sols froids (< 10°C) — 50% RGA AMIATA + 50% Ray-grass multiflorum BARTERRA. À utiliser juste avant ou après l\'hiver pour préserver la pelouse',
+  },
+  {
+    id: 'pro-ombre',
+    name: 'PRO OMBRE',
+    brand: 'Barenbrug',
+    category: 'seeds',
+    defaultUsageId: 'creation',
+    usages: [
+      { id: 'creation', label: 'Création zones ombragées', doseG_m2: 25, doseRange: '20–25 g/m²', note: 'Sous arbres, en lisière, exposition nord' },
+    ],
+    note: 'Spécial ombre — 40% Canche cespiteuse (meilleure tolérance à l\'ombre) + Fétuques fines + Ray-grass traçant. S\'adapte aux sols pauvres et filtrants. Astuce : remonter la hauteur de tonte pour compenser le manque de lumière',
+  },
+  {
+    id: 'res-rpr-patch',
+    name: 'RES+ RPR PATCH',
+    brand: 'Barenbrug',
+    category: 'seeds',
+    defaultUsageId: 'reparation',
+    usages: [
+      { id: 'reparation', label: 'Réparation de zones / trous', doseG_m2: 2000, doseRange: '1500–2000 g/m²', note: 'Application en remplissage (épaisseur 1–2 cm). Le sac couvre ~7–10 m² de réparations' },
+    ],
+    note: 'Produit "rebouche-trous" prêt-à-l\'emploi — 30% semences RPR (4 RGA dont 3 traçants) + 55% fibres de coco + 15% engrais organique 3-1-6. Installation rapide même en période sèche grâce à la rétention d\'eau de la coco',
   },
 
   // Engrais granulaires Compo Expert
@@ -185,6 +204,19 @@ export const SOLID_CATALOG: SolidCatalogProduct[] = [
     ],
     note: 'Premium sans phosphore + Bacillus E4CDX2',
   },
+  {
+    id: 'floranid-n31',
+    name: 'Floranid N 31',
+    brand: 'Compo Expert',
+    category: 'fertilizer',
+    defaultUsageId: 'parcs',
+    usages: [
+      { id: 'parcs', label: 'Parcs et gazons d\'agrément', doseG_m2: 30, doseRange: '20–30 g/m²', note: 'Mars à septembre' },
+      { id: 'sport', label: 'Terrain de sport', doseG_m2: 30, doseRange: '20–30 g/m²' },
+      { id: 'golf', label: 'Fairways de golf', doseG_m2: 20, doseRange: '15–20 g/m²' },
+    ],
+    note: 'Azote pur 31-0-0 longue durée (3–4 mois) — Isodur à 95% d\'indice d\'activité, biodégradable. Idéal grands espaces verts ou renforcement d\'azote ciblé',
+  },
 
   // Engrais ICL
   {
@@ -199,6 +231,53 @@ export const SOLID_CATALOG: SolidCatalogProduct[] = [
     ],
     note: 'Poly-S libération contrôlée 3 mois',
   },
+  {
+    id: 'sierrablen-renovator',
+    name: 'Sierrablen Plus Renovator',
+    brand: 'ICL',
+    category: 'fertilizer',
+    defaultUsageId: 'creation',
+    usages: [
+      { id: 'creation', label: 'Création (au semis)', doseG_m2: 35, doseRange: '25–35 g/m²', note: 'À épandre au moment du semis pour booster les jeunes racines' },
+      { id: 'regarnissage', label: 'Regarnissage (sursemis)', doseG_m2: 35, doseRange: '25–35 g/m²', note: 'Post-scarif, après le sursemis' },
+    ],
+    note: 'NPK 20-20-8 riche en phosphore — Poly-S libération contrôlée 3 mois. Engrais de démarrage idéal création / rénovation (mai → octobre)',
+  },
+  {
+    id: 'sierrablen-nstart',
+    name: 'Sierrablen Plus N-Start 3M',
+    brand: 'ICL',
+    category: 'fertilizer',
+    defaultUsageId: 'demarrage',
+    usages: [
+      { id: 'demarrage', label: 'Démarrage printemps', doseG_m2: 25, doseRange: '15–25 g/m²', note: 'Verdissement rapide, même par temps frais' },
+    ],
+    note: 'NPK 30-5-5 — Poly-S libération contrôlée 3 mois. Forte teneur azote pour réveil de printemps (avril → juin). Granulométrie fine, gazons tondus > 8 mm',
+  },
+  {
+    id: 'sierrablen-stress',
+    name: 'Sierrablen Plus Stress Control',
+    brand: 'ICL',
+    category: 'fertilizer',
+    defaultUsageId: 'stress_ete',
+    usages: [
+      { id: 'stress_ete', label: 'Anti-stress estival', doseG_m2: 35, doseRange: '25–35 g/m²', note: 'Renforce résistance chaleur, sécheresse, piétinement' },
+      { id: 'preparation_hiver', label: 'Préparation hivernale', doseG_m2: 35, doseRange: '25–35 g/m²', note: 'Renforce résistance au froid avant l\'hiver' },
+    ],
+    note: 'NPK 15-0-28 + 2 MgO — très forte teneur en potasse pour résistance aux stress (été + hiver). Poly-S 3 mois, gazons tondus > 6 mm',
+  },
+  {
+    id: 'proturf-12-5-20',
+    name: 'ProTurf 12-5-20',
+    brand: 'ICL Everris',
+    category: 'fertilizer',
+    defaultUsageId: 'automne',
+    usages: [
+      { id: 'automne', label: 'Fertilisation automne', doseG_m2: 35, doseRange: '20–35 g/m²', note: 'Septembre à novembre — prépare l\'hiver' },
+      { id: 'stress_ete', label: 'Stress estival', doseG_m2: 35, doseRange: '20–35 g/m²', note: 'Juillet à août — soutient en période chaude' },
+    ],
+    note: 'NPK 12-5-20 + 2.2 MgO + 2.2 CaO — riche en Polyhalite (K, Mg, Ca, S). Poly-S 2–3 mois. Polyvalent gazons / arbustes / massifs. Granulés fins, gazons tondus à 6 mm',
+  },
 
   // Biostimulants / Activateurs sol
   {
@@ -212,6 +291,19 @@ export const SOLID_CATALOG: SolidCatalogProduct[] = [
       { id: 'choc', label: 'Choc démarrage', doseG_m2: 30, doseRange: '25–35 g/m²' },
     ],
     note: 'Activateur biologique sol — structure et humus',
+  },
+  {
+    id: 'agrosil-algin',
+    name: 'Agrosil Algin',
+    brand: 'Compo Expert',
+    category: 'biostim',
+    defaultUsageId: 'creation',
+    usages: [
+      { id: 'creation', label: 'Création (incorporation)', doseG_m2: 150, doseRange: '100–150 g/m²', note: 'À incorporer dans les 10–15 premiers cm avant semis' },
+      { id: 'renovation', label: 'Rénovation / scalpage', doseG_m2: 100, doseRange: '70–100 g/m²', note: 'Faire suivre d\'un griffage ou brossage' },
+      { id: 'aeration', label: 'Aération / défeutrage', doseG_m2: 70, doseRange: '50–70 g/m²', note: 'Après louchets / lames — finir au brossage' },
+    ],
+    note: 'Bio-activateur de sol — 25% algue Ascophyllum nodosum + zéolithe + Bacillus R6CDX + acides humiques. Stimule germination, enracinement, vie microbienne. Idéal sols sableux, compactés, asphyxiés ou C/N > 12',
   },
 ]
 
@@ -228,6 +320,16 @@ export const LIQUID_CATALOG: LiquidCatalogProduct[] = [
       { id: 'curatif', label: 'Curatif (stress installé)', doseL_ha: 50, doseMl_L: 5, doseRange: '50 L/ha', note: 'À appliquer dès symptômes' },
     ],
     note: 'Biostimulant foliaire — acides aminés + oligo-éléments',
+  },
+  {
+    id: 'vitalnova-smx',
+    name: 'Vitalnova SMX',
+    brand: 'ICL',
+    defaultUsageId: 'standard',
+    usages: [
+      { id: 'standard', label: 'Pulvérisation foliaire', doseL_ha: 10, doseMl_L: 1, doseRange: '5–10 L/ha', note: 'Toute l\'année hors gel et forte chaleur — intervalle 15 jours mini' },
+    ],
+    note: 'Concentré d\'algues marines — 10% Ascophyllum nodosum (acides aminés + oligo-éléments). Booster racinaire, accélère levée des semis, améliore résistance aux stress. Miscible avec Vitalnova Stressbuster / Silk',
   },
   {
     id: 'h2pro-trismart',
