@@ -10,8 +10,10 @@
  *  - Un sélecteur inline permet de switcher d'usage → la dose s'adapte
  *
  * Pour les liquides, la dose est exprimée en L/ha (mode expert) ET ml/L
- * (mode simplifié, 10 L bouillie / 100 m²) — les deux sont cohérentes :
- *   dose_ml_L = dose_L_ha / 100
+ * (mode simplifié) — les deux sont cohérentes pour une bouillie de référence
+ * de 1000 L/ha, soit 1 L d'eau pour 10 m² :
+ *   dose_ml_L = dose_L_ha   (relation 1:1)
+ *   ex : 10 L/ha → 10 ml/L  (100 mL de produit dans 10 L d'eau pour 100 m²)
  */
 
 // ── Types ────────────────────────────────────────────────────────────────────
@@ -718,8 +720,8 @@ export const LIQUID_CATALOG: LiquidCatalogProduct[] = [
     brand: 'ICL',
     defaultUsageId: 'entretien',
     usages: [
-      { id: 'entretien', label: 'Entretien préventif', doseL_ha: 25, doseMl_L: 2.5, doseRange: '25 L/ha' },
-      { id: 'curatif', label: 'Curatif (stress installé)', doseL_ha: 50, doseMl_L: 5, doseRange: '50 L/ha', note: 'À appliquer dès symptômes' },
+      { id: 'entretien', label: 'Entretien préventif', doseL_ha: 25, doseMl_L: 25, doseRange: '25 L/ha' },
+      { id: 'curatif', label: 'Curatif (stress installé)', doseL_ha: 50, doseMl_L: 50, doseRange: '50 L/ha', note: 'À appliquer dès symptômes' },
     ],
     note: 'Biostimulant foliaire — acides aminés + oligo-éléments',
   },
@@ -729,7 +731,7 @@ export const LIQUID_CATALOG: LiquidCatalogProduct[] = [
     brand: 'ICL',
     defaultUsageId: 'standard',
     usages: [
-      { id: 'standard', label: 'Pulvérisation foliaire', doseL_ha: 10, doseMl_L: 1, doseRange: '5–10 L/ha', note: 'Toute l\'année hors gel et forte chaleur — intervalle 15 jours mini' },
+      { id: 'standard', label: 'Pulvérisation foliaire', doseL_ha: 10, doseMl_L: 10, doseRange: '5–10 L/ha', note: 'Toute l\'année hors gel et forte chaleur — intervalle 15 jours mini' },
     ],
     note: 'Concentré d\'algues marines — 10% Ascophyllum nodosum (acides aminés + oligo-éléments). Booster racinaire, accélère levée des semis, améliore résistance aux stress. Miscible avec Vitalnova Stressbuster / Silk',
   },
@@ -739,8 +741,8 @@ export const LIQUID_CATALOG: LiquidCatalogProduct[] = [
     brand: 'ICL',
     defaultUsageId: 'entretien',
     usages: [
-      { id: 'premiere', label: '1ʳᵉ application', doseL_ha: 25, doseMl_L: 2.5, note: 'Choc d\'humectation' },
-      { id: 'entretien', label: 'Entretien mensuel', doseL_ha: 10, doseMl_L: 1, doseRange: '10 L/ha' },
+      { id: 'premiere', label: '1ʳᵉ application', doseL_ha: 25, doseMl_L: 25, note: 'Choc d\'humectation' },
+      { id: 'entretien', label: 'Entretien mensuel', doseL_ha: 10, doseMl_L: 10, doseRange: '10 L/ha' },
     ],
     note: 'Agent mouillant triple action — +40% économie d\'eau',
   },
@@ -750,7 +752,7 @@ export const LIQUID_CATALOG: LiquidCatalogProduct[] = [
     brand: 'ICL',
     defaultUsageId: 'mensuel',
     usages: [
-      { id: 'mensuel', label: 'Mensuel anti Dry Patch', doseL_ha: 10, doseMl_L: 1 },
+      { id: 'mensuel', label: 'Mensuel anti Dry Patch', doseL_ha: 10, doseMl_L: 10 },
     ],
     note: 'Super pénétrant drainage — 1×/mois Dry Patch',
   },
@@ -760,7 +762,7 @@ export const LIQUID_CATALOG: LiquidCatalogProduct[] = [
     brand: 'Compo Expert',
     defaultUsageId: 'standard',
     usages: [
-      { id: 'standard', label: 'Pulvérisation standard', doseL_ha: 18, doseMl_L: 1.8, doseRange: '1–2.8 ml/L' },
+      { id: 'standard', label: 'Pulvérisation standard', doseL_ha: 2.8, doseMl_L: 2.8, doseRange: '1–2.8 ml/L' },
     ],
     note: 'Agent mouillant concentré — 58% sulfosuccinate',
   },
@@ -770,7 +772,7 @@ export const LIQUID_CATALOG: LiquidCatalogProduct[] = [
     brand: 'Compo Expert',
     defaultUsageId: 'foliaire',
     usages: [
-      { id: 'foliaire', label: 'Engrais foliaire', doseL_ha: 50, doseMl_L: 5, doseRange: '40–60 L/ha' },
+      { id: 'foliaire', label: 'Engrais foliaire', doseL_ha: 50, doseMl_L: 50, doseRange: '40–60 L/ha' },
     ],
     note: 'Engrais foliaire — coloration verte intense',
   },
@@ -780,8 +782,8 @@ export const LIQUID_CATALOG: LiquidCatalogProduct[] = [
     brand: 'Compo Expert',
     defaultUsageId: 'preventif',
     usages: [
-      { id: 'preventif', label: 'Préventif stress hydrique', doseL_ha: 15, doseMl_L: 1.5, doseRange: '10–20 L/ha' },
-      { id: 'choc', label: 'Choc piétinement', doseL_ha: 20, doseMl_L: 2 },
+      { id: 'preventif', label: 'Préventif stress hydrique', doseL_ha: 15, doseMl_L: 15, doseRange: '10–20 L/ha' },
+      { id: 'choc', label: 'Choc piétinement', doseL_ha: 20, doseMl_L: 20 },
     ],
     note: 'Silicium — résistance stress hydrique et piétinement',
   },
@@ -791,7 +793,7 @@ export const LIQUID_CATALOG: LiquidCatalogProduct[] = [
     brand: 'ICL',
     defaultUsageId: 'standard',
     usages: [
-      { id: 'standard', label: 'Pulvérisation foliaire', doseL_ha: 20, doseMl_L: 2, doseRange: '20 L/ha', note: 'Dans 400 L d\'eau — mars à novembre, 3–6 j avant compétition' },
+      { id: 'standard', label: 'Pulvérisation foliaire', doseL_ha: 20, doseMl_L: 20, doseRange: '20 L/ha', note: 'Dans 400 L d\'eau — mars à novembre, 3–6 j avant compétition' },
     ],
     note: 'NPK 0-10-19 riche en silicate de potassium (6% silice) — sans azote. Améliore résistance sécheresse et maladies, renforce la feuille, port dressé (roule de balle). Effets visibles 3–5 j, durée ~4 semaines. Spécial gazon exposé aux maladies',
   },
@@ -801,8 +803,8 @@ export const LIQUID_CATALOG: LiquidCatalogProduct[] = [
     brand: 'Compo Expert',
     defaultUsageId: 'stress',
     usages: [
-      { id: 'stress', label: 'Stress / compétition', doseL_ha: 30, doseMl_L: 3, doseRange: '20–30 L/ha', note: 'Dans 500 L d\'eau — green / sport en période de stress' },
-      { id: 'placage', label: 'Gazon de placage', doseL_ha: 30, doseMl_L: 3, doseRange: '20–30 L/ha', note: 'À la mise en place pour enracinement rapide' },
+      { id: 'stress', label: 'Stress / compétition', doseL_ha: 30, doseMl_L: 30, doseRange: '20–30 L/ha', note: 'Dans 500 L d\'eau — green / sport en période de stress' },
+      { id: 'placage', label: 'Gazon de placage', doseL_ha: 30, doseMl_L: 30, doseRange: '20–30 L/ha', note: 'À la mise en place pour enracinement rapide' },
     ],
     note: 'Engrais NPK 5-9-10 + oligo-éléments + 40% extrait de 2 algues (Ecklonia maxima + Ascophyllum nodosum) — biostimulant racinaire (équivalent auxines). Meilleure reprise après tonte rase / dégradations, résistance chaleur, froid, manque d\'eau. Associer à Kick Pro',
   },
@@ -812,9 +814,9 @@ export const LIQUID_CATALOG: LiquidCatalogProduct[] = [
     brand: 'Compo Expert',
     defaultUsageId: 'gazon_etabli',
     usages: [
-      { id: 'semis', label: 'Semis de gazon', doseL_ha: 10, doseMl_L: 1, doseRange: '10 L/ha (1%)', note: 'Dès le semis effectué' },
-      { id: 'jeune_gazon', label: 'Jeune gazon', doseL_ha: 10, doseMl_L: 1, doseRange: '10 L/ha (1%)', note: '1 à 5 apports / an' },
-      { id: 'gazon_etabli', label: 'Gazon établi', doseL_ha: 20, doseMl_L: 2, doseRange: '20 L/ha (1–2%)', note: 'Dans 600–1000 L bouillie/ha — sol à 14–15°C mini' },
+      { id: 'semis', label: 'Semis de gazon', doseL_ha: 10, doseMl_L: 10, doseRange: '10 L/ha (1%)', note: 'Dès le semis effectué' },
+      { id: 'jeune_gazon', label: 'Jeune gazon', doseL_ha: 10, doseMl_L: 10, doseRange: '10 L/ha (1%)', note: '1 à 5 apports / an' },
+      { id: 'gazon_etabli', label: 'Gazon établi', doseL_ha: 20, doseMl_L: 20, doseRange: '20 L/ha (1–2%)', note: 'Dans 600–1000 L bouillie/ha — sol à 14–15°C mini' },
     ],
     note: 'Biostimulant liquide utilisable en Agriculture Biologique — extrait d\'algue Ecklonia maxima + Bacillus R6CDX (biofilm racinaire) + oligo-éléments chélatés EDTA. Germination et installation accélérées, chevelu racinaire dense, résistance aux stress abiotiques',
   },
@@ -824,8 +826,8 @@ export const LIQUID_CATALOG: LiquidCatalogProduct[] = [
     brand: 'Compo Expert',
     defaultUsageId: 'sport',
     usages: [
-      { id: 'sport', label: 'Terrains de sport', doseL_ha: 30, doseMl_L: 3, doseRange: '30 L/ha', note: 'Dans 400–800 L d\'eau — ne pas arroser derrière' },
-      { id: 'greens', label: 'Greens et départs', doseL_ha: 20, doseMl_L: 2, doseRange: '20 L/ha' },
+      { id: 'sport', label: 'Terrains de sport', doseL_ha: 30, doseMl_L: 30, doseRange: '30 L/ha', note: 'Dans 400–800 L d\'eau — ne pas arroser derrière' },
+      { id: 'greens', label: 'Greens et départs', doseL_ha: 20, doseMl_L: 20, doseRange: '20 L/ha' },
     ],
     note: 'Engrais foliaire liquide N 15-0-0 + 8% Fe + oligo-éléments — reverdissement très rapide avec peu de pousse. Idéal avant compétition ou en hiver (compense le manque de lumière). Ne pas appliquer par temps sec/chaud. Associable à Kick (1 L/ha) pour accélérer la pénétration du fer',
   },
@@ -835,8 +837,8 @@ export const LIQUID_CATALOG: LiquidCatalogProduct[] = [
     brand: 'Compo Expert',
     defaultUsageId: 'repete',
     usages: [
-      { id: 'repete', label: 'Applications répétées', doseL_ha: 40, doseMl_L: 4, doseRange: '20–40 L/ha', note: 'Toutes les 2 à 4 semaines (spoon feeding)' },
-      { id: 'unique', label: 'Application unique', doseL_ha: 60, doseMl_L: 6, doseRange: '50–60 L/ha', note: 'Faire suivre d\'un arrosage (4–5 mm)' },
+      { id: 'repete', label: 'Applications répétées', doseL_ha: 40, doseMl_L: 40, doseRange: '20–40 L/ha', note: 'Toutes les 2 à 4 semaines (spoon feeding)' },
+      { id: 'unique', label: 'Application unique', doseL_ha: 60, doseMl_L: 60, doseRange: '50–60 L/ha', note: 'Faire suivre d\'un arrosage (4–5 mm)' },
     ],
     note: 'Engrais azoté liquide N 28 à action lente (60% de l\'azote en libération lente) — nutrition immédiate + longue durée, faible indice de salinité. Reverdissement avec croissance régulée. Appliquer le matin ou le soir, pas en plein soleil. Volume de bouillie 600–800 L/ha',
   },
@@ -846,7 +848,7 @@ export const LIQUID_CATALOG: LiquidCatalogProduct[] = [
     brand: 'Frayssinet',
     defaultUsageId: 'gazon',
     usages: [
-      { id: 'gazon', label: 'Gazon (placage / entretien / stress)', doseL_ha: 20, doseMl_L: 2, doseRange: '1–2 L / 1000 m²', note: '2 à 3 applications à 8–10 j d\'intervalle, dans 300 L d\'eau mini + arrosage' },
+      { id: 'gazon', label: 'Gazon (placage / entretien / stress)', doseL_ha: 20, doseMl_L: 20, doseRange: '1–2 L / 1000 m²', note: '2 à 3 applications à 8–10 j d\'intervalle, dans 300 L d\'eau mini + arrosage' },
     ],
     note: 'Stimulateur de croissance racinaire homologué (AMM n°1080002), utilisable en Agriculture Biologique — 40% de matière active OSYR. Protège les auxines et active la lignification : +41% de poids racinaire sur ray-grass. Assure l\'enracinement du gazon de placage, limite la régression racinaire sous stress (hydrique, thermique, piétinement, salinité), sécurise les semis de regarnissage',
   },
