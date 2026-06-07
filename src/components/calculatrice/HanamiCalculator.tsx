@@ -1627,6 +1627,9 @@ export default function HanamiCalculator() {
                                     catalogProductId: prod.raw.id,
                                     catalogUsageId: u.id,
                                   })
+                                  // Pré-remplit la bouillie experte depuis la fiche.
+                                  // (bouillie partagée par le mélange : la dernière sélection l'emporte)
+                                  if (u.bouillieL_ha) setSprayVolume(String(u.bouillieL_ha))
                                 }}
                                 search={(q, limit) => searchLiquidCatalog(q, limit).map(prod => {
                                   const u = getDefaultLiquidUsage(prod)
@@ -1701,6 +1704,7 @@ export default function HanamiCalculator() {
                                       doseExpert: String(u.doseL_ha),
                                       catalogUsageId: newUsageId,
                                     })
+                                    if (u.bouillieL_ha) setSprayVolume(String(u.bouillieL_ha))
                                   }}
                                 />
                               )
