@@ -15,6 +15,7 @@
 
 import Link from 'next/link'
 import { useFadeIn } from '@/hooks/useFadeIn'
+import { track } from '@/lib/analytics'
 import BeforeAfterSlider from '@/components/shared/BeforeAfterSlider'
 
 export default function Hero() {
@@ -78,6 +79,7 @@ export default function Hero() {
               {/* CTA principal : wizard de simulation */}
               <Link
                 href="/mon-chantier"
+                onClick={() => track('cta_click', { location: 'hero_primary', page: window.location.pathname })}
                 className="inline-flex items-center justify-center px-6 py-3 rounded-md bg-hanami-700 text-white font-medium hover:bg-hanami-900 transition-colors cursor-pointer text-sm"
               >
                 Faire ma simulation gratuite
@@ -88,6 +90,7 @@ export default function Hero() {
                 href="https://wa.me/33667277614"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => track('whatsapp_click', { source: 'hero', page: window.location.pathname })}
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-md border border-stone-200 text-stone-800 font-medium hover:border-hanami-500 hover:text-hanami-700 transition-colors text-sm bg-white"
               >
                 {/* Icône WhatsApp SVG */}

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Fraunces, DM_Sans, Space_Mono, Geist } from 'next/font/google'
 import './globals.css'
 import CookieBanner from '@/components/shared/CookieBanner'
+import AnalyticsProvider from '@/components/shared/AnalyticsProvider'
 import { cn } from "@/lib/utils";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
@@ -92,6 +93,7 @@ export default function RootLayout({
         <div className="grain-overlay" aria-hidden="true" />
         {children}
         <CookieBanner />
+        <AnalyticsProvider />
       </body>
     </html>
   )

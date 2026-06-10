@@ -86,7 +86,7 @@ export default function HomePage() {
         <Arguments />
 
         {/* CTA intermédiaire 1 */}
-        <IntermediateCTA message="Prêt à changer de méthode ? Demandez votre diagnostic gratuit" />
+        <IntermediateCTA message="Prêt à changer de méthode ? Demandez votre diagnostic gratuit" trackingId="intermediate_1" />
 
         {/* 4. Ce que vous économisez */}
         <Savings />
@@ -98,7 +98,7 @@ export default function HomePage() {
         <SeasonalMoments />
 
         {/* CTA intermédiaire 2 */}
-        <IntermediateCTA message="Vous aussi, passez à la méthode pro. Contactez-nous" />
+        <IntermediateCTA message="Vous aussi, passez à la méthode pro. Contactez-nous" trackingId="intermediate_2" />
 
         {/* 7. Études de cas — Susan, Véronique, Noël */}
         <CaseStudies />
@@ -107,7 +107,7 @@ export default function HomePage() {
         <Testimonials />
 
         {/* CTA intermédiaire 3 */}
-        <IntermediateCTA message="C'est simple. Commencez maintenant." />
+        <IntermediateCTA message="C'est simple. Commencez maintenant." trackingId="intermediate_3" />
 
         {/* 9. Comment ça marche — 4 étapes */}
         <HowItWorks />

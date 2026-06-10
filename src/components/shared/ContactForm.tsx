@@ -20,6 +20,7 @@
 import { useForm, Controller } from 'react-hook-form'
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { useFadeIn } from '@/hooks/useFadeIn'
+import { track } from '@/lib/analytics'
 import { X, Upload, ImageIcon } from 'lucide-react'
 
 // ── Types de données du formulaire ──────────────────────────────────────────
@@ -165,10 +166,12 @@ export default function ContactForm({ variant }: ContactFormProps) {
 
       if (!res.ok) {
         setSubmitError(true)
+        track('contact_submit', { variant, status: 'error' })
         return
       }
 
       setSucceeded(true)
+      track('contact_submit', { variant, status: 'success' })
       reset()
       setPhotos(prev => {
         prev.forEach(p => URL.revokeObjectURL(p.preview))
@@ -177,6 +180,7 @@ export default function ContactForm({ variant }: ContactFormProps) {
     } catch {
       // Erreur réseau (offline, CORS, DNS…) → WhatsApp fallback
       setSubmitError(true)
+      track('contact_submit', { variant, status: 'error' })
     } finally {
       setSubmitting(false)
     }

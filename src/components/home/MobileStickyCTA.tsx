@@ -12,6 +12,7 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import { track } from '@/lib/analytics'
 
 export default function MobileStickyCTA() {
   const [visible, setVisible] = useState(false)
@@ -49,6 +50,7 @@ export default function MobileStickyCTA() {
     >
       <Link
         href="/mon-chantier"
+        onClick={() => track('cta_click', { location: 'sticky_mobile', page: window.location.pathname })}
         className="block w-full py-3 rounded-md bg-hanami-700 text-white font-medium text-sm hover:bg-hanami-900 transition-colors text-center"
       >
         Faire ma simulation gratuite →

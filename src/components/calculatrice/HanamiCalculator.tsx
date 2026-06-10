@@ -15,6 +15,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Plus, Trash2, AlertTriangle, Info, Calculator, Download, ChevronLeft, ImageDown, Camera, Loader2, Share2 } from 'lucide-react'
 import { compressPhoto } from '@/lib/photo-utils'
+import { track } from '@/lib/analytics'
 import PhotoLightbox from '@/components/shared/PhotoLightbox'
 import ProductAutocomplete from './ProductAutocomplete'
 import UsageSwitcher from './UsageSwitcher'
@@ -576,6 +577,7 @@ export default function HanamiCalculator() {
   // ── Calculate results ─────────────────────────────────────────────────────
 
   const calculateResults = (overrideLiquidDose?: string, overrideSprayVol?: string) => {
+    track('calculator_action', { action: 'compute', type: productType })
     const totalSurface  = reverseMode ? getSelectedSurface() : getTotalSurface()
     const zonesToCalc   = reverseMode ? zones.filter((_, i) => selectedZones.includes(i)) : zones
     const numberOfZones = zonesToCalc.filter(z => parseFloat(z.surface) > 0).length
@@ -776,6 +778,7 @@ export default function HanamiCalculator() {
   }, [])
 
   const downloadPDF = async () => {
+    track('calculator_action', { action: 'export_pdf' })
     const dataUrl = await captureWithPadding()
     const { jsPDF } = await import('jspdf')
     const img = new window.Image()
@@ -791,6 +794,7 @@ export default function HanamiCalculator() {
   }
 
   const downloadPNG = async () => {
+    track('calculator_action', { action: 'export_png' })
     const dataUrl = await captureWithPadding()
     const a = document.createElement('a')
     a.href = dataUrl
@@ -961,6 +965,7 @@ export default function HanamiCalculator() {
     // TODO: connect to Mailchimp / Resend / Brevo endpoint
     localStorage.setItem('hanami-newsletter-email', newsletterEmail)
     setNewsletterSubmitted(true)
+    track('newsletter_signup', { source: 'calculator', status: 'success' })
   }
 
   // ── Shared classes ────────────────────────────────────────────────────────

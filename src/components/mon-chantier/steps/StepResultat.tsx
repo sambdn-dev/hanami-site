@@ -18,6 +18,7 @@ import { PopupModal } from 'react-calendly'
 import { useEffect, useState } from 'react'
 import { SERVICES } from '@/lib/chantier/services'
 import { computeEstimation, formatEstimation, formatPrice } from '@/lib/chantier/pricing'
+import { track } from '@/lib/analytics'
 import type { ChantierFormState, ChantierResult } from '@/lib/chantier/types'
 
 const CALENDLY_URL = 'https://calendly.com/samibouden/30min'
@@ -149,7 +150,10 @@ export default function StepResultat({ state, result, submissionStatus }: Props)
       {/* ── CTA principal Calendly ─────────────────────────── */}
       <div className="mt-6 flex flex-col sm:flex-row gap-3">
         <button
-          onClick={() => setCalendlyOpen(true)}
+          onClick={() => {
+            track('calendly_open', { source: 'wizard_result' })
+            setCalendlyOpen(true)
+          }}
           className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-4 rounded-md bg-hanami-700 text-white font-medium text-sm hover:bg-hanami-900 transition-colors cursor-pointer"
         >
           <Calendar className="w-4 h-4" />
@@ -161,6 +165,7 @@ export default function StepResultat({ state, result, submissionStatus }: Props)
           href={waUrl}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => track('whatsapp_click', { source: 'wizard_result' })}
           className="inline-flex items-center justify-center gap-2 px-6 py-4 rounded-md border border-stone-200 bg-white text-stone-700 font-medium text-sm hover:border-hanami-500 hover:text-hanami-700 transition-colors"
         >
           <MessageCircle className="w-4 h-4 text-[#25D366]" />

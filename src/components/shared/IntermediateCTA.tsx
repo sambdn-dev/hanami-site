@@ -15,6 +15,7 @@
 
 import Link from 'next/link'
 import { useFadeIn } from '@/hooks/useFadeIn'
+import { track } from '@/lib/analytics'
 import CalendlyButton from './CalendlyButton'
 
 interface IntermediateCTAProps {
@@ -30,6 +31,8 @@ interface IntermediateCTAProps {
   href?: string
   /** Source UTM pour tracker la provenance dans Calendly analytics. */
   utmSource?: string
+  /** Identifiant de position pour l'event cta_click (ex: 'intermediate_1'). */
+  trackingId?: string
 }
 
 export default function IntermediateCTA({
@@ -39,11 +42,13 @@ export default function IntermediateCTA({
   useCalendly = false,
   href = '/mon-chantier',
   utmSource,
+  trackingId,
 }: IntermediateCTAProps) {
   const fadeRef = useFadeIn()
 
   // Scroll fluide vers le formulaire de contact (utilisé pour les ancres #contact)
   function scrollToContact(e: React.MouseEvent<HTMLAnchorElement>) {
+    track('cta_click', { location: trackingId ?? 'intermediate', page: window.location.pathname })
     if (!href.startsWith('#')) return
     e.preventDefault()
     document.getElementById(href.slice(1))?.scrollIntoView({ behavior: 'smooth' })
@@ -97,6 +102,7 @@ export default function IntermediateCTA({
                 href="https://wa.me/33667277614"
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => track('whatsapp_click', { source: trackingId ?? 'intermediate', page: window.location.pathname })}
                 className={`inline-flex items-center gap-1.5 px-5 py-2.5 rounded-md border text-sm font-medium transition-colors whitespace-nowrap ${btnBorder}`}
               >
                 WhatsApp

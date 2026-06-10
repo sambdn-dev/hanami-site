@@ -1,3 +1,7 @@
+'use client'
+
+import { track } from '@/lib/analytics'
+
 export default function WhatsAppButton() {
   return (
     <a
@@ -5,6 +9,7 @@ export default function WhatsAppButton() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Nous contacter sur WhatsApp"
+      onClick={() => track('whatsapp_click', { source: 'floating', page: window.location.pathname })}
       className="fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-105 active:scale-95"
       style={{ backgroundColor: '#25D366' }}
     >

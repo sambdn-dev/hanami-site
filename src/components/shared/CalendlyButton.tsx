@@ -17,6 +17,7 @@
 
 import { useEffect, useState, type ReactNode } from 'react'
 import { PopupModal } from 'react-calendly'
+import { track } from '@/lib/analytics'
 
 const CALENDLY_URL = 'https://calendly.com/samibouden/30min'
 
@@ -45,7 +46,10 @@ export default function CalendlyButton({
     <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          track('calendly_open', { source: utmSource })
+          setOpen(true)
+        }}
         className={className}
       >
         {children}
