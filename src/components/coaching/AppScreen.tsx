@@ -17,6 +17,9 @@ interface AppScreenProps {
   variant?: 'browser' | 'phone'
   priority?: boolean
   className?: string
+  /** Hauteur d'affichage max (px) : recadre le haut d'un écran long avec
+   *  un dégradé de fin. Utilisé pour les vignettes de galerie. */
+  cropHeight?: number
 }
 
 export default function AppScreen({
@@ -27,6 +30,7 @@ export default function AppScreen({
   variant = 'browser',
   priority = false,
   className = '',
+  cropHeight,
 }: AppScreenProps) {
   if (variant === 'phone') {
     return (
@@ -59,15 +63,31 @@ export default function AppScreen({
           app.hanami-gazon.fr
         </span>
       </div>
-      <Image
-        src={src}
-        alt={alt}
-        width={width}
-        height={height}
-        sizes="(max-width: 768px) 100vw, 720px"
-        priority={priority}
-        className="w-full h-auto block"
-      />
+      {cropHeight ? (
+        <div className="relative overflow-hidden" style={{ height: cropHeight }}>
+          <Image
+            src={src}
+            alt={alt}
+            width={width}
+            height={height}
+            sizes="(max-width: 768px) 100vw, 560px"
+            priority={priority}
+            className="w-full h-auto block"
+          />
+          {/* Dégradé de fin : suggère "et plus encore" sans tronquer net */}
+          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white to-transparent" aria-hidden="true" />
+        </div>
+      ) : (
+        <Image
+          src={src}
+          alt={alt}
+          width={width}
+          height={height}
+          sizes="(max-width: 768px) 100vw, 720px"
+          priority={priority}
+          className="w-full h-auto block"
+        />
+      )}
     </figure>
   )
 }
