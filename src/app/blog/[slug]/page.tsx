@@ -13,6 +13,7 @@
  */
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import remarkGfm from 'remark-gfm'
@@ -146,11 +147,16 @@ export default async function ArticlePage(
 
           {article.cover && (
             <div className="max-w-4xl mx-auto mb-14 rounded-2xl overflow-hidden border border-stone-200">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              {/* Dimensions indicatives 16:9 — w-full h-auto préserve le ratio
+                  réel du fichier, next/image fournit srcset + WebP/AVIF */}
+              <Image
                 src={article.cover}
                 alt=""
+                width={1600}
+                height={900}
                 className="w-full h-auto"
+                sizes="(max-width: 1024px) 100vw, 896px"
+                priority
               />
             </div>
           )}

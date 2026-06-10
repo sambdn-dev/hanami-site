@@ -123,10 +123,13 @@ export const mdxComponents = {
     )
   },
   img: (props: ElementProps<'img'>) => (
+    // Dimensions inconnues dans le MDX arbitraire → next/image risqué ici ;
+    // lazy + decoding async suffisent pour les images de corps d'article.
     // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
     <img
       className="my-8 rounded-xl border border-stone-200 w-full h-auto"
       loading="lazy"
+      decoding="async"
       {...props}
     />
   ),

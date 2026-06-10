@@ -123,6 +123,7 @@ export default function Hero() {
                 afterTransform="scale(1.08)"
                 afterTransformOrigin="center 15%"
                 initialPosition={50}
+                priority
               />
 
               {/* Badge flottant "Résultat" en bas à gauche */}
