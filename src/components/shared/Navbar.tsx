@@ -137,11 +137,13 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
                   </Link>
                 )
               })}
+              {/* CTA principal — coaching pour les particuliers (offre scalable
+                  nationale), simulation pour la page pro */}
               <Link
-                href="/mon-chantier"
+                href={isPro ? '/mon-chantier' : '/coaching'}
                 className="text-sm font-medium px-4 py-2 rounded-lg bg-hanami-700 text-white hover:bg-hanami-900 transition-colors cursor-pointer shadow-sm"
               >
-                Faire ma simulation
+                {isPro ? 'Faire ma simulation' : 'Découvrir le coaching'}
               </Link>
             </div>
 
@@ -225,11 +227,11 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
         {/* CTA en bas */}
         <div className="px-6 py-6 border-t border-stone-100 flex flex-col gap-3">
           <Link
-            href="/mon-chantier"
+            href={isPro ? '/mon-chantier' : '/coaching'}
             onClick={() => setMenuOpen(false)}
             className="w-full py-3.5 rounded-xl bg-hanami-700 text-white font-semibold text-sm hover:bg-hanami-900 transition-colors text-center"
           >
-            Faire ma simulation gratuite
+            {isPro ? 'Faire ma simulation gratuite' : 'Découvrir le coaching — 29 €/mois'}
           </Link>
           <a
             href="https://wa.me/33667277614"

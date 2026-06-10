@@ -101,9 +101,11 @@ export default function HomePage() {
         <Arguments />
 
         {/* CTA intermédiaire 1 */}
-        {/* Copy alignée sur la destination réelle (wizard, pas formulaire) */}
+        {/* CTA intermédiaires orientés coaching — l'offre primaire du site */}
         <IntermediateCTA
-          message="Prêt à changer de méthode ? Estimez votre chantier en 2 minutes — gratuit"
+          message="Prêt à changer de méthode ? Un expert vous guide toute l'année."
+          ctaLabel="Découvrir le coaching"
+          href="/coaching"
           trackingId="intermediate_1"
         />
 
@@ -117,7 +119,12 @@ export default function HomePage() {
         <SeasonalMoments />
 
         {/* CTA intermédiaire 2 */}
-        <IntermediateCTA message="Vous aussi, passez à la méthode pro. Contactez-nous" trackingId="intermediate_2" />
+        <IntermediateCTA
+          message="Vous aussi, passez à la méthode pro — dès 29 €/mois."
+          ctaLabel="Découvrir le coaching"
+          href="/coaching"
+          trackingId="intermediate_2"
+        />
 
         {/* 7. Études de cas — Susan, Véronique, Noël */}
         <CaseStudies />
@@ -126,7 +133,12 @@ export default function HomePage() {
         <Testimonials />
 
         {/* CTA intermédiaire 3 */}
-        <IntermediateCTA message="C'est simple. Commencez maintenant." trackingId="intermediate_3" />
+        <IntermediateCTA
+          message="C'est simple. Commencez maintenant."
+          ctaLabel="Découvrir le coaching"
+          href="/coaching"
+          trackingId="intermediate_3"
+        />
 
         {/* 9. Comment ça marche — 4 étapes */}
         <HowItWorks />

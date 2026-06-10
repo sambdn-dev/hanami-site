@@ -41,6 +41,8 @@ export const PRICING_DISPLAY = {
   recoMinM2: PRIX_RECO_MIN_M2,
   recoMaxM2: PRIX_RECO_MAX_M2,
   coachingMois: PRIX_COACHING_MOIS,
+  /** Option annuelle : 10 × le mensuel (2 mois offerts) — validé par Sami */
+  coachingAnnuel: PRIX_COACHING_MOIS * 10,
 } as const
 
 /**

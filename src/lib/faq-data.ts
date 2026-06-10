@@ -14,7 +14,7 @@ export interface FaqEntry {
 export const FAQS: FaqEntry[] = [
   {
     question: 'Combien ça coûte ?',
-    answer: 'Le coaching annuel coûte 29€/mois — moins cher qu\'un sac d\'engrais en jardinerie. Les rénovations vont de 6 à 25€/m² TTC selon l\'état du terrain, estimation précise en 2 minutes avec la simulation gratuite. Le diagnostic initial est offert.',
+    answer: 'Le coaching coûte 29€/mois sans engagement (ou 290€/an, soit 2 mois offerts) — moins cher qu\'un sac d\'engrais en jardinerie. Les rénovations vont de 6 à 25€/m² TTC selon l\'état du terrain, estimation précise en 2 minutes avec la simulation gratuite. Le diagnostic initial est offert.',
   },
   {
     question: '29€/mois, c\'est rentable ?',
@@ -38,7 +38,7 @@ export const FAQS: FaqEntry[] = [
   },
   {
     question: 'Et si ça ne marche pas ?',
-    answer: 'On ajuste votre protocole sans surcoût. Le suivi est continu toute l\'année, on ne vous laisse pas avec un PDF et bonne chance.',
+    answer: 'On ajuste votre protocole sans surcoût — le suivi est continu toute l\'année, on ne vous laisse pas avec un PDF et bonne chance. Et si le coaching ne vous convient vraiment pas : satisfait ou remboursé pendant 30 jours, sans justification.',
   },
   {
     question: 'Pourquoi pas un paysagiste classique ?',

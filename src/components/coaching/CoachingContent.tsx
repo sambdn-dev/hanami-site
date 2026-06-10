@@ -94,7 +94,7 @@ export default function CoachingContent() {
               </div>
 
               <p className="font-[family-name:var(--font-space-mono)] text-[11px] text-stone-400 uppercase tracking-wider mt-4">
-                Diagnostic offert · Sans engagement · Réponse sous 24 h
+                Diagnostic offert · Sans engagement · Garantie 30 jours
               </p>
             </div>
 
@@ -152,12 +152,21 @@ export default function CoachingContent() {
                 {PRICING_DISPLAY.coachingMois}&nbsp;€
                 <span className="font-[family-name:var(--font-fraunces)] text-2xl font-semibold text-stone-300 italic"> /mois TTC</span>
               </p>
+              <p className="font-[family-name:var(--font-space-mono)] text-sm text-stone-300 mt-2">
+                Sans engagement — ou {PRICING_DISPLAY.coachingAnnuel} €/an (2 mois offerts)
+              </p>
               <p className="font-[family-name:var(--font-fraunces)] text-xl text-amber-500 mt-4">
                 Moins cher qu&apos;un sac d&apos;engrais en jardinerie.
               </p>
               <p className="text-stone-300 text-sm leading-relaxed mt-3 max-w-md">
                 Et cette fois, c&apos;est le bon produit, à la bonne dose, à la bonne date.
                 Rentabilisé dès le premier achat inutile évité.
+              </p>
+              {/* Garantie — lève le dernier frein sans infrastructure d'essai */}
+              <p className="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-lg border border-amber-500/30 bg-amber-500/10">
+                <span className="font-[family-name:var(--font-space-mono)] text-xs font-bold uppercase tracking-wider text-amber-500">
+                  Satisfait ou remboursé · 30 jours
+                </span>
               </p>
             </div>
 
