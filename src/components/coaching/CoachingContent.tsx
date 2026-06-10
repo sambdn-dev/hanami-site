@@ -100,7 +100,9 @@ export default function CoachingContent() {
 
             {/* Colonne carte protocole — décalée (asymétrie) */}
             <div className="relative lg:ml-8 lg:translate-x-8">
-              <div className="bg-white rounded-2xl border border-stone-200 shadow-lg p-6">
+              {/* pb-12 : réserve l'espace du badge prix flottant pour qu'il ne
+                  recouvre pas la note italique en bas de carte */}
+              <div className="bg-white rounded-2xl border border-stone-200 shadow-lg p-6 pb-12">
                 <div className="flex items-center justify-between mb-5">
                   <span className="font-[family-name:var(--font-space-mono)] text-[10px] font-semibold tracking-widest uppercase text-hanami-500">
                     Extrait de protocole
@@ -125,7 +127,7 @@ export default function CoachingContent() {
               </div>
 
               {/* Badge flottant prix */}
-              <div className="absolute -bottom-4 -left-6 bg-hanami-700 rounded-xl shadow-lg px-4 py-3">
+              <div className="absolute -bottom-6 -left-6 bg-hanami-700 rounded-xl shadow-lg px-4 py-3">
                 <p className="font-[family-name:var(--font-space-mono)] text-xs text-hanami-100 uppercase tracking-wider">
                   Coaching
                 </p>
