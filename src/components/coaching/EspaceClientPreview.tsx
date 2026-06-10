@@ -41,7 +41,7 @@ export default function EspaceClientPreview() {
               Tout votre coaching, réuni au même endroit
             </h2>
             <p className="text-stone-500 leading-relaxed mt-4">
-              Pas un logiciel de plus : le moyen pour Sami de vous suivre toute
+              Pas un logiciel de plus : le moyen pour Hanami de vous suivre toute
               l&apos;année sans se déplacer. Votre plan, votre sol, vos échanges —
               du bureau comme du jardin.
             </p>
@@ -104,7 +104,7 @@ export default function EspaceClientPreview() {
                   On analyse votre sol avant de recommander quoi que ce soit.
                 </h3>
                 <p className="text-stone-500 leading-relaxed">
-                  La méthode du bocal révèle la vraie nature de votre terre. Sami
+                  La méthode du bocal révèle la vraie nature de votre terre. Hanami
                   en tire les implications concrètes : arrosage, fertilisation,
                   scarification, pH. Le protocole part de votre sol, pas d&apos;une
                   recette générique.
@@ -123,7 +123,7 @@ export default function EspaceClientPreview() {
                 </h3>
                 <p className="text-stone-500 leading-relaxed">
                   Chaque intervention à sa date, avec le produit et la dose
-                  exacts. Vous cochez au fur et à mesure, Sami ajuste si la
+                  exacts. Vous cochez au fur et à mesure, Hanami ajuste si la
                   météo ou votre gazon l&apos;exigent. Le PDF figé, c&apos;est fini.
                 </p>
               </div>
@@ -165,7 +165,7 @@ export default function EspaceClientPreview() {
                     cropHeight={300}
                   />
                   <p className="text-sm text-stone-500 mt-4">
-                    <strong className="text-stone-700">Les produits pros</strong> — sélectionnés par Sami, dosés sur vos m², introuvables en jardinerie.
+                    <strong className="text-stone-700">Les produits pros</strong> — sélectionnés par Hanami, dosés sur vos m², introuvables en jardinerie.
                   </p>
                 </div>
               </div>
@@ -194,7 +194,7 @@ export default function EspaceClientPreview() {
               src="/landing/screens/messages-mobile.webp"
               alt="Messagerie avec l'expert Hanami sur mobile : conseils agronomiques en direct"
               width={720} height={1290}
-              title="Sami vous répond"
+              title="Hanami vous répond"
               text="Directement, sous 24h, avec le bon dosage et le bon timing."
             />
             <PhoneBlock

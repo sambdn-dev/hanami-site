@@ -118,7 +118,7 @@ export default function StepCodePostal({ state, onUpdate, onNext, onBack }: Prop
               Zone d&apos;intervention étendue (limitrophe IdF).
             </p>
             <p className="text-sm text-stone-700 mt-1 leading-relaxed">
-              Sami se déplace dans votre département. Un <strong>forfait déplacement
+              Hanami se déplace dans votre département. Un <strong>forfait déplacement
               de {TRAVEL_FEE_PAID_ZONE} € TTC</strong> sera ajouté à votre estimation pour
               les services Express et Reconstruction.
             </p>
