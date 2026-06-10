@@ -231,7 +231,7 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
             onClick={() => setMenuOpen(false)}
             className="w-full py-3.5 rounded-xl bg-hanami-700 text-white font-semibold text-sm hover:bg-hanami-900 transition-colors text-center"
           >
-            {isPro ? 'Faire ma simulation gratuite' : 'Découvrir le coaching — 29 €/mois'}
+            {isPro ? 'Faire ma simulation gratuite' : 'Découvrir le coaching — 1ᵉʳ mois offert'}
           </Link>
           <a
             href="https://wa.me/33667277614"

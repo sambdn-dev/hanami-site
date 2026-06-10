@@ -24,7 +24,7 @@ interface MobileStickyCTAProps {
 export default function MobileStickyCTA({
   href = '/coaching',
   label = 'Découvrir le coaching →',
-  reassurance = '29 €/mois · Sans engagement · Diagnostic offert',
+  reassurance = '1ᵉʳ mois offert · Puis 29 €/mois · Sans engagement',
 }: MobileStickyCTAProps) {
   const [visible, setVisible] = useState(false)
 

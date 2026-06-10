@@ -79,7 +79,7 @@ export default function CoachingContent() {
                   onClick={() => scrollToContact('coaching_hero')}
                   className="inline-flex items-center justify-center px-6 py-3 rounded-md bg-hanami-700 text-white font-medium hover:bg-hanami-900 transition-colors cursor-pointer text-sm"
                 >
-                  Demander mon diagnostic offert
+                  Commencer mon mois d&apos;essai offert
                 </button>
                 <a
                   href="https://wa.me/33667277614"
@@ -94,7 +94,7 @@ export default function CoachingContent() {
               </div>
 
               <p className="font-[family-name:var(--font-space-mono)] text-[11px] text-stone-400 uppercase tracking-wider mt-4">
-                Diagnostic offert · Sans engagement · Garantie 30 jours
+                1ᵉʳ mois offert · Sans engagement · Réponse sous 24 h
               </p>
             </div>
 
@@ -148,12 +148,18 @@ export default function CoachingContent() {
               <span className="section-label mb-3 block" style={{ color: '#4a8c3f' }}>
                 Le prix
               </span>
+              {/* L'essai d'abord : c'est lui qui lève le frein */}
+              <p className="inline-flex items-center gap-2 mb-4 px-3 py-2 rounded-lg border border-amber-500/30 bg-amber-500/10">
+                <span className="font-[family-name:var(--font-space-mono)] text-xs font-bold uppercase tracking-wider text-amber-500">
+                  1ᵉʳ mois offert — jugez sur pièces
+                </span>
+              </p>
               <p className="font-[family-name:var(--font-space-mono)] text-6xl lg:text-7xl font-bold text-white">
                 {PRICING_DISPLAY.coachingMois}&nbsp;€
                 <span className="font-[family-name:var(--font-fraunces)] text-2xl font-semibold text-stone-300 italic"> /mois TTC</span>
               </p>
               <p className="font-[family-name:var(--font-space-mono)] text-sm text-stone-300 mt-2">
-                Sans engagement — ou {PRICING_DISPLAY.coachingAnnuel} €/an (2 mois offerts)
+                Après votre mois d&apos;essai · sans engagement — ou {PRICING_DISPLAY.coachingAnnuel} €/an (2 mois offerts)
               </p>
               <p className="font-[family-name:var(--font-fraunces)] text-xl text-amber-500 mt-4">
                 Moins cher qu&apos;un sac d&apos;engrais en jardinerie.
@@ -161,12 +167,6 @@ export default function CoachingContent() {
               <p className="text-stone-300 text-sm leading-relaxed mt-3 max-w-md">
                 Et cette fois, c&apos;est le bon produit, à la bonne dose, à la bonne date.
                 Rentabilisé dès le premier achat inutile évité.
-              </p>
-              {/* Garantie — lève le dernier frein sans infrastructure d'essai */}
-              <p className="inline-flex items-center gap-2 mt-5 px-3 py-2 rounded-lg border border-amber-500/30 bg-amber-500/10">
-                <span className="font-[family-name:var(--font-space-mono)] text-xs font-bold uppercase tracking-wider text-amber-500">
-                  Satisfait ou remboursé · 30 jours
-                </span>
               </p>
             </div>
 
@@ -263,7 +263,7 @@ export default function CoachingContent() {
               onClick={() => scrollToContact('coaching_steps')}
               className="inline-flex items-center px-6 py-3 rounded-md bg-hanami-700 text-white text-sm font-medium hover:bg-hanami-900 transition-colors cursor-pointer"
             >
-              Commencer par le diagnostic offert →
+              Commencer mon mois offert →
             </button>
           </div>
         </div>

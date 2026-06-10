@@ -27,8 +27,8 @@ const services = [
     icon: Target,
     title: 'Coaching agronomique',
     description: 'Protocole personnalisé avec dates précises, suivi toute l\'année. Vous savez exactement quoi faire, quand et comment.',
-    tag: `Dès ${PRICING_DISPLAY.coachingMois} €/mois`,
-    priceAnchor: 'Moins cher qu\'un sac d\'engrais en jardinerie. Suivi illimité inclus. Vous deviendrez un(e) pro du gazon.',
+    tag: '1ᵉʳ mois offert',
+    priceAnchor: `Puis ${PRICING_DISPLAY.coachingMois} €/mois sans engagement — moins cher qu'un sac d'engrais en jardinerie. Suivi illimité inclus.`,
   },
   {
     icon: RefreshCw,

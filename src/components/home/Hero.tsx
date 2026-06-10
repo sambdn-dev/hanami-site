@@ -82,7 +82,7 @@ export default function Hero() {
                 onClick={() => track('cta_click', { location: 'hero_primary', page: window.location.pathname })}
                 className="inline-flex items-center justify-center px-6 py-3 rounded-md bg-hanami-700 text-white font-medium hover:bg-hanami-900 transition-colors cursor-pointer text-sm"
               >
-                Découvrir le coaching — 29 €/mois
+                Découvrir le coaching — 1ᵉʳ mois offert
               </Link>
 
               {/* CTA secondaire : wizard de simulation chantier (IDF) */}
@@ -99,7 +99,7 @@ export default function Hero() {
             {/* Réassurance sous les CTA — lève les 3 freins au clic.
                 (WhatsApp reste accessible via le bouton flottant) */}
             <p className="font-[family-name:var(--font-space-mono)] text-[11px] text-stone-400 uppercase tracking-wider mt-4">
-              Sans engagement · Diagnostic offert · Garantie 30 jours
+              1ᵉʳ mois offert · Puis 29 €/mois · Sans engagement
             </p>
           </div>
 
