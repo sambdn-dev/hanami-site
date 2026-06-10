@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { track } from '@/lib/analytics'
 
 const STORAGE_KEY = 'hanami-newsletter-email'
 
@@ -33,8 +34,10 @@ export default function NewsletterCapture({ variant = 'section' }: NewsletterCap
       if (!res.ok) throw new Error('Erreur serveur')
       localStorage.setItem(STORAGE_KEY, trimmed)
       setSubmitted(true)
+      track('newsletter_signup', { source: variant, status: 'success' })
     } catch {
       setError('Une erreur est survenue, veuillez réessayer.')
+      track('newsletter_signup', { source: variant, status: 'error' })
     }
   }
 

@@ -124,7 +124,12 @@ export default function ProPage() {
 
       <Footer />
       <WhatsAppButton />
-      <MobileStickyCTA />
+      {/* Sur la page pro, la barre mobile reste orientée chantier/simulation */}
+      <MobileStickyCTA
+        href="/mon-chantier"
+        label="Faire ma simulation gratuite →"
+        reassurance="Gratuit · 2 min · Estimation immédiate"
+      />
     </>
   )
 }

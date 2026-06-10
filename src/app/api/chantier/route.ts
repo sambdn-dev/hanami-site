@@ -336,7 +336,7 @@ export async function POST(request: NextRequest) {
         </div>
 
         <p style="margin:0 0 12px;font-size:15px;line-height:1.6;">
-          <strong>Pour valider votre devis</strong>, réservez 30 minutes avec Sami pour ajuster
+          <strong>Pour valider votre devis</strong>, réservez 30 minutes avec Hanami pour ajuster
           au m² près et lever vos questions.
         </p>
 

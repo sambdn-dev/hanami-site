@@ -28,6 +28,10 @@
 
 import type { Metadata } from 'next'
 
+// Données structurées SEO (JSON-LD) — SEO local + rich snippets FAQ
+import { localBusinessSchema, serviceSchemas, faqPageSchema } from '@/lib/structured-data'
+import { FAQS } from '@/lib/faq-data'
+
 // Composants partagés (utilisés aussi sur la page Pro)
 import Navbar from '@/components/shared/Navbar'
 import Footer from '@/components/shared/Footer'
@@ -65,8 +69,19 @@ export const metadata: Metadata = {
 }
 
 export default function HomePage() {
+  // JSON-LD : LocalBusiness (SEO local Le Vésinet/IDF), les 3 Services, FAQPage
+  const jsonLdBlocks = [localBusinessSchema(), ...serviceSchemas(), faqPageSchema(FAQS)]
+
   return (
     <>
+      {jsonLdBlocks.map((block, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(block) }}
+        />
+      ))}
+
       {/* Bandeau saisonnier — au-dessus de tout, fermable */}
       <SeasonalBanner />
 
@@ -86,7 +101,13 @@ export default function HomePage() {
         <Arguments />
 
         {/* CTA intermédiaire 1 */}
-        <IntermediateCTA message="Prêt à changer de méthode ? Demandez votre diagnostic gratuit" />
+        {/* CTA intermédiaires orientés coaching — l'offre primaire du site */}
+        <IntermediateCTA
+          message="Prêt à changer de méthode ? Un expert vous guide toute l'année."
+          ctaLabel="Découvrir le coaching"
+          href="/coaching"
+          trackingId="intermediate_1"
+        />
 
         {/* 4. Ce que vous économisez */}
         <Savings />
@@ -98,7 +119,12 @@ export default function HomePage() {
         <SeasonalMoments />
 
         {/* CTA intermédiaire 2 */}
-        <IntermediateCTA message="Vous aussi, passez à la méthode pro. Contactez-nous" />
+        <IntermediateCTA
+          message="Vous aussi, passez à la méthode pro — dès 29 €/mois."
+          ctaLabel="Découvrir le coaching"
+          href="/coaching"
+          trackingId="intermediate_2"
+        />
 
         {/* 7. Études de cas — Susan, Véronique, Noël */}
         <CaseStudies />
@@ -107,7 +133,12 @@ export default function HomePage() {
         <Testimonials />
 
         {/* CTA intermédiaire 3 */}
-        <IntermediateCTA message="C'est simple. Commencez maintenant." />
+        <IntermediateCTA
+          message="C'est simple. Commencez maintenant."
+          ctaLabel="Découvrir le coaching"
+          href="/coaching"
+          trackingId="intermediate_3"
+        />
 
         {/* 9. Comment ça marche — 4 étapes */}
         <HowItWorks />
@@ -121,11 +152,13 @@ export default function HomePage() {
         {/* 11. Bloc de réassurance — juste avant le formulaire */}
         <GuaranteeBlock />
 
-        {/* 12. Section newsletter + CTA diagnostic */}
-        <NewsletterSection />
-
-        {/* 13. Formulaire de contact — ancre #contact */}
+        {/* 12. Formulaire de contact — ancre #contact (fin de la séquence
+            de conversion : la newsletter ne s'intercale plus avant) */}
         <ContactForm variant="particulier" />
+
+        {/* 13. Section newsletter — capture de sortie pour les visiteurs
+            pas encore prêts à convertir */}
+        <NewsletterSection />
 
       </main>
 

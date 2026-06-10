@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { Fraunces, DM_Sans, Space_Mono, Geist } from 'next/font/google'
 import './globals.css'
 import CookieBanner from '@/components/shared/CookieBanner'
+import AnalyticsProvider from '@/components/shared/AnalyticsProvider'
+import { organizationSchema } from '@/lib/structured-data'
 import { cn } from "@/lib/utils";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
@@ -87,11 +89,17 @@ export default function RootLayout({
       className={cn(fraunces.variable, dmSans.variable, spaceMono.variable, "font-sans", geist.variable)}
     >
       <body className="min-h-screen flex flex-col font-[family-name:var(--font-dm-sans)]">
+        {/* JSON-LD Organization — identité de marque sur tout le site */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema()) }}
+        />
         {/* Texture grain — élément DOM réel (pas body::before) pour que
             pointer-events: none fonctionne correctement sur iOS Safari */}
         <div className="grain-overlay" aria-hidden="true" />
         {children}
         <CookieBanner />
+        <AnalyticsProvider />
       </body>
     </html>
   )

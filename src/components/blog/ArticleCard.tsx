@@ -3,6 +3,7 @@
  * et la section "Articles récents" sur la homepage.
  */
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowUpRight, Clock } from 'lucide-react'
 import type { Article } from '@/lib/blog'
 import { formatArticleDate } from '@/lib/blog'
@@ -26,12 +27,12 @@ export default function ArticleCard({ article, compact = false }: ArticleCardPro
         }`}
       >
         {article.cover ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={article.cover}
             alt=""
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-            loading="lazy"
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            sizes="(max-width: 768px) 100vw, 33vw"
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">

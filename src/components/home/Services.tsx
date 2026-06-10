@@ -14,23 +14,27 @@
 
 'use client'
 
+import Link from 'next/link'
 import { useFadeIn } from '@/hooks/useFadeIn'
+import { track } from '@/lib/analytics'
+import { PRICING_DISPLAY } from '@/lib/chantier/pricing'
 import { Target, RefreshCw, FlaskConical, Wrench } from 'lucide-react'
 
-// Données des 4 services
+// Données des 4 services — prix issus de PRICING_DISPLAY (source unique,
+// alignés sur ce que le wizard cote réellement)
 const services = [
   {
     icon: Target,
     title: 'Coaching agronomique',
     description: 'Protocole personnalisé avec dates précises, suivi toute l\'année. Vous savez exactement quoi faire, quand et comment.',
-    tag: 'À partir de 400€/an',
-    priceAnchor: 'Moins cher qu\'un semis raté. Suivi illimité inclus. Vous deviendrez un(e) pro du gazon.',
+    tag: '1ᵉʳ mois offert',
+    priceAnchor: `Puis ${PRICING_DISPLAY.coachingMois} €/mois sans engagement — moins cher qu'un sac d'engrais en jardinerie. Suivi illimité inclus.`,
   },
   {
     icon: RefreshCw,
     title: 'Rénovation complète',
     description: 'Scarification, amendement, semis professionnel, suivi post-rénovation. On s\'assure que ça prend du premier coup.',
-    tag: 'Sur devis',
+    tag: `De ${PRICING_DISPLAY.expressMinM2} à ${PRICING_DISPLAY.recoMaxM2} €/m² TTC`,
     priceAnchor: null,
   },
   {
@@ -74,6 +78,17 @@ export default function Services() {
           {services.map((service, index) => (
             <ServiceCard key={index} {...service} index={index} />
           ))}
+        </div>
+
+        {/* CTA unique sous la grille — le wizard chiffre précisément */}
+        <div className="mt-10 text-center sm:text-left">
+          <Link
+            href="/mon-chantier"
+            onClick={() => track('cta_click', { location: 'services', page: window.location.pathname })}
+            className="inline-flex items-center px-6 py-3 rounded-md bg-hanami-700 text-white text-sm font-medium hover:bg-hanami-500 transition-colors"
+          >
+            Estimer mon budget en 2 minutes →
+          </Link>
         </div>
       </div>
     </section>

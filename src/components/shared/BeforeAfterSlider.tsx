@@ -49,6 +49,12 @@ interface BeforeAfterSliderProps {
    * Zoomer depuis le haut-centre pousse les éléments du bas hors du cadre.
    */
   afterTransformOrigin?: string
+  /**
+   * Précharge les images (candidat LCP au-dessus de la ligne de flottaison).
+   * À réserver au slider du Hero — les instances below-fold (Cas clients)
+   * restent en lazy loading natif.
+   */
+  priority?: boolean
 }
 
 export default function BeforeAfterSlider({
@@ -61,6 +67,7 @@ export default function BeforeAfterSlider({
   afterObjectPosition = 'center 50%',
   afterTransform,
   afterTransformOrigin = 'center 40%',
+  priority = false,
 }: BeforeAfterSliderProps) {
   // Position du curseur en pourcentage (0 = tout à gauche, 100 = tout à droite)
   const [position, setPosition] = useState(initialPosition)
@@ -205,7 +212,7 @@ export default function BeforeAfterSlider({
           }),
         }}
         sizes="(max-width: 768px) 100vw, 50vw"
-        priority
+        priority={priority}
       />
 
       {/* ── Photo AVANT — visible uniquement sur le côté GAUCHE ────────── */}
@@ -232,7 +239,7 @@ export default function BeforeAfterSlider({
           className="object-cover"
           style={{ objectPosition: beforeObjectPosition }}
           sizes="(max-width: 768px) 100vw, 50vw"
-          priority
+          priority={priority}
         />
       </div>
 

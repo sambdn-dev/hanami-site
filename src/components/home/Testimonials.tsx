@@ -14,22 +14,25 @@
 
 import { useFadeIn } from '@/hooks/useFadeIn'
 
-// Données des 3 témoignages
+// Données des 3 témoignages — tous clients coaching 12 mois, renouvelés
 const testimonials = [
   {
     quote: 'Un paysagiste était venu il y a 2 ans, mais les résultats n\'ont pas duré. J\'avais peur de mal faire et de perdre encore du temps et de l\'argent. Le diagnostic a tout changé.',
     name: 'Luc',
     region: 'Nouvelle-Aquitaine',
+    tag: 'Coaching 12 mois',
   },
   {
     quote: 'Je ne savais pas par où commencer. Après l\'envoi de mes photos, j\'ai reçu toutes les étapes et les produits professionnels pour arriver à un résultat dont je suis fière, et mes enfants aussi.',
     name: 'Joséphine',
     region: 'Île-de-France',
+    tag: 'Coaching 12 mois',
   },
   {
     quote: 'Récent propriétaire, je n\'avais pas le budget pour un paysagiste. J\'ai trouvé une solution abordable et clé en main pour le faire moi-même.',
     name: 'Guy',
     region: 'Occitanie',
+    tag: 'Coaching 12 mois',
   },
 ]
 
@@ -66,11 +69,13 @@ function TestimonialCard({
   quote,
   name,
   region,
+  tag,
   index,
 }: {
   quote: string
   name: string
   region: string
+  tag: string
   index: number
 }) {
   const ref = useFadeIn()
@@ -109,10 +114,14 @@ function TestimonialCard({
             {name[0]}
           </span>
         </div>
-        <div>
+        <div className="flex-1">
           <p className="font-semibold text-stone-800 text-sm">{name}</p>
-          <p className="text-stone-500 text-xs">{region}</p>
+          <p className="text-stone-500 text-xs">{region} · {tag}</p>
         </div>
+        {/* Le chiffre qui compte : tous les clients coaching renouvellent */}
+        <span className="font-[family-name:var(--font-space-mono)] text-[10px] uppercase tracking-wider text-amber-500 shrink-0">
+          Renouvelé
+        </span>
       </div>
     </div>
   )

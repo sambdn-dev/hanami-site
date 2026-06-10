@@ -2,7 +2,8 @@
  * MobileStickyCTA.tsx — Barre CTA fixe en bas d'écran (mobile uniquement)
  *
  * Visible sur mobile (< md) après 400 px de scroll.
- * Cible : page /mon-chantier (wizard de simulation).
+ * Cible par défaut : /coaching (l'offre scalable nationale) ; la page pro
+ * la reconfigure vers le wizard via les props.
  *
  * Se masque automatiquement quand le formulaire #contact est visible
  * dans le viewport (le visiteur est déjà arrivé au fallback).
@@ -12,8 +13,19 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import { track } from '@/lib/analytics'
 
-export default function MobileStickyCTA() {
+interface MobileStickyCTAProps {
+  href?: string
+  label?: string
+  reassurance?: string
+}
+
+export default function MobileStickyCTA({
+  href = '/coaching',
+  label = 'Découvrir le coaching →',
+  reassurance = '1ᵉʳ mois offert · Puis 29 €/mois · Sans engagement',
+}: MobileStickyCTAProps) {
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
@@ -47,11 +59,16 @@ export default function MobileStickyCTA() {
       `}
       aria-hidden={!visible}
     >
+      {/* Réassurance compacte au-dessus du bouton */}
+      <p className="font-[family-name:var(--font-space-mono)] text-[10px] text-stone-400 uppercase tracking-wider text-center mb-1.5">
+        {reassurance}
+      </p>
       <Link
-        href="/mon-chantier"
+        href={href}
+        onClick={() => track('cta_click', { location: 'sticky_mobile', page: window.location.pathname })}
         className="block w-full py-3 rounded-md bg-hanami-700 text-white font-medium text-sm hover:bg-hanami-900 transition-colors text-center"
       >
-        Faire ma simulation gratuite →
+        {label}
       </Link>
     </div>
   )

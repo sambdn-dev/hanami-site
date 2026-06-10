@@ -20,6 +20,7 @@
 import { useForm, Controller } from 'react-hook-form'
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { useFadeIn } from '@/hooks/useFadeIn'
+import { track } from '@/lib/analytics'
 import { X, Upload, ImageIcon } from 'lucide-react'
 
 // ── Types de données du formulaire ──────────────────────────────────────────
@@ -165,10 +166,12 @@ export default function ContactForm({ variant }: ContactFormProps) {
 
       if (!res.ok) {
         setSubmitError(true)
+        track('contact_submit', { variant, status: 'error' })
         return
       }
 
       setSucceeded(true)
+      track('contact_submit', { variant, status: 'success' })
       reset()
       setPhotos(prev => {
         prev.forEach(p => URL.revokeObjectURL(p.preview))
@@ -177,6 +180,7 @@ export default function ContactForm({ variant }: ContactFormProps) {
     } catch {
       // Erreur réseau (offline, CORS, DNS…) → WhatsApp fallback
       setSubmitError(true)
+      track('contact_submit', { variant, status: 'error' })
     } finally {
       setSubmitting(false)
     }
@@ -302,12 +306,13 @@ export default function ContactForm({ variant }: ContactFormProps) {
                   />
                 </FormField>
 
-                {/* Téléphone */}
-                <FormField htmlFor="phone" label="Téléphone" required error={errors.phone?.message}>
+                {/* Téléphone — requis seulement pour les pros : côté particulier,
+                    nom + email suffisent pour démarrer (moins de friction) */}
+                <FormField htmlFor="phone" label={isPro ? 'Téléphone' : 'Téléphone (facultatif)'} required={isPro} error={errors.phone?.message}>
                   <Controller
                     name="phone"
                     control={control}
-                    rules={{ required: 'Ce champ est requis' }}
+                    rules={isPro ? { required: 'Ce champ est requis' } : {}}
                     render={({ field }) => (
                       <PhoneField
                         id="phone"
@@ -322,11 +327,11 @@ export default function ContactForm({ variant }: ContactFormProps) {
 
                 {/* Surface ou Type de demande */}
                 {!isPro ? (
-                  <FormField htmlFor="surface" label="Surface de votre gazon" required error={(errors as {surface?: {message?: string}}).surface?.message}>
+                  <FormField htmlFor="surface" label="Surface de votre gazon (facultatif)" error={(errors as {surface?: {message?: string}}).surface?.message}>
                     <select
                       id="surface"
                       className={inputClass((errors as {surface?: {message?: string}}).surface)}
-                      {...register('surface' as keyof FormData, { required: 'Veuillez sélectionner une surface' })}
+                      {...register('surface' as keyof FormData)}
                     >
                       <option value="">Sélectionnez une surface</option>
                       <option value="<100">Moins de 100 m²</option>
@@ -355,14 +360,14 @@ export default function ContactForm({ variant }: ContactFormProps) {
 
                 {/* Code postal ou Chantiers/an */}
                 {!isPro ? (
-                  <FormField htmlFor="postalCode" label="Code postal" required error={(errors as {postalCode?: {message?: string}}).postalCode?.message}>
+                  <FormField htmlFor="postalCode" label="Code postal (facultatif)" error={(errors as {postalCode?: {message?: string}}).postalCode?.message}>
                     <input
                       id="postalCode"
                       type="text"
                       autoComplete="postal-code"
                       placeholder="75001"
                       className={inputClass((errors as {postalCode?: {message?: string}}).postalCode)}
-                      {...register('postalCode' as keyof FormData, { required: 'Ce champ est requis' })}
+                      {...register('postalCode' as keyof FormData)}
                     />
                   </FormField>
                 ) : (

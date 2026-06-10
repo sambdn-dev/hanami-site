@@ -2,8 +2,10 @@
  * ProCaseStudies.tsx — Section "Ce que ça change concrètement"
  *
  * 2 études de cas terrain : Ronan et Baptiste.
- * Layout alterné texte/placeholder (même pattern que CaseStudies particuliers).
- * Pas de vraies photos pro pour l'instant — placeholder vert texturé.
+ * Layout alterné texte/fiche protocole (même pattern que CaseStudies
+ * particuliers). En attendant de vraies photos chantier, la colonne visuelle
+ * est une "fiche protocole" Diagnostic → Protocole → Résultat — c'est
+ * exactement le produit vendu ("la décision et le timing"), pas un substitut.
  * Stats clés en Space Mono gras.
  */
 
@@ -22,6 +24,11 @@ const cases = [
       { value: '24h', label: 'résultat visible' },
       { value: 'Produits', label: 'économisés' },
     ],
+    protocole: [
+      { phase: 'Diagnostic', detail: 'Photos + analyse à distance : Pythium détecté avant propagation' },
+      { phase: 'Protocole', detail: 'Traitement ciblé immédiat — pas de regarnissage voué à l\'échec' },
+      { phase: 'Résultat', detail: 'Visible en 24h, robot jamais mis en pause, client rassuré' },
+    ],
     reverse: false,
   },
   {
@@ -33,6 +40,11 @@ const cases = [
       { value: '6 jours-homme', label: 'économisés' },
       { value: '0', label: 'retournement sol' },
       { value: '2 semaines', label: 'résultat visible' },
+    ],
+    protocole: [
+      { phase: 'Diagnostic', detail: 'Sol analysé : le retournement prévu (6 jours-homme) était inutile' },
+      { phase: 'Protocole', detail: 'Démoussage ciblé, lit de semences préparé, semis professionnel' },
+      { phase: 'Résultat', detail: 'Levée plus rapide, moins d\'usure machine — la marge a suivi' },
     ],
     reverse: true,
   },
@@ -70,6 +82,7 @@ function CaseRow({
   title,
   body,
   stats,
+  protocole,
   reverse,
   index,
 }: {
@@ -78,6 +91,7 @@ function CaseRow({
   title: string
   body: string
   stats: { value: string; label: string }[]
+  protocole: { phase: string; detail: string }[]
   reverse: boolean
   index: number
 }) {
@@ -115,40 +129,47 @@ function CaseRow({
         </div>
       </div>
 
-      {/* Colonne visuel — placeholder gazon */}
-      <div
-        className="rounded-2xl overflow-hidden aspect-[4/3] flex items-center justify-center relative"
-        style={{ background: 'linear-gradient(135deg, #1a2e1a 0%, #2d5a27 50%, #4a8c3f 100%)' }}
-      >
-        {/* Texture herbe en SVG */}
-        <svg
-          className="absolute inset-0 w-full h-full opacity-10"
-          viewBox="0 0 400 300"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          {Array.from({ length: 40 }).map((_, i) => (
-            <line
-              key={i}
-              x1={i * 10}
-              y1="300"
-              x2={i * 10 + (i % 3 === 0 ? -5 : i % 3 === 1 ? 5 : 0)}
-              y2="200"
-              stroke="white"
-              strokeWidth="1"
-            />
-          ))}
-        </svg>
+      {/* Colonne visuel — fiche protocole Diagnostic → Protocole → Résultat */}
+      <div className="rounded-2xl border border-stone-200 bg-hanami-100/50 p-6 lg:p-8 relative overflow-hidden">
+        {/* En-tête de fiche */}
+        <div className="flex items-center justify-between mb-7">
+          <span className="font-[family-name:var(--font-space-mono)] text-[10px] font-semibold tracking-widest uppercase text-hanami-700">
+            Fiche protocole
+          </span>
+          <span className="font-[family-name:var(--font-space-mono)] text-[10px] px-2 py-0.5 rounded-full text-amber-600 bg-amber-100 uppercase tracking-wider">
+            Cas réel
+          </span>
+        </div>
 
-        {/* Badge flottant */}
-        <div className="relative z-10 bg-white/95 rounded-xl px-6 py-4 text-center shadow-xl">
-          <p className="font-[family-name:var(--font-space-mono)] text-xs text-stone-400 uppercase tracking-wider mb-1">
-            Résultat
-          </p>
-          <p className="font-[family-name:var(--font-fraunces)] text-2xl font-semibold text-hanami-900">
+        {/* Timeline verticale 3 phases */}
+        <ol className="relative space-y-6">
+          {/* Ligne de connexion */}
+          <div
+            className="absolute left-[11px] top-2 bottom-2 w-px bg-hanami-500/30"
+            aria-hidden="true"
+          />
+          {protocole.map((step, i) => (
+            <li key={step.phase} className="relative flex items-start gap-4 pl-0">
+              {/* Pastille numérotée */}
+              <span className="relative z-10 w-6 h-6 rounded-full bg-hanami-700 text-white flex items-center justify-center shrink-0 font-[family-name:var(--font-space-mono)] text-[10px] font-bold">
+                {i + 1}
+              </span>
+              <div>
+                <p className="font-[family-name:var(--font-space-mono)] text-xs font-bold uppercase tracking-wider text-hanami-900">
+                  {step.phase}
+                </p>
+                <p className="text-stone-600 text-sm leading-relaxed mt-1">{step.detail}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+
+        {/* Pied de fiche : le chiffre qui résume */}
+        <div className="border-t border-hanami-500/20 mt-7 pt-5 flex items-baseline gap-3">
+          <p className="font-[family-name:var(--font-space-mono)] text-2xl font-bold text-hanami-700">
             {stats[0].value}
           </p>
-          <p className="text-stone-500 text-xs mt-0.5">{stats[0].label}</p>
+          <p className="text-stone-500 text-xs uppercase tracking-wide">{stats[0].label}</p>
         </div>
       </div>
     </div>

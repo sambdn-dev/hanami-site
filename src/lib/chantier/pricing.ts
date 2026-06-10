@@ -31,6 +31,21 @@ const PRIX_RECO_MAX_M2 = 25
 const PRIX_COACHING_MOIS = 29
 
 /**
+ * Tarifs d'affichage — SOURCE UNIQUE pour toute copy marketing (cartes
+ * Services, FAQ, page /coaching, schémas SEO). Dérivés des constantes du
+ * moteur pour que le prix affiché ne puisse jamais dériver du prix coté.
+ */
+export const PRICING_DISPLAY = {
+  expressMinM2: PRIX_EXPRESS_BASE_M2,
+  expressTerreauM2: PRIX_EXPRESS_TERREAU_M2,
+  recoMinM2: PRIX_RECO_MIN_M2,
+  recoMaxM2: PRIX_RECO_MAX_M2,
+  coachingMois: PRIX_COACHING_MOIS,
+  /** Option annuelle : 10 × le mensuel (2 mois offerts) — validé par Sami */
+  coachingAnnuel: PRIX_COACHING_MOIS * 10,
+} as const
+
+/**
  * Calcule l'estimation TTC pour un service.
  * Pour Express et Reconstruction en zone "paid", on ajoute un forfait
  * déplacement de 100 € au prix total. Le Coaching n'est pas concerné

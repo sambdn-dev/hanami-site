@@ -12,6 +12,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { Check, Expand } from 'lucide-react'
 import StepNav from '../StepNav'
 import PhotoLightbox from '@/components/shared/PhotoLightbox'
@@ -88,12 +89,12 @@ export default function StepEtat({ state, onUpdate, onNext, onBack }: Props) {
                 aria-pressed={isSelected}
                 aria-label={`${isSelected ? 'Désélectionner' : 'Sélectionner'} : ${photo.alt}`}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={photo.src}
                   alt={photo.alt}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
                   draggable={false}
                 />
               </button>

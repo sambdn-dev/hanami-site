@@ -8,9 +8,14 @@ import WhatsAppButton from '@/components/shared/WhatsAppButton'
 import HanamiCalculator from '@/components/calculatrice/HanamiCalculator'
 
 export const metadata: Metadata = {
-  title: 'Dosage Intelligent',
+  title: 'Calculatrice de dosage gazon — engrais, semences, liquides',
   description:
-    'Calculez précisément vos dosages d\'engrais, semences et produits liquides selon la surface de votre jardin. Outil gratuit Hanami.',
+    'Calculez précisément vos dosages d\'engrais, semences et produits liquides selon la surface de votre jardin. Outil gratuit Hanami, export PDF inclus.',
+  openGraph: {
+    title: 'Calculatrice de dosage gazon — Hanami',
+    description:
+      'Dosages exacts d\'engrais, semences et produits liquides selon votre surface. Outil professionnel gratuit.',
+  },
 }
 
 export default function CalculatricePage() {

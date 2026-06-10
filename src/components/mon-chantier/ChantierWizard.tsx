@@ -34,6 +34,7 @@ import StepResultat from './steps/StepResultat'
 import { recommendService, adjustForOutOfZone } from '@/lib/chantier/scoring'
 import { computeEstimation } from '@/lib/chantier/pricing'
 import { getZoneType } from '@/lib/chantier/postal-codes'
+import { track } from '@/lib/analytics'
 import type { ChantierFormState, ChantierResult } from '@/lib/chantier/types'
 
 // ── Définition statique des étapes (panneau de progression) ─────────────────
@@ -79,11 +80,14 @@ export default function ChantierWizard() {
   const [submitting, setSubmitting] = useState(false)
   const [submissionStatus, setSubmissionStatus] = useState<'idle' | 'success' | 'error'>('idle')
 
-  // Scroll en haut à chaque changement d'étape pour visibilité claire
+  // Scroll en haut à chaque changement d'étape pour visibilité claire.
+  // Trace aussi la progression funnel : l'abandon se lit dans le drop-off
+  // entre deux wizard_step consécutifs (couvre next/back/jump).
   useEffect(() => {
     if (typeof window !== 'undefined') {
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
+    track('wizard_step', { step: currentStep, label: STEP_DEFS[currentStep]?.label })
   }, [currentStep])
 
   /** Calcule le résultat (service + estimation) en se basant sur l'état courant.
@@ -175,8 +179,14 @@ export default function ChantierWizard() {
     try {
       const res = await fetch('/api/chantier', { method: 'POST', body: fd })
       setSubmissionStatus(res.ok ? 'success' : 'error')
+      track('wizard_submit', {
+        status: res.ok ? 'success' : 'error',
+        service: result.serviceId,
+        zone: result.zoneType,
+      })
     } catch {
       setSubmissionStatus('error')
+      track('wizard_submit', { status: 'error', service: result.serviceId, zone: result.zoneType })
     } finally {
       setSubmitting(false)
       next()
