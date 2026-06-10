@@ -28,6 +28,10 @@
 
 import type { Metadata } from 'next'
 
+// Données structurées SEO (JSON-LD) — SEO local + rich snippets FAQ
+import { localBusinessSchema, serviceSchemas, faqPageSchema } from '@/lib/structured-data'
+import { FAQS } from '@/lib/faq-data'
+
 // Composants partagés (utilisés aussi sur la page Pro)
 import Navbar from '@/components/shared/Navbar'
 import Footer from '@/components/shared/Footer'
@@ -65,8 +69,19 @@ export const metadata: Metadata = {
 }
 
 export default function HomePage() {
+  // JSON-LD : LocalBusiness (SEO local Le Vésinet/IDF), les 3 Services, FAQPage
+  const jsonLdBlocks = [localBusinessSchema(), ...serviceSchemas(), faqPageSchema(FAQS)]
+
   return (
     <>
+      {jsonLdBlocks.map((block, i) => (
+        <script
+          key={i}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(block) }}
+        />
+      ))}
+
       {/* Bandeau saisonnier — au-dessus de tout, fermable */}
       <SeasonalBanner />
 

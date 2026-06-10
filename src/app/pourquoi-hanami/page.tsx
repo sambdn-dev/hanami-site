@@ -10,6 +10,11 @@ export const metadata: Metadata = {
   title: 'Pourquoi Hanami ?',
   description:
     '5 ans de passion, de terrain et de formation auprès des plus grands agronomes. L\'histoire derrière Hanami et pourquoi je me suis obsédé par le gazon parfait.',
+  openGraph: {
+    title: 'Pourquoi Hanami ? — L\'histoire derrière la méthode',
+    description:
+      '5 ans de terrain et de formation agronomique. Pourquoi je me suis obsédé par le gazon parfait.',
+  },
 }
 
 export default function PourquoiHanamiPage() {
