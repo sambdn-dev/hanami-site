@@ -14,11 +14,11 @@ export interface FaqEntry {
 export const FAQS: FaqEntry[] = [
   {
     question: 'Combien ça coûte ?',
-    answer: 'Le coaching annuel commence à 400€/an — c\'est moins cher qu\'un seul passage de paysagiste. Les rénovations sont sur devis après diagnostic. Le diagnostic initial est offert.',
+    answer: 'Le coaching annuel coûte 29€/mois — moins cher qu\'un sac d\'engrais en jardinerie. Les rénovations vont de 6 à 25€/m² TTC selon l\'état du terrain, estimation précise en 2 minutes avec la simulation gratuite. Le diagnostic initial est offert.',
   },
   {
-    question: '400€/an, c\'est rentable ?',
-    answer: 'Une rénovation ratée coûte 500 à 1 500€ en semences, engrais et temps perdu. Le coaching vous évite ces erreurs et vous fait économiser sur les produits en vous donnant les bons dosages. Le suivi illimité toute l\'année est inclus.',
+    question: '29€/mois, c\'est rentable ?',
+    answer: 'Une rénovation ratée coûte 500 à 1 500€ en semences, engrais et temps perdu. Le coaching vous évite ces erreurs et vous fait économiser sur les produits en vous donnant les bons dosages. Le suivi illimité toute l\'année est inclus — c\'est rentabilisé dès le premier achat évité.',
   },
   {
     question: 'Les produits professionnels, c\'est trop cher ?',

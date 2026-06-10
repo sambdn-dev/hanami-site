@@ -15,9 +15,10 @@ import { useFadeIn } from '@/hooks/useFadeIn'
 import { Plus, Minus } from 'lucide-react'
 // Questions/réponses partagées avec le JSON-LD FAQPage (généré côté serveur
 // dans page.tsx) — source unique : src/lib/faq-data.ts
-import { FAQS as faqs } from '@/lib/faq-data'
+import { FAQS, type FaqEntry } from '@/lib/faq-data'
 
-export default function FAQ() {
+export default function FAQ({ items }: { items?: FaqEntry[] }) {
+  const faqs = items ?? FAQS
   // Index de la question actuellement ouverte (null = aucune ouverte)
   const [openIndex, setOpenIndex] = useState<number | null>(null)
   const headerRef = useFadeIn()

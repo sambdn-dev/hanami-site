@@ -101,7 +101,11 @@ export default function HomePage() {
         <Arguments />
 
         {/* CTA intermédiaire 1 */}
-        <IntermediateCTA message="Prêt à changer de méthode ? Demandez votre diagnostic gratuit" trackingId="intermediate_1" />
+        {/* Copy alignée sur la destination réelle (wizard, pas formulaire) */}
+        <IntermediateCTA
+          message="Prêt à changer de méthode ? Estimez votre chantier en 2 minutes — gratuit"
+          trackingId="intermediate_1"
+        />
 
         {/* 4. Ce que vous économisez */}
         <Savings />
@@ -136,11 +140,13 @@ export default function HomePage() {
         {/* 11. Bloc de réassurance — juste avant le formulaire */}
         <GuaranteeBlock />
 
-        {/* 12. Section newsletter + CTA diagnostic */}
-        <NewsletterSection />
-
-        {/* 13. Formulaire de contact — ancre #contact */}
+        {/* 12. Formulaire de contact — ancre #contact (fin de la séquence
+            de conversion : la newsletter ne s'intercale plus avant) */}
         <ContactForm variant="particulier" />
+
+        {/* 13. Section newsletter — capture de sortie pour les visiteurs
+            pas encore prêts à convertir */}
+        <NewsletterSection />
 
       </main>
 

@@ -54,7 +54,9 @@ export async function POST(request: NextRequest) {
     const data = JSON.parse(rawData) as Record<string, string>
 
     // ── 2. Validation des champs obligatoires ─────────────────────────────
-    if (!data.fullName || !data.email || !data.phone) {
+    // Téléphone facultatif côté particulier (réduction de friction) — seuls
+    // nom et email sont indispensables pour recontacter.
+    if (!data.fullName || !data.email) {
       return NextResponse.json(
         { error: 'Champs obligatoires manquants' },
         { status: 400 }

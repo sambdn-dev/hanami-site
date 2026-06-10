@@ -48,6 +48,10 @@ export default function MobileStickyCTA() {
       `}
       aria-hidden={!visible}
     >
+      {/* Réassurance compacte au-dessus du bouton */}
+      <p className="font-[family-name:var(--font-space-mono)] text-[10px] text-stone-400 uppercase tracking-wider text-center mb-1.5">
+        Gratuit · 2 min · Estimation immédiate
+      </p>
       <Link
         href="/mon-chantier"
         onClick={() => track('cta_click', { location: 'sticky_mobile', page: window.location.pathname })}

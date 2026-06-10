@@ -85,6 +85,9 @@ export default function Footer() {
             <Link href="/pro" className="hover:text-stone-400 transition-colors">
               Professionnels
             </Link>
+            <Link href="/coaching" className="hover:text-stone-400 transition-colors">
+              Coaching
+            </Link>
             <Link href="/calculatrice" className="hover:text-stone-400 transition-colors">
               Dosage Intelligent
             </Link>

@@ -100,6 +100,11 @@ export default function Hero() {
                 WhatsApp
               </a>
             </div>
+
+            {/* Réassurance sous les CTA — lève les 3 freins au clic */}
+            <p className="font-[family-name:var(--font-space-mono)] text-[11px] text-stone-400 uppercase tracking-wider mt-4">
+              Estimation immédiate · Gratuit · Sans engagement
+            </p>
           </div>
 
           {/* ── Colonne droite : slider avant/après ── */}
