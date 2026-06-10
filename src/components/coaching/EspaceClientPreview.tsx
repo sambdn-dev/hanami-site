@@ -1,0 +1,138 @@
+/**
+ * EspaceClientPreview.tsx — Section "Votre espace client" sur /coaching
+ *
+ * Montre l'espace client en action pour rendre le coaching tangible et
+ * justifier le prix. Captures actuelles = prototype (à remplacer par les
+ * vraies captures de l'app au lancement, cf. AppScreen).
+ *
+ * Garde-fous respectés : aucune donnée non-V1 (météo ETP masquée),
+ * compte démo anonymisé, accroches centrées sur l'expert (pas la feature).
+ */
+
+'use client'
+
+import { useFadeIn } from '@/hooks/useFadeIn'
+import AppScreen from './AppScreen'
+
+export default function EspaceClientPreview() {
+  const headRef = useFadeIn()
+  const r1 = useFadeIn()
+  const r2 = useFadeIn()
+  const r3 = useFadeIn()
+
+  return (
+    <section className="py-20 lg:py-28 bg-stone-50">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+
+        {/* En-tête */}
+        <div ref={headRef} className="fade-in mb-14 max-w-2xl">
+          <span className="section-label mb-3 block">Votre espace client</span>
+          <h2 className="font-[family-name:var(--font-fraunces)] text-3xl lg:text-4xl font-semibold text-hanami-900 leading-tight">
+            Tout votre coaching, réuni au même endroit
+          </h2>
+          <p className="text-stone-500 leading-relaxed mt-4">
+            Pas un logiciel de plus : le moyen pour Sami de vous suivre toute
+            l&apos;année sans se déplacer. Votre plan, votre sol, vos échanges —
+            accessibles du bureau comme du jardin.
+          </p>
+        </div>
+
+        {/* Row A — Tableau de bord (asymétrique : texte gauche, écran droite) */}
+        <div ref={r1} className="fade-in grid grid-cols-1 lg:grid-cols-[1fr_1.7fr] gap-10 lg:gap-14 items-center mb-20 lg:mb-28">
+          <div>
+            <span className="font-[family-name:var(--font-space-mono)] text-[11px] font-bold uppercase tracking-widest text-hanami-500">
+              Tableau de bord
+            </span>
+            <h3 className="font-[family-name:var(--font-fraunces)] text-2xl lg:text-3xl font-semibold text-hanami-900 leading-snug mt-2 mb-4">
+              La prochaine action, le bon produit, la bonne dose.
+            </h3>
+            <p className="text-stone-500 leading-relaxed">
+              À chaque connexion, vous savez exactement quoi faire — avec le
+              produit recommandé et la dose calculée sur votre surface réelle.
+              Plus de doute, plus de PDF oublié dans un tiroir.
+            </p>
+          </div>
+          <AppScreen
+            src="/landing/screens/dashboard.webp"
+            alt="Tableau de bord de l'espace client Hanami : prochaine étape, produit recommandé et dose calculée sur la surface du jardin"
+            width={1600}
+            height={1307}
+            variant="browser"
+            priority
+          />
+        </div>
+
+        {/* Row B — Diagnostic sol (asymétrique inverse : écran gauche, texte droite) */}
+        <div ref={r2} className="fade-in grid grid-cols-1 lg:grid-cols-[1.7fr_1fr] gap-10 lg:gap-14 items-center mb-20 lg:mb-28">
+          <div className="lg:order-1 order-2">
+            <AppScreen
+              src="/landing/screens/diagnostic.webp"
+              alt="Diagnostic de sol Hanami : type de sol, composition sable/limons/argile et implications agronomiques"
+              width={1600}
+              height={1494}
+              variant="browser"
+            />
+          </div>
+          <div className="lg:order-2 order-1">
+            <span className="font-[family-name:var(--font-space-mono)] text-[11px] font-bold uppercase tracking-widest text-hanami-500">
+              Diagnostic sol
+            </span>
+            <h3 className="font-[family-name:var(--font-fraunces)] text-2xl lg:text-3xl font-semibold text-hanami-900 leading-snug mt-2 mb-4">
+              On analyse votre sol avant de recommander quoi que ce soit.
+            </h3>
+            <p className="text-stone-500 leading-relaxed">
+              La méthode du bocal révèle la vraie nature de votre terre. Sami
+              en tire les implications concrètes : arrosage, fertilisation,
+              scarification, pH. Le protocole part de votre sol, pas d&apos;une
+              recette générique.
+            </p>
+          </div>
+        </div>
+
+        {/* Row C — Dans la poche (deux téléphones) */}
+        <div ref={r3} className="fade-in">
+          <div className="max-w-2xl mb-10">
+            <span className="font-[family-name:var(--font-space-mono)] text-[11px] font-bold uppercase tracking-widest text-hanami-500">
+              Au jardin
+            </span>
+            <h3 className="font-[family-name:var(--font-fraunces)] text-2xl lg:text-3xl font-semibold text-hanami-900 leading-snug mt-2">
+              Votre coaching dans la poche, là où vous en avez besoin.
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 lg:gap-16 max-w-3xl mx-auto sm:mx-0">
+            <div>
+              <AppScreen
+                src="/landing/screens/plan-mobile.webp"
+                alt="Plan d'action Hanami sur mobile : interventions datées et dosées, statuts à cocher"
+                width={720}
+                height={1708}
+                variant="phone"
+              />
+              <p className="text-center text-sm text-stone-500 mt-5 max-w-[260px] mx-auto">
+                <strong className="text-stone-700">Le plan d&apos;action</strong> — chaque étape datée, dosée sur vos m², cochée une fois faite.
+              </p>
+            </div>
+            <div>
+              <AppScreen
+                src="/landing/screens/messages-mobile.webp"
+                alt="Messagerie avec l'expert Hanami sur mobile : conseils agronomiques en direct"
+                width={720}
+                height={1290}
+                variant="phone"
+              />
+              <p className="text-center text-sm text-stone-500 mt-5 max-w-[260px] mx-auto">
+                <strong className="text-stone-700">Sami vous répond</strong> — directement, sous 24h, avec le bon dosage et le bon timing.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Note honnête : aperçu de l'interface en cours de finalisation */}
+        <p className="font-[family-name:var(--font-space-mono)] text-[11px] text-stone-400 mt-16 text-center">
+          Aperçu de l&apos;espace client inclus dans votre coaching.
+        </p>
+      </div>
+    </section>
+  )
+}

@@ -25,6 +25,7 @@ import GuaranteeBlock from '@/components/shared/GuaranteeBlock'
 import ContactForm from '@/components/shared/ContactForm'
 
 import CoachingContent from '@/components/coaching/CoachingContent'
+import EspaceClientPreview from '@/components/coaching/EspaceClientPreview'
 import Testimonials from '@/components/home/Testimonials'
 import FAQ from '@/components/home/FAQ'
 
@@ -72,7 +73,10 @@ export default function CoachingPage() {
         {/* 1-4. Hero, prix, inclus, comment ça marche */}
         <CoachingContent />
 
-        {/* 5. Témoignages — tous clients coaching renouvelés */}
+        {/* 5. Aperçu de l'espace client — rend le coaching tangible */}
+        <EspaceClientPreview />
+
+        {/* 6. Témoignages — tous clients coaching renouvelés */}
         <Testimonials />
 
         {/* 6. FAQ — objections spécifiques au coaching */}
