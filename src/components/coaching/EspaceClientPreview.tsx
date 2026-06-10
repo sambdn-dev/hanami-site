@@ -16,7 +16,7 @@
 
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Monitor, Smartphone } from 'lucide-react'
 import { useFadeIn } from '@/hooks/useFadeIn'
 import AppScreen from './AppScreen'
@@ -25,15 +25,9 @@ type Device = 'web' | 'mobile'
 
 export default function EspaceClientPreview() {
   const headRef = useFadeIn()
+  // Défaut Web partout ; le bouton Mobile reste disponible (les captures
+  // desktop restent lisibles : sur petit écran on les remplace via le toggle).
   const [device, setDevice] = useState<Device>('web')
-
-  // Responsivité : sur petit écran, une capture desktop rétrécie est
-  // illisible → on démarre en mode Mobile. Le bouton reste disponible.
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.innerWidth < 768) {
-      setDevice('mobile')
-    }
-  }, [])
 
   return (
     <section className="py-20 lg:py-28 bg-stone-50">
