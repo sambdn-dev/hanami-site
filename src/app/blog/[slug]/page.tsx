@@ -71,8 +71,10 @@ export default async function ArticlePage(
   const article = getArticleBySlug(slug)
   if (!article) notFound()
 
-  // JSON-LD BlogPosting pour le SEO — Google exige des URLs absolues
-  // pour `image` et `publisher.logo` (les chemins relatifs sont ignorés)
+  // JSON-LD BlogPosting pour le SEO/GEO — Google exige des URLs absolues
+  // pour `image` et `publisher.logo` (les chemins relatifs sont ignorés).
+  // `speakable` pointe vers le bloc "L'essentiel" (#article-essentiel) :
+  // c'est la réponse condensée que les moteurs IA extraient en priorité.
   const BASE_URL = 'https://hanami-gazon.fr'
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -80,6 +82,14 @@ export default async function ArticlePage(
     headline: article.title,
     description: article.excerpt,
     datePublished: article.date,
+    // Pas de suivi des révisions dans le frontmatter : date de publication
+    dateModified: article.date,
+    inLanguage: 'fr-FR',
+    articleSection: article.category,
+    speakable: {
+      '@type': 'SpeakableSpecification',
+      cssSelector: ['#article-essentiel'],
+    },
     author: { '@type': 'Person', name: article.author },
     publisher: {
       '@type': 'Organization',
@@ -133,10 +143,6 @@ export default async function ArticlePage(
               {article.title}
             </h1>
 
-            <p className="mt-5 text-lg text-stone-600 leading-relaxed">
-              {article.excerpt}
-            </p>
-
             <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-stone-500">
               <span>Par <span className="font-semibold text-stone-700">{article.author}</span></span>
               <span className="inline-block w-1 h-1 rounded-full bg-stone-300" />
@@ -150,6 +156,21 @@ export default async function ArticlePage(
 
             <div className="mt-6">
               <ShareButton title={article.title} excerpt={article.excerpt} />
+            </div>
+
+            {/* Bloc "L'essentiel" — réponse d'abord (GEO) : l'excerpt du
+                frontmatter, encadré et ciblé par `speakable` dans le JSON-LD.
+                L'id #article-essentiel doit rester stable. */}
+            <div
+              id="article-essentiel"
+              className="mt-8 rounded-r-xl bg-hanami-100/40 border-l-4 border-hanami-500 px-5 py-4"
+            >
+              <p className="font-[family-name:var(--font-space-mono)] text-[11px] font-bold uppercase tracking-widest text-hanami-700">
+                L&apos;essentiel
+              </p>
+              <p className="mt-2 text-stone-700 leading-relaxed">
+                {article.excerpt}
+              </p>
             </div>
           </header>
 
