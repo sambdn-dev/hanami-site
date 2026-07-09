@@ -2582,22 +2582,24 @@ export default function HanamiCalculator() {
             )}
           </div>
 
-          {/* ── Dev button — toujours visible, discret en haut à droite.
+          {/* ── Dev button — UNIQUEMENT en développement (jamais en prod).
                 Clic = pré-remplit aléatoirement zones + type + produits + dose
                 avec des valeurs réalistes du catalogue Hanami, et lance le
                 calcul. Pratique pour tester rapidement le rendu des résultats. */}
-          <button
-            onClick={prefillDev}
-            title="Pré-remplir avec un scénario aléatoire"
-            className="absolute top-3 right-3 px-2.5 py-1 text-[10px] font-semibold tracking-widest uppercase rounded-md bg-amber-500/20 text-amber-700 hover:bg-amber-500/30 transition-colors font-[family-name:var(--font-space-mono)]"
-          >
-            🎲 Dev
-          </button>
+          {process.env.NODE_ENV === 'development' && (
+            <button
+              onClick={prefillDev}
+              title="Pré-remplir avec un scénario aléatoire"
+              className="absolute top-3 right-3 px-2.5 py-1 text-[10px] font-semibold tracking-widest uppercase rounded-md bg-amber-500/20 text-amber-700 hover:bg-amber-500/30 transition-colors font-[family-name:var(--font-space-mono)]"
+            >
+              Dev
+            </button>
+          )}
         </div>
 
         {/* ── Disclaimer footer ──────────────────────────────────────────────── */}
         <p className="text-center text-xs text-stone-400 mt-4 leading-relaxed px-4">
-          💚 Dosage Intelligent · Hanami · Pour des applications précises et responsables
+          Dosage Intelligent · Hanami · Pour des applications précises et responsables
         </p>
         <p className="text-center text-xs text-stone-300 mt-2 leading-relaxed px-4 italic">
           {DISCLAIMER}

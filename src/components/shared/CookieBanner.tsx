@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { Cookie } from 'lucide-react'
 
 interface CookiePrefs {
   functional: true
@@ -64,8 +65,9 @@ export default function CookieBanner() {
         {state === 'banner' && (
           <div className="p-5">
             <div className="flex items-start gap-3 mb-3">
-              {/* Icône cookie SVG (sans dépendance Lucide) */}
-              <span className="text-2xl flex-shrink-0" aria-hidden="true">🍪</span>
+              <span className="flex-shrink-0 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center" aria-hidden="true">
+                <Cookie className="w-4.5 h-4.5 text-amber-500" strokeWidth={1.8} />
+              </span>
               <div>
                 <p className="font-semibold text-sm leading-snug mb-1">
                   Nous respectons votre vie privée
