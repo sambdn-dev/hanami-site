@@ -16,6 +16,7 @@ const NAV_LINKS = [
   { href: '/',                label: 'Particuliers'       },
   { href: '/pro',             label: 'Professionnels'     },
   { href: '/mon-chantier',    label: 'Mon chantier'       },
+  { href: '/visualiseur',     label: 'Visualiseur IA'     },
   { href: '/calculatrice',    label: 'Dosage Intelligent' },
   { href: '/blog',            label: 'Journal'            },
   { href: '/pourquoi-hanami', label: 'Pourquoi Hanami ?'  },

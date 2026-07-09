@@ -20,6 +20,11 @@ export type HanamiEvent =
   | 'contact_submit'
   | 'newsletter_signup'
   | 'calculator_action'
+  | 'visualizer_upload'
+  | 'visualizer_generate'
+  | 'visualizer_gate_shown'
+  | 'visualizer_lead'
+  | 'visualizer_download'
 
 type EventProps = Record<string, string | number | boolean | null | undefined>
 
