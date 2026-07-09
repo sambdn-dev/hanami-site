@@ -13,6 +13,7 @@
 
 import { getAllArticles } from '@/lib/blog'
 import { FAQS } from '@/lib/faq-data'
+import { COACHING_FAQS } from '@/lib/coaching-faq-data'
 import { PRICING_DISPLAY } from '@/lib/chantier/pricing'
 
 const BASE_URL = 'https://hanami-gazon.fr'
@@ -108,8 +109,9 @@ function buildLlmsTxt(): string {
   }
 
   // ── FAQ — le contenu le plus cité par les moteurs IA ─────────────────────
+  // Générales (home) + spécifiques coaching : les deux jeux sont disjoints.
   sections.push('## FAQ', '')
-  for (const faq of FAQS) {
+  for (const faq of [...FAQS, ...COACHING_FAQS]) {
     sections.push(`**${faq.question}**`, '', faq.answer, '')
   }
 

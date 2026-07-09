@@ -108,6 +108,34 @@ export default async function ArticlePage(
     },
   }
 
+  // JSON-LD BreadcrumbList — fil d'Ariane à 3 niveaux (Accueil → Journal →
+  // article) : situe la page dans l'arborescence du site pour les moteurs
+  // classiques et IA. URLs absolues exigées, comme pour le BlogPosting.
+  const breadcrumbJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Accueil',
+        item: `${BASE_URL}/`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Journal',
+        item: `${BASE_URL}/blog`,
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: article.title,
+        item: `${BASE_URL}/blog/${article.slug}`,
+      },
+    ],
+  }
+
   return (
     <>
       <SeasonalBanner />
@@ -116,6 +144,10 @@ export default async function ArticlePage(
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
       <main className="flex-1 pt-24 pb-20">
