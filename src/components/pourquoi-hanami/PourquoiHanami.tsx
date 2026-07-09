@@ -135,17 +135,17 @@ export default function PourquoiHanami() {
 
       {/* ── CTA final ──────────────────────────────────────────────────────── */}
       <section className="bg-[#1a2e1a] py-16 lg:py-20">
-        <div className="max-w-3xl mx-auto px-6 lg:px-8 text-center">
+        <div className="max-w-3xl mx-auto px-6 lg:px-8">
           <p
             className="text-2xl lg:text-3xl font-semibold text-white mb-4 leading-snug"
             style={{ fontFamily: 'var(--font-fraunces)' }}
           >
             Prêt à voir la différence ?
           </p>
-          <p className="text-stone-300 leading-relaxed mb-8 max-w-lg mx-auto">
+          <p className="text-stone-300 leading-relaxed mb-8 max-w-lg">
             Un diagnostic gratuit, sans engagement. On regarde votre terrain, on vous explique ce qui bloque — et on vous donne le protocole pour y remédier.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-start gap-3">
             <Link
               href="/#contact"
               className="px-6 py-3 rounded-lg bg-[#4a8c3f] hover:bg-[#3a7030] text-white font-medium transition-colors"

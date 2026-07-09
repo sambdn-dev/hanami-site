@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ChevronRight, X, Menu } from 'lucide-react'
 
 interface NavbarProps {
@@ -27,6 +27,11 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
   const [bannerGone, setBannerGone] = useState(false)
   const [menuOpen, setMenuOpen]     = useState(false)
 
+  // Gestion du focus du drawer (accessibilité clavier / lecteur d'écran)
+  const hamburgerRef = useRef<HTMLButtonElement>(null)
+  const closeBtnRef  = useRef<HTMLButtonElement>(null)
+  const wasOpenRef   = useRef(false)
+
   useEffect(() => {
     const handleScroll  = () => setScrolled(window.scrollY > 20)
     const handleDismiss = () => setBannerGone(true)
@@ -46,6 +51,24 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
 
   // Fermer le menu lors d'un changement de route
   useEffect(() => { setMenuOpen(false) }, [pathname])
+
+  // Accessibilité du drawer : Échap ferme, focus déplacé sur "Fermer" à
+  // l'ouverture, puis rendu au bouton hamburger à la fermeture.
+  useEffect(() => {
+    if (menuOpen) {
+      wasOpenRef.current = true
+      const onKey = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') setMenuOpen(false)
+      }
+      document.addEventListener('keydown', onKey)
+      closeBtnRef.current?.focus()
+      return () => document.removeEventListener('keydown', onKey)
+    }
+    if (wasOpenRef.current) {
+      wasOpenRef.current = false
+      hamburgerRef.current?.focus()
+    }
+  }, [menuOpen])
 
   const isPro = variant === 'dark'
 
@@ -149,9 +172,12 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
 
             {/* Mobile — bouton hamburger */}
             <button
+              ref={hamburgerRef}
               className="lg:hidden flex items-center justify-center w-9 h-9 rounded-lg transition-colors"
               onClick={() => setMenuOpen(true)}
               aria-label="Ouvrir le menu"
+              aria-expanded={menuOpen}
+              aria-controls="mobile-menu"
             >
               <Menu className={`w-5 h-5 ${isPro ? 'text-white' : 'text-stone-700'}`} />
             </button>
@@ -171,13 +197,17 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
       />
 
       {/* Panneau coulissant depuis la droite */}
+      {/* `inert` retire le panneau du parcours Tab et des lecteurs d'écran
+          quand il est fermé (il reste dans le DOM, juste hors-champ). */}
       <div
+        id="mobile-menu"
         className={`fixed top-0 right-0 bottom-0 w-[85vw] max-w-sm bg-white z-[100] shadow-2xl flex flex-col transition-transform duration-300 ease-out lg:hidden ${
           menuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         role="dialog"
         aria-modal="true"
         aria-label="Menu principal"
+        inert={!menuOpen}
       >
 
         {/* En-tête du drawer */}
@@ -194,6 +224,7 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
             </div>
           </Link>
           <button
+            ref={closeBtnRef}
             onClick={() => setMenuOpen(false)}
             className="flex items-center gap-1.5 text-stone-400 hover:text-stone-700 transition-colors"
             aria-label="Fermer le menu"

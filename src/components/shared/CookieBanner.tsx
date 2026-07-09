@@ -57,9 +57,10 @@ export default function CookieBanner() {
           'bg-[#1a2e1a] text-white shadow-2xl',
           state === 'preferences' ? 'md:rounded-2xl' : 'rounded-t-2xl md:rounded-2xl',
         ].join(' ')}
-        role="dialog"
+        /* role="region" (pas "dialog") : le bandeau n'est pas modal — la
+           page reste utilisable derrière, pas de piège de focus */
+        role="region"
         aria-label="Gestion des cookies"
-        aria-modal="true"
       >
         {/* ── État 1 : Banner ──────────────────────────────────────── */}
         {state === 'banner' && (

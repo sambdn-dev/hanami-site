@@ -12,21 +12,38 @@ import { Resend } from 'resend'
 
 const CONTACT_EMAIL = process.env.CONTACT_EMAIL ?? 'samibouden@gmail.com'
 
+/* Expéditeur : onboarding@resend.dev (sandbox Resend) ne délivre QUE vers
+   l'adresse du propriétaire du compte — les visiteurs ne reçoivent rien.
+   Vérifier le domaine hanami-gazon.fr dans le dashboard Resend, puis définir
+   RESEND_FROM_EMAIL='Hanami <noreply@hanami-gazon.fr>' sur Vercel. */
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? 'Hanami <onboarding@resend.dev>'
+
 export async function POST(request: NextRequest) {
   const resend = new Resend(process.env.RESEND_API_KEY)
 
   try {
-    const { email } = await request.json() as { email?: string }
+    let body: { email?: unknown }
+    try {
+      body = await request.json() as { email?: unknown }
+    } catch {
+      return NextResponse.json({ error: 'Données invalides' }, { status: 400 })
+    }
 
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+    // Coercition en chaîne — le payload vient du client, rien n'est garanti
+    const email = String(body.email ?? '').trim()
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return NextResponse.json({ error: 'Email invalide' }, { status: 400 })
     }
 
-    const safeEmail = email.trim()
+    const safeEmail = email
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
-    await resend.emails.send({
-      from: 'Hanami <onboarding@resend.dev>',
+    // Le SDK Resend ne throw pas : il retourne { data, error }. Si la
+    // notification interne échoue, l'inscription est perdue → 502 pour que
+    // le front affiche le fallback WhatsApp.
+    const { error: sendError } = await resend.emails.send({
+      from: FROM_EMAIL,
       to: [CONTACT_EMAIL],
       subject: `[Hanami] Nouvelle inscription newsletter`,
       html: `
@@ -37,6 +54,13 @@ export async function POST(request: NextRequest) {
         </p>
       `,
     })
+    if (sendError) {
+      console.error('[API /newsletter] Échec envoi Resend:', sendError)
+      return NextResponse.json(
+        { error: "L'envoi a échoué, veuillez réessayer" },
+        { status: 502 }
+      )
+    }
 
     return NextResponse.json({ success: true }, { status: 200 })
 

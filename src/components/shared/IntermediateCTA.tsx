@@ -68,8 +68,8 @@ export default function IntermediateCTA({
       <div ref={fadeRef} className="fade-in max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
 
-          {/* Phrase d'accroche */}
-          <p className={`font-[family-name:var(--font-fraunces)] text-xl lg:text-2xl font-semibold ${textColor} text-center sm:text-left`}>
+          {/* Phrase d'accroche — alignée à gauche partout (charte : jamais centré) */}
+          <p className={`font-[family-name:var(--font-fraunces)] text-xl lg:text-2xl font-semibold ${textColor} text-left w-full sm:w-auto`}>
             {message}
           </p>
 

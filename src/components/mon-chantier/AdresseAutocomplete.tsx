@@ -289,7 +289,8 @@ export default function AdresseAutocomplete({
       )}
       {userCoords && !geoError && !geoLoading && (
         <p className="text-xs text-hanami-700 mt-1.5">
-          📍 Position détectée — les adresses proches apparaîtront en premier.
+          <MapPin className="w-3.5 h-3.5 inline align-text-bottom mr-1" />
+          Position détectée — les adresses proches apparaîtront en premier.
         </p>
       )}
 

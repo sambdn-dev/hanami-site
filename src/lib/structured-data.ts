@@ -17,6 +17,11 @@ import type { FaqEntry } from '@/lib/faq-data'
 const BASE_URL = 'https://hanami-gazon.fr'
 const PHONE = '+33 6 67 27 76 14'
 
+// Logo carré brins d'herbe (src/app/icon.svg, servi à /icon.svg).
+// Google exige un logo carré pour Organization.logo — l'ancienne bannière
+// /opengraph-image (1200×630) n'était pas conforme.
+const LOGO_URL = `${BASE_URL}/icon.svg`
+
 export function organizationSchema() {
   return {
     '@context': 'https://schema.org',
@@ -25,7 +30,7 @@ export function organizationSchema() {
     name: 'Hanami',
     legalName: 'TROTT SASU',
     url: BASE_URL,
-    logo: `${BASE_URL}/opengraph-image`,
+    logo: LOGO_URL,
     description:
       'Expert gazon agronomique : diagnostic personnalisé, protocole daté, produits professionnels. Interventions en Île-de-France, coaching partout en France.',
     contactPoint: {
@@ -44,7 +49,7 @@ export function localBusinessSchema() {
     '@id': `${BASE_URL}/#localbusiness`,
     name: 'Hanami — Coach gazon agronomique',
     url: BASE_URL,
-    image: `${BASE_URL}/opengraph-image`,
+    image: LOGO_URL,
     telephone: PHONE,
     priceRange: '€€',
     address: {

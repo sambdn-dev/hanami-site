@@ -44,7 +44,9 @@ import ProFAQ from '@/components/pro/ProFAQ'
 import MobileStickyCTA from '@/components/home/MobileStickyCTA'
 
 export const metadata: Metadata = {
-  title: 'Hanami Pro — Expertise agronomique pour paysagistes',
+  // `absolute` : le nom commercial "Hanami Pro" contient déjà la marque,
+  // on court-circuite le template '%s | Hanami' du layout (sinon doublon)
+  title: { absolute: 'Hanami Pro — Expertise agronomique pour paysagistes' },
   description:
     'Consulting chantier, dosages précis, suivi météo agricole jour par jour. Transformez le gazon en levier de satisfaction, de renouvellement et de marge.',
   openGraph: {

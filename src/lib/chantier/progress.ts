@@ -29,10 +29,14 @@ export const LAST_INPUT_STEP = 7
 export const OPTIONAL_PHOTOS_STEP = 6
 
 /** Le téléphone est stocké avec l'indicatif ("+33 6 12 34 56 78").
- *  On valide large : indicatif (1-3 chiffres) + numéro local (6-15). */
-function isTelComplete(stored: string): boolean {
-  const digits = stored.replace(/\D/g, '')
-  return digits.length >= 8 && digits.length <= 18
+ *  Source unique de validation, partagée avec StepCoordonnees : on isole la
+ *  partie LOCALE (après l'indicatif) et on valide souple — 6 à 15 chiffres,
+ *  ce qui couvre tous les formats internationaux sans bloquer un numéro valide. */
+export function isTelephoneValid(stored: string): boolean {
+  const m = stored.match(/^\+\d{1,3}\s*(.*)$/)
+  const local = m ? m[1] : stored
+  const digits = local.replace(/\D/g, '')
+  return digits.length >= 6 && digits.length <= 15
 }
 
 /** Une étape est "complète" (= cochée) si ses données sont réellement saisies.
@@ -47,7 +51,7 @@ export function isStepComplete(index: number, s: ChantierFormState): boolean {
     case 4: return s.arrosageAuto !== null
     case 5: return isValidCodePostalFormat(s.codePostal)
     case 6: return s.photosFiles.length > 0
-    case 7: return s.prenom.trim().length >= 2 && EMAIL_REGEX.test(s.email.trim()) && isTelComplete(s.telephone)
+    case 7: return s.prenom.trim().length >= 2 && EMAIL_REGEX.test(s.email.trim()) && isTelephoneValid(s.telephone)
     default: return false // 8 = Estimation
   }
 }

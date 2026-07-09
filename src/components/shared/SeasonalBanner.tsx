@@ -40,7 +40,10 @@ export default function SeasonalBanner() {
       <button
         onClick={dismiss}
         aria-label="Fermer le bandeau"
-        className="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white transition-colors cursor-pointer"
+        /* p-3 élargit la zone tactile (~38-44px) ; -mr-3 compense à droite
+           pour un rendu visuel inchangé (le -translate-y-1/2 recentre
+           automatiquement en vertical) */
+        className="absolute right-4 top-1/2 -translate-y-1/2 p-3 -mr-3 text-white/60 hover:text-white transition-colors cursor-pointer"
       >
         <svg
           viewBox="0 0 16 16"

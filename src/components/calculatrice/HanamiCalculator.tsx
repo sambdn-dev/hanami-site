@@ -13,7 +13,7 @@
  */
 
 import { useState, useEffect, useRef } from 'react'
-import { Plus, Trash2, AlertTriangle, Info, Calculator, Download, ChevronLeft, ImageDown, Camera, Loader2, Share2 } from 'lucide-react'
+import { Plus, Trash2, AlertTriangle, Info, Calculator, Download, ChevronLeft, ImageDown, Camera, Loader2, Share2, Sprout, Sparkles, Droplets, Mountain, Package, Settings, Lightbulb, Mail, Check, Globe, FlaskConical, Timer, Play } from 'lucide-react'
 import { compressPhoto } from '@/lib/photo-utils'
 import { track } from '@/lib/analytics'
 import PhotoLightbox from '@/components/shared/PhotoLightbox'
@@ -508,10 +508,10 @@ export default function HanamiCalculator() {
     const rec  = productType === 'liquid' ? 10 : productType === 'seeds' ? 25 : 30
     const pct  = (calc / rec) * 100
     const unit = productType === 'liquid' ? 'L/ha' : 'g/m²'
-    if (pct < 50)  return { type: 'error',   message: `${calc.toFixed(1)} ${unit} (${pct.toFixed(0)}% recommandé)`, advice: '⚠️ Effets quasi inexistants — ne pas appliquer.' }
-    if (pct < 80)  return { type: 'warning', message: `${calc.toFixed(1)} ${unit} (${pct.toFixed(0)}% recommandé)`, advice: '⚠️ Effets limités — concentrez-vous sur vos zones prioritaires.' }
-    if (pct <= 120) return { type: 'success', message: `${calc.toFixed(1)} ${unit} (${pct.toFixed(0)}% recommandé)`, advice: '✅ Dosage correct.' }
-    return { type: 'error', message: `${calc.toFixed(1)} ${unit} (${pct.toFixed(0)}% recommandé)`, advice: '⚠️ Surdosage — risque de brûlure.' }
+    if (pct < 50)  return { type: 'error',   message: `${calc.toFixed(1)} ${unit} (${pct.toFixed(0)}% recommandé)`, advice: 'Effets quasi inexistants — ne pas appliquer.' }
+    if (pct < 80)  return { type: 'warning', message: `${calc.toFixed(1)} ${unit} (${pct.toFixed(0)}% recommandé)`, advice: 'Effets limités — concentrez-vous sur vos zones prioritaires.' }
+    if (pct <= 120) return { type: 'success', message: `${calc.toFixed(1)} ${unit} (${pct.toFixed(0)}% recommandé)`, advice: 'Dosage correct.' }
+    return { type: 'error', message: `${calc.toFixed(1)} ${unit} (${pct.toFixed(0)}% recommandé)`, advice: 'Surdosage — risque de brûlure.' }
   }
 
   const getWarning = () => {
@@ -1155,7 +1155,7 @@ export default function HanamiCalculator() {
                         {/* Erreur de compression (rare) */}
                         {errMsg && (
                           <div className="px-3 pb-2 -mt-1">
-                            <p className="text-[11px] text-red-600">⚠ {errMsg}</p>
+                            <p className="text-[11px] text-red-600 flex items-center gap-1.5"><AlertTriangle className="w-3 h-3 shrink-0" /> {errMsg}</p>
                           </div>
                         )}
                       </div>
@@ -1192,11 +1192,11 @@ export default function HanamiCalculator() {
                 </h2>
                 <div className="grid grid-cols-2 gap-2.5">
                   {[
-                    { type: 'seeds'       as const, emoji: '🌱', label: 'Semences',       desc: 'Création ou regarnissage',    product: 'Barenbrug RES+ Elite' },
-                    { type: 'fertilizer'  as const, emoji: '✨', label: 'Engrais granulés', desc: 'Fertilisation & nutrition',  product: 'Floranid Twin Club'   },
-                    { type: 'liquid'      as const, emoji: '💧', label: 'Produit liquide', desc: 'Traitement, mouillant, fongicide', product: 'H2Pro Trismart' },
-                    { type: 'topdressing' as const, emoji: '🪨', label: 'Top dressing',    desc: 'Sable, terreau, nivellement', product: ''                    },
-                  ].map(({ type, emoji, label, desc, product }) => (
+                    { type: 'seeds'       as const, icon: Sprout,   label: 'Semences',       desc: 'Création ou regarnissage',    product: 'Barenbrug RES+ Elite' },
+                    { type: 'fertilizer'  as const, icon: Sparkles, label: 'Engrais granulés', desc: 'Fertilisation & nutrition',  product: 'Floranid Twin Club'   },
+                    { type: 'liquid'      as const, icon: Droplets, label: 'Produit liquide', desc: 'Traitement, mouillant, fongicide', product: 'H2Pro Trismart' },
+                    { type: 'topdressing' as const, icon: Mountain, label: 'Top dressing',    desc: 'Sable, terreau, nivellement', product: ''                    },
+                  ].map(({ type, icon: TypeIcon, label, desc, product }) => (
                     <button
                       key={type}
                       onClick={() => {
@@ -1213,7 +1213,7 @@ export default function HanamiCalculator() {
                       }}
                       className="flex flex-col items-start gap-2 p-4 bg-white border-2 border-stone-100 rounded-xl hover:border-hanami-500 hover:bg-hanami-100/20 transition-all text-left group"
                     >
-                      <span className="text-2xl">{emoji}</span>
+                      <TypeIcon className="w-6 h-6 text-hanami-500 group-hover:text-hanami-700 transition-colors" />
                       <div>
                         <p className="text-sm font-semibold text-stone-800 group-hover:text-hanami-900 leading-tight">{label}</p>
                         <p className="text-xs text-stone-400 mt-0.5 leading-tight">{desc}</p>
@@ -1363,9 +1363,9 @@ export default function HanamiCalculator() {
                 <div className="space-y-3">
                   {/* Seeds info */}
                   {productType === 'seeds' && (
-                    <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 flex gap-2">
-                      <Info className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
-                      <p className="text-xs text-blue-800">
+                    <div className="bg-hanami-100/60 border border-hanami-500/20 rounded-lg p-3 flex gap-2">
+                      <Info className="w-4 h-4 text-hanami-500 mt-0.5 shrink-0" />
+                      <p className="text-xs text-hanami-900">
                         Regarnissage : 10–20 g/m² · Création : 25–40 g/m² · Respectez toujours le fabricant.
                       </p>
                     </div>
@@ -1517,21 +1517,21 @@ export default function HanamiCalculator() {
                   )}
 
                   {/* Reverse mode toggle */}
-                  <label className="flex items-center gap-3 cursor-pointer p-3 bg-blue-50 border border-blue-100 rounded-lg">
+                  <label className="flex items-center gap-3 cursor-pointer p-3 bg-hanami-100/60 border border-hanami-500/20 rounded-lg">
                     <input
                       type="checkbox" checked={reverseMode}
                       onChange={(e) => { setReverseMode(e.target.checked); if (e.target.checked) setSelectedZones(zones.map((_, i) => i)) }}
                       className="w-4 h-4 accent-hanami-700 rounded shrink-0"
                     />
                     <div>
-                      <p className="text-xs font-semibold text-stone-700">📦 Calcul inversé</p>
+                      <p className="text-xs font-semibold text-stone-700 flex items-center gap-1.5"><Package className="w-3.5 h-3.5 shrink-0" /> Calcul inversé</p>
                       <p className="text-xs text-stone-500">Calculer avec votre stock (un seul produit)</p>
                     </div>
                   </label>
 
                   {/* Reverse mode fields */}
                   {reverseMode && (
-                    <div className="space-y-3 border-l-4 border-blue-200 pl-3">
+                    <div className="space-y-3 border-l-4 border-hanami-500/30 pl-3">
                       <div>
                         <label className="block text-xs font-medium text-stone-500 mb-1">Quantité en stock</label>
                         <div className="flex gap-2">
@@ -1579,16 +1579,16 @@ export default function HanamiCalculator() {
                 <div className="space-y-3">
                   {/* Mode toggle */}
                   <div className="flex gap-1 p-1 bg-stone-100 rounded-lg">
-                    {[{ v: false, l: 'Simplifié' }, { v: true, l: '⚙️ Expert' }].map(({ v, l }) => (
-                      <button key={String(v)} onClick={() => setExpertMode(v)} className={`flex-1 py-1.5 rounded-md text-xs font-medium transition-all ${expertMode === v ? 'bg-white text-hanami-700 shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}>{l}</button>
+                    {[{ v: false, l: 'Simplifié' }, { v: true, l: 'Expert' }].map(({ v, l }) => (
+                      <button key={String(v)} onClick={() => setExpertMode(v)} className={`flex-1 py-1.5 rounded-md text-xs font-medium transition-all flex items-center justify-center gap-1 ${expertMode === v ? 'bg-white text-hanami-700 shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}>{v && <Settings className="w-3.5 h-3.5" />}{l}</button>
                     ))}
                   </div>
 
                   {!reverseMode ? (
                     <>
                       {!expertMode ? (
-                        <div className="bg-blue-50 border border-blue-100 rounded-lg p-3">
-                          <p className="text-xs text-blue-700">Mode simplifié : calcul basé sur 10L de bouillie / 100m² (vitesse de marche normale).</p>
+                        <div className="bg-hanami-100/60 border border-hanami-500/20 rounded-lg p-3">
+                          <p className="text-xs text-hanami-900">Mode simplifié : calcul basé sur 10L de bouillie / 100m² (vitesse de marche normale).</p>
                         </div>
                       ) : null}
 
@@ -1753,7 +1753,7 @@ export default function HanamiCalculator() {
                     // Reverse liquid — un seul produit (le stock disponible)
                     <>
                       <div className="bg-amber-50 border border-amber-100 rounded-lg p-3">
-                        <p className="text-xs text-amber-700">📦 Mode calcul inversé : un seul produit (votre stock).</p>
+                        <p className="text-xs text-amber-700 flex items-center gap-1.5"><Package className="w-3.5 h-3.5 shrink-0" /> Mode calcul inversé : un seul produit (votre stock).</p>
                       </div>
                       <div>
                         <label className="block text-xs font-medium text-stone-500 mb-1">Nom du produit</label>
@@ -1786,10 +1786,10 @@ export default function HanamiCalculator() {
                   )}
 
                   {/* Reverse toggle */}
-                  <label className="flex items-center gap-3 cursor-pointer p-3 bg-blue-50 border border-blue-100 rounded-lg">
+                  <label className="flex items-center gap-3 cursor-pointer p-3 bg-hanami-100/60 border border-hanami-500/20 rounded-lg">
                     <input type="checkbox" checked={reverseMode} onChange={(e) => { setReverseMode(e.target.checked); if (e.target.checked) setSelectedZones(zones.map((_, i) => i)) }} className="w-4 h-4 accent-hanami-700 rounded shrink-0" />
                     <div>
-                      <p className="text-xs font-semibold text-stone-700">📦 Calcul inversé</p>
+                      <p className="text-xs font-semibold text-stone-700 flex items-center gap-1.5"><Package className="w-3.5 h-3.5 shrink-0" /> Calcul inversé</p>
                       <p className="text-xs text-stone-500">Calculer avec votre stock (un seul produit)</p>
                     </div>
                   </label>
@@ -2059,11 +2059,11 @@ export default function HanamiCalculator() {
                   {results.type === 'solid' && (
                     <>
                       <div className="bg-amber-50 border border-amber-100 rounded-xl p-3 flex gap-2">
-                        <Info className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+                        <Lightbulb className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
                         <p className="text-xs text-amber-800">
                           {results.products.length > 1
-                            ? '💡 Appliquez chaque produit en passes croisées (2–3 passages) pour une répartition homogène.'
-                            : '💡 Épandez en passes croisées à réglage faible (2–3 passages) pour une répartition homogène.'}
+                            ? 'Appliquez chaque produit en passes croisées (2–3 passages) pour une répartition homogène.'
+                            : 'Épandez en passes croisées à réglage faible (2–3 passages) pour une répartition homogène.'}
                         </p>
                       </div>
 
@@ -2142,11 +2142,11 @@ export default function HanamiCalculator() {
                   {results.type === 'liquid' && (
                     <>
                       <div className="bg-amber-50 border border-amber-100 rounded-xl p-3 flex gap-2">
-                        <Info className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+                        <Lightbulb className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
                         <p className="text-xs text-amber-800">
                           {results.products.length > 1
-                            ? '💡 Mélangez tous les produits dans la même bouillie. Vérifiez la compatibilité chimique avant.'
-                            : '💡 Utilisez un traceur bleu pour éviter les doubles passages.'}
+                            ? 'Mélangez tous les produits dans la même bouillie. Vérifiez la compatibilité chimique avant.'
+                            : 'Utilisez un traceur bleu pour éviter les doubles passages.'}
                         </p>
                       </div>
 
@@ -2258,9 +2258,9 @@ export default function HanamiCalculator() {
                               </div>
 
                               {/* Eau */}
-                              <div className="mx-4 mb-3 bg-blue-50 rounded-xl px-4 py-3 flex items-center gap-2.5">
-                                <span className="text-base">💧</span>
-                                <p className="text-sm text-blue-800">
+                              <div className="mx-4 mb-3 bg-hanami-100/60 border border-hanami-500/20 rounded-xl px-4 py-3 flex items-center gap-2.5">
+                                <Droplets className="w-4 h-4 text-hanami-500 shrink-0" />
+                                <p className="text-sm text-hanami-900">
                                   Eau : <strong className="font-[family-name:var(--font-space-mono)]">{z.waterAmount} L</strong>
                                 </p>
                               </div>
@@ -2302,17 +2302,17 @@ export default function HanamiCalculator() {
                                 {!isDone ? (
                                   <button
                                     onClick={() => isRunning ? stopTimer(zoneIndex) : startTimer(zoneIndex)}
-                                    className={`w-full py-2.5 rounded-xl text-sm font-medium transition-all ${
+                                    className={`w-full py-2.5 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-1.5 ${
                                       isRunning
-                                        ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                                        ? 'bg-hanami-100/60 text-hanami-700 border border-hanami-500/20'
                                         : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
                                     }`}
                                   >
                                     {isRunning
-                                      ? `⏱ ${formatTimer(timerVal)}`
+                                      ? <><Timer className="w-4 h-4" /> {formatTimer(timerVal)}</>
                                       : timerVal > 0
-                                        ? `▶ Reprendre · ${formatTimer(timerVal)}`
-                                        : '⏱ Lancer le chronomètre'
+                                        ? <><Play className="w-4 h-4" /> Reprendre · {formatTimer(timerVal)}</>
+                                        : <><Timer className="w-4 h-4" /> Lancer le chronomètre</>
                                     }
                                   </button>
                                 ) : (
@@ -2357,15 +2357,15 @@ export default function HanamiCalculator() {
                             <div className="grid grid-cols-2 gap-2">
                               {results.products.map((p, i) => (
                                 <div key={i} className="bg-white border border-stone-100 rounded-lg px-3 py-2.5">
-                                  <p className="text-[10px] text-stone-400 mb-0.5 truncate">🧪 {p.name}</p>
-                                  <p className="text-sm font-semibold text-blue-700 font-[family-name:var(--font-space-mono)]">
+                                  <p className="text-[10px] text-stone-400 mb-0.5 flex items-center gap-1"><FlaskConical className="w-3 h-3 shrink-0" /><span className="truncate">{p.name}</span></p>
+                                  <p className="text-sm font-semibold text-hanami-700 font-[family-name:var(--font-space-mono)]">
                                     {p.perFillAmount} {p.perFillUnit}
                                   </p>
                                 </div>
                               ))}
                               <div className="bg-white border border-stone-100 rounded-lg px-3 py-2.5">
-                                <p className="text-[10px] text-stone-400 mb-0.5">💧 Eau / plein</p>
-                                <p className="text-sm font-semibold text-blue-700 font-[family-name:var(--font-space-mono)]">
+                                <p className="text-[10px] text-stone-400 mb-0.5 flex items-center gap-1"><Droplets className="w-3 h-3 shrink-0" /> Eau / plein</p>
+                                <p className="text-sm font-semibold text-hanami-700 font-[family-name:var(--font-space-mono)]">
                                   {waterFull.toFixed(1)} L
                                 </p>
                               </div>
@@ -2385,9 +2385,9 @@ export default function HanamiCalculator() {
                   {results.type === 'topdressing' && (
                     <>
                       <div className="bg-amber-50 border border-amber-100 rounded-xl p-3 flex gap-2">
-                        <Info className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+                        <Lightbulb className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
                         <p className="text-xs text-amber-800">
-                          💡 Passez à l'aérateur ou au scarificateur avant application pour une meilleure pénétration.
+                          Passez à l'aérateur ou au scarificateur avant application pour une meilleure pénétration.
                         </p>
                       </div>
 
@@ -2472,22 +2472,18 @@ export default function HanamiCalculator() {
                         Expert Gazon
                       </span>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-y-1.5 gap-x-3 text-xs text-stone-600">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-1.5 gap-x-3 text-xs text-stone-600">
                       <a href="https://wa.me/33667277614" className="flex items-center gap-1.5 hover:text-hanami-700 transition-colors">
                         <span className="text-[#25D366]">●</span>
                         <span className="font-[family-name:var(--font-space-mono)]">06 67 27 76 14</span>
                       </a>
-                      <a href="mailto:samibouden@gmail.com" className="flex items-center gap-1.5 hover:text-hanami-700 transition-colors min-w-0">
-                        <span className="text-hanami-500">✉</span>
-                        <span className="truncate">samibouden@gmail.com</span>
-                      </a>
                       <a href="https://hanami-gazon.fr" className="flex items-center gap-1.5 hover:text-hanami-700 transition-colors">
-                        <span className="text-hanami-500">🌐</span>
+                        <Globe className="w-3.5 h-3.5 text-hanami-500 shrink-0" />
                         <span>hanami-gazon.fr</span>
                       </a>
                     </div>
                     <p className="text-[10px] text-stone-400 mt-2.5 pt-2.5 border-t border-stone-100 leading-relaxed">
-                      Sami Bouden · TROTT SASU · SIREN 891 868 143 · Le Vésinet, Île-de-France ·
+                      Hanami · TROTT SASU · SIREN 891 868 143 · Le Vésinet, Île-de-France ·
                       Coaching agronomique partout en France
                     </p>
                   </div>
@@ -2495,10 +2491,10 @@ export default function HanamiCalculator() {
 
                 {/* ── Newsletter inline ── */}
                 <div className="no-print bg-hanami-100/40 border border-hanami-200 rounded-xl p-4">
-                  <p className="text-xs font-semibold text-hanami-900 mb-0.5">📬 Recevez nos protocoles saisonniers</p>
+                  <p className="text-xs font-semibold text-hanami-900 mb-0.5 flex items-center gap-1.5"><Mail className="w-3.5 h-3.5 shrink-0" /> Recevez nos protocoles saisonniers</p>
                   <p className="text-xs text-stone-500 mb-3">Conseils d'entretien, moments clés, nouveaux produits.</p>
                   {newsletterSubmitted ? (
-                    <p className="text-xs text-hanami-700 font-medium">✅ Merci ! Vous êtes inscrit·e.</p>
+                    <p className="text-xs text-hanami-700 font-medium flex items-center gap-1.5"><Check className="w-3.5 h-3.5 shrink-0" /> Merci ! Vous êtes inscrit·e.</p>
                   ) : (
                     <form onSubmit={submitNewsletter} className="flex gap-2">
                       <input

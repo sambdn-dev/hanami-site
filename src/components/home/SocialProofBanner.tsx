@@ -5,7 +5,7 @@
  * de manière sobre et factuelle. Les chiffres sont en Space Mono (police monospace)
  * pour donner un aspect "données techniques". Séparés par des barres verticales.
  *
- * Design : fond blanc (légèrement différent du fond stone-50 de la page),
+ * Design : fond stone-50 (charte : pas de blanc pur en fond de section),
  * bordures top/bottom discrètes, pas tape-à-l'œil.
  */
 
@@ -26,7 +26,7 @@ export default function SocialProofBanner() {
   return (
     <div
       ref={fadeRef}
-      className="fade-in bg-white border-y border-stone-200 py-4"
+      className="fade-in bg-stone-50 border-y border-stone-200 py-4"
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-0 sm:divide-x sm:divide-stone-200">

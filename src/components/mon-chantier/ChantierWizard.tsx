@@ -68,6 +68,7 @@ const INITIAL_STATE: ChantierFormState = {
   prenom: '',
   email: '',
   telephone: '',
+  telCountryId: undefined,
 }
 
 // ── Composant principal ─────────────────────────────────────────────────────

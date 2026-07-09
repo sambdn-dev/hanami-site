@@ -25,7 +25,11 @@ import { COMPLEXITES, ACCES, getCombinedCoefficient } from '@/lib/chantier/compl
 import type { ServiceId, ObjectifId, ArrosageReponse, ComplexiteId, AccesId } from '@/lib/chantier/types'
 
 const CONTACT_EMAIL = process.env.CONTACT_EMAIL ?? 'samibouden@gmail.com'
-const FROM_EMAIL = 'Hanami <onboarding@resend.dev>'
+/* Expéditeur : onboarding@resend.dev (sandbox Resend) ne délivre QUE vers
+   l'adresse du propriétaire du compte — les visiteurs ne reçoivent rien.
+   Vérifier le domaine hanami-gazon.fr dans le dashboard Resend, puis définir
+   RESEND_FROM_EMAIL='Hanami <noreply@hanami-gazon.fr>' sur Vercel. */
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? 'Hanami <onboarding@resend.dev>'
 const CALENDLY_URL = 'https://calendly.com/samibouden/30min'
 
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024
@@ -130,6 +134,14 @@ export async function POST(request: NextRequest) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email)) {
       return NextResponse.json({ error: 'Email invalide' }, { status: 400 })
     }
+    // Service et surface : contrôlés côté client mais jamais garantis —
+    // valider AVANT toute construction d'email (SERVICES[...] planterait sinon)
+    if (!payload.serviceRecommande || !(payload.serviceRecommande in SERVICES)) {
+      return NextResponse.json({ error: 'Service invalide' }, { status: 400 })
+    }
+    if (!Number.isFinite(payload.surface) || payload.surface < 1 || payload.surface > 50000) {
+      return NextResponse.json({ error: 'Surface invalide' }, { status: 400 })
+    }
 
     // 3. Lecture et validation des photos
     const attachments: { filename: string; content: Buffer }[] = []
@@ -179,7 +191,9 @@ export async function POST(request: NextRequest) {
     }
 
     // ── 5. Email à Sami : notification interne ─────────────────────────────
-    const adminSubject = `[Hanami Chantier] ${safe.prenom} · ${safe.surface} m² · ${SERVICES[payload.serviceRecommande].tag}`
+    // Sujet en texte brut — valeur brute trimée, PAS d'échappement HTML
+    // (sinon des entités &#039; apparaîtraient dans l'objet du mail)
+    const adminSubject = `[Hanami Chantier] ${payload.prenom.trim()} · ${safe.surface} m² · ${SERVICES[payload.serviceRecommande].tag}`
 
     const photosNote = attachments.length > 0
       ? `<p style="color:#4a8c3f;font-weight:600;margin:0 0 12px;">${attachments.length} photo(s) jointe(s)</p>`
@@ -191,7 +205,7 @@ export async function POST(request: NextRequest) {
     const zoneNote = payload.zoneType === 'out'
       ? '<p style="margin:8px 0;padding:10px 12px;background:#fef3c7;border-left:3px solid #d4a853;color:#7a5e1a;font-size:13px;">⚠ Hors zone d\'intervention — bascule auto sur Coaching.</p>'
       : payload.zoneType === 'paid'
-      ? `<p style="margin:8px 0;padding:10px 12px;background:#e8f0e6;border-left:3px solid #4a8c3f;color:#1a2e1a;font-size:13px;">📍 Zone étendue (limitrophe IdF) — forfait déplacement ${payload.fraisDeplacement} € TTC inclus dans l\'estimation.</p>`
+      ? `<p style="margin:8px 0;padding:10px 12px;background:#e8f0e6;border-left:3px solid #4a8c3f;color:#1a2e1a;font-size:13px;">📍 Zone étendue (limitrophe IdF) — forfait déplacement ${Number(payload.fraisDeplacement) || 0} € TTC inclus dans l\'estimation.</p>`
       : ''
 
     const adminHtml = `
@@ -214,7 +228,7 @@ export async function POST(request: NextRequest) {
             <div>${safe.tel}</div>
             ${payload.telephone ? `
               <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">
-                <a href="tel:${payload.telephone.replace(/\s/g, '').replace(/^\+/, '+')}"
+                <a href="tel:${payload.telephone.replace(/[^\d+]/g, '')}"
                    style="display:inline-block;padding:3px 9px;background:#2d5a27;color:white;text-decoration:none;border-radius:4px;font-size:11px;font-weight:500;">
                   📞 Appeler
                 </a>
@@ -291,7 +305,10 @@ export async function POST(request: NextRequest) {
       </p>
     `
 
-    await resend.emails.send({
+    // Le SDK Resend ne throw pas : il retourne { data, error }. Si la
+    // notification interne échoue, le lead est perdu → 502 pour que le
+    // front affiche le fallback WhatsApp.
+    const { error: adminError } = await resend.emails.send({
       from: FROM_EMAIL,
       to: [CONTACT_EMAIL],
       replyTo: payload.email,
@@ -299,6 +316,13 @@ export async function POST(request: NextRequest) {
       html: adminHtml,
       ...(attachments.length > 0 ? { attachments } : {}),
     })
+    if (adminError) {
+      console.error('[API /chantier] Échec notification interne Resend:', adminError)
+      return NextResponse.json(
+        { error: "L'envoi a échoué, contactez-nous sur WhatsApp" },
+        { status: 502 }
+      )
+    }
 
     // ── 6. Email au visiteur : confirmation + estimation ────────────────────
     const service = SERVICES[payload.serviceRecommande]
@@ -358,13 +382,18 @@ export async function POST(request: NextRequest) {
       </div>
     `
 
-    await resend.emails.send({
+    // Confirmation visiteur : si elle échoue, le lead est déjà chez Sami —
+    // on logge l'erreur sans faire échouer la requête.
+    const { error: visitorError } = await resend.emails.send({
       from: FROM_EMAIL,
       to: [payload.email],
       replyTo: CONTACT_EMAIL,
       subject: 'Votre estimation Hanami',
       html: visitorHtml,
     })
+    if (visitorError) {
+      console.error('[API /chantier] Échec email de confirmation visiteur:', visitorError)
+    }
 
     return NextResponse.json({ success: true }, { status: 200 })
 

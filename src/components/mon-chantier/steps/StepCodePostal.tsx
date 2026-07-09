@@ -17,6 +17,7 @@ import { AlertCircle, CheckCircle2, Info } from 'lucide-react'
 import StepNav from '../StepNav'
 import AdresseAutocomplete, { type SelectedAdresse } from '../AdresseAutocomplete'
 import { isValidCodePostalFormat, getZoneType, TRAVEL_FEE_PAID_ZONE } from '@/lib/chantier/postal-codes'
+import { PRICING_DISPLAY } from '@/lib/chantier/pricing'
 import type { ChantierFormState } from '@/lib/chantier/types'
 
 interface Props {
@@ -43,8 +44,9 @@ export default function StepCodePostal({ state, onUpdate, onNext, onBack, stepNu
     onUpdate({
       adresseComplete: label,
       codePostal: cp,
-      // Si on retape, on reset la ville (sera reseté à la prochaine sélection)
-      ville: cp ? state.ville : '',
+      // On ne conserve la ville que si le CP extrait est resté le même —
+      // sinon elle serait obsolète (elle sera resetée à la prochaine sélection)
+      ville: cp && cp === state.codePostal ? state.ville : '',
     })
   }
 
@@ -136,7 +138,7 @@ export default function StepCodePostal({ state, onUpdate, onNext, onBack, stepNu
               Vous êtes hors zone d&apos;intervention sur place.
             </p>
             <p className="text-sm text-stone-700 mt-1 leading-relaxed">
-              Pas de problème : on vous proposera notre <strong>Coaching Hanami</strong> (29 €/mois TTC),
+              Pas de problème : on vous proposera notre <strong>Coaching Hanami</strong> ({PRICING_DISPLAY.coachingMois} €/mois TTC),
               un suivi 100 % en ligne avec protocole personnalisé sur 12 mois et accès aux produits
               professionnels. Disponible partout en France.
             </p>

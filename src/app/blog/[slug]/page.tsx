@@ -41,10 +41,11 @@ export async function generateMetadata(
 ): Promise<Metadata> {
   const { slug } = await params
   const article = getArticleBySlug(slug)
-  if (!article) return { title: 'Article introuvable — Hanami' }
+  if (!article) return { title: 'Article introuvable' }
 
+  // Titre sans la marque : le template '%s | Hanami' du layout l'ajoute déjà
   return {
-    title: `${article.title} — Journal Hanami`,
+    title: article.title,
     description: article.excerpt,
     openGraph: {
       title: article.title,
@@ -70,7 +71,9 @@ export default async function ArticlePage(
   const article = getArticleBySlug(slug)
   if (!article) notFound()
 
-  // JSON-LD BlogPosting pour le SEO
+  // JSON-LD BlogPosting pour le SEO — Google exige des URLs absolues
+  // pour `image` et `publisher.logo` (les chemins relatifs sont ignorés)
+  const BASE_URL = 'https://hanami-gazon.fr'
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
@@ -81,12 +84,17 @@ export default async function ArticlePage(
     publisher: {
       '@type': 'Organization',
       name: 'Hanami',
-      url: 'https://hanami-gazon.fr',
+      url: BASE_URL,
+      logo: {
+        '@type': 'ImageObject',
+        // Logo carré brins d'herbe (src/app/icon.svg, servi à /icon.svg)
+        url: `${BASE_URL}/icon.svg`,
+      },
     },
-    image: article.cover ? [article.cover] : undefined,
+    image: article.cover ? [`${BASE_URL}${article.cover}`] : undefined,
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://hanami-gazon.fr/blog/${article.slug}`,
+      '@id': `${BASE_URL}/blog/${article.slug}`,
     },
   }
 
@@ -100,7 +108,7 @@ export default async function ArticlePage(
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <main className="flex-1 pt-24 pb-20 bg-white">
+      <main className="flex-1 pt-24 pb-20">
 
         {/* Barre retour */}
         <div className="max-w-7xl mx-auto px-6 lg:px-8 mb-8">
@@ -151,7 +159,7 @@ export default async function ArticlePage(
                   réel du fichier, next/image fournit srcset + WebP/AVIF */}
               <Image
                 src={article.cover}
-                alt=""
+                alt={article.title}
                 width={1600}
                 height={900}
                 className="w-full h-auto"

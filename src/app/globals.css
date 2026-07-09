@@ -236,6 +236,13 @@ h3 .anchor-heading {
 }
 @media (prefers-reduced-motion: reduce) {
   .float-3d { animation: none; }
+  /* Contenu directement visible, sans translation ni fondu */
+  .fade-in {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .carousel-enter { animation: none; }
 }
 
 /* ─── GrassDivider : tondeuse + masque "coupé" ──────────────── */
@@ -347,6 +354,17 @@ h3 .anchor-heading {
   }
   html {
     @apply font-sans;
+  }
+}
+
+/* ─── Bouton WhatsApp flottant vs CTA sticky mobile ─────────────────────
+   Sur mobile, la barre MobileStickyCTA (fixed bottom) recouvre le bouton
+   WhatsApp flottant (bottom-6 right-6). Quand la barre est visible
+   (data-visible="true"), on remonte le bouton au-dessus d'elle. La
+   transition est assurée par la classe transition-all du bouton. */
+@media (max-width: 767px) {
+  body:has([data-visible="true"].mobile-sticky-cta) .whatsapp-float {
+    bottom: 7rem;
   }
 }
 

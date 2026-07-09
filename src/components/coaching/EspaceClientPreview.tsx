@@ -47,10 +47,12 @@ export default function EspaceClientPreview() {
             </p>
           </div>
 
-          {/* Toggle Web / Mobile */}
+          {/* Toggle Web / Mobile — boutons à état (aria-pressed) plutôt que
+              tablist : pas de panneaux tabpanel associés ni de navigation
+              flèches, le pattern "toggle button" est le bon ici */}
           <div
             className="inline-flex shrink-0 p-1 bg-stone-100 border border-stone-200 rounded-full"
-            role="tablist"
+            role="group"
             aria-label="Format d'affichage de l'espace client"
           >
             <ToggleBtn active={device === 'web'} onClick={() => setDevice('web')} icon={<Monitor className="w-4 h-4" />} label="Web" />
@@ -229,8 +231,7 @@ function ToggleBtn({ active, onClick, icon, label }: {
   return (
     <button
       type="button"
-      role="tab"
-      aria-selected={active}
+      aria-pressed={active}
       onClick={onClick}
       className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${
         active ? 'bg-white text-hanami-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'

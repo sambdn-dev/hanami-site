@@ -20,6 +20,7 @@
 
 import { useEffect, useState } from 'react'
 import StepNav from '../StepNav'
+import { isTelephoneValid } from '@/lib/chantier/progress'
 import type { ChantierFormState } from '@/lib/chantier/types'
 
 interface Props {
@@ -58,13 +59,20 @@ const COUNTRIES = [
 type CountryId = typeof COUNTRIES[number]['id']
 
 /** Formate les chiffres selon le pays.
- *  France (+33) : XX XX XX XX XX (paires) — convention française
+ *  France (+33) : X XX XX XX XX (sans le 0 national) — convention française
  *  Autres       : XXX XXX XXX… (triplets) — convention internationale */
 function formatLocal(raw: string, code: string, maxDigits: number): string {
-  const digits = raw.replace(/\D/g, '').slice(0, maxDigits)
+  let digits = raw.replace(/\D/g, '')
   if (code === '+33') {
-    return digits.replace(/(\d{2})(?=\d)/g, '$1 ').trim()
+    // Les utilisateurs (et l'autofill tel-national) tapent souvent le 0 national
+    // ("0612345678"). On le retire AVANT de tronquer, sinon le slice à 9 chiffres
+    // couperait le DERNIER chiffre du numéro.
+    digits = digits.replace(/^0/, '').slice(0, maxDigits)
+    if (!digits) return ''
+    // Premier chiffre seul puis paires : "612345678" → "6 12 34 56 78"
+    return `${digits[0]} ${digits.slice(1).replace(/(\d{2})(?=\d)/g, '$1 ')}`.trim()
   }
+  digits = digits.slice(0, maxDigits)
   return digits.replace(/(\d{3})(?=\d)/g, '$1 ').trim()
 }
 
@@ -81,8 +89,14 @@ export default function StepCoordonnees({ state, onUpdate, onNext, onBack, loadi
 
   // État local du sélecteur pays — distinct du state.telephone qui stocke le
   // tout (indicatif + numéro). On synchronise les 2 via setTel().
+  // Au remontage : on lit en priorité l'id pays persisté (state.telCountryId),
+  // car les indicatifs +1 sont partagés USA/Canada — retomber sur le code seul
+  // rebasculerait Canada → USA.
   const initial = parseStored(state.telephone)
-  const initialCountry = COUNTRIES.find(c => c.code === initial.code) ?? COUNTRIES[0]
+  const initialCountry =
+    COUNTRIES.find(c => c.id === state.telCountryId)
+    ?? COUNTRIES.find(c => c.code === initial.code)
+    ?? COUNTRIES[0]
   const [countryId, setCountryId] = useState<CountryId>(initialCountry.id)
   const [local, setLocal] = useState(initial.local)
 
@@ -91,10 +105,10 @@ export default function StepCoordonnees({ state, onUpdate, onNext, onBack, loadi
   // Validations
   const prenomOk = state.prenom.trim().length >= 2
   const emailOk = EMAIL_REGEX.test(state.email.trim())
-  // Validation souple : 6 à 15 chiffres dans la partie locale.
-  // Couvre tous les formats internationaux sans bloquer un numéro valide.
+  // Téléphone : règle partagée avec progress.ts (source unique). state.telephone
+  // reste synchrone avec `local` — setTel() le met à jour à chaque frappe.
   const localDigits = local.replace(/\D/g, '')
-  const telOk = localDigits.length >= 6 && localDigits.length <= 15
+  const telOk = isTelephoneValid(state.telephone)
   const isValid = prenomOk && emailOk && telOk
 
   /** Sync : à chaque changement de pays OU de numéro local, on met à jour
@@ -107,6 +121,8 @@ export default function StepCoordonnees({ state, onUpdate, onNext, onBack, loadi
   function handleCountryChange(id: CountryId) {
     setCountryId(id)
     const c = COUNTRIES.find(x => x.id === id)!
+    // Persiste l'id pays (dédoublonne les indicatifs +1 USA/Canada au remontage)
+    onUpdate({ telCountryId: id })
     // Reformate le numéro existant selon le nouveau pays
     const reformatted = formatLocal(local, c.code, c.maxDigits)
     setLocal(reformatted)
@@ -119,13 +135,15 @@ export default function StepCoordonnees({ state, onUpdate, onNext, onBack, loadi
     setTel(country.code, formatted)
   }
 
-  // Si le parent reset le tel (ex: bouton Nouveau calcul), on reset l'UI locale
+  // Si le parent reset le tel (ex: bouton Nouveau calcul), on reset l'UI locale.
+  // On ne repasse sur 'fr' que si aucun pays n'a été persisté (telCountryId) :
+  // un visiteur qui a choisi son pays puis effacé son numéro le garde sélectionné.
   useEffect(() => {
     if (!state.telephone) {
       setLocal('')
-      setCountryId('fr')
+      if (!state.telCountryId) setCountryId('fr')
     }
-  }, [state.telephone])
+  }, [state.telephone, state.telCountryId])
 
   function handleFormSubmit(e: React.FormEvent) {
     e.preventDefault()
