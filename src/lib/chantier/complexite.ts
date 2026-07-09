@@ -34,8 +34,6 @@ export interface ComplexiteOption {
   label: string
   description: string
   coefficient: number
-  /** Pictogramme représentatif */
-  icon: string
 }
 
 export interface AccesOption {
@@ -43,7 +41,6 @@ export interface AccesOption {
   label: string
   description: string
   coefficient: number
-  icon: string
 }
 
 export const COMPLEXITES: ComplexiteOption[] = [
@@ -52,28 +49,24 @@ export const COMPLEXITES: ComplexiteOption[] = [
     label: 'Simple',
     description: 'Zone régulière (carré, rectangle), peu d\'obstacles',
     coefficient: 1.00,
-    icon: '⬛',
   },
   {
     id: 'moyenne',
     label: 'Moyenne',
     description: 'Quelques arbres ou massifs, contours légèrement courbes',
     coefficient: 1.10,
-    icon: '🌳',
   },
   {
     id: 'elevee',
     label: 'Élevée',
     description: 'Multiples arbres et massifs, formes courbes',
     coefficient: 1.20,
-    icon: '🌲',
   },
   {
     id: 'tres_elevee',
     label: 'Très élevée',
     description: 'Pas japonais serrés, bordures découpées, terrain morcelé',
     coefficient: 1.35,
-    icon: '🪨',
   },
 ]
 
@@ -83,21 +76,18 @@ export const ACCES: AccesOption[] = [
     label: 'Facile',
     description: 'Entrée plain-pied, dépôt camion à proximité immédiate',
     coefficient: 1.00,
-    icon: '🚪',
   },
   {
     id: 'moyen',
     label: 'Moyen',
     description: 'Quelques marches, dépôt à moins de 20 m',
     coefficient: 1.08,
-    icon: '🪜',
   },
   {
     id: 'difficile',
     label: 'Difficile',
     description: 'Escaliers, passage étroit, dépôt éloigné ou en hauteur',
     coefficient: 1.20,
-    icon: '⛰️',
   },
 ]
 
