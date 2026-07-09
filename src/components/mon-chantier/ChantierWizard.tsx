@@ -34,6 +34,7 @@ import StepResultat from './steps/StepResultat'
 import { recommendService, adjustForOutOfZone } from '@/lib/chantier/scoring'
 import { computeEstimation } from '@/lib/chantier/pricing'
 import { getZoneType } from '@/lib/chantier/postal-codes'
+import { computeCompleted, computeFrontier } from '@/lib/chantier/progress'
 import { track } from '@/lib/analytics'
 import type { ChantierFormState, ChantierResult } from '@/lib/chantier/types'
 
@@ -73,9 +74,6 @@ const INITIAL_STATE: ChantierFormState = {
 
 export default function ChantierWizard() {
   const [currentStep, setCurrentStep] = useState(0)
-  /** Étape la plus avancée jamais atteinte (pour permettre la nav avant/arrière
-   *  sur les étapes déjà visitées sans avoir à re-cliquer "Continuer" partout). */
-  const [maxVisitedStep, setMaxVisitedStep] = useState(0)
   const [state, setState] = useState<ChantierFormState>(INITIAL_STATE)
   const [submitting, setSubmitting] = useState(false)
   const [submissionStatus, setSubmissionStatus] = useState<'idle' | 'success' | 'error'>('idle')
@@ -111,33 +109,35 @@ export default function ChantierWizard() {
     }
   }, [state.surface, state.etatPhotos, state.objectif, state.codePostal, state.complexite, state.acces])
 
+  /** Complétude réelle de chaque étape (dérivée des données, jamais du simple
+   *  fait d'avoir visité l'étape) + frontière de navigation autorisée. */
+  const completed = useMemo(() => computeCompleted(state, STEP_DEFS.length), [state])
+  const frontier = useMemo(() => computeFrontier(state), [state])
+
   function update(patch: Partial<ChantierFormState>) {
     setState(prev => ({ ...prev, ...patch }))
   }
 
   function next() {
-    setCurrentStep(s => {
-      const target = Math.min(s + 1, STEP_DEFS.length - 1)
-      setMaxVisitedStep(m => Math.max(m, target))
-      return target
-    })
+    setCurrentStep(s => Math.min(s + 1, STEP_DEFS.length - 1))
   }
 
   function back() {
     setCurrentStep(s => Math.max(s - 1, 0))
   }
 
-  /** Saut direct via le panneau : navigation libre entre les étapes de SAISIE
-   *  (Surface → Coordonnées, index 0-6). L'étape Estimation (index 7) reste
-   *  bloquée — elle n'est atteignable qu'après soumission via "Voir mon
-   *  estimation", sinon la page serait vide (pas de résultat calculé).
-   *  Pas non plus de retour depuis Estimation (envoi déjà fait). */
+  /** Saut direct via le panneau de progression. Règles :
+   *  - on peut revenir sur toute étape déjà complétée, ou avancer jusqu'à la
+   *    frontière (= prochaine étape à remplir) ;
+   *  - interdit de sauter PAR-DESSUS une étape requise encore vide (sinon elle
+   *    apparaîtrait à tort cochée et le lead serait incomplet) ;
+   *  - l'écran Estimation (dernier index) n'est atteignable qu'après soumission ;
+   *  - pas de retour possible une fois sur l'écran Estimation (envoi déjà fait). */
   function jumpTo(stepIndex: number) {
     if (currentStep >= STEP_DEFS.length - 1) return
-    // Bloque toute tentative d'accès direct à l'écran Estimation
     if (stepIndex >= STEP_DEFS.length - 1) return
+    if (stepIndex > frontier) return
     setCurrentStep(stepIndex)
-    setMaxVisitedStep(m => Math.max(m, stepIndex))
   }
 
   /** Soumet le formulaire à /api/chantier puis avance vers le résultat.
@@ -195,21 +195,25 @@ export default function ChantierWizard() {
 
   // ── Rendu de l'étape courante ─────────────────────────────────────────────
   function renderStep() {
+    // Le numéro affiché en pastille = position de l'étape (currentStep + 1),
+    // aligné sur STEP_DEFS et le panneau de progression. Source unique → plus
+    // de désynchronisation entre l'en-tête de l'écran et le panneau.
+    const stepNumber = currentStep + 1
     switch (currentStep) {
       case 0:
-        return <StepSurface state={state} onUpdate={update} onNext={next} />
+        return <StepSurface state={state} onUpdate={update} onNext={next} stepNumber={stepNumber} />
       case 1:
-        return <StepEtat state={state} onUpdate={update} onNext={next} onBack={back} />
+        return <StepEtat state={state} onUpdate={update} onNext={next} onBack={back} stepNumber={stepNumber} />
       case 2:
-        return <StepObjectif state={state} onUpdate={update} onNext={next} onBack={back} />
+        return <StepObjectif state={state} onUpdate={update} onNext={next} onBack={back} stepNumber={stepNumber} />
       case 3:
-        return <StepComplexiteAcces state={state} onUpdate={update} onNext={next} onBack={back} />
+        return <StepComplexiteAcces state={state} onUpdate={update} onNext={next} onBack={back} stepNumber={stepNumber} />
       case 4:
-        return <StepArrosage state={state} onUpdate={update} onNext={next} onBack={back} />
+        return <StepArrosage state={state} onUpdate={update} onNext={next} onBack={back} stepNumber={stepNumber} />
       case 5:
-        return <StepCodePostal state={state} onUpdate={update} onNext={next} onBack={back} />
+        return <StepCodePostal state={state} onUpdate={update} onNext={next} onBack={back} stepNumber={stepNumber} />
       case 6:
-        return <StepPhotos state={state} onUpdate={update} onNext={next} onBack={back} />
+        return <StepPhotos state={state} onUpdate={update} onNext={next} onBack={back} stepNumber={stepNumber} />
       case 7:
         return (
           <StepCoordonnees
@@ -218,6 +222,7 @@ export default function ChantierWizard() {
             onNext={handleSubmit}
             onBack={back}
             loading={submitting}
+            stepNumber={stepNumber}
           />
         )
       case 8:
@@ -240,7 +245,8 @@ export default function ChantierWizard() {
       <ProgressPanel
         steps={STEP_DEFS}
         currentStep={currentStep}
-        maxVisitedStep={maxVisitedStep}
+        completed={completed}
+        frontier={frontier}
         onStepClick={jumpTo}
       />
 
@@ -248,7 +254,8 @@ export default function ChantierWizard() {
       <ProgressBar
         steps={STEP_DEFS}
         currentStep={currentStep}
-        maxVisitedStep={maxVisitedStep}
+        completed={completed}
+        frontier={frontier}
         onStepClick={jumpTo}
       />
 

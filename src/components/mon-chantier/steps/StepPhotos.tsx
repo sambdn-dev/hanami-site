@@ -19,13 +19,14 @@ interface Props {
   onUpdate: (patch: Partial<ChantierFormState>) => void
   onNext: () => void
   onBack: () => void
+  stepNumber: number
 }
 
 const MAX_PHOTOS = 5
 const ACCEPTED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'])
 const ACCEPTED_EXT = /\.(jpe?g|png|webp|heic|heif)$/i
 
-export default function StepPhotos({ state, onUpdate, onNext, onBack }: Props) {
+export default function StepPhotos({ state, onUpdate, onNext, onBack, stepNumber }: Props) {
   const [isDragOver, setIsDragOver] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const photos = state.photosFiles
@@ -61,7 +62,7 @@ export default function StepPhotos({ state, onUpdate, onNext, onBack }: Props) {
   return (
     <div>
       <span className="font-[family-name:var(--font-space-mono)] text-[10px] font-semibold tracking-widest uppercase text-hanami-500">
-        Étape 5
+        Étape {stepNumber}
       </span>
       <h1 className="font-[family-name:var(--font-fraunces)] text-3xl lg:text-4xl font-semibold text-hanami-900 mt-2 leading-tight">
         Quelques photos de votre gazon

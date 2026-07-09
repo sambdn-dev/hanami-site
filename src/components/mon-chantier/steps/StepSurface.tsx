@@ -22,6 +22,8 @@ interface Props {
   state: ChantierFormState
   onUpdate: (patch: Partial<ChantierFormState>) => void
   onNext: () => void
+  /** Numéro d'étape affiché en pastille (fourni par le wizard) */
+  stepNumber: number
 }
 
 interface Preset {
@@ -41,7 +43,7 @@ const PRESETS: Preset[] = [
   { label: 'Plus de 1 000 m²', value: 1500, promptPrecise: true },
 ]
 
-export default function StepSurface({ state, onUpdate, onNext }: Props) {
+export default function StepSurface({ state, onUpdate, onNext, stepNumber }: Props) {
   const [touched, setTouched] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const isValid = state.surface !== null && state.surface > 0 && state.surface <= 50_000
@@ -67,7 +69,7 @@ export default function StepSurface({ state, onUpdate, onNext }: Props) {
   return (
     <div>
       <span className="font-[family-name:var(--font-space-mono)] text-[10px] font-semibold tracking-widest uppercase text-hanami-500">
-        Étape 1
+        Étape {stepNumber}
       </span>
       <h1 className="font-[family-name:var(--font-fraunces)] text-3xl lg:text-4xl font-semibold text-hanami-900 mt-2 leading-tight">
         Quelle est la surface de votre gazon ?

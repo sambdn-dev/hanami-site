@@ -24,6 +24,7 @@ interface Props {
   onUpdate: (patch: Partial<ChantierFormState>) => void
   onNext: () => void
   onBack: () => void
+  stepNumber: number
 }
 
 /** Tente d'extraire un CP français (5 chiffres) d'un texte libre */
@@ -32,7 +33,7 @@ function extractCodePostal(text: string): string {
   return match ? match[0] : ''
 }
 
-export default function StepCodePostal({ state, onUpdate, onNext, onBack }: Props) {
+export default function StepCodePostal({ state, onUpdate, onNext, onBack, stepNumber }: Props) {
   const [touched, setTouched] = useState(false)
 
   /** Quand l'utilisateur tape librement, on tente d'extraire un CP au passage.
@@ -70,7 +71,7 @@ export default function StepCodePostal({ state, onUpdate, onNext, onBack }: Prop
   return (
     <div>
       <span className="font-[family-name:var(--font-space-mono)] text-[10px] font-semibold tracking-widest uppercase text-hanami-500">
-        Étape 4
+        Étape {stepNumber}
       </span>
       <h1 className="font-[family-name:var(--font-fraunces)] text-3xl lg:text-4xl font-semibold text-hanami-900 mt-2 leading-tight">
         Dans quelle ville se trouve votre jardin ?

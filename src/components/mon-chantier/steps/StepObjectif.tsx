@@ -16,15 +16,16 @@ interface Props {
   onUpdate: (patch: Partial<ChantierFormState>) => void
   onNext: () => void
   onBack: () => void
+  stepNumber: number
 }
 
-export default function StepObjectif({ state, onUpdate, onNext, onBack }: Props) {
+export default function StepObjectif({ state, onUpdate, onNext, onBack, stepNumber }: Props) {
   const isValid = state.objectif !== null
 
   return (
     <div>
       <span className="font-[family-name:var(--font-space-mono)] text-[10px] font-semibold tracking-widest uppercase text-hanami-500">
-        Étape 3
+        Étape {stepNumber}
       </span>
       <h1 className="font-[family-name:var(--font-fraunces)] text-3xl lg:text-4xl font-semibold text-hanami-900 mt-2 leading-tight">
         Quel est votre objectif principal ?

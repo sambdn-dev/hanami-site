@@ -28,6 +28,7 @@ interface Props {
   onNext: () => void
   onBack: () => void
   loading: boolean
+  stepNumber: number
 }
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -75,7 +76,7 @@ function parseStored(stored: string): { code: string; local: string } {
   return { code: '+33', local: stored }
 }
 
-export default function StepCoordonnees({ state, onUpdate, onNext, onBack, loading }: Props) {
+export default function StepCoordonnees({ state, onUpdate, onNext, onBack, loading, stepNumber }: Props) {
   const [touched, setTouched] = useState({ prenom: false, email: false, telephone: false })
 
   // État local du sélecteur pays — distinct du state.telephone qui stocke le
@@ -134,7 +135,7 @@ export default function StepCoordonnees({ state, onUpdate, onNext, onBack, loadi
   return (
     <div>
       <span className="font-[family-name:var(--font-space-mono)] text-[10px] font-semibold tracking-widest uppercase text-hanami-500">
-        Étape 6
+        Étape {stepNumber}
       </span>
       <h1 className="font-[family-name:var(--font-fraunces)] text-3xl lg:text-4xl font-semibold text-hanami-900 mt-2 leading-tight">
         Vos coordonnées

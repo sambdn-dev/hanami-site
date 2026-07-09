@@ -24,11 +24,12 @@ interface Props {
   onUpdate: (patch: Partial<ChantierFormState>) => void
   onNext: () => void
   onBack: () => void
+  stepNumber: number
 }
 
 const MAX_SELECTION = 6
 
-export default function StepEtat({ state, onUpdate, onNext, onBack }: Props) {
+export default function StepEtat({ state, onUpdate, onNext, onBack, stepNumber }: Props) {
   const selected = state.etatPhotos
   const isValid = selected.length >= 1 && selected.length <= MAX_SELECTION
   const canSelectMore = selected.length < MAX_SELECTION
@@ -47,7 +48,7 @@ export default function StepEtat({ state, onUpdate, onNext, onBack }: Props) {
   return (
     <div>
       <span className="font-[family-name:var(--font-space-mono)] text-[10px] font-semibold tracking-widest uppercase text-hanami-500">
-        Étape 2
+        Étape {stepNumber}
       </span>
       <h1 className="font-[family-name:var(--font-fraunces)] text-3xl lg:text-4xl font-semibold text-hanami-900 mt-2 leading-tight">
         À quoi ressemble votre gazon aujourd&apos;hui ?
