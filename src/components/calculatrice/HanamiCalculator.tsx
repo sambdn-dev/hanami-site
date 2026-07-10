@@ -16,6 +16,8 @@ import { useState, useEffect, useRef } from 'react'
 import { Plus, Trash2, AlertTriangle, Info, Calculator, Download, ChevronLeft, ImageDown, Camera, Loader2, Share2, Sprout, Sparkles, Droplets, Mountain, Package, Settings, Lightbulb, Mail, Check, Globe, FlaskConical, Timer, Play } from 'lucide-react'
 import { compressPhoto } from '@/lib/photo-utils'
 import { track } from '@/lib/analytics'
+import { fmt, plural } from '@/lib/calculatrice/format'
+import { downloadDosagePdf, type DosagePdfDoc, type PdfZone } from '@/lib/calculatrice/pdf-export'
 import PhotoLightbox from '@/components/shared/PhotoLightbox'
 import ProductAutocomplete from './ProductAutocomplete'
 import UsageSwitcher from './UsageSwitcher'
@@ -777,20 +779,185 @@ export default function HanamiCalculator() {
     setIsApple(isiOS || isiPadDesktopUA || isMac)
   }, [])
 
+  /** Conseil d'application affiché en encadré ambre (écran + PDF). */
+  const getTip = (): string => {
+    if (!results) return ''
+    if (results.type === 'solid') {
+      return results.products.length > 1
+        ? 'Appliquez chaque produit en passes croisées (2–3 passages) pour une répartition homogène.'
+        : 'Épandez en passes croisées à réglage faible (2–3 passages) pour une répartition homogène.'
+    }
+    if (results.type === 'liquid') {
+      return results.products.length > 1
+        ? 'Mélangez tous les produits dans la même bouillie. Vérifiez la compatibilité chimique avant.'
+        : 'Utilisez un traceur bleu pour éviter les doubles passages.'
+    }
+    return 'Passez à l\'aérateur ou au scarificateur avant application pour une meilleure pénétration.'
+  }
+
+  /** Ligne de configuration du bandeau d'en-tête (surface en tête). */
+  const getChips = (): string[] => {
+    if (!results) return []
+    const chips = [`${getTotalSurface().toFixed(0)} m²`]
+    if (results.type === 'solid' && productType === 'seeds') {
+      chips.push('Semences')
+      const obj = SEED_OBJECTIVES.find(o => o.id === seedObjective)?.label
+      if (obj) chips.push(obj)
+      const cond = LAWN_CONDITIONS.find(c => c.id === lawnCondition)?.label
+      if (cond) chips.push(`État : ${cond}`)
+    } else if (results.type === 'solid') {
+      chips.push('Engrais')
+    } else if (results.type === 'liquid') {
+      chips.push(results.products.length > 1 ? `Liquide · mélange ${results.products.length} produits` : 'Liquide')
+      chips.push(expertMode ? 'Mode expert' : 'Mode simplifié')
+      chips.push(`Pulvérisateur ${sprayerCapacity} L`)
+    } else {
+      chips.push('Top dressing')
+      chips.push(`${tdCustomDepth || tdDepth} mm`)
+      const mat = TD_MATERIALS.find(m => m.id === tdMaterial)?.label
+      if (mat) chips.push(mat)
+    }
+    return chips
+  }
+
+  /** Traduit l'état des résultats en modèle de document PDF (cf. lib/calculatrice/pdf-export.ts).
+   *  Toutes les valeurs numériques sont formatées ici — le module PDF ne fait que dessiner. */
+  const buildPdfDoc = (): DosagePdfDoc | null => {
+    if (!results) return null
+
+    const base = {
+      dateLabel: new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }),
+      chips: getChips(),
+      tip: getTip(),
+      disclaimer: DISCLAIMER,
+    }
+
+    if (results.type === 'solid') {
+      const zones: PdfZone[] = results.zones.length > 1
+        ? results.zones.map(z => ({
+            name: z.name,
+            surface: `${z.surface} m²`,
+            photo: z.photo,
+            rows: z.productsQuantities.map(pq => ({
+              label: pq.name || 'Produit',
+              value: `${fmt(pq.quantity)} kg`,
+            })),
+          }))
+        : []
+      return {
+        ...base,
+        summaryTitle: results.products.length > 1 ? 'Quantités totales' : 'Quantité totale',
+        keyFigures: results.products.map(p => ({
+          value: `${fmt(p.totalKg)} kg`,
+          label: p.name || 'Produit',
+          sub: `${Math.round(parseFloat(p.dosePerM2))} g/m²`,
+        })),
+        summaryMeta: [`${results.totalSurface} m²`],
+        zonesTitle: zones.length ? 'Détail par zone' : undefined,
+        zones,
+      }
+    }
+
+    if (results.type === 'liquid') {
+      const cap = parseFloat(sprayerCapacity) || 15
+      const totalProductMlPerFill = results.products.reduce((s, p) => {
+        const ml = p.perFillUnit === 'L'
+          ? parseFloat(p.perFillAmount.toString()) * 1000
+          : parseFloat(p.perFillAmount.toString())
+        return s + ml
+      }, 0)
+      const waterFull = cap - totalProductMlPerFill / 1000
+      const totalVol = parseFloat(results.totalSprayVolume)
+      const lastVol = totalVol - (results.numberOfFills - 1) * cap
+      const isPartial = results.numberOfFills > 1 && lastVol < cap * 0.98
+
+      const zones: PdfZone[] = results.zones.map(z => {
+        const zFills = parseFloat(z.fills)
+        return {
+          name: z.name,
+          surface: `${z.surface} m²`,
+          photo: z.photo,
+          rows: [
+            { label: 'Eau', value: `${fmt(z.waterAmount)} L`, highlight: true },
+            ...z.productsAmounts.map((pa, i) => ({
+              label: pa.name || `Produit ${i + 1}`,
+              value: `${fmt(pa.amount)} ${pa.unit}`,
+            })),
+            { label: 'Bouillie', value: `${fmt(z.sprayVolume)} L` },
+            { label: `Pulvérisateur (${sprayerCapacity} L)`, value: `${fmt(zFills)} ${plural(zFills, 'plein')}` },
+          ],
+        }
+      })
+
+      return {
+        ...base,
+        summaryTitle: results.products.length > 1 ? 'Mélange à préparer' : 'Produit nécessaire',
+        keyFigures: results.products.map(p => ({
+          value: `${fmt(p.totalAmount)} ${p.totalUnit}`,
+          label: p.name || 'Produit',
+        })),
+        summaryMeta: [
+          `${results.totalSurface} m²`,
+          `${fmt(results.totalSprayVolume)} L bouillie`,
+          `${results.numberOfFills} ${plural(results.numberOfFills, 'plein')}`,
+        ],
+        zonesTitle: zones.length > 1 ? 'Détail par zone' : undefined,
+        zones,
+        recipeTitle: `Recette par plein complet (${sprayerCapacity} L)`,
+        recipe: [
+          ...results.products.map(p => ({
+            label: p.name || 'Produit',
+            value: `${fmt(p.perFillAmount)} ${p.perFillUnit}`,
+          })),
+          { label: 'Eau / plein', value: `${fmt(waterFull, 1)} L` },
+        ],
+        recipeNote: isPartial ? `Dernier plein partiel : ${fmt(lastVol, 1)} L de bouillie` : undefined,
+      }
+    }
+
+    // Top dressing
+    const zones: PdfZone[] = results.zones.length > 1
+      ? results.zones.map(z => ({
+          name: z.name,
+          surface: `${z.surface} m²`,
+          photo: z.photo,
+          rows: [
+            { label: 'Volume', value: `${fmt(z.litres, 0)} L`, highlight: true },
+            { label: 'Soit', value: `${fmt(z.litres / 1000)} m³` },
+            {
+              label: `Sacs de ${results.bagSize} L`,
+              value: `≈ ${Math.ceil(z.litres / results.bagSize)}`,
+            },
+          ],
+        }))
+      : []
+
+    return {
+      ...base,
+      summaryTitle: 'Volume nécessaire',
+      keyFigures: [{
+        value: `${fmt(results.totalLitres, 0)} L`,
+        label: results.material,
+        sub: `${fmt(results.totalLitres / 1000)} m³`,
+      }],
+      summaryMeta: [
+        `${results.totalSurface} m²`,
+        `à ${results.depth} mm`,
+        `≈ ${results.bagsCount} ${plural(results.bagsCount, 'sac')} de ${results.bagSize} L`,
+      ],
+      zonesTitle: zones.length ? 'Détail par zone' : undefined,
+      zones,
+    }
+  }
+
+  /** Export PDF vectoriel : texte net et sélectionnable, fichier léger.
+   *  (L'ancien export collait une capture PNG du DOM → ~18 Mo et flou au zoom.) */
   const downloadPDF = async () => {
     track('calculator_action', { action: 'export_pdf' })
-    const dataUrl = await captureWithPadding()
-    const { jsPDF } = await import('jspdf')
-    const img = new window.Image()
-    img.src = dataUrl
-    await new Promise<void>(resolve => { img.onload = () => resolve() })
-    const margin = 15, pageW = 210
-    const contentW = pageW - margin * 2
-    const contentH = (img.naturalHeight / img.naturalWidth) * contentW
-    const pageH = Math.max(297, contentH + margin * 2)
-    const pdf = new jsPDF({ unit: 'mm', format: [pageW, pageH], orientation: 'portrait' })
-    pdf.addImage(dataUrl, 'PNG', margin, margin, contentW, contentH)
-    pdf.save(`hanami-dosage-${Date.now()}.pdf`)
+    const doc = buildPdfDoc()
+    if (!doc) return
+    const date = new Date().toISOString().slice(0, 10)
+    await downloadDosagePdf(doc, `hanami-plan-dosage-${date}.pdf`)
   }
 
   const downloadPNG = async () => {
@@ -2079,7 +2246,7 @@ export default function HanamiCalculator() {
                                 <li key={i}>
                                   <div className="flex items-baseline gap-2">
                                     <span className="text-2xl font-bold text-white font-[family-name:var(--font-space-mono)]">
-                                      {p.totalKg}&nbsp;kg
+                                      {fmt(p.totalKg)}&nbsp;kg
                                     </span>
                                     <span className="text-xs text-hanami-100/70 truncate">{p.name}</span>
                                   </div>
@@ -2124,7 +2291,7 @@ export default function HanamiCalculator() {
                                       <li key={j} className="flex items-center justify-between text-xs">
                                         <span className="text-stone-500 truncate">{pq.name}</span>
                                         <span className="font-semibold text-hanami-700 font-[family-name:var(--font-space-mono)] shrink-0 ml-2">
-                                          {pq.quantity} kg
+                                          {fmt(pq.quantity)} kg
                                         </span>
                                       </li>
                                     ))}
@@ -2161,7 +2328,7 @@ export default function HanamiCalculator() {
                               {results.products.map((p, i) => (
                                 <li key={i} className="flex items-baseline gap-2">
                                   <span className="text-2xl font-bold text-white font-[family-name:var(--font-space-mono)]">
-                                    {p.totalAmount}&nbsp;{p.totalUnit}
+                                    {fmt(p.totalAmount)}&nbsp;{p.totalUnit}
                                   </span>
                                   <span className="text-xs text-hanami-100/70 truncate">{p.name}</span>
                                 </li>
@@ -2170,8 +2337,8 @@ export default function HanamiCalculator() {
                           </div>
                           <div className="text-right text-xs text-hanami-100/50 space-y-0.5 shrink-0">
                             <p>{results.totalSurface} m²</p>
-                            <p>{results.totalSprayVolume} L bouillie</p>
-                            <p>{results.numberOfFills} plein{results.numberOfFills > 1 ? 's' : ''}</p>
+                            <p>{fmt(results.totalSprayVolume)} L bouillie</p>
+                            <p>{results.numberOfFills} {plural(results.numberOfFills, 'plein')}</p>
                           </div>
                         </div>
                       </div>
@@ -2261,7 +2428,7 @@ export default function HanamiCalculator() {
                               <div className="mx-4 mb-3 bg-hanami-100/60 border border-hanami-500/20 rounded-xl px-4 py-3 flex items-center gap-2.5">
                                 <Droplets className="w-4 h-4 text-hanami-500 shrink-0" />
                                 <p className="text-sm text-hanami-900">
-                                  Eau : <strong className="font-[family-name:var(--font-space-mono)]">{z.waterAmount} L</strong>
+                                  Eau : <strong className="font-[family-name:var(--font-space-mono)]">{fmt(z.waterAmount)} L</strong>
                                 </p>
                               </div>
 
@@ -2271,7 +2438,7 @@ export default function HanamiCalculator() {
                                   <div key={i} className={i > 0 ? 'pt-2.5 border-t border-stone-200/70' : ''}>
                                     <p className="text-xs text-stone-400 mb-0.5">{pa.name || `Produit ${i + 1}`}</p>
                                     <p className="text-lg font-bold text-hanami-900 font-[family-name:var(--font-space-mono)]">
-                                      {pa.amount} {pa.unit}
+                                      {fmt(pa.amount)} {pa.unit}
                                     </p>
                                   </div>
                                 ))}
@@ -2291,9 +2458,9 @@ export default function HanamiCalculator() {
                                 </div>
                                 <div>
                                   <p className="text-base font-bold text-stone-900 font-[family-name:var(--font-space-mono)]">
-                                    {zFills.toFixed(2)} pulvérisateur{zFills > 1 ? 's' : ''}
+                                    {fmt(zFills)} {plural(zFills, 'plein')}
                                   </p>
-                                  <p className="text-xs text-stone-400 mt-0.5">{z.sprayVolume} L de bouillie</p>
+                                  <p className="text-xs text-stone-400 mt-0.5">{fmt(z.sprayVolume)} L de bouillie</p>
                                 </div>
                               </div>
 
@@ -2359,20 +2526,20 @@ export default function HanamiCalculator() {
                                 <div key={i} className="bg-white border border-stone-100 rounded-lg px-3 py-2.5">
                                   <p className="text-[10px] text-stone-400 mb-0.5 flex items-center gap-1"><FlaskConical className="w-3 h-3 shrink-0" /><span className="truncate">{p.name}</span></p>
                                   <p className="text-sm font-semibold text-hanami-700 font-[family-name:var(--font-space-mono)]">
-                                    {p.perFillAmount} {p.perFillUnit}
+                                    {fmt(p.perFillAmount)} {p.perFillUnit}
                                   </p>
                                 </div>
                               ))}
                               <div className="bg-white border border-stone-100 rounded-lg px-3 py-2.5">
                                 <p className="text-[10px] text-stone-400 mb-0.5 flex items-center gap-1"><Droplets className="w-3 h-3 shrink-0" /> Eau / plein</p>
                                 <p className="text-sm font-semibold text-hanami-700 font-[family-name:var(--font-space-mono)]">
-                                  {waterFull.toFixed(1)} L
+                                  {fmt(waterFull, 1)} L
                                 </p>
                               </div>
                             </div>
                             {isPartial && (
                               <p className="text-[10px] text-stone-400 mt-2 italic">
-                                Dernier plein partiel : {lastVol.toFixed(1)} L de bouillie
+                                Dernier plein partiel : {fmt(lastVol, 1)} L de bouillie
                               </p>
                             )}
                           </div>
