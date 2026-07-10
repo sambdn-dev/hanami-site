@@ -507,7 +507,15 @@ export default function HanamiCalculator() {
   const getDosageAlert = () => {
     if (!reverseMode) return null
     const calc = calculateReverseDosage()
-    const rec  = productType === 'liquid' ? 10 : productType === 'seeds' ? 25 : 30
+    // Référence = dose recommandée du PRODUIT sélectionné quand elle existe
+    // (autocomplete catalogue), sinon constante générique par type. L'ancienne
+    // constante seule (10 L/ha) marquait « surdosage » un stock parfaitement
+    // correct de produit dosé à 25 L/ha.
+    const productRec = productType === 'liquid'
+      ? parseFloat(liquidProducts[0]?.doseExpert ?? '')
+      : convertDosageToGperM2()
+    const fallback = productType === 'liquid' ? 10 : productType === 'seeds' ? 25 : 30
+    const rec = productRec > 0 ? productRec : fallback
     const pct  = (calc / rec) * 100
     const unit = productType === 'liquid' ? 'L/ha' : 'g/m²'
     if (pct < 50)  return { type: 'error',   message: `${calc.toFixed(1)} ${unit} (${pct.toFixed(0)}% recommandé)`, advice: 'Effets quasi inexistants — ne pas appliquer.' }
@@ -521,7 +529,9 @@ export default function HanamiCalculator() {
     if (productType === 'seeds') {
       if (d > 40)           return { type: 'error',   message: 'Dose >40g/m² : risque de compétition entre brins. Vérifiez le fabricant.' }
       if (d >= 15 && d <= 25) return { type: 'success', message: 'Dose idéale pour un regarnissage (15–25 g/m²).' }
-      if (d > 30 && d <= 40)  return { type: 'warning', message: 'Dose correcte pour une création. Ne pas dépasser 40 g/m².' }
+      // Bande contiguë : 25–40 = création (le catalogue dose les créations à 30 g/m²,
+      // qui tombait dans un trou muet entre les deux bandes précédentes)
+      if (d > 25 && d <= 40)  return { type: 'warning', message: 'Dose correcte pour une création. Ne pas dépasser 40 g/m².' }
     }
     if (productType === 'fertilizer') {
       if (d > 50) return { type: 'error', message: 'ALERTE : Dose >50g/m² — risque élevé de brûlure.' }
@@ -641,7 +651,12 @@ export default function HanamiCalculator() {
 
       const products: ProductQuantity[] = prodInputs.map((p, idx) => {
         const totalMl = productAmountsMl[idx]
-        const perFillMl = totalMl / fills
+        // Recette par PLEIN COMPLET = concentration (ml par L de bouillie) × capacité.
+        // Surtout pas totalMl / nombre de pleins arrondi au supérieur : le dernier
+        // plein étant souvent partiel, cette division sous-dosait chaque plein
+        // complet (jusqu'à −47 % sur petite surface). La concentration, elle,
+        // est constante quel que soit le découpage en pleins.
+        const perFillMl = tsv > 0 ? (totalMl / tsv) * sc : 0
         const tf = fmtLiquid(totalMl)
         const pf = fmtLiquid(perFillMl)
         return {
@@ -667,8 +682,9 @@ export default function HanamiCalculator() {
           photo: z.photo,
           sprayVolume: zsv.toFixed(2),
           productsAmounts,
-          // Eau = volume bouillie - somme des produits
-          waterAmount: ((zsv * 1000 - zoneProdsTotalMl) / 1000).toFixed(1),
+          // Eau = volume bouillie - somme des produits (borné à 0 : un mélange
+          // très concentré sur une petite bouillie ne doit pas afficher un négatif)
+          waterAmount: (Math.max(0, zsv * 1000 - zoneProdsTotalMl) / 1000).toFixed(1),
           fills: (zsv / sc).toFixed(2),
         }
       })
@@ -860,16 +876,29 @@ export default function HanamiCalculator() {
 
     if (results.type === 'liquid') {
       const cap = parseFloat(sprayerCapacity) || 15
-      const totalProductMlPerFill = results.products.reduce((s, p) => {
-        const ml = p.perFillUnit === 'L'
-          ? parseFloat(p.perFillAmount.toString()) * 1000
-          : parseFloat(p.perFillAmount.toString())
-        return s + ml
-      }, 0)
-      const waterFull = cap - totalProductMlPerFill / 1000
       const totalVol = parseFloat(results.totalSprayVolume)
       const lastVol = totalVol - (results.numberOfFills - 1) * cap
       const isPartial = results.numberOfFills > 1 && lastVol < cap * 0.98
+      const singlePartial = results.numberOfFills === 1 && totalVol < cap * 0.98
+
+      const parseMl = (amount: string | number, unit: string) =>
+        unit === 'L' ? parseFloat(amount.toString()) * 1000 : parseFloat(amount.toString())
+
+      // Même logique que le bloc Recette à l'écran : plein complet, ou bouillie
+      // totale si tout tient dans un unique plein partiel.
+      const recipeProducts = results.products.map(p => ({
+        name: p.name || 'Produit',
+        ml: singlePartial ? parseMl(p.totalAmount, p.totalUnit) : parseMl(p.perFillAmount, p.perFillUnit),
+      }))
+      const recipeVol = singlePartial ? totalVol : cap
+      const water = Math.max(0, recipeVol - recipeProducts.reduce((s, p) => s + p.ml, 0) / 1000)
+      const partialNote = isPartial
+        ? `Dernier plein partiel (${fmt(lastVol, 1)} L de bouillie) : ` +
+          results.products.map(p => {
+            const f = fmtLiquid(parseMl(p.perFillAmount, p.perFillUnit) * lastVol / cap)
+            return `${fmt(f.value)} ${f.unit} de ${p.name || 'produit'}`
+          }).join(' · ') + ", complété d'eau"
+        : undefined
 
       const zones: PdfZone[] = results.zones.map(z => {
         const zFills = parseFloat(z.fills)
@@ -903,15 +932,17 @@ export default function HanamiCalculator() {
         ],
         zonesTitle: zones.length > 1 ? 'Détail par zone' : undefined,
         zones,
-        recipeTitle: `Recette par plein complet (${sprayerCapacity} L)`,
+        recipeTitle: singlePartial
+          ? `Recette pour votre bouillie (${fmt(totalVol, 1)} L)`
+          : `Recette par plein complet (${sprayerCapacity} L)`,
         recipe: [
-          ...results.products.map(p => ({
-            label: p.name || 'Produit',
-            value: `${fmt(p.perFillAmount)} ${p.perFillUnit}`,
-          })),
-          { label: 'Eau / plein', value: `${fmt(waterFull, 1)} L` },
+          ...recipeProducts.map(p => {
+            const f = fmtLiquid(p.ml)
+            return { label: p.name, value: `${fmt(f.value)} ${f.unit}` }
+          }),
+          { label: singlePartial ? 'Eau' : 'Eau / plein', value: `${fmt(water, 1)} L` },
         ],
-        recipeNote: isPartial ? `Dernier plein partiel : ${fmt(lastVol, 1)} L de bouillie` : undefined,
+        recipeNote: partialNote,
       }
     }
 
@@ -2499,47 +2530,68 @@ export default function HanamiCalculator() {
                         })}
                       </div>
 
-                      {/* Recette par plein complet — détail par produit */}
+                      {/* Recette — par plein complet, ou pour la bouillie totale si
+                          elle tient dans un seul plein partiel (afficher la recette
+                          d'un plein COMPLET surdoserait alors la préparation). */}
                       {(() => {
                         const cap       = parseFloat(sprayerCapacity) || 15
                         const totalVol  = parseFloat(results.totalSprayVolume)
                         const n         = results.numberOfFills
                         const lastVol   = totalVol - (n - 1) * cap
                         const isPartial = n > 1 && lastVol < cap * 0.98
+                        const singlePartial = n === 1 && totalVol < cap * 0.98
 
-                        // Somme des produits par plein, pour calculer l'eau restante
-                        const totalProductMlPerFill = results.products.reduce((s, p) => {
-                          const ml = p.perFillUnit === 'L'
-                            ? parseFloat(p.perFillAmount.toString()) * 1000
-                            : parseFloat(p.perFillAmount.toString())
-                          return s + ml
-                        }, 0)
-                        const waterFull = cap - totalProductMlPerFill / 1000
+                        const parseMl = (amount: string | number, unit: string) =>
+                          unit === 'L' ? parseFloat(amount.toString()) * 1000 : parseFloat(amount.toString())
+
+                        // Quantité de chaque produit dans la recette affichée
+                        const recipeProducts = results.products.map(p => ({
+                          name: p.name,
+                          ml: singlePartial
+                            ? parseMl(p.totalAmount, p.totalUnit)
+                            : parseMl(p.perFillAmount, p.perFillUnit),
+                        }))
+                        const recipeVol = singlePartial ? totalVol : cap
+                        const water = Math.max(0, recipeVol - recipeProducts.reduce((s, p) => s + p.ml, 0) / 1000)
+
+                        // Doses du dernier plein partiel = concentration × son volume
+                        const partialProducts = isPartial
+                          ? results.products.map(p => ({
+                              name: p.name,
+                              ...fmtLiquid(parseMl(p.perFillAmount, p.perFillUnit) * lastVol / cap),
+                            }))
+                          : []
 
                         return (
                           <div className="bg-stone-50 border border-stone-100 rounded-xl p-4">
                             <p className="text-xs font-medium text-stone-600 mb-3">
-                              Recette par plein complet ({sprayerCapacity} L)
+                              {singlePartial
+                                ? `Recette pour votre bouillie (${fmt(totalVol, 1)} L)`
+                                : `Recette par plein complet (${sprayerCapacity} L)`}
                             </p>
                             <div className="grid grid-cols-2 gap-2">
-                              {results.products.map((p, i) => (
-                                <div key={i} className="bg-white border border-stone-100 rounded-lg px-3 py-2.5">
-                                  <p className="text-[10px] text-stone-400 mb-0.5 flex items-center gap-1"><FlaskConical className="w-3 h-3 shrink-0" /><span className="truncate">{p.name}</span></p>
-                                  <p className="text-sm font-semibold text-hanami-700 font-[family-name:var(--font-space-mono)]">
-                                    {fmt(p.perFillAmount)} {p.perFillUnit}
-                                  </p>
-                                </div>
-                              ))}
+                              {recipeProducts.map((p, i) => {
+                                const f = fmtLiquid(p.ml)
+                                return (
+                                  <div key={i} className="bg-white border border-stone-100 rounded-lg px-3 py-2.5">
+                                    <p className="text-[10px] text-stone-400 mb-0.5 flex items-center gap-1"><FlaskConical className="w-3 h-3 shrink-0" /><span className="truncate">{p.name}</span></p>
+                                    <p className="text-sm font-semibold text-hanami-700 font-[family-name:var(--font-space-mono)]">
+                                      {fmt(f.value)} {f.unit}
+                                    </p>
+                                  </div>
+                                )
+                              })}
                               <div className="bg-white border border-stone-100 rounded-lg px-3 py-2.5">
-                                <p className="text-[10px] text-stone-400 mb-0.5 flex items-center gap-1"><Droplets className="w-3 h-3 shrink-0" /> Eau / plein</p>
+                                <p className="text-[10px] text-stone-400 mb-0.5 flex items-center gap-1"><Droplets className="w-3 h-3 shrink-0" /> {singlePartial ? 'Eau' : 'Eau / plein'}</p>
                                 <p className="text-sm font-semibold text-hanami-700 font-[family-name:var(--font-space-mono)]">
-                                  {fmt(waterFull, 1)} L
+                                  {fmt(water, 1)} L
                                 </p>
                               </div>
                             </div>
                             {isPartial && (
                               <p className="text-[10px] text-stone-400 mt-2 italic">
-                                Dernier plein partiel : {fmt(lastVol, 1)} L de bouillie
+                                Dernier plein partiel ({fmt(lastVol, 1)} L de bouillie) :{' '}
+                                {partialProducts.map(p => `${fmt(p.value)} ${p.unit} de ${p.name}`).join(' · ')}, complété d&apos;eau
                               </p>
                             )}
                           </div>
