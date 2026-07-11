@@ -19,6 +19,7 @@ import { track } from '@/lib/analytics'
 import { fmt, plural } from '@/lib/calculatrice/format'
 import { downloadDosagePdf, type DosagePdfDoc, type PdfZone } from '@/lib/calculatrice/pdf-export'
 import { CALC_PRESETS, type CalcPreset } from '@/lib/calculatrice/presets'
+import { OTPInput } from '@/components/motion/otp-input'
 import PhotoLightbox from '@/components/shared/PhotoLightbox'
 import ProductAutocomplete from './ProductAutocomplete'
 import UsageSwitcher from './UsageSwitcher'
@@ -553,11 +554,14 @@ export default function HanamiCalculator() {
     })
   }
 
-  /** Charge les zones d'un code dans le formulaire (bouton « Charger »).
+  /** Charge les zones d'un code dans le formulaire (bouton « Charger », ou
+   *  automatiquement dès la 4ᵉ saisie dans les cases OTP). `codeOverride`
+   *  permet de passer la valeur composée directement (évite de dépendre de
+   *  `codeInput`, pas encore flushé au moment où le 4ᵉ chiffre est tapé).
    *  Demande confirmation si des zones sont déjà saisies — contrairement au
    *  lien direct (?code=), c'est une saisie manuelle qui peut être un essai. */
-  const loadCode = () => {
-    const code = codeInput.trim()
+  const loadCode = (codeOverride?: string) => {
+    const code = (codeOverride ?? codeInput).trim()
     if (!/^\d{4}$/.test(code)) {
       setCodeMsg({ type: 'error', text: 'Entrez un code à 4 chiffres.' })
       return
@@ -1402,28 +1406,23 @@ export default function HanamiCalculator() {
                     Pratique pour retrouver ses zones d'une visite à l'autre ou les
                     charger sur un autre appareil (codes gérés par Hanami). */}
                 <div className="bg-hanami-100/40 border border-hanami-500/20 rounded-xl px-3 py-2.5">
-                  <label htmlFor="calc-code" className="text-[11px] font-semibold text-hanami-900 flex items-center gap-1.5">
+                  <p className="text-[11px] font-semibold text-hanami-900 flex items-center gap-1.5">
                     <Package className="w-3.5 h-3.5 shrink-0" /> Code zones
-                  </label>
+                  </p>
                   <p className="text-[11px] text-stone-500 mt-0.5 mb-2">
                     Un code pré-remplit vos zones. Enregistrez les vôtres pour les retrouver.
                   </p>
-                  <div className="flex items-center gap-2">
-                    <div className="relative w-20 shrink-0">
-                      <input
-                        id="calc-code"
-                        type="text"
-                        inputMode="numeric"
-                        autoComplete="off"
-                        maxLength={4}
-                        placeholder="0000"
+                  <div className="flex flex-col gap-2.5">
+                    <div className="flex items-center gap-2">
+                      {/* Cases OTP (beui.dev) : saisie chiffre par chiffre, colle/autofill
+                          gérés nativement. onComplete déclenche le chargement dès la 4ᵉ
+                          case remplie — pas besoin de cliquer « Charger » en plus. */}
+                      <OTPInput
+                        length={4}
                         value={codeInput}
-                        onChange={(e) => {
-                          setCodeInput(e.target.value.replace(/\D/g, '').slice(0, 4))
-                          setCodeMsg(null)
-                        }}
-                        onKeyDown={(e) => { if (e.key === 'Enter') loadCode() }}
-                        className={`w-full pl-2 pr-6 py-1.5 text-sm text-center tracking-[0.3em] font-[family-name:var(--font-space-mono)] ${inputCls}`}
+                        onChange={(v) => { setCodeInput(v); setCodeMsg(null) }}
+                        onComplete={(v) => loadCode(v)}
+                        status={codeMsg ? (codeMsg.type === 'success' ? 'success' : 'error') : 'idle'}
                         aria-label="Code à 4 chiffres"
                       />
                       {codeInput && (
@@ -1431,24 +1430,26 @@ export default function HanamiCalculator() {
                           type="button"
                           onClick={() => { setCodeInput(''); setCodeMsg(null) }}
                           aria-label="Effacer le code"
-                          className="absolute right-1 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center text-stone-400 hover:text-stone-700 transition-colors cursor-pointer"
+                          className="w-8 h-8 flex items-center justify-center rounded-lg text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors cursor-pointer shrink-0"
                         >
-                          <X className="w-3.5 h-3.5" />
+                          <X className="w-4 h-4" />
                         </button>
                       )}
                     </div>
-                    <button
-                      onClick={loadCode}
-                      className="px-3 py-1.5 rounded-lg bg-hanami-700 text-white text-xs font-medium hover:bg-hanami-900 transition-colors"
-                    >
-                      Charger
-                    </button>
-                    <button
-                      onClick={saveCode}
-                      className="px-3 py-1.5 rounded-lg border border-hanami-500/30 text-hanami-700 text-xs font-medium hover:bg-hanami-100/60 transition-colors"
-                    >
-                      Enregistrer
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => loadCode()}
+                        className="px-3 py-1.5 rounded-lg bg-hanami-700 text-white text-xs font-medium hover:bg-hanami-900 transition-colors"
+                      >
+                        Charger
+                      </button>
+                      <button
+                        onClick={saveCode}
+                        className="px-3 py-1.5 rounded-lg border border-hanami-500/30 text-hanami-700 text-xs font-medium hover:bg-hanami-100/60 transition-colors"
+                      >
+                        Enregistrer
+                      </button>
+                    </div>
                   </div>
                   {codeMsg && (
                     <p className={`text-[11px] mt-2 flex items-start gap-1.5 ${codeMsg.type === 'success' ? 'text-hanami-700' : 'text-red-600'}`}>

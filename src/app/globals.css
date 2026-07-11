@@ -35,6 +35,7 @@
   --accent-foreground: var(--hanami-900);
   --destructive: oklch(0.577 0.245 27.325);
   --border: var(--stone-200);
+  --border-strong: var(--stone-500);       /* contour renforcé (ex. case remplie) */
   --input: var(--stone-200);
   --ring: var(--hanami-500);               /* focus ring vert */
   --chart-1: oklch(0.87 0 0);
@@ -91,6 +92,7 @@
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);

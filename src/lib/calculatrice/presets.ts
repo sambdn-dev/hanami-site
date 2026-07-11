@@ -24,7 +24,15 @@
  */
 
 export interface PresetZone {
-  /** Nom libre de la zone ; vide → « Zone N » à l'affichage */
+  /** Nom de la zone. NE JAMAIS laisser vide sur un preset à PLUSIEURS zones :
+   *  un nom vide s'affiche comme « Zone N » où N est la POSITION dans le
+   *  tableau, pas une identité stable — si le client supprime la 1ʳᵉ zone,
+   *  toutes les suivantes remontent d'un cran et se renomment (« Zone 2 »
+   *  devient « Zone 1 »), ce qui rend le suivi impossible à qui traite ses
+   *  zones une par une. Toujours mettre un nom réel et fixe (ex. 'Zone 1',
+   *  'Avant', 'Talus'…) qui reste vrai quel que soit ce que le client
+   *  supprime ensuite. Un nom vide n'est acceptable que pour un preset à
+   *  UNE seule zone (pas d'ambiguïté de position possible). */
   name: string
   /** Surface en m² (chaîne, comme dans le formulaire) */
   surface: string
@@ -43,11 +51,11 @@ export const CALC_PRESETS: Record<string, CalcPreset> = {
   '2016': {
     label: 'Mes zones (Hanami)',
     zones: [
-      { name: '', surface: '80' },
-      { name: '', surface: '142' },
-      { name: '', surface: '152' },
-      { name: '', surface: '203' },
-      { name: '', surface: '90' },
+      { name: 'Zone 1', surface: '80' },
+      { name: 'Zone 2', surface: '142' },
+      { name: 'Zone 3', surface: '152' },
+      { name: 'Zone 4', surface: '203' },
+      { name: 'Zone 5', surface: '90' },
     ],
   },
 
