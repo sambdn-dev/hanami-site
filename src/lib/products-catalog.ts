@@ -794,7 +794,7 @@ export const LIQUID_CATALOG: LiquidCatalogProduct[] = [
       { id: 'preventif', label: 'Préventif stress hydrique', doseL_ha: 15, bouillieL_ha: 600, doseMl_L: 15, doseRange: '10–20 L/ha', note: 'Catalogue Compo EV 2025 : 10–20 L/ha dans 600 L d\'eau' },
       { id: 'choc', label: 'Choc piétinement', doseL_ha: 20, bouillieL_ha: 600, doseMl_L: 20, note: 'Catalogue Compo EV 2025 : dans 600 L d\'eau' },
     ],
-    note: 'Biostimulant foliaire NPK 5-3-7 + 10% silice + algue Ecklonia maxima — résistance stress hydrique et piétinement. Catalogue Compo EV 2025 : 10–20 L/ha dans 600 L d'eau',
+    note: 'Biostimulant foliaire NPK 5-3-7 + 10% silice + algue Ecklonia maxima — résistance stress hydrique et piétinement. Catalogue Compo EV 2025 : 10–20 L/ha dans 600 L d\'eau',
   },
   {
     id: 'vitalnova-silk',
