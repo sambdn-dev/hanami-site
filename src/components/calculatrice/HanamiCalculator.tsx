@@ -20,6 +20,7 @@ import { fmt, plural } from '@/lib/calculatrice/format'
 import { downloadDosagePdf, type DosagePdfDoc, type PdfZone } from '@/lib/calculatrice/pdf-export'
 import { CALC_PRESETS, type CalcPreset } from '@/lib/calculatrice/presets'
 import { OTPInput } from '@/components/motion/otp-input'
+import { RangeSlider } from '@/components/motion/range-slider'
 import PhotoLightbox from '@/components/shared/PhotoLightbox'
 import ProductAutocomplete from './ProductAutocomplete'
 import UsageSwitcher from './UsageSwitcher'
@@ -47,6 +48,16 @@ type Zone = {
     width: number
     height: number
   }
+  /** Ajustement du dosage pour CETTE zone, en % (défaut '100').
+   *  Permet de sur/sous-doser une zone selon son stress ou son état hydrique
+   *  (ex. '120' = +20 % sur la zone exposée plein sud). Appliqué à tous les
+   *  produits du calcul, persiste avec la zone dans localStorage. */
+  doseFactor?: string
+  /** Zone exclue du calcul (décochée dans « Zones à traiter »). Porté par la
+   *  zone elle-même — PAS par une liste d'indices : une sélection indexée se
+   *  décale à la suppression d'une zone et se perd au remontage (course entre
+   *  la restauration localStorage et l'effet de sélection initiale). */
+  excluded?: boolean
 }
 type ProductType = 'seeds' | 'fertilizer' | 'liquid' | 'topdressing' | ''
 type StepKey = 'zones' | 'type' | 'seeds_scenario' | 'fertilizer_scenario' | 'dosage' | 'topdressing_config' | 'results'
@@ -162,8 +173,10 @@ type SolidResults = {
     name: string
     surface: number
     photo?: ZonePhoto
-    /** Quantité de chaque produit pour cette zone (kg) */
-    productsQuantities: Array<{ name: string; quantity: string }>
+    /** Facteur de dose appliqué à cette zone (1 = dose de base) */
+    doseFactor: number
+    /** Quantité de chaque produit pour cette zone (kg), avec la dose établie */
+    productsQuantities: Array<{ name: string; quantity: string; dose: string }>
   }>
   numberOfZones: number
 }
@@ -187,13 +200,19 @@ type LiquidResults = {
   /** Liste des produits dans le mélange — peut contenir 1 à N éléments */
   products: ProductQuantity[]
   numberOfFills: number
+  /** false si au moins une zone a un facteur de dose ≠ 100 % : la concentration
+   *  varie alors selon les zones → la « recette par plein » globale n'a plus de
+   *  sens, chaque zone porte sa propre préparation. */
+  uniformConcentration: boolean
   zones: Array<{
     name: string
     surface: number
     photo?: ZonePhoto
+    /** Facteur de dose appliqué à cette zone (1 = dose de base) */
+    doseFactor: number
     sprayVolume: string
-    /** Pour chaque produit, la quantité dans cette zone */
-    productsAmounts: Array<{ name: string; amount: string | number; unit: string }>
+    /** Pour chaque produit : quantité dans cette zone + dose établie affichable */
+    productsAmounts: Array<{ name: string; amount: string | number; unit: string; dose: string }>
     waterAmount: string
     fills: string
   }>
@@ -248,11 +267,15 @@ export default function HanamiCalculator() {
   const [reverseMode, setReverseMode] = useState(false)
   const [stockQuantity, setStockQuantity] = useState('')
   const [stockUnit, setStockUnit]         = useState('kg')
-  const [selectedZones, setSelectedZones] = useState<number[]>([])
+  // (la sélection des zones à traiter vit sur chaque zone : Zone.excluded)
 
   // ── Code zones (pré-remplissage 4 chiffres) ─────────────────────────────────
   const [codeInput, setCodeInput] = useState('')
   const [codeMsg, setCodeMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+  /** Instantané des zones AVANT un chargement de code qui a remplacé des données
+   *  saisies — alimente le bouton « Annuler » du bandeau de confirmation.
+   *  (Remplace l'ancien window.confirm, bloquant et pénible en pleine saisie.) */
+  const [undoSnapshot, setUndoSnapshot] = useState<{ zones: Zone[]; sprayerCapacity: string } | null>(null)
 
   // Helpers SolidProduct
   const updateSolidProduct = (id: string, patch: Partial<SolidProduct>) =>
@@ -439,10 +462,8 @@ export default function HanamiCalculator() {
     }
   }, [zones]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    if (zones.length > 0 && selectedZones.length === 0)
-      setSelectedZones(zones.map((_, i) => i))
-  }, [zones]) // eslint-disable-line react-hooks/exhaustive-deps
+  // (plus d'effet de sélection initiale : une zone est incluse par défaut,
+  //  Zone.excluded n'existe que si l'utilisateur décoche explicitement)
 
   useEffect(() => {
     if (sprayerCapacity) {
@@ -490,6 +511,23 @@ export default function HanamiCalculator() {
     clearCodeMsg()
     setZones(zones.map((z, idx) => idx === i ? { ...z, photo } : z))
   }
+  /** Facteur de dose d'une zone (en %) — ne périme pas le message de code :
+   *  c'est un réglage de calcul, pas une modification des zones elles-mêmes. */
+  const setZoneDoseFactor = (i: number, factor: string) =>
+    setZones(zs => zs.map((z, idx) => idx === i ? { ...z, doseFactor: factor } : z))
+
+  /** Ajoute l'Indicateur Bleu Compo au mélange (1 ml pour 10 L de bouillie,
+   *  soit 0,1 ml/L). En expert, l'équivalent L/ha dépend de la bouillie choisie :
+   *  0,1 ml/L × bouillie (L/ha) / 1000. */
+  const addBlueIndicator = () => {
+    const svn = parseFloat(sprayVolume) || 1000
+    setLiquidProducts(prods => [...prods, {
+      ...makeProduct('Indicateur Bleu Compo', '0.1', String(Math.round(svn * 0.1) / 1000)),
+    }])
+    track('calculator_action', { action: 'add_blue_indicator' })
+  }
+  /** Le mélange contient-il déjà un traceur/indicateur bleu ? */
+  const hasBlueIndicator = liquidProducts.some(p => /bleu|indicateur|traceur/i.test(p.name))
 
   /** Handler upload/capture photo pour une zone donnée. Compresse via
    *  photo-utils (gère HEIC sur tous navigateurs) et stocke en data: URL. */
@@ -536,8 +574,7 @@ export default function HanamiCalculator() {
   const applyPreset = (preset: CalcPreset) => {
     const loaded = preset.zones.map(z => ({ name: z.name, surface: z.surface }))
     const nextZones = loaded.length > 0 ? loaded : [{ name: '', surface: '' }]
-    setZones(nextZones)
-    setSelectedZones(nextZones.map((_, i) => i))
+    setZones(nextZones) // toutes incluses par défaut (Zone.excluded absent)
     if (preset.sprayerCapacity) setSprayerCapacity(preset.sprayerCapacity)
     setResults(null) // les anciens résultats ne correspondent plus aux nouvelles zones
     // Purge du suivi de zones (chronos, cases « fait ») indexé par position :
@@ -573,18 +610,24 @@ export default function HanamiCalculator() {
       setCodeMsg({ type: 'error', text: 'Aucune zone enregistrée pour ce code.' })
       return
     }
-    // Anti-écrasement : si l'utilisateur a déjà saisi des données (surface ou photo),
-    // on confirme avant de tout remplacer — l'auto-sauvegarde écraserait sinon le backup.
+    // Anti-écrasement NON bloquant : si des données étaient saisies (surface ou
+    // photo), on charge quand même mais on garde un instantané → bouton « Annuler »
+    // dans le bandeau de confirmation. Pas de window.confirm : il gelait la saisie
+    // (déclenché en plein onComplete de l'OTP) et bloquait les navigateurs pilotés.
     const hasUserData = zones.some(z => (parseFloat(z.surface) || 0) > 0 || z.photo)
-    const hasPhotos = zones.some(z => z.photo)
-    if (hasUserData && typeof window !== 'undefined') {
-      const warn = hasPhotos
-        ? 'Remplacer les zones actuelles ? Vos surfaces ET vos photos seront perdues.'
-        : 'Remplacer les zones actuelles par celles du code ?'
-      if (!window.confirm(warn)) return
-    }
+    setUndoSnapshot(hasUserData ? { zones, sprayerCapacity } : null)
     applyPreset(preset)
     track('calculator_action', { action: 'code_load' })
+  }
+
+  /** Restaure les zones telles qu'elles étaient avant le dernier chargement de code. */
+  const undoLoad = () => {
+    if (!undoSnapshot) return
+    setZones(undoSnapshot.zones)
+    setSprayerCapacity(undoSnapshot.sprayerCapacity)
+    setResults(null)
+    setUndoSnapshot(null)
+    setCodeMsg({ type: 'success', text: 'Vos zones précédentes ont été restaurées.' })
   }
 
   /** Enregistre les zones actuelles sous un code, dans ce navigateur. */
@@ -619,10 +662,14 @@ export default function HanamiCalculator() {
   }
 
   const getTotalSurface    = () => zones.reduce((s, z) => s + (parseFloat(z.surface) || 0), 0)
+  /** Surface des zones incluses dans le calcul (non exclues). */
   const getSelectedSurface = () =>
-    zones.filter((_, i) => selectedZones.includes(i)).reduce((s, z) => s + (parseFloat(z.surface) || 0), 0)
+    zones.filter(z => !z.excluded).reduce((s, z) => s + (parseFloat(z.surface) || 0), 0)
+  const includedZonesCount = zones.filter(z => !z.excluded).length
+  /** Inclut/exclut une zone du calcul — l'état vit sur la zone (stable à la
+   *  suppression et au remontage, contrairement à une liste d'indices). */
   const toggleZoneSelection = (i: number) =>
-    setSelectedZones(selectedZones.includes(i) ? selectedZones.filter(x => x !== i) : [...selectedZones, i])
+    setZones(zs => zs.map((z, idx) => idx === i ? { ...z, excluded: !z.excluded } : z))
 
   // ── Dosage helpers ────────────────────────────────────────────────────────
 
@@ -736,9 +783,17 @@ export default function HanamiCalculator() {
 
   const calculateResults = (overrideLiquidDose?: string, overrideSprayVol?: string) => {
     track('calculator_action', { action: 'compute', type: productType })
-    const totalSurface  = reverseMode ? getSelectedSurface() : getTotalSurface()
-    const zonesToCalc   = reverseMode ? zones.filter((_, i) => selectedZones.includes(i)) : zones
+    // La sélection de zones vaut dans TOUS les modes (plus seulement en calcul
+    // inversé) : décocher une zone l'exclut du mélange sans la supprimer.
+    const zonesToCalc   = zones.filter(z => !z.excluded)
+    const totalSurface  = zonesToCalc.reduce((s, z) => s + (parseFloat(z.surface) || 0), 0)
     const numberOfZones = zonesToCalc.filter(z => parseFloat(z.surface) > 0).length
+
+    /** Facteur de dose d'une zone (ex. '120' → 1.2) — 1 si absent/invalide. */
+    const zoneFactor = (z: Zone): number => {
+      const f = parseFloat(z.doseFactor ?? '')
+      return Number.isFinite(f) && f > 0 ? f / 100 : 1
+    }
 
     if (productType === 'topdressing') {
       const depth   = parseFloat(tdCustomDepth || tdDepth)
@@ -791,8 +846,34 @@ export default function HanamiCalculator() {
         }))
       }
 
-      // Quantité totale de produit pour la surface (en ml)
-      const productAmountsMl = prodInputs.map(p => (p.doseLperHa * totalSurface / 10000) * 1000)
+      // Facteurs par zone : la concentration reste uniforme tant qu'aucune zone
+      // n'est ajustée. Dès qu'un facteur ≠ 100 % existe, la recette globale par
+      // plein perd son sens (chaque zone a sa propre concentration).
+      const uniformConcentration = zonesToCalc.every(z => zoneFactor(z) === 1)
+
+      /** Dose établie affichable pour une zone : l'unité suit le mode de saisie
+       *  (ml/L en simplifié — c'est ce qu'on verse par litre —, L/ha sinon),
+       *  facteur de zone appliqué et signalé quand il diffère de 100 %. */
+      const isSimplified = overrideLiquidDose === undefined && overrideSprayVol === '1000'
+      const doseLabel = (doseLperHa: number, factor: number): string => {
+        const applied = isSimplified ? (doseLperHa * 1000) / svn : doseLperHa
+        const unit = isSimplified ? 'ml/L' : 'L/ha'
+        const base = `${fmt(applied * factor, 1)} ${unit}`
+        return factor === 1 ? base : `${base} (×${fmt(factor, 2)})`
+      }
+
+      // Quantités par zone (facteur appliqué), puis totaux = somme des zones —
+      // et non plus dose × surface totale, qui ignorerait les ajustements.
+      const zoneCalc = zonesToCalc.map(z => {
+        const surf = parseFloat(z.surface) || 0
+        const f = zoneFactor(z)
+        return {
+          zone: z, surf, factor: f,
+          prodsMl: prodInputs.map(p => (p.doseLperHa * f * surf / 10000) * 1000),
+        }
+      })
+      const productAmountsMl = prodInputs.map((_, idx) =>
+        zoneCalc.reduce((s, zc) => s + zc.prodsMl[idx], 0))
       const totalProductsMl = productAmountsMl.reduce((s, v) => s + v, 0)
 
       const products: ProductQuantity[] = prodInputs.map((p, idx) => {
@@ -802,6 +883,7 @@ export default function HanamiCalculator() {
         // plein étant souvent partiel, cette division sous-dosait chaque plein
         // complet (jusqu'à −47 % sur petite surface). La concentration, elle,
         // est constante quel que soit le découpage en pleins.
+        // (N'a de sens que si la concentration est uniforme — masquée sinon.)
         const perFillMl = tsv > 0 ? (totalMl / tsv) * sc : 0
         const tf = fmtLiquid(totalMl)
         const pf = fmtLiquid(perFillMl)
@@ -812,20 +894,22 @@ export default function HanamiCalculator() {
         }
       })
 
-      const zoneResults = zonesToCalc.map((z, i) => {
-        const surf = parseFloat(z.surface) || 0
+      const zoneResults = zoneCalc.map(({ zone: z, surf, factor, prodsMl }, i) => {
         const zsv  = (surf * svn) / 10000
-        // Quantité de chaque produit dans cette zone
-        const zoneProdsMl = prodInputs.map(p => (p.doseLperHa * surf / 10000) * 1000)
-        const zoneProdsTotalMl = zoneProdsMl.reduce((s, v) => s + v, 0)
+        const zoneProdsTotalMl = prodsMl.reduce((s, v) => s + v, 0)
         const productsAmounts = prodInputs.map((p, idx) => {
-          const fp = fmtLiquid(zoneProdsMl[idx])
-          return { name: p.name || `Produit ${idx + 1}`, amount: fp.value, unit: fp.unit }
+          const fp = fmtLiquid(prodsMl[idx])
+          return {
+            name: p.name || `Produit ${idx + 1}`,
+            amount: fp.value, unit: fp.unit,
+            dose: doseLabel(p.doseLperHa, factor),
+          }
         })
         return {
           name: z.name || `Zone ${i + 1}`,
           surface: surf,
           photo: z.photo,
+          doseFactor: factor,
           sprayVolume: zsv.toFixed(2),
           productsAmounts,
           // Eau = volume bouillie - somme des produits (borné à 0 : un mélange
@@ -847,18 +931,22 @@ export default function HanamiCalculator() {
         totalSprayVolume: tsv.toFixed(2),
         products,
         numberOfFills: fills,
+        uniformConcentration,
         zones: zoneResults,
         numberOfZones,
       })
     } else {
       // Solid (seeds + fertilizer) — multi-produits
-      // Chaque produit est calculé indépendamment pour la même surface.
+      // Chaque produit est calculé par zone (facteur appliqué) ; les totaux sont
+      // la somme des zones, pour refléter les ajustements zone par zone.
       const productsCalc = solidProducts.map((p, idx) => {
         const dg = doseToGperM2(p.dose, p.doseUnit)
+        const totalG = zonesToCalc.reduce(
+          (s, z) => s + (parseFloat(z.surface) || 0) * dg * zoneFactor(z), 0)
         return {
           name: p.name || `Produit ${idx + 1}`,
           dosePerM2: dg.toFixed(1),
-          totalKg: ((totalSurface * dg) / 1000).toFixed(2),
+          totalKg: (totalG / 1000).toFixed(2),
           dgValue: dg,
         }
       })
@@ -869,13 +957,18 @@ export default function HanamiCalculator() {
         products: productsCalc.map(({ dgValue, ...p }) => p),
         zones: zonesToCalc.map((z, i) => {
           const surf = parseFloat(z.surface) || 0
+          const f = zoneFactor(z)
           return {
             name: z.name || `Zone ${i + 1}`,
             surface: surf,
             photo: z.photo,
+            doseFactor: f,
             productsQuantities: productsCalc.map(p => ({
               name: p.name,
-              quantity: ((surf * p.dgValue) / 1000).toFixed(2),
+              quantity: ((surf * p.dgValue * f) / 1000).toFixed(2),
+              dose: f === 1
+                ? `${fmt(p.dgValue, 1)} g/m²`
+                : `${fmt(p.dgValue * f, 1)} g/m² (×${fmt(f, 2)})`,
             })),
           }
         }),
@@ -888,8 +981,11 @@ export default function HanamiCalculator() {
   // ── Export ────────────────────────────────────────────────────────────────
 
   /** Capture le bloc résultats en image PNG dataUrl.
-   *  - Largeur forcée à 720 px → rendu cohérent peu importe le viewport
-   *    (très lisible sur mobile, pas écrasé sur desktop).
+   *  - Capture à la TAILLE NATURELLE de l'élément : l'ancienne version forçait
+   *    une largeur de 720 px (le clone se re-mettait en page) tout en gardant la
+   *    hauteur d'origine pour le canvas → image étirée verticalement dès que la
+   *    largeur réelle différait de 720. La netteté vient du pixelRatio adaptatif
+   *    (on vise ~1440 px de large, borné 2–3×), pas d'un redimensionnement.
    *  - Filter exclut les éléments .no-print (chronomètre, boutons UI, etc.)
    *    car html-to-image ne respecte pas le CSS @media print.
    *  - Marge blanche autour via canvas pour aérer le rendu final. */
@@ -897,15 +993,11 @@ export default function HanamiCalculator() {
     const el = resultsRef.current
     if (!el) throw new Error('no ref')
     const { toPng } = await import('html-to-image')
-    const pixelRatio = 2
-    const targetWidth = 720
+    const pixelRatio = Math.min(3, Math.max(2, 1440 / el.offsetWidth))
     const raw = await toPng(el, {
       pixelRatio,
       backgroundColor: '#ffffff',
       skipFonts: false,
-      width: targetWidth,
-      canvasWidth: targetWidth * pixelRatio,
-      style: { width: `${targetWidth}px` },
       // Skip tout élément qui a la classe .no-print (chronomètre, etc.)
       filter: (node) => {
         if (node instanceof Element) {
@@ -916,8 +1008,11 @@ export default function HanamiCalculator() {
     })
     const img = new window.Image()
     img.src = raw
-    await new Promise<void>(resolve => { img.onload = () => resolve() })
-    const padPx = pad * pixelRatio
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve()
+      img.onerror = () => reject(new Error('capture illisible'))
+    })
+    const padPx = Math.round(pad * pixelRatio)
     const canvas = document.createElement('canvas')
     canvas.width  = img.naturalWidth  + padPx * 2
     canvas.height = img.naturalHeight + padPx * 2
@@ -957,10 +1052,12 @@ export default function HanamiCalculator() {
     return 'Passez à l\'aérateur ou au scarificateur avant application pour une meilleure pénétration.'
   }
 
-  /** Ligne de configuration du bandeau d'en-tête (surface en tête). */
+  /** Ligne de configuration du bandeau d'en-tête (surface en tête).
+   *  La surface vient des RÉSULTATS (zones sélectionnées uniquement), pas de la
+   *  somme brute des zones — sinon une zone exclue serait quand même comptée. */
   const getChips = (): string[] => {
     if (!results) return []
-    const chips = [`${getTotalSurface().toFixed(0)} m²`]
+    const chips = [`${results.totalSurface.toFixed(0)} m²`]
     if (results.type === 'solid' && productType === 'seeds') {
       chips.push('Semences')
       const obj = SEED_OBJECTIVES.find(o => o.id === seedObjective)?.label
@@ -1001,7 +1098,7 @@ export default function HanamiCalculator() {
             surface: `${z.surface} m²`,
             photo: z.photo,
             rows: z.productsQuantities.map(pq => ({
-              label: pq.name || 'Produit',
+              label: `${pq.name || 'Produit'} — ${pq.dose}`,
               value: `${fmt(pq.quantity)} kg`,
             })),
           }))
@@ -1055,7 +1152,7 @@ export default function HanamiCalculator() {
           rows: [
             { label: 'Eau', value: `${fmt(z.waterAmount)} L`, highlight: true },
             ...z.productsAmounts.map((pa, i) => ({
-              label: pa.name || `Produit ${i + 1}`,
+              label: `${pa.name || `Produit ${i + 1}`} — ${pa.dose}`,
               value: `${fmt(pa.amount)} ${pa.unit}`,
             })),
             { label: 'Bouillie', value: `${fmt(z.sprayVolume)} L` },
@@ -1076,19 +1173,27 @@ export default function HanamiCalculator() {
           `${fmt(results.totalSprayVolume)} L bouillie`,
           `${results.numberOfFills} ${plural(results.numberOfFills, 'plein')}`,
         ],
-        zonesTitle: zones.length > 1 ? 'Détail par zone' : undefined,
+        // Avec des facteurs par zone, la préparation se fait zone par zone : le
+        // titre de section le rappelle et la recette globale est omise.
+        zonesTitle: !results.uniformConcentration
+          ? 'Détail par zone — dosages ajustés : préparer la bouillie zone par zone'
+          : zones.length > 1 ? 'Détail par zone' : undefined,
         zones,
-        recipeTitle: singlePartial
-          ? `Recette pour votre bouillie (${fmt(totalVol, 1)} L)`
-          : `Recette par plein complet (${sprayerCapacity} L)`,
-        recipe: [
-          ...recipeProducts.map(p => {
-            const f = fmtLiquid(p.ml)
-            return { label: p.name, value: `${fmt(f.value)} ${f.unit}` }
-          }),
-          { label: singlePartial ? 'Eau' : 'Eau / plein', value: `${fmt(water, 1)} L` },
-        ],
-        recipeNote: partialNote,
+        recipeTitle: !results.uniformConcentration
+          ? undefined
+          : singlePartial
+            ? `Recette pour votre bouillie (${fmt(totalVol, 1)} L)`
+            : `Recette par plein complet (${sprayerCapacity} L)`,
+        recipe: !results.uniformConcentration
+          ? undefined
+          : [
+              ...recipeProducts.map(p => {
+                const f = fmtLiquid(p.ml)
+                return { label: p.name, value: `${fmt(f.value)} ${f.unit}` }
+              }),
+              { label: singlePartial ? 'Eau' : 'Eau / plein', value: `${fmt(water, 1)} L` },
+            ],
+        recipeNote: results.uniformConcentration ? partialNote : undefined,
       }
     }
 
@@ -1154,35 +1259,71 @@ export default function HanamiCalculator() {
     // bloqueur de popups d'iOS (le geste utilisateur doit rester synchrone)
     const newTab = window.open('', '_blank')
 
-    const dataUrl = await captureWithPadding()
-    const blob = await fetch(dataUrl).then(r => r.blob())
-    const file = new File([blob], `hanami-dosage-${Date.now()}.png`, { type: 'image/png' })
-
-    // Web Share API avec fichiers — disponible sur HTTPS (iOS 15+, Android)
-    if (typeof navigator.share === 'function' &&
-        typeof navigator.canShare === 'function' &&
-        navigator.canShare({ files: [file] })) {
-      newTab?.close()
-      await navigator.share({
-        files: [file],
-        title: 'Plan de dosage Hanami',
-        text: 'Mon plan de dosage Hanami — Dosage Intelligent',
-      })
-      return
-    }
-
-    // Fallback : affiche l'image dans le nouvel onglet déjà ouvert
-    // iOS Safari : appuie longuement → "Enregistrer l'image"
-    if (newTab) {
+    /** Affiche l'image dans l'onglet pré-ouvert (long-press → « Enregistrer »). */
+    const showInTab = (dataUrl: string) => {
+      if (!newTab || newTab.closed) return false
       const html =
         `<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1">` +
         `<title>Hanami — Dosage</title><style>body{margin:0;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:12px}` +
         `img{max-width:100%;height:auto}p{font-family:sans-serif;font-size:13px;color:#666;text-align:center;margin:0;padding:0 12px}</style></head>` +
         `<body><img src="${dataUrl}" alt="Hanami dosage"><p>Appuyez longuement sur l'image → "Enregistrer l'image"</p></body></html>`
-      const htmlBlob = new Blob([html], { type: 'text/html' })
-      const htmlUrl = URL.createObjectURL(htmlBlob)
+      const htmlUrl = URL.createObjectURL(new Blob([html], { type: 'text/html' }))
       newTab.location.href = htmlUrl
       setTimeout(() => URL.revokeObjectURL(htmlUrl), 10_000)
+      return true
+    }
+
+    let dataUrl: string
+    try {
+      dataUrl = await captureWithPadding()
+    } catch (err) {
+      // Capture impossible : ne pas laisser un onglet blanc orphelin
+      console.error('[HanamiCalc] capture échouée', err)
+      newTab?.close()
+      return
+    }
+
+    try {
+      const blob = await fetch(dataUrl).then(r => r.blob())
+      const file = new File([blob], `hanami-dosage-${Date.now()}.png`, { type: 'image/png' })
+
+      // Web Share API avec fichiers — disponible sur HTTPS (iOS 15+, Android).
+      // ⚠️ Safari exige que share() reste dans la fenêtre d'activation utilisateur ;
+      // si la capture a pris trop longtemps, l'appel rejette (NotAllowedError) —
+      // on retombe alors sur l'onglet image au lieu d'échouer en silence
+      // (c'était le « AirDrop ne fonctionne plus » : rejet muet, onglet blanc).
+      if (typeof navigator.share === 'function' &&
+          typeof navigator.canShare === 'function' &&
+          navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({
+            files: [file],
+            title: 'Plan de dosage Hanami',
+            text: 'Mon plan de dosage Hanami — Dosage Intelligent',
+          })
+          newTab?.close() // partage réussi : l'onglet de secours ne sert plus
+          return
+        } catch (err) {
+          if (err instanceof Error && err.name === 'AbortError') {
+            // L'utilisateur a fermé la feuille de partage lui-même : rien à faire
+            newTab?.close()
+            return
+          }
+          // Activation expirée ou refus → on continue vers le fallback onglet
+          console.warn('[HanamiCalc] navigator.share rejeté, fallback onglet', err)
+        }
+      }
+
+      if (!showInTab(dataUrl)) {
+        // Popup bloquée ET partage indisponible : téléchargement direct en dernier recours
+        const a = document.createElement('a')
+        a.href = dataUrl
+        a.download = `hanami-dosage-${Date.now()}.png`
+        a.click()
+      }
+    } catch (err) {
+      console.error('[HanamiCalc] partage échoué', err)
+      showInTab(dataUrl)
     }
   }
 
@@ -1291,7 +1432,8 @@ export default function HanamiCalculator() {
     setExpertMode(false)
     setReverseMode(false); setStockQuantity(''); setStockUnit('kg')
     setTdDepth('5'); setTdCustomDepth(''); setTdMaterial('sand'); setTdBagSize('40')
-    setSelectedZones(zones.map((_, i) => i))
+    // Réinclut toutes les zones et remet les facteurs de dose à 100 %
+    setZones(zs => zs.map(z => ({ ...z, excluded: false, doseFactor: undefined })))
     setResults(null); setShowDownloadMenu(false)
     // Clear liquid tracking
     Object.values(timerRefs.current).forEach(clearInterval)
@@ -1426,11 +1568,14 @@ export default function HanamiCalculator() {
                         aria-label="Code à 4 chiffres"
                       />
                       {codeInput && (
+                        /* ml-6 réserve en PERMANENCE la place de la coche de succès
+                           animée de l'OTP (positionnée en absolu à -right-7 des cases) :
+                           sans cette marge, coche et croix se superposent. */
                         <button
                           type="button"
                           onClick={() => { setCodeInput(''); setCodeMsg(null) }}
                           aria-label="Effacer le code"
-                          className="w-8 h-8 flex items-center justify-center rounded-lg text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors cursor-pointer shrink-0"
+                          className="ml-6 w-8 h-8 flex items-center justify-center rounded-lg text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors cursor-pointer shrink-0"
                         >
                           <X className="w-4 h-4" />
                         </button>
@@ -1456,7 +1601,18 @@ export default function HanamiCalculator() {
                       {codeMsg.type === 'success'
                         ? <Check className="w-3 h-3 mt-0.5 shrink-0" />
                         : <AlertTriangle className="w-3 h-3 mt-0.5 shrink-0" />}
-                      <span>{codeMsg.text}</span>
+                      <span>
+                        {codeMsg.text}
+                        {undoSnapshot && codeMsg.type === 'success' && (
+                          <button
+                            type="button"
+                            onClick={undoLoad}
+                            className="ml-1.5 underline underline-offset-2 font-medium hover:text-hanami-900 cursor-pointer"
+                          >
+                            Annuler
+                          </button>
+                        )}
+                      </span>
                     </p>
                   )}
                 </div>
@@ -1840,29 +1996,32 @@ export default function HanamiCalculator() {
                             />
                           </div>
 
-                          <div>
-                            <label className="block text-[11px] font-medium text-stone-500 mb-1">
-                              Dosage {isReverseProduct ? '(calculé depuis le stock)' : 'recommandé'}
-                            </label>
-                            <div className="flex gap-2">
-                              <input
-                                type="number" inputMode="decimal" step="1"
-                                value={p.dose}
-                                onChange={(e) => updateSolidProduct(p.id, { dose: e.target.value })}
-                                disabled={isReverseProduct}
-                                className={`flex-1 px-3 py-2 ${inputCls} ${isReverseProduct ? 'opacity-60' : ''}`}
-                                placeholder="Ex : 30"
-                              />
-                              <select
-                                value={p.doseUnit}
-                                onChange={(e) => updateSolidProduct(p.id, { doseUnit: e.target.value as 'g/m2' | 'kg/ha' })}
-                                disabled={isReverseProduct}
-                                className={`px-2 py-2 ${inputCls} ${isReverseProduct ? 'opacity-60' : ''}`}
-                              >
-                                <option value="g/m2">g/m²</option>
-                                <option value="kg/ha">kg/ha</option>
-                              </select>
-                            </div>
+                          <div className="space-y-2">
+                            <DoseField
+                              label={`Dosage ${isReverseProduct ? '(calculé depuis le stock)' : 'recommandé'}`}
+                              value={p.dose}
+                              onChange={(v) => updateSolidProduct(p.id, { dose: v })}
+                              unit={p.doseUnit === 'g/m2' ? 'g/m²' : 'kg/ha'}
+                              max={p.doseUnit === 'g/m2' ? 50 : 500}
+                              step={p.doseUnit === 'g/m2' ? 1 : 5}
+                              disabled={isReverseProduct}
+                            />
+                            {!isReverseProduct && (
+                              <div className="flex gap-1">
+                                {([['g/m2', 'g/m²'], ['kg/ha', 'kg/ha']] as const).map(([u, label]) => (
+                                  <button
+                                    key={u}
+                                    type="button"
+                                    onClick={() => updateSolidProduct(p.id, { doseUnit: u })}
+                                    className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors ${
+                                      p.doseUnit === u ? 'bg-hanami-700 text-white' : 'bg-stone-100 text-stone-500 hover:bg-stone-200'
+                                    }`}
+                                  >
+                                    {label}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
 
                             {/* Usage switcher — affiché si le produit vient du catalogue Hanami */}
                             {p.catalogProductId && (() => {
@@ -1919,11 +2078,20 @@ export default function HanamiCalculator() {
                     </div>
                   )}
 
+                  {/* Zones : sélection (exclure de l'application) + ajustement de dose
+                      par zone — en mode normal ; le mode reverse a déjà son sélecteur. */}
+                  {!reverseMode && zones.length > 1 && (
+                    <>
+                      <ZoneSelector zones={zones} onToggle={toggleZoneSelection} selectedSurface={getSelectedSurface()} inputCls={inputCls} />
+                      <ZoneDoseAdjuster zones={zones} onFactorChange={setZoneDoseFactor} />
+                    </>
+                  )}
+
                   {/* Reverse mode toggle */}
                   <label className="flex items-center gap-3 cursor-pointer p-3 bg-hanami-100/60 border border-hanami-500/20 rounded-lg">
                     <input
                       type="checkbox" checked={reverseMode}
-                      onChange={(e) => { setReverseMode(e.target.checked); if (e.target.checked) setSelectedZones(zones.map((_, i) => i)) }}
+                      onChange={(e) => { setReverseMode(e.target.checked); if (e.target.checked) setZones(zs => zs.map(z => ({ ...z, excluded: false }))) }}
                       className="w-4 h-4 accent-hanami-700 rounded shrink-0"
                     />
                     <div>
@@ -1946,7 +2114,7 @@ export default function HanamiCalculator() {
                         </div>
                       </div>
                       {zones.length > 1 && (
-                        <ZoneSelector zones={zones} selectedZones={selectedZones} onToggle={toggleZoneSelection} selectedSurface={getSelectedSurface()} inputCls={inputCls} />
+                        <ZoneSelector zones={zones} onToggle={toggleZoneSelection} selectedSurface={getSelectedSurface()} inputCls={inputCls} />
                       )}
                       {stockQuantity && getDosageAlert() && <DosageAlert alert={getDosageAlert()!} />}
                     </div>
@@ -1962,7 +2130,7 @@ export default function HanamiCalculator() {
                     calculateResults()
                   }}
                   disabled={(() => {
-                    if (reverseMode) return !stockQuantity || selectedZones.length === 0
+                    if (reverseMode) return !stockQuantity || includedZonesCount === 0
                     return solidProducts.some(p => !p.dose || parseFloat(p.dose) <= 0)
                   })()}
                   className={btnPrimary}
@@ -2055,40 +2223,27 @@ export default function HanamiCalculator() {
                             </div>
 
                             {!expertMode ? (
-                              <div>
-                                <label className="block text-[11px] font-medium text-stone-500 mb-1">Dose recommandée</label>
-                                <div className="relative">
-                                  <input
-                                    type="number" inputMode="decimal" step="1"
-                                    value={p.doseSimple}
-                                    onChange={(e) => updateLiquidProduct(p.id, { doseSimple: e.target.value })}
-                                    className={`w-full px-3 py-2 pr-14 ${inputCls}`}
-                                    placeholder="Ex : 10"
-                                  />
-                                  <span className="absolute right-3 top-2 text-xs text-stone-400">ml/L</span>
-                                </div>
-                              </div>
+                              <DoseField
+                                label="Dose recommandée"
+                                value={p.doseSimple}
+                                onChange={(v) => updateLiquidProduct(p.id, { doseSimple: v })}
+                                unit="ml/L"
+                                max={60}
+                                step={0.5}
+                                hint={p.doseSimple ? `Soit ${fmt(parseFloat(p.doseSimple) || 0, 1)} L/ha à la bouillie simplifiée (1000 L/ha).` : undefined}
+                              />
                             ) : (
-                              <>
-                                <div>
-                                  <label className="block text-[11px] font-medium text-stone-500 mb-1">Dose produit pur (L/ha)</label>
-                                  <input
-                                    type="number" inputMode="decimal" step="1"
-                                    value={p.doseExpert}
-                                    onChange={(e) => updateLiquidProduct(p.id, { doseExpert: e.target.value })}
-                                    className={`w-full px-3 py-2 ${inputCls}`}
-                                    placeholder="Ex : 10"
-                                  />
-                                </div>
-                                {p.doseExpert && sprayVolume && (
-                                  <div className="bg-green-50 border border-green-100 rounded-lg p-2">
-                                    <p className="text-[10px] text-green-600 mb-0.5">Concentration calculée</p>
-                                    <p className="text-base font-bold text-hanami-700 font-[family-name:var(--font-space-mono)]">
-                                      {((parseFloat(p.doseExpert) * 1000) / parseFloat(sprayVolume)).toFixed(1)} ml/L
-                                    </p>
-                                  </div>
-                                )}
-                              </>
+                              <DoseField
+                                label="Dose produit pur"
+                                value={p.doseExpert}
+                                onChange={(v) => updateLiquidProduct(p.id, { doseExpert: v })}
+                                unit="L/ha"
+                                max={60}
+                                step={0.5}
+                                hint={p.doseExpert && sprayVolume
+                                  ? `Concentration dans la bouillie : ${fmt((parseFloat(p.doseExpert) * 1000) / parseFloat(sprayVolume), 1)} ml/L à ${sprayVolume} L/ha.`
+                                  : undefined}
+                              />
                             )}
 
                             {/* Usage switcher liquide — si le produit vient du catalogue */}
@@ -2120,6 +2275,28 @@ export default function HanamiCalculator() {
                           </div>
                         ))}
 
+                        {/* Suggestion Indicateur Bleu — repère visuel des zones déjà
+                            pulvérisées, recommandé sur tout mélange. 1 ml / 10 L de
+                            bouillie ; disparaît si un traceur est déjà dans le mélange. */}
+                        {!hasBlueIndicator && (
+                          <button
+                            type="button"
+                            onClick={addBlueIndicator}
+                            className="w-full flex items-start gap-2.5 p-3 rounded-xl border border-sky-200 bg-sky-50 text-left hover:border-sky-400 transition-colors cursor-pointer"
+                          >
+                            <Droplets className="w-4 h-4 text-sky-500 mt-0.5 shrink-0" />
+                            <span>
+                              <span className="block text-xs font-semibold text-sky-900">
+                                Ajouter l&apos;Indicateur Bleu Compo au mélange
+                              </span>
+                              <span className="block text-[11px] text-sky-700 mt-0.5">
+                                Colore la bouillie pour visualiser les zones déjà traitées et éviter
+                                les doubles passages — 1 ml pour 10 L de bouillie.
+                              </span>
+                            </span>
+                          </button>
+                        )}
+
                         {/* Bouton "Ajouter un produit" */}
                         <button
                           type="button"
@@ -2133,17 +2310,28 @@ export default function HanamiCalculator() {
 
                       {/* Volume bouillie (mode expert seulement) + capacité pulvérisateur — partagés */}
                       {expertMode && (
-                        <div>
-                          <div className="flex items-center justify-between mb-2">
-                            <label className="text-xs font-medium text-stone-500">Volume de bouillie (et vitesse de marche)</label>
+                        <div className="border border-stone-200 rounded-xl p-3 bg-white space-y-2">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-xs font-semibold text-stone-700">Volume de bouillie</p>
+                              <p className="text-[11px] text-stone-400">Quantité d&apos;eau épandue — dépend de votre vitesse de marche</p>
+                            </div>
                             <button
                               onClick={() => setShowVolumeConverter(!showVolumeConverter)}
-                              className={`text-xs font-medium transition-colors ${showVolumeConverter ? 'text-hanami-700' : 'text-stone-400 hover:text-stone-600'}`}
+                              className={`text-xs font-medium transition-colors shrink-0 ${showVolumeConverter ? 'text-hanami-700' : 'text-stone-400 hover:text-stone-600'}`}
                             >
                               {showVolumeConverter ? 'L/100m²' : 'L/ha'} ⇄
                             </button>
                           </div>
                           <SprayVolumeSelector value={sprayVolume} onChange={setSprayVolume} showL100={showVolumeConverter} />
+                          {sprayVolume && getSelectedSurface() > 0 && (
+                            <p className="text-[11px] text-stone-500">
+                              Pour vos <strong className="font-[family-name:var(--font-space-mono)]">{getSelectedSurface().toFixed(0)} m²</strong> :
+                              {' '}<strong className="font-[family-name:var(--font-space-mono)] text-hanami-700">
+                                {fmt((getSelectedSurface() * parseFloat(sprayVolume)) / 10000, 1)} L
+                              </strong> de bouillie au total.
+                            </p>
+                          )}
                         </div>
                       )}
 
@@ -2151,6 +2339,14 @@ export default function HanamiCalculator() {
                         <label className="block text-xs font-medium text-stone-500 mb-1.5">Capacité pulvérisateur (L)</label>
                         <SprayerCapacitySelector value={sprayerCapacity} onChange={setSprayerCapacity} inputCls={inputCls} />
                       </div>
+
+                      {/* Zones : sélection (exclure du mélange) + ajustement de dose par zone */}
+                      {zones.length > 1 && (
+                        <>
+                          <ZoneSelector zones={zones} onToggle={toggleZoneSelection} selectedSurface={getSelectedSurface()} inputCls={inputCls} />
+                          <ZoneDoseAdjuster zones={zones} onFactorChange={setZoneDoseFactor} />
+                        </>
+                      )}
                     </>
                   ) : (
                     // Reverse liquid — un seul produit (le stock disponible)
@@ -2183,14 +2379,14 @@ export default function HanamiCalculator() {
                         <label className="block text-xs font-medium text-stone-500 mb-1.5">Capacité pulvérisateur (L)</label>
                         <SprayerCapacitySelector value={sprayerCapacity} onChange={setSprayerCapacity} inputCls={inputCls} />
                       </div>
-                      {zones.length > 1 && <ZoneSelector zones={zones} selectedZones={selectedZones} onToggle={toggleZoneSelection} selectedSurface={getSelectedSurface()} inputCls={inputCls} />}
+                      {zones.length > 1 && <ZoneSelector zones={zones} onToggle={toggleZoneSelection} selectedSurface={getSelectedSurface()} inputCls={inputCls} />}
                       {stockQuantity && getDosageAlert() && <DosageAlert alert={getDosageAlert()!} />}
                     </>
                   )}
 
                   {/* Reverse toggle */}
                   <label className="flex items-center gap-3 cursor-pointer p-3 bg-hanami-100/60 border border-hanami-500/20 rounded-lg">
-                    <input type="checkbox" checked={reverseMode} onChange={(e) => { setReverseMode(e.target.checked); if (e.target.checked) setSelectedZones(zones.map((_, i) => i)) }} className="w-4 h-4 accent-hanami-700 rounded shrink-0" />
+                    <input type="checkbox" checked={reverseMode} onChange={(e) => { setReverseMode(e.target.checked); if (e.target.checked) setZones(zs => zs.map(z => ({ ...z, excluded: false }))) }} className="w-4 h-4 accent-hanami-700 rounded shrink-0" />
                     <div>
                       <p className="text-xs font-semibold text-stone-700 flex items-center gap-1.5"><Package className="w-3.5 h-3.5 shrink-0" /> Calcul inversé</p>
                       <p className="text-xs text-stone-500">Calculer avec votre stock (un seul produit)</p>
@@ -2205,7 +2401,7 @@ export default function HanamiCalculator() {
                     else calculateResults()
                   }}
                   disabled={(() => {
-                    if (reverseMode) return !stockQuantity || !sprayerCapacity || selectedZones.length === 0
+                    if (reverseMode) return !stockQuantity || !sprayerCapacity || includedZonesCount === 0
                     if (!sprayerCapacity) return true
                     return liquidProducts.some(p => {
                       const v = expertMode ? p.doseExpert : p.doseSimple
@@ -2421,10 +2617,11 @@ export default function HanamiCalculator() {
                       <h2 className="font-[family-name:var(--font-fraunces)] text-2xl font-semibold mt-1 leading-tight">
                         Hanami · Dosage Intelligent
                       </h2>
-                      {/* Ligne de configuration : type + scénario + état */}
+                      {/* Ligne de configuration : type + scénario + état.
+                          Surface = zones calculées (les zones exclues ne comptent pas). */}
                       <div className="mt-3 pt-3 border-t border-white/15 flex flex-wrap gap-x-4 gap-y-1 text-xs text-white/80">
                         <span className="font-[family-name:var(--font-space-mono)] font-semibold text-amber-200">
-                          {getTotalSurface().toFixed(0)} m²
+                          {results.totalSurface.toFixed(0)} m²
                         </span>
                         {results.type === 'solid' && productType === 'seeds' && (
                           <>
@@ -2525,7 +2722,12 @@ export default function HanamiCalculator() {
                                   <ul className="space-y-0.5">
                                     {z.productsQuantities.map((pq, j) => (
                                       <li key={j} className="flex items-center justify-between text-xs">
-                                        <span className="text-stone-500 truncate">{pq.name}</span>
+                                        <span className="text-stone-500 truncate">
+                                          {pq.name}
+                                          <span className={`ml-1.5 font-[family-name:var(--font-space-mono)] ${z.doseFactor !== 1 ? 'text-amber-600' : 'text-stone-400'}`}>
+                                            {pq.dose}
+                                          </span>
+                                        </span>
                                         <span className="font-semibold text-hanami-700 font-[family-name:var(--font-space-mono)] shrink-0 ml-2">
                                           {fmt(pq.quantity)} kg
                                         </span>
@@ -2668,11 +2870,17 @@ export default function HanamiCalculator() {
                                 </p>
                               </div>
 
-                              {/* Produits — un bloc par produit du mélange */}
+                              {/* Produits — un bloc par produit du mélange, avec la
+                                  dose établie en regard du nom (facteur de zone inclus) */}
                               <div className="mx-4 mb-3 bg-stone-50 rounded-xl px-4 py-3 space-y-2.5">
                                 {z.productsAmounts.map((pa, i) => (
                                   <div key={i} className={i > 0 ? 'pt-2.5 border-t border-stone-200/70' : ''}>
-                                    <p className="text-xs text-stone-400 mb-0.5">{pa.name || `Produit ${i + 1}`}</p>
+                                    <div className="flex items-baseline justify-between gap-2 mb-0.5">
+                                      <p className="text-xs text-stone-400 truncate">{pa.name || `Produit ${i + 1}`}</p>
+                                      <p className={`text-[11px] font-medium font-[family-name:var(--font-space-mono)] shrink-0 ${z.doseFactor !== 1 ? 'text-amber-600' : 'text-stone-500'}`}>
+                                        {pa.dose}
+                                      </p>
+                                    </div>
                                     <p className="text-lg font-bold text-hanami-900 font-[family-name:var(--font-space-mono)]">
                                       {fmt(pa.amount)} {pa.unit}
                                     </p>
@@ -2737,8 +2945,19 @@ export default function HanamiCalculator() {
 
                       {/* Recette — par plein complet, ou pour la bouillie totale si
                           elle tient dans un seul plein partiel (afficher la recette
-                          d'un plein COMPLET surdoserait alors la préparation). */}
-                      {(() => {
+                          d'un plein COMPLET surdoserait alors la préparation).
+                          Masquée si des zones ont un facteur de dose ≠ 100 % : la
+                          concentration varie alors selon les zones, une recette
+                          globale surdoserait les unes et sous-doserait les autres. */}
+                      {!results.uniformConcentration ? (
+                        <div className="bg-amber-50 border border-amber-100 rounded-xl p-3 flex gap-2">
+                          <Info className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
+                          <p className="text-xs text-amber-800">
+                            Dosages ajustés par zone : préparez la bouillie <strong>zone par zone</strong> —
+                            les quantités exactes (produits + eau) sont dans chaque carte ci-dessus.
+                          </p>
+                        </div>
+                      ) : (() => {
                         const cap       = parseFloat(sprayerCapacity) || 15
                         const totalVol  = parseFloat(results.totalSprayVolume)
                         const n         = results.numberOfFills
@@ -2941,6 +3160,25 @@ export default function HanamiCalculator() {
                   Vous voulez un protocole personnalisé ? Contactez-nous →
                 </a>
 
+                {/* ── Retours en arrière — modifier sans repartir de zéro ──
+                    L'état est conservé : on revient à l'étape, on ajuste
+                    (ajouter/exclure une zone, changer une dose), et « Calculer »
+                    régénère les résultats. */}
+                <div className="no-print grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => goTo('zones')}
+                    className="py-2.5 px-3 bg-white border border-stone-200 text-stone-600 rounded-lg hover:border-hanami-500 hover:text-hanami-700 flex items-center justify-center gap-1.5 text-xs font-medium transition-colors"
+                  >
+                    <ChevronLeft className="w-3.5 h-3.5" /> Modifier les zones
+                  </button>
+                  <button
+                    onClick={() => goTo(productType === 'topdressing' ? 'topdressing_config' : 'dosage')}
+                    className="py-2.5 px-3 bg-white border border-stone-200 text-stone-600 rounded-lg hover:border-hanami-500 hover:text-hanami-700 flex items-center justify-center gap-1.5 text-xs font-medium transition-colors"
+                  >
+                    <ChevronLeft className="w-3.5 h-3.5" /> Modifier le dosage
+                  </button>
+                </div>
+
                 {/* ── Export + Reset ── */}
                 <div className="no-print flex gap-2">
                   <div className="relative flex-1">
@@ -3039,6 +3277,126 @@ export default function HanamiCalculator() {
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
+/**
+ * Champ de dose : slider (réglage rapide au doigt) + saisie numérique libre.
+ * La saisie est la source de vérité — elle peut dépasser la plage du slider
+ * (le slider se borne, la valeur reste exacte). Chaque mouvement de slider
+ * réécrit la saisie pour que les deux restent synchrones.
+ */
+function DoseField({
+  label, value, onChange, unit, min = 0, max, step = 1, disabled = false, hint,
+}: {
+  label: string
+  value: string
+  onChange: (v: string) => void
+  unit: string
+  min?: number
+  max: number
+  step?: number
+  disabled?: boolean
+  /** Texte d'aide affiché sous le champ (ex. équivalence ml/L) */
+  hint?: string
+}) {
+  const num = parseFloat(value)
+  return (
+    <div className={disabled ? 'opacity-60' : ''}>
+      <div className="flex items-center justify-between mb-1">
+        <label className="text-[11px] font-medium text-stone-500">{label}</label>
+        <div className="relative w-24">
+          <input
+            type="number" inputMode="decimal" step={step}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            disabled={disabled}
+            className="w-full pl-2 pr-9 py-1 text-sm text-right font-semibold text-hanami-900 font-[family-name:var(--font-space-mono)] border border-stone-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-hanami-500/30"
+          />
+          <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-stone-400 pointer-events-none">{unit}</span>
+        </div>
+      </div>
+      <RangeSlider
+        value={Number.isFinite(num) ? Math.min(Math.max(num, min), max) : min}
+        onValueChange={(v) => onChange(String(v))}
+        min={min} max={max} step={step}
+        showTicks={false}
+        disabled={disabled}
+        aria-label={label}
+        className="w-full"
+      />
+      {hint && <p className="text-[10px] text-stone-400 mt-1">{hint}</p>}
+    </div>
+  )
+}
+
+/**
+ * Ajustement du dosage zone par zone (50–150 %). Replié par défaut : la
+ * majorité des calculs restent uniformes ; ceux qui sur-dosent une zone
+ * stressée (plein sud, piétinée…) ouvrent le panneau. Le facteur vit sur la
+ * zone elle-même (persisté avec elle), pas sur une position de liste.
+ */
+function ZoneDoseAdjuster({
+  zones, onFactorChange,
+}: {
+  zones: Zone[]
+  onFactorChange: (index: number, factor: string) => void
+}) {
+  const [open, setOpen] = useState(false)
+  const adjusted = zones.filter(z => !z.excluded && z.doseFactor && z.doseFactor !== '100').length
+  return (
+    <div className="border border-stone-200 rounded-xl bg-white overflow-hidden">
+      <button
+        type="button"
+        onClick={() => setOpen(o => !o)}
+        className="w-full flex items-center justify-between px-3 py-2.5 text-left cursor-pointer hover:bg-stone-50 transition-colors"
+        aria-expanded={open}
+      >
+        <span className="text-xs font-semibold text-stone-700 flex items-center gap-1.5">
+          <Settings className="w-3.5 h-3.5 shrink-0 text-hanami-500" />
+          Ajuster le dosage par zone
+          {adjusted > 0 && (
+            <span className="px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 text-[10px] font-bold">
+              {adjusted} ajustée{adjusted > 1 ? 's' : ''}
+            </span>
+          )}
+        </span>
+        <ChevronLeft className={`w-4 h-4 text-stone-400 transition-transform ${open ? 'rotate-90' : '-rotate-90'}`} />
+      </button>
+      {open && (
+        <div className="px-3 pb-3 space-y-3 border-t border-stone-100 pt-3">
+          <p className="text-[11px] text-stone-500">
+            100 % = dose de base. Montez sur une zone stressée (plein sud, piétinement),
+            descendez sur une zone à l&apos;ombre ou déjà vigoureuse.
+          </p>
+          {zones.map((z, i) => {
+            if (z.excluded) return null
+            const factor = parseFloat(z.doseFactor ?? '100') || 100
+            return (
+              <div key={i}>
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-medium text-stone-700 truncate">
+                    {z.name || `Zone ${i + 1}`}
+                    <span className="text-stone-400 font-normal ml-1">· {z.surface} m²</span>
+                  </span>
+                  <span className={`text-xs font-bold font-[family-name:var(--font-space-mono)] ${factor !== 100 ? 'text-amber-600' : 'text-stone-500'}`}>
+                    {factor} %
+                  </span>
+                </div>
+                <RangeSlider
+                  value={factor}
+                  onValueChange={(v) => onFactorChange(i, String(v))}
+                  min={50} max={150} step={5}
+                  showTicks={false}
+                  aria-label={`Dosage de ${z.name || `Zone ${i + 1}`} en pourcentage`}
+                  className="w-full"
+                />
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
+  )
+}
+
 function SprayerCapacitySelector({ value, onChange, inputCls }: { value: string; onChange: (v: string) => void; inputCls: string }) {
   const presets = ['5', '10', '15']
   const isPreset = presets.includes(value)
@@ -3097,29 +3455,30 @@ function SprayVolumeSelector({ value, onChange, showL100 = false }: { value: str
 }
 
 function ZoneSelector({
-  zones, selectedZones, onToggle, selectedSurface, inputCls,
+  zones, onToggle, selectedSurface, inputCls,
 }: {
-  zones: Zone[]; selectedZones: number[]; onToggle: (i: number) => void
+  zones: Zone[]; onToggle: (i: number) => void
   selectedSurface: number; inputCls: string
 }) {
+  const included = zones.filter(z => !z.excluded).length
   return (
     <div>
       <label className="block text-xs font-medium text-stone-500 mb-2">
-        Zones à traiter ({selectedZones.length}/{zones.length})
+        Zones à traiter ({included}/{zones.length})
       </label>
       <div className="space-y-1.5">
         {zones.map((zone, i) => (
           <button
             key={i} onClick={() => onToggle(i)}
             className={`w-full px-3 py-2 rounded-lg border-2 transition-all text-left flex items-center justify-between text-xs ${
-              selectedZones.includes(i) ? 'border-hanami-500 bg-hanami-100/30' : 'border-stone-100 bg-stone-50 opacity-60'
+              !zone.excluded ? 'border-hanami-500 bg-hanami-100/30' : 'border-stone-100 bg-stone-50 opacity-60'
             }`}
           >
             <div className="flex items-center gap-2">
               <div className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 ${
-                selectedZones.includes(i) ? 'bg-hanami-700 border-hanami-700' : 'border-stone-300'
+                !zone.excluded ? 'bg-hanami-700 border-hanami-700' : 'border-stone-300'
               }`}>
-                {selectedZones.includes(i) && (
+                {!zone.excluded && (
                   <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
                   </svg>
