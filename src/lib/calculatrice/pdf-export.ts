@@ -11,10 +11,12 @@
  * `DosagePdfDoc`, modèle de document neutre construit côté composant. Toutes
  * les valeurs arrivent déjà formatées (cf. format.ts).
  *
- * Les polices de la charte (Fraunces, Space Mono) ne sont pas embarquées :
- * elles ajouteraient des centaines de Ko de base64 par graisse. On utilise
- * Helvetica (police PDF standard, présente dans tous les lecteurs) — la
- * lisibilité prime sur la typographie pour un document de terrain.
+ * Les polices de la charte (Fraunces pour les titres, Space Mono pour les
+ * chiffres, DM Sans pour le corps) sont embarquées en TTF statiques depuis
+ * `./fonts/` (~60–110 Ko de base64 par graisse). Elles sont chargées en
+ * dynamic import au moment de la génération, comme jsPDF lui-même : le bundle
+ * principal ne porte aucun de ces octets. Si un chargement échoue, on retombe
+ * silencieusement sur Helvetica — le document reste toujours généré.
  */
 
 import type { jsPDF } from 'jspdf'
@@ -94,6 +96,56 @@ const C = {
   white: [255, 255, 255],
 } satisfies Record<string, RGB>
 
+// ── Polices de la charte ─────────────────────────────────────────────────────
+
+/** Rôles typographiques du document — découplés des noms de familles réelles. */
+type PdfFontFamily = 'heading' | 'body' | 'mono'
+
+/** Identifiant jsPDF de chaque rôle (nom passé à addFont / setFont). */
+const FONT_ID: Record<PdfFontFamily, string> = {
+  heading: 'Fraunces',
+  body: 'DMSans',
+  mono: 'SpaceMono',
+}
+
+/**
+ * Enregistre les TTF de la charte dans le VFS de jsPDF et renvoie l'ensemble
+ * des combinaisons `famille:style` réellement disponibles. Chaque graisse est
+ * chargée en dynamic import (les modules base64 ne pèsent donc rien dans le
+ * bundle principal) et protégée par try/catch : une police qui manque ou un
+ * TTF corrompu ne bloque jamais la génération, `Canvas.font()` retombera sur
+ * Helvetica pour cette combinaison.
+ */
+async function registerFonts(pdf: jsPDF): Promise<Set<string>> {
+  const sources: Array<{
+    family: PdfFontFamily
+    style: 'normal' | 'bold'
+    vfsName: string
+    load: () => Promise<{ default: string }>
+  }> = [
+    // Fraunces n'existe qu'en 600 : la même graisse sert de normal ET de bold.
+    { family: 'heading', style: 'normal', vfsName: 'Fraunces-SemiBold.ttf', load: () => import('./fonts/fraunces-600') },
+    { family: 'heading', style: 'bold', vfsName: 'Fraunces-SemiBold.ttf', load: () => import('./fonts/fraunces-600') },
+    { family: 'body', style: 'normal', vfsName: 'DMSans-Regular.ttf', load: () => import('./fonts/dm-sans-400') },
+    { family: 'body', style: 'bold', vfsName: 'DMSans-Bold.ttf', load: () => import('./fonts/dm-sans-700') },
+    { family: 'mono', style: 'normal', vfsName: 'SpaceMono-Regular.ttf', load: () => import('./fonts/space-mono-400') },
+    { family: 'mono', style: 'bold', vfsName: 'SpaceMono-Bold.ttf', load: () => import('./fonts/space-mono-700') },
+  ]
+
+  const loaded = new Set<string>()
+  await Promise.all(sources.map(async (s) => {
+    try {
+      const { default: base64 } = await s.load()
+      pdf.addFileToVFS(s.vfsName, base64)
+      pdf.addFont(s.vfsName, FONT_ID[s.family], s.style)
+      loaded.add(`${s.family}:${s.style}`)
+    } catch {
+      // Police indisponible : la combinaison restera en Helvetica.
+    }
+  }))
+  return loaded
+}
+
 // ── Géométrie de page (mm) ───────────────────────────────────────────────────
 
 const PAGE_W = 210
@@ -109,14 +161,25 @@ const BOTTOM_GUTTER = 12
  */
 class Canvas {
   y = MARGIN
-  constructor(readonly pdf: jsPDF) {}
+  constructor(readonly pdf: jsPDF, private readonly fonts: Set<string>) {}
 
   fill(c: RGB) { this.pdf.setFillColor(c[0], c[1], c[2]) }
   stroke(c: RGB) { this.pdf.setDrawColor(c[0], c[1], c[2]) }
   color(c: RGB) { this.pdf.setTextColor(c[0], c[1], c[2]) }
 
-  font(style: 'normal' | 'bold' | 'italic', size: number) {
-    this.pdf.setFont('helvetica', style)
+  /**
+   * Sélectionne une police par rôle : `heading` (Fraunces), `body` (DM Sans),
+   * `mono` (Space Mono). L'italique n'est pas embarqué : pour une famille de
+   * la charte, `italic` est rendu en romain (même taille) ; si la famille n'a
+   * pas pu être enregistrée, on retombe sur Helvetica, qui garde l'italique.
+   */
+  font(family: PdfFontFamily, style: 'normal' | 'bold' | 'italic', size: number) {
+    const wanted = style === 'italic' ? 'normal' : style
+    if (this.fonts.has(`${family}:${wanted}`)) {
+      this.pdf.setFont(FONT_ID[family], wanted)
+    } else {
+      this.pdf.setFont('helvetica', style)
+    }
     this.pdf.setFontSize(size)
   }
 
@@ -177,18 +240,18 @@ function drawHeader(c: Canvas, doc: DosagePdfDoc) {
   const inner = MARGIN + 7
   let y = c.y + 9
 
-  c.font('bold', 7)
+  c.font('body', 'bold', 7)
   c.color(C.amber)
   c.pdf.setCharSpace(0.5)
   c.pdf.text('PLAN DE DOSAGE', inner, y)
   c.pdf.setCharSpace(0)
 
-  c.font('normal', 7.5)
+  c.font('body', 'normal', 7.5)
   c.color(C.stone400)
   c.right(doc.dateLabel, PAGE_W - MARGIN - 7, y)
 
   y += 8
-  c.font('bold', 16)
+  c.font('heading', 'bold', 16)
   c.color(C.white)
   c.pdf.text('Hanami · Dosage Intelligent', inner, y)
 
@@ -203,10 +266,11 @@ function drawHeader(c: Canvas, doc: DosagePdfDoc) {
   let x = inner
   doc.chips.forEach((chip, i) => {
     if (i === 0) {
-      c.font('bold', 8)
+      // La surface est une valeur chiffrée : Space Mono, comme les chiffres clés.
+      c.font('mono', 'bold', 8)
       c.color(C.amber)
     } else {
-      c.font('normal', 8)
+      c.font('body', 'normal', 8)
       c.color(C.hanami100)
     }
     c.pdf.text(chip, x, y)
@@ -218,7 +282,7 @@ function drawHeader(c: Canvas, doc: DosagePdfDoc) {
 
 /** Encadré ambre : conseil d'application. */
 function drawTip(c: Canvas, tip: string) {
-  c.font('normal', 8.5)
+  c.font('body', 'normal', 8.5)
   const textW = CONTENT_W - 12
   const h = Math.max(11, c.wrappedHeight(tip, textW, 4) + 6)
   c.ensure(h + 5)
@@ -252,7 +316,7 @@ function drawSummary(c: Canvas, doc: DosagePdfDoc) {
   const inner = MARGIN + 7
   let y = c.y + 9
 
-  c.font('normal', 7)
+  c.font('body', 'normal', 7)
   c.color(C.stone400)
   c.pdf.setCharSpace(0.4)
   c.pdf.text(doc.summaryTitle.toUpperCase(), inner, y)
@@ -260,17 +324,17 @@ function drawSummary(c: Canvas, doc: DosagePdfDoc) {
 
   y += 8
   for (const kf of doc.keyFigures) {
-    c.font('bold', 15)
+    c.font('mono', 'bold', 15)
     c.color(C.white)
     c.pdf.text(kf.value, inner, y)
     const valueW = c.pdf.getTextWidth(kf.value)
 
-    c.font('normal', 8)
+    c.font('body', 'normal', 8)
     c.color(C.hanami100)
     c.pdf.text(c.truncate(kf.label, figuresW - valueW - 4), inner + valueW + 3, y)
 
     if (kf.sub) {
-      c.font('normal', 6.5)
+      c.font('mono', 'normal', 6.5)
       c.color(C.stone500)
       c.pdf.text(kf.sub, inner, y + 3.5)
     }
@@ -279,7 +343,7 @@ function drawSummary(c: Canvas, doc: DosagePdfDoc) {
 
   // Colonne méta, alignée à droite
   let my = c.y + 9
-  c.font('normal', 7.5)
+  c.font('body', 'normal', 7.5)
   c.color(C.stone400)
   for (const meta of doc.summaryMeta) {
     c.right(meta, PAGE_W - MARGIN - 7, my)
@@ -311,11 +375,11 @@ function drawZone(c: Canvas, zone: PdfZone) {
     textX = inner + PHOTO + 5
   }
 
-  c.font('bold', 10.5)
+  c.font('heading', 'bold', 10.5)
   c.color(C.hanami900)
   c.pdf.text(c.truncate(zone.name, CONTENT_W - 40), textX, top + 4)
 
-  c.font('normal', 8)
+  c.font('mono', 'normal', 8)
   c.color(C.stone400)
   c.right(zone.surface, PAGE_W - MARGIN - 6, top + 4)
 
@@ -326,11 +390,11 @@ function drawZone(c: Canvas, zone: PdfZone) {
     if (row.highlight) {
       c.box(MARGIN + 4, y - 4.2, CONTENT_W - 8, rowH - 1.2, C.hanami100, undefined, 1.5)
     }
-    c.font('normal', 8.5)
+    c.font('body', 'normal', 8.5)
     c.color(row.highlight ? C.hanami900 : C.stone500)
     c.pdf.text(c.truncate(row.label, CONTENT_W - 60), inner, y)
 
-    c.font('bold', 9)
+    c.font('mono', 'bold', 9)
     c.color(row.highlight ? C.hanami900 : C.hanami700)
     c.right(row.value, rowRight, y)
     y += rowH
@@ -376,7 +440,7 @@ function drawRecipe(c: Canvas, doc: DosagePdfDoc) {
   c.ensure(h + 5)
   c.box(MARGIN, c.y, CONTENT_W, h, C.stone50, C.stone200, 2.5)
 
-  c.font('bold', 8)
+  c.font('body', 'bold', 8)
   c.color(C.stone700)
   c.pdf.text(doc.recipeTitle ?? 'Recette par plein', MARGIN + 6, c.y + 8)
 
@@ -388,16 +452,16 @@ function drawRecipe(c: Canvas, doc: DosagePdfDoc) {
     const y = startY + row * (cardH + gap)
 
     c.box(x, y, cardW, cardH, C.white, C.stone200, 1.5)
-    c.font('normal', 6.5)
+    c.font('body', 'normal', 6.5)
     c.color(C.stone400)
     c.pdf.text(c.truncate(kv.label, cardW - 6), x + 3, y + 5)
-    c.font('bold', 9.5)
+    c.font('mono', 'bold', 9.5)
     c.color(C.hanami700)
     c.pdf.text(kv.value, x + 3, y + 10.5)
   })
 
   if (doc.recipeNote) {
-    c.font('italic', 6.5)
+    c.font('body', 'italic', 6.5)
     c.color(C.stone400)
     c.pdf.text(doc.recipeNote, MARGIN + 6, startY + rows * (cardH + gap) + 2)
   }
@@ -407,7 +471,7 @@ function drawRecipe(c: Canvas, doc: DosagePdfDoc) {
 
 /** Avertissement légal + bloc identité Hanami. */
 function drawFooter(c: Canvas, doc: DosagePdfDoc) {
-  c.font('italic', 6.8)
+  c.font('body', 'italic', 6.8)
   const discH = c.wrappedHeight(doc.disclaimer, CONTENT_W, 3.2)
   c.ensure(discH + 30)
 
@@ -419,22 +483,23 @@ function drawFooter(c: Canvas, doc: DosagePdfDoc) {
   c.box(MARGIN, c.y, CONTENT_W, H, C.stone50, C.stone200, 2.5)
   const inner = MARGIN + 6
 
-  c.font('bold', 11)
+  // Wordmark : même traitement serif que le titre du document.
+  c.font('heading', 'bold', 11)
   c.color(C.hanami900)
   c.pdf.text('Hanami.', inner, c.y + 8)
 
-  c.font('bold', 6)
+  c.font('body', 'bold', 6)
   c.color(C.hanami500)
   c.pdf.setCharSpace(0.5)
   c.right('EXPERT GAZON', PAGE_W - MARGIN - 6, c.y + 8)
   c.pdf.setCharSpace(0)
 
-  c.font('normal', 8)
+  c.font('body', 'normal', 8)
   c.color(C.stone700)
   c.pdf.text('06 67 27 76 14', inner, c.y + 14)
   c.pdf.text('hanami-gazon.fr', MARGIN + 60, c.y + 14)
 
-  c.font('normal', 6.2)
+  c.font('body', 'normal', 6.2)
   c.color(C.stone400)
   c.pdf.text(
     'Hanami · TROTT SASU · SIREN 891 868 143 · Le Vésinet, Île-de-France · Coaching agronomique partout en France',
@@ -445,14 +510,14 @@ function drawFooter(c: Canvas, doc: DosagePdfDoc) {
 }
 
 /** Numérotation, uniquement si le document dépasse une page. */
-function drawPageNumbers(pdf: jsPDF) {
+function drawPageNumbers(c: Canvas) {
+  const { pdf } = c
   const total = pdf.getNumberOfPages()
   if (total < 2) return
   for (let i = 1; i <= total; i++) {
     pdf.setPage(i)
-    pdf.setFont('helvetica', 'normal')
-    pdf.setFontSize(7)
-    pdf.setTextColor(C.stone400[0], C.stone400[1], C.stone400[2])
+    c.font('body', 'normal', 7)
+    c.color(C.stone400)
     const label = `${i} / ${total}`
     pdf.text(label, PAGE_W - MARGIN - pdf.getTextWidth(label), PAGE_H - 6)
   }
@@ -473,7 +538,9 @@ export async function buildDosagePdf(doc: DosagePdfDoc): Promise<jsPDF> {
     creator: 'hanami-gazon.fr',
   })
 
-  const c = new Canvas(pdf)
+  const fonts = await registerFonts(pdf)
+
+  const c = new Canvas(pdf, fonts)
   drawHeader(c, doc)
   if (doc.tip) drawTip(c, doc.tip)
   drawSummary(c, doc)
@@ -481,7 +548,7 @@ export async function buildDosagePdf(doc: DosagePdfDoc): Promise<jsPDF> {
   if (doc.zones.length > 0) {
     if (doc.zonesTitle) {
       c.ensure(10)
-      c.font('bold', 8)
+      c.font('body', 'bold', 8)
       c.color(C.stone500)
       pdf.text(doc.zonesTitle, MARGIN, c.y + 3)
       c.y += 7
@@ -491,7 +558,7 @@ export async function buildDosagePdf(doc: DosagePdfDoc): Promise<jsPDF> {
 
   drawRecipe(c, doc)
   drawFooter(c, doc)
-  drawPageNumbers(pdf)
+  drawPageNumbers(c)
 
   return pdf
 }
