@@ -18,6 +18,7 @@ import { compressPhoto } from '@/lib/photo-utils'
 import { track } from '@/lib/analytics'
 import { fmt, plural } from '@/lib/calculatrice/format'
 import { downloadDosagePdf, type DosagePdfDoc, type PdfZone } from '@/lib/calculatrice/pdf-export'
+import { CALC_PRESETS, type CalcPreset } from '@/lib/calculatrice/presets'
 import PhotoLightbox from '@/components/shared/PhotoLightbox'
 import ProductAutocomplete from './ProductAutocomplete'
 import UsageSwitcher from './UsageSwitcher'
@@ -248,6 +249,10 @@ export default function HanamiCalculator() {
   const [stockUnit, setStockUnit]         = useState('kg')
   const [selectedZones, setSelectedZones] = useState<number[]>([])
 
+  // ── Code zones (pré-remplissage 4 chiffres) ─────────────────────────────────
+  const [codeInput, setCodeInput] = useState('')
+  const [codeMsg, setCodeMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
+
   // Helpers SolidProduct
   const updateSolidProduct = (id: string, patch: Partial<SolidProduct>) =>
     setSolidProducts(prods => prods.map(p => p.id === id ? { ...p, ...patch } : p))
@@ -351,6 +356,7 @@ export default function HanamiCalculator() {
 
   const LS_ZONES_KEY = 'hanami-calc-zones-v2'   // v2 = photos incluses
   const LS_SPRAYER_KEY = 'hanami-calc-sprayer-cap'
+  const LS_CODES_KEY = 'hanami-calc-codes'      // codes enregistrés par le visiteur
 
   /** Sauve les zones avec gestion du quota. Si le storage est plein, on retire
    *  les photos et on retente — mieux vaut garder noms/surfaces que tout perdre. */
@@ -443,15 +449,20 @@ export default function HanamiCalculator() {
 
   // ── Zone helpers ──────────────────────────────────────────────────────────
 
-  const addZone    = () => setZones([...zones, { name: '', surface: '' }])
-  const removeZone = (i: number) => zones.length > 1 && setZones(zones.filter((_, idx) => idx !== i))
+  // Toute édition manuelle des zones périme le message « … chargés » / « enregistrées »
+  const clearCodeMsg = () => setCodeMsg(null)
+  const addZone    = () => { clearCodeMsg(); setZones([...zones, { name: '', surface: '' }]) }
+  const removeZone = (i: number) => { if (zones.length > 1) { clearCodeMsg(); setZones(zones.filter((_, idx) => idx !== i)) } }
   const updateZone = (i: number, field: 'name' | 'surface', v: string) => {
     // Spread pour créer un nouvel objet zone — évite la mutation en place
     // qui empêche React de détecter le changement (shallow copy insuffisant).
+    clearCodeMsg()
     setZones(zones.map((z, idx) => idx === i ? { ...z, [field]: v } : z))
   }
-  const setZonePhoto = (i: number, photo: Zone['photo']) =>
+  const setZonePhoto = (i: number, photo: Zone['photo']) => {
+    clearCodeMsg()
     setZones(zones.map((z, idx) => idx === i ? { ...z, photo } : z))
+  }
 
   /** Handler upload/capture photo pour une zone donnée. Compresse via
    *  photo-utils (gère HEIC sur tous navigateurs) et stocke en data: URL. */
@@ -472,6 +483,103 @@ export default function HanamiCalculator() {
       setPhotoLoadingIdx(null)
     }
   }
+  // ── Codes de zones ──────────────────────────────────────────────────────────
+  //
+  // Un code à 4 chiffres pré-remplit les zones. Résolution : d'abord les presets
+  // officiels (lib/calculatrice/presets.ts, valables partout), puis les codes que
+  // le visiteur a lui-même enregistrés dans ce navigateur (localStorage).
+
+  /** Lit la carte des codes enregistrés localement. */
+  const readSavedCodes = (): Record<string, CalcPreset> => {
+    try {
+      const raw = localStorage.getItem(LS_CODES_KEY)
+      const parsed = raw ? JSON.parse(raw) : {}
+      return parsed && typeof parsed === 'object' ? parsed : {}
+    } catch {
+      return {}
+    }
+  }
+
+  /** Résout un code → preset, ou null. Presets officiels prioritaires. */
+  const resolveCode = (code: string): CalcPreset | null =>
+    CALC_PRESETS[code] ?? readSavedCodes()[code] ?? null
+
+  /** Charge les zones d'un code dans le formulaire. */
+  const loadCode = () => {
+    const code = codeInput.trim()
+    if (!/^\d{4}$/.test(code)) {
+      setCodeMsg({ type: 'error', text: 'Entrez un code à 4 chiffres.' })
+      return
+    }
+    const preset = resolveCode(code)
+    // Garde de forme : une entrée localStorage trafiquée/d'une future version
+    // pourrait ne pas avoir de tableau `zones` → on refuse proprement au lieu de crasher.
+    if (!preset || !Array.isArray(preset.zones)) {
+      setCodeMsg({ type: 'error', text: 'Aucune zone enregistrée pour ce code.' })
+      return
+    }
+    // Anti-écrasement : si l'utilisateur a déjà saisi des données (surface ou photo),
+    // on confirme avant de tout remplacer — l'auto-sauvegarde écraserait sinon le backup.
+    const hasUserData = zones.some(z => (parseFloat(z.surface) || 0) > 0 || z.photo)
+    const hasPhotos = zones.some(z => z.photo)
+    if (hasUserData && typeof window !== 'undefined') {
+      const warn = hasPhotos
+        ? 'Remplacer les zones actuelles ? Vos surfaces ET vos photos seront perdues.'
+        : 'Remplacer les zones actuelles par celles du code ?'
+      if (!window.confirm(warn)) return
+    }
+    const loaded = preset.zones.map(z => ({ name: z.name, surface: z.surface }))
+    const nextZones = loaded.length > 0 ? loaded : [{ name: '', surface: '' }]
+    setZones(nextZones)
+    setSelectedZones(nextZones.map((_, i) => i))
+    if (preset.sprayerCapacity) setSprayerCapacity(preset.sprayerCapacity)
+    setResults(null) // les anciens résultats ne correspondent plus aux nouvelles zones
+    // Purge du suivi de zones (chronos, cases « fait ») indexé par position :
+    // sans ça, un ✓ ou un chrono resterait collé à la zone qui prend le même index.
+    Object.values(timerRefs.current).forEach(clearInterval)
+    timerRefs.current = {}
+    setActiveZoneTab('all')
+    setZonesDone(new Set())
+    setZoneTimers({})
+    const total = nextZones.reduce((s, z) => s + (parseFloat(z.surface) || 0), 0)
+    setCodeMsg({
+      type: 'success',
+      text: `${preset.label} — ${nextZones.length} ${plural(nextZones.length, 'zone')}, ${total.toFixed(0)} m² chargés.`,
+    })
+    track('calculator_action', { action: 'code_load' })
+  }
+
+  /** Enregistre les zones actuelles sous un code, dans ce navigateur. */
+  const saveCode = () => {
+    const code = codeInput.trim()
+    if (!/^\d{4}$/.test(code)) {
+      setCodeMsg({ type: 'error', text: 'Choisissez un code à 4 chiffres pour enregistrer.' })
+      return
+    }
+    if (CALC_PRESETS[code]) {
+      setCodeMsg({ type: 'error', text: 'Ce code est réservé — choisissez-en un autre.' })
+      return
+    }
+    const filled = zones.filter(z => (parseFloat(z.surface) || 0) > 0)
+    if (filled.length === 0) {
+      setCodeMsg({ type: 'error', text: 'Ajoutez au moins une zone avec une surface avant d’enregistrer.' })
+      return
+    }
+    try {
+      const map = readSavedCodes()
+      map[code] = {
+        label: `Mes zones (${code})`,
+        zones: filled.map(z => ({ name: z.name, surface: z.surface })),
+        sprayerCapacity,
+      }
+      localStorage.setItem(LS_CODES_KEY, JSON.stringify(map))
+      setCodeMsg({ type: 'success', text: `Zones enregistrées sous le code ${code}. Retapez-le pour les recharger.` })
+      track('calculator_action', { action: 'code_save' })
+    } catch {
+      setCodeMsg({ type: 'error', text: 'Enregistrement impossible (stockage saturé).' })
+    }
+  }
+
   const getTotalSurface    = () => zones.reduce((s, z) => s + (parseFloat(z.surface) || 0), 0)
   const getSelectedSurface = () =>
     zones.filter((_, i) => selectedZones.includes(i)).reduce((s, z) => s + (parseFloat(z.surface) || 0), 0)
@@ -1254,6 +1362,56 @@ export default function HanamiCalculator() {
                   <p className="text-xs text-stone-400 mt-0.5">
                     Séparez les zones de gazon distinctes (exposition, type de sol…)
                   </p>
+                </div>
+
+                {/* Code zones — pré-remplit / enregistre un jeu de zones (4 chiffres).
+                    Pratique pour retrouver ses zones d'une visite à l'autre ou les
+                    charger sur un autre appareil (codes gérés par Hanami). */}
+                <div className="bg-hanami-100/40 border border-hanami-500/20 rounded-xl px-3 py-2.5">
+                  <label htmlFor="calc-code" className="text-[11px] font-semibold text-hanami-900 flex items-center gap-1.5">
+                    <Package className="w-3.5 h-3.5 shrink-0" /> Code zones
+                  </label>
+                  <p className="text-[11px] text-stone-500 mt-0.5 mb-2">
+                    Un code pré-remplit vos zones. Enregistrez les vôtres pour les retrouver.
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <input
+                      id="calc-code"
+                      type="text"
+                      inputMode="numeric"
+                      autoComplete="off"
+                      maxLength={4}
+                      placeholder="0000"
+                      value={codeInput}
+                      onChange={(e) => {
+                        setCodeInput(e.target.value.replace(/\D/g, '').slice(0, 4))
+                        setCodeMsg(null)
+                      }}
+                      onKeyDown={(e) => { if (e.key === 'Enter') loadCode() }}
+                      className={`w-20 px-2 py-1.5 text-sm text-center tracking-[0.3em] font-[family-name:var(--font-space-mono)] ${inputCls}`}
+                      aria-label="Code à 4 chiffres"
+                    />
+                    <button
+                      onClick={loadCode}
+                      className="px-3 py-1.5 rounded-lg bg-hanami-700 text-white text-xs font-medium hover:bg-hanami-900 transition-colors"
+                    >
+                      Charger
+                    </button>
+                    <button
+                      onClick={saveCode}
+                      className="px-3 py-1.5 rounded-lg border border-hanami-500/30 text-hanami-700 text-xs font-medium hover:bg-hanami-100/60 transition-colors"
+                    >
+                      Enregistrer
+                    </button>
+                  </div>
+                  {codeMsg && (
+                    <p className={`text-[11px] mt-2 flex items-start gap-1.5 ${codeMsg.type === 'success' ? 'text-hanami-700' : 'text-red-600'}`}>
+                      {codeMsg.type === 'success'
+                        ? <Check className="w-3 h-3 mt-0.5 shrink-0" />
+                        : <AlertTriangle className="w-3 h-3 mt-0.5 shrink-0" />}
+                      <span>{codeMsg.text}</span>
+                    </p>
+                  )}
                 </div>
 
                 {/* Zone list — ligne horizontale compacte avec slot photo carré
