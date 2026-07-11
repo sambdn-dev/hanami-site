@@ -13,7 +13,7 @@
  */
 
 import { useState, useEffect, useRef } from 'react'
-import { Plus, Trash2, AlertTriangle, Info, Calculator, Download, ChevronLeft, ImageDown, Camera, Loader2, Share2, Sprout, Sparkles, Droplets, Mountain, Package, Settings, Lightbulb, Mail, Check, Globe, FlaskConical, Timer, Play } from 'lucide-react'
+import { Plus, Trash2, AlertTriangle, Info, Calculator, Download, ChevronLeft, ImageDown, Camera, Loader2, Share2, Sprout, Sparkles, Droplets, Mountain, Package, Settings, Lightbulb, Mail, Check, Globe, FlaskConical, Timer, Play, X } from 'lucide-react'
 import { compressPhoto } from '@/lib/photo-utils'
 import { track } from '@/lib/analytics'
 import { fmt, plural } from '@/lib/calculatrice/format'
@@ -1409,22 +1409,34 @@ export default function HanamiCalculator() {
                     Un code pré-remplit vos zones. Enregistrez les vôtres pour les retrouver.
                   </p>
                   <div className="flex items-center gap-2">
-                    <input
-                      id="calc-code"
-                      type="text"
-                      inputMode="numeric"
-                      autoComplete="off"
-                      maxLength={4}
-                      placeholder="0000"
-                      value={codeInput}
-                      onChange={(e) => {
-                        setCodeInput(e.target.value.replace(/\D/g, '').slice(0, 4))
-                        setCodeMsg(null)
-                      }}
-                      onKeyDown={(e) => { if (e.key === 'Enter') loadCode() }}
-                      className={`w-20 px-2 py-1.5 text-sm text-center tracking-[0.3em] font-[family-name:var(--font-space-mono)] ${inputCls}`}
-                      aria-label="Code à 4 chiffres"
-                    />
+                    <div className="relative w-20 shrink-0">
+                      <input
+                        id="calc-code"
+                        type="text"
+                        inputMode="numeric"
+                        autoComplete="off"
+                        maxLength={4}
+                        placeholder="0000"
+                        value={codeInput}
+                        onChange={(e) => {
+                          setCodeInput(e.target.value.replace(/\D/g, '').slice(0, 4))
+                          setCodeMsg(null)
+                        }}
+                        onKeyDown={(e) => { if (e.key === 'Enter') loadCode() }}
+                        className={`w-full pl-2 pr-6 py-1.5 text-sm text-center tracking-[0.3em] font-[family-name:var(--font-space-mono)] ${inputCls}`}
+                        aria-label="Code à 4 chiffres"
+                      />
+                      {codeInput && (
+                        <button
+                          type="button"
+                          onClick={() => { setCodeInput(''); setCodeMsg(null) }}
+                          aria-label="Effacer le code"
+                          className="absolute right-1 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center text-stone-400 hover:text-stone-700 transition-colors cursor-pointer"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
                     <button
                       onClick={loadCode}
                       className="px-3 py-1.5 rounded-lg bg-hanami-700 text-white text-xs font-medium hover:bg-hanami-900 transition-colors"
