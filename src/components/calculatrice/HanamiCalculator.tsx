@@ -404,6 +404,32 @@ export default function HanamiCalculator() {
     setIsMobile('ontouchstart' in window || navigator.maxTouchPoints > 0)
   }, [])
 
+  /** Lien direct (ex. /calculatrice?code=2016) : charge le code SANS demander
+   *  confirmation — contrairement à la saisie manuelle, ce lien a été envoyé
+   *  délibérément (par Hanami à un client), donc son intention fait foi.
+   *  S'exécute une seule fois au montage (guard via ref, StrictMode-safe),
+   *  après l'effet de restauration ci-dessus dont il prend volontairement
+   *  le pas — un lien reçu doit toujours gagner sur d'anciennes zones stockées. */
+  const urlCodeHandled = useRef(false)
+  useEffect(() => {
+    if (urlCodeHandled.current || typeof window === 'undefined') return
+    urlCodeHandled.current = true
+    const code = new URLSearchParams(window.location.search).get('code')
+    if (!code || !/^\d{4}$/.test(code)) return
+    setCodeInput(code)
+    const preset = resolveCode(code)
+    if (preset && Array.isArray(preset.zones)) {
+      applyPreset(preset)
+      track('calculator_action', { action: 'code_load_url' })
+    } else {
+      setCodeMsg({ type: 'error', text: 'Lien invalide — aucune zone pour ce code.' })
+    }
+    // Nettoie l'URL pour qu'un simple rafraîchissement (F5) ne re-déclenche pas
+    // le chargement (et n'écrase pas des zones que le client aurait modifiées).
+    window.history.replaceState(null, '', window.location.pathname)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   useEffect(() => {
     // On ne sauve que s'il y a au moins une zone avec une surface saisie,
     // pour ne pas écraser une session précédente avec un état vierge.
@@ -504,7 +530,32 @@ export default function HanamiCalculator() {
   const resolveCode = (code: string): CalcPreset | null =>
     CALC_PRESETS[code] ?? readSavedCodes()[code] ?? null
 
-  /** Charge les zones d'un code dans le formulaire. */
+  /** Applique un preset résolu au formulaire — cœur commun entre le chargement
+   *  manuel (bouton « Charger ») et le chargement via lien direct (?code=). */
+  const applyPreset = (preset: CalcPreset) => {
+    const loaded = preset.zones.map(z => ({ name: z.name, surface: z.surface }))
+    const nextZones = loaded.length > 0 ? loaded : [{ name: '', surface: '' }]
+    setZones(nextZones)
+    setSelectedZones(nextZones.map((_, i) => i))
+    if (preset.sprayerCapacity) setSprayerCapacity(preset.sprayerCapacity)
+    setResults(null) // les anciens résultats ne correspondent plus aux nouvelles zones
+    // Purge du suivi de zones (chronos, cases « fait ») indexé par position :
+    // sans ça, un ✓ ou un chrono resterait collé à la zone qui prend le même index.
+    Object.values(timerRefs.current).forEach(clearInterval)
+    timerRefs.current = {}
+    setActiveZoneTab('all')
+    setZonesDone(new Set())
+    setZoneTimers({})
+    const total = nextZones.reduce((s, z) => s + (parseFloat(z.surface) || 0), 0)
+    setCodeMsg({
+      type: 'success',
+      text: `${preset.label} — ${nextZones.length} ${plural(nextZones.length, 'zone')}, ${total.toFixed(0)} m² chargés.`,
+    })
+  }
+
+  /** Charge les zones d'un code dans le formulaire (bouton « Charger »).
+   *  Demande confirmation si des zones sont déjà saisies — contrairement au
+   *  lien direct (?code=), c'est une saisie manuelle qui peut être un essai. */
   const loadCode = () => {
     const code = codeInput.trim()
     if (!/^\d{4}$/.test(code)) {
@@ -528,24 +579,7 @@ export default function HanamiCalculator() {
         : 'Remplacer les zones actuelles par celles du code ?'
       if (!window.confirm(warn)) return
     }
-    const loaded = preset.zones.map(z => ({ name: z.name, surface: z.surface }))
-    const nextZones = loaded.length > 0 ? loaded : [{ name: '', surface: '' }]
-    setZones(nextZones)
-    setSelectedZones(nextZones.map((_, i) => i))
-    if (preset.sprayerCapacity) setSprayerCapacity(preset.sprayerCapacity)
-    setResults(null) // les anciens résultats ne correspondent plus aux nouvelles zones
-    // Purge du suivi de zones (chronos, cases « fait ») indexé par position :
-    // sans ça, un ✓ ou un chrono resterait collé à la zone qui prend le même index.
-    Object.values(timerRefs.current).forEach(clearInterval)
-    timerRefs.current = {}
-    setActiveZoneTab('all')
-    setZonesDone(new Set())
-    setZoneTimers({})
-    const total = nextZones.reduce((s, z) => s + (parseFloat(z.surface) || 0), 0)
-    setCodeMsg({
-      type: 'success',
-      text: `${preset.label} — ${nextZones.length} ${plural(nextZones.length, 'zone')}, ${total.toFixed(0)} m² chargés.`,
-    })
+    applyPreset(preset)
     track('calculator_action', { action: 'code_load' })
   }
 
