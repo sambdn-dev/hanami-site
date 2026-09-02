@@ -11,24 +11,41 @@
 
 'use client'
 
+import { Square, TreeDeciduous, Trees, Puzzle, DoorOpen, Footprints, Mountain, type LucideIcon } from 'lucide-react'
 import StepNav from '../StepNav'
 import { COMPLEXITES, ACCES } from '@/lib/chantier/complexite'
 import type { ChantierFormState, ComplexiteId, AccesId } from '@/lib/chantier/types'
+
+/* Icônes Lucide mappées côté client — lib/chantier/complexite.ts reste des
+ * données pures (aussi importé côté serveur pour les emails). */
+const COMPLEXITE_ICONS: Record<ComplexiteId, LucideIcon> = {
+  simple: Square,
+  moyenne: TreeDeciduous,
+  elevee: Trees,
+  tres_elevee: Puzzle,
+}
+
+const ACCES_ICONS: Record<AccesId, LucideIcon> = {
+  facile: DoorOpen,
+  moyen: Footprints,
+  difficile: Mountain,
+}
 
 interface Props {
   state: ChantierFormState
   onUpdate: (patch: Partial<ChantierFormState>) => void
   onNext: () => void
   onBack: () => void
+  stepNumber: number
 }
 
-export default function StepComplexiteAcces({ state, onUpdate, onNext, onBack }: Props) {
+export default function StepComplexiteAcces({ state, onUpdate, onNext, onBack, stepNumber }: Props) {
   const isValid = state.complexite !== null && state.acces !== null
 
   return (
     <div>
       <span className="font-[family-name:var(--font-space-mono)] text-[10px] font-semibold tracking-widest uppercase text-hanami-500">
-        Étape 4
+        Étape {stepNumber}
       </span>
       <h1 className="font-[family-name:var(--font-fraunces)] text-3xl lg:text-4xl font-semibold text-hanami-900 mt-2 leading-tight">
         Comment décririez-vous votre terrain ?
@@ -46,6 +63,7 @@ export default function StepComplexiteAcces({ state, onUpdate, onNext, onBack }:
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {COMPLEXITES.map(opt => {
             const isSelected = state.complexite === opt.id
+            const Icon = COMPLEXITE_ICONS[opt.id]
             return (
               <button
                 key={opt.id}
@@ -59,7 +77,14 @@ export default function StepComplexiteAcces({ state, onUpdate, onNext, onBack }:
                 aria-pressed={isSelected}
               >
                 <div className="flex items-start gap-3">
-                  <span className="text-2xl shrink-0" aria-hidden="true">{opt.icon}</span>
+                  <span
+                    className={`shrink-0 w-9 h-9 rounded-lg flex items-center justify-center transition-colors ${
+                      isSelected ? 'bg-hanami-500 text-white' : 'bg-stone-100 text-stone-500'
+                    }`}
+                    aria-hidden="true"
+                  >
+                    <Icon className="w-4.5 h-4.5" strokeWidth={1.8} />
+                  </span>
                   <div className="flex-1 min-w-0">
                     <p className={`font-semibold text-sm leading-tight ${
                       isSelected ? 'text-hanami-900' : 'text-stone-800'
@@ -85,6 +110,7 @@ export default function StepComplexiteAcces({ state, onUpdate, onNext, onBack }:
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {ACCES.map(opt => {
             const isSelected = state.acces === opt.id
+            const Icon = ACCES_ICONS[opt.id]
             return (
               <button
                 key={opt.id}
@@ -98,7 +124,14 @@ export default function StepComplexiteAcces({ state, onUpdate, onNext, onBack }:
                 aria-pressed={isSelected}
               >
                 <div className="flex flex-col items-start gap-2">
-                  <span className="text-2xl" aria-hidden="true">{opt.icon}</span>
+                  <span
+                    className={`w-9 h-9 rounded-lg flex items-center justify-center transition-colors ${
+                      isSelected ? 'bg-hanami-500 text-white' : 'bg-stone-100 text-stone-500'
+                    }`}
+                    aria-hidden="true"
+                  >
+                    <Icon className="w-4.5 h-4.5" strokeWidth={1.8} />
+                  </span>
                   <p className={`font-semibold text-sm leading-tight ${
                     isSelected ? 'text-hanami-900' : 'text-stone-800'
                   }`}>

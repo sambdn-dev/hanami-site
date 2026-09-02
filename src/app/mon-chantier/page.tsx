@@ -21,6 +21,18 @@ export const metadata: Metadata = {
   title: 'Mon chantier — Estimation gratuite en 2 minutes',
   description:
     'Décrivez votre gazon en 7 étapes et recevez une estimation chiffrée TTC adaptée à votre projet : Express, Reconstruction ou Coaching annuel.',
+  openGraph: {
+    title: 'Mon chantier — Estimation gratuite en 2 minutes',
+    description:
+      'Décrivez votre gazon en 7 étapes et recevez une estimation chiffrée TTC adaptée à votre projet : Express, Reconstruction ou Coaching annuel.',
+    url: 'https://hanami-gazon.fr/mon-chantier',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Mon chantier — Estimation gratuite en 2 minutes',
+    description:
+      'Décrivez votre gazon en 7 étapes et recevez une estimation chiffrée TTC adaptée à votre projet : Express, Reconstruction ou Coaching annuel.',
+  },
 }
 
 export default function MonChantierPage() {

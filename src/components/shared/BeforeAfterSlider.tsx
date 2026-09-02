@@ -91,6 +91,10 @@ export default function BeforeAfterSlider({
   }, [])
 
   useEffect(() => {
+    // Respecte la préférence système : pas d'oscillation d'amorce si
+    // l'utilisateur a demandé de réduire les animations.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
     const startTime = performance.now()
     const PERIOD    = 6000  // ms — durée d'un aller-retour complet (lent)
     const AMPLITUDE = 38    // ±38% autour de initialPosition
@@ -163,6 +167,21 @@ export default function BeforeAfterSlider({
     isDragging.current = false
   }, [])
 
+  // ── Pilotage clavier de la poignée ────────────────────────────────────────
+  // Flèches gauche/droite = déplacement par pas de 5 %, bornes identiques
+  // au drag souris/tactile (2–98 %).
+
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return
+    e.preventDefault()
+    cancelHint()
+    const STEP = 5
+    setPosition((prev) => {
+      const next = e.key === 'ArrowLeft' ? prev - STEP : prev + STEP
+      return Math.min(98, Math.max(2, next))
+    })
+  }, [cancelHint])
+
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
@@ -185,7 +204,9 @@ export default function BeforeAfterSlider({
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       style={{ WebkitUserSelect: 'none', userSelect: 'none' }}
-      role="img"
+      /* role="group" (pas "img") : un rôle image rendrait la poignée
+         role="slider" invisible aux technologies d'assistance */
+      role="group"
       aria-label={`Comparaison avant/après : ${beforeAlt} et ${afterAlt}`}
     >
 
@@ -248,8 +269,18 @@ export default function BeforeAfterSlider({
         className="absolute top-0 bottom-0 w-0.5 bg-white shadow-xl pointer-events-none"
         style={{ left: `${position}%`, transform: 'translateX(-50%)' }}
       >
-        {/* Poignée centrale — cercle blanc avec icône double flèche */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center">
+        {/* Poignée centrale — cercle blanc avec icône double flèche.
+            Focusable et pilotable au clavier (role="slider" + flèches). */}
+        <div
+          role="slider"
+          tabIndex={0}
+          aria-label="Curseur de comparaison avant/après"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(position)}
+          onKeyDown={handleKeyDown}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center pointer-events-auto focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-hanami-500"
+        >
           <svg
             viewBox="0 0 24 24"
             fill="none"

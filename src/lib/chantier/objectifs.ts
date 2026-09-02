@@ -11,8 +11,6 @@ export interface Objectif {
   id: ObjectifId
   label: string
   description: string
-  /** Emoji ou pictogramme représentatif */
-  icon: string
 }
 
 export const OBJECTIFS: Objectif[] = [
@@ -20,24 +18,20 @@ export const OBJECTIFS: Objectif[] = [
     id: 'densifier',
     label: 'Densifier et verdir',
     description: 'Ma pelouse existe mais elle est terne, clairsemée ou ennuyeuse',
-    icon: '🌿',
   },
   {
     id: 'renover',
     label: 'Rénover complètement',
     description: 'Je veux une nouvelle pelouse digne de ce nom',
-    icon: '✨',
   },
   {
     id: 'entretien',
     label: 'Entretien régulier',
     description: 'Ma pelouse va bien, je veux la garder en forme toute l\'année',
-    icon: '📅',
   },
   {
     id: 'creation',
     label: 'Création (sol nu)',
     description: 'Je pars de zéro — terre nue, terrain à aménager',
-    icon: '🏗️',
   },
 ]

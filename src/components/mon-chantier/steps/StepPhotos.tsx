@@ -19,13 +19,14 @@ interface Props {
   onUpdate: (patch: Partial<ChantierFormState>) => void
   onNext: () => void
   onBack: () => void
+  stepNumber: number
 }
 
 const MAX_PHOTOS = 5
 const ACCEPTED_MIME = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'])
 const ACCEPTED_EXT = /\.(jpe?g|png|webp|heic|heif)$/i
 
-export default function StepPhotos({ state, onUpdate, onNext, onBack }: Props) {
+export default function StepPhotos({ state, onUpdate, onNext, onBack, stepNumber }: Props) {
   const [isDragOver, setIsDragOver] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const photos = state.photosFiles
@@ -61,7 +62,7 @@ export default function StepPhotos({ state, onUpdate, onNext, onBack }: Props) {
   return (
     <div>
       <span className="font-[family-name:var(--font-space-mono)] text-[10px] font-semibold tracking-widest uppercase text-hanami-500">
-        Étape 5
+        Étape {stepNumber}
       </span>
       <h1 className="font-[family-name:var(--font-fraunces)] text-3xl lg:text-4xl font-semibold text-hanami-900 mt-2 leading-tight">
         Quelques photos de votre gazon
@@ -99,7 +100,7 @@ export default function StepPhotos({ state, onUpdate, onNext, onBack }: Props) {
           <p className="text-xs text-stone-400 mt-1">
             ou <span className="text-hanami-600 font-medium">cliquez pour parcourir</span>
           </p>
-          <p className="text-xs text-stone-300 mt-2">JPG, PNG, WebP, HEIC · 10 Mo max par photo</p>
+          <p className="text-xs text-stone-500 mt-2">JPG, PNG, WebP, HEIC · 10 Mo max par photo</p>
         </div>
 
         <input
@@ -128,11 +129,15 @@ export default function StepPhotos({ state, onUpdate, onNext, onBack }: Props) {
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img src={photo.preview} alt={photo.name} className="w-full h-full object-cover" />
                 )}
+                {/* Bouton supprimer :
+                    - Desktop (lg+) : invisible par défaut, apparaît au hover de la vignette
+                    - Mobile/tablette : visible discrètement (pas de hover possible
+                      sur écrans tactiles, sinon le bouton serait inaccessible). */}
                 <button
                   type="button"
                   onClick={() => removePhoto(photo.id)}
                   aria-label={`Supprimer ${photo.name}`}
-                  className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-red-500"
+                  className="absolute top-1.5 right-1.5 w-8 h-8 rounded-full bg-black/60 flex items-center justify-center opacity-60 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity cursor-pointer hover:bg-red-500"
                 >
                   <X className="w-3.5 h-3.5 text-white" />
                 </button>

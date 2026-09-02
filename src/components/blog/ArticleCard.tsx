@@ -29,7 +29,7 @@ export default function ArticleCard({ article, compact = false }: ArticleCardPro
         {article.cover ? (
           <Image
             src={article.cover}
-            alt=""
+            alt={article.title}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
             sizes="(max-width: 768px) 100vw, 33vw"

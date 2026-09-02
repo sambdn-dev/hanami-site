@@ -3,28 +3,40 @@
  *
  * Sélection unique. Le choix combine avec les photos d'état pour
  * déterminer le service recommandé.
+ *
+ * Icônes Lucide mappées ici (côté client) : les fichiers lib/chantier/*
+ * restent des données pures, aussi importées côté serveur (emails).
  */
 
 'use client'
 
+import { Sprout, Sparkles, CalendarCheck, Shovel, type LucideIcon } from 'lucide-react'
 import StepNav from '../StepNav'
 import { OBJECTIFS } from '@/lib/chantier/objectifs'
-import type { ChantierFormState } from '@/lib/chantier/types'
+import type { ChantierFormState, ObjectifId } from '@/lib/chantier/types'
+
+const OBJECTIF_ICONS: Record<ObjectifId, LucideIcon> = {
+  densifier: Sprout,
+  renover: Sparkles,
+  entretien: CalendarCheck,
+  creation: Shovel,
+}
 
 interface Props {
   state: ChantierFormState
   onUpdate: (patch: Partial<ChantierFormState>) => void
   onNext: () => void
   onBack: () => void
+  stepNumber: number
 }
 
-export default function StepObjectif({ state, onUpdate, onNext, onBack }: Props) {
+export default function StepObjectif({ state, onUpdate, onNext, onBack, stepNumber }: Props) {
   const isValid = state.objectif !== null
 
   return (
     <div>
       <span className="font-[family-name:var(--font-space-mono)] text-[10px] font-semibold tracking-widest uppercase text-hanami-500">
-        Étape 3
+        Étape {stepNumber}
       </span>
       <h1 className="font-[family-name:var(--font-fraunces)] text-3xl lg:text-4xl font-semibold text-hanami-900 mt-2 leading-tight">
         Quel est votre objectif principal ?
@@ -37,6 +49,7 @@ export default function StepObjectif({ state, onUpdate, onNext, onBack }: Props)
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-8">
         {OBJECTIFS.map(obj => {
           const isSelected = state.objectif === obj.id
+          const Icon = OBJECTIF_ICONS[obj.id]
           return (
             <button
               key={obj.id}
@@ -50,7 +63,14 @@ export default function StepObjectif({ state, onUpdate, onNext, onBack }: Props)
               aria-pressed={isSelected}
             >
               <div className="flex items-start gap-3">
-                <span className="text-2xl shrink-0" aria-hidden="true">{obj.icon}</span>
+                <span
+                  className={`shrink-0 w-10 h-10 rounded-lg flex items-center justify-center transition-colors ${
+                    isSelected ? 'bg-hanami-500 text-white' : 'bg-stone-100 text-stone-500'
+                  }`}
+                  aria-hidden="true"
+                >
+                  <Icon className="w-5 h-5" strokeWidth={1.8} />
+                </span>
                 <div className="flex-1 min-w-0">
                   <p className={`font-semibold text-base leading-tight ${
                     isSelected ? 'text-hanami-900' : 'text-stone-800'

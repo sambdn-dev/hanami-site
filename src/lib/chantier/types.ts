@@ -48,6 +48,10 @@ export interface ChantierFormState {
   prenom: string
   email: string
   telephone: string
+  /** Id du pays sélectionné pour l'indicatif téléphone (ex: 'fr', 'ca').
+   *  Nécessaire car les indicatifs +1 sont partagés USA/Canada : sans lui,
+   *  un remontage de l'étape rebasculerait Canada → USA. */
+  telCountryId?: string
 }
 
 export interface UploadedPhoto {

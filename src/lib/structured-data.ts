@@ -17,6 +17,23 @@ import type { FaqEntry } from '@/lib/faq-data'
 const BASE_URL = 'https://hanami-gazon.fr'
 const PHONE = '+33 6 67 27 76 14'
 
+// Logo carré brins d'herbe (src/app/icon.svg, servi à /icon.svg).
+// Google exige un logo carré pour Organization.logo — l'ancienne bannière
+// /opengraph-image (1200×630) n'était pas conforme.
+const LOGO_URL = `${BASE_URL}/icon.svg`
+
+// Domaines d'expertise (signal E-E-A-T pour les moteurs IA : ChatGPT,
+// Perplexity, Google AI Overviews…). Partagé Organization + LocalBusiness.
+const KNOWS_ABOUT = [
+  'agronomie du gazon',
+  'rénovation de pelouse',
+  'fertilisation raisonnée',
+  'diagnostic de sol',
+  'scarification',
+  'regarnissage',
+  'arrosage du gazon',
+]
+
 export function organizationSchema() {
   return {
     '@context': 'https://schema.org',
@@ -25,9 +42,18 @@ export function organizationSchema() {
     name: 'Hanami',
     legalName: 'TROTT SASU',
     url: BASE_URL,
-    logo: `${BASE_URL}/opengraph-image`,
+    logo: LOGO_URL,
+    // Immatriculation TROTT SASU (SIREN 891 868 143) : 2020
+    foundingDate: '2020',
+    slogan: 'Diagnostic personnalisé, protocole daté au jour près, produits professionnels.',
     description:
       'Expert gazon agronomique : diagnostic personnalisé, protocole daté, produits professionnels. Interventions en Île-de-France, coaching partout en France.',
+    knowsAbout: KNOWS_ABOUT,
+    // TODO sameAs : à ajouter dès que ces profils existent et sont vérifiés
+    // (aucun à ce jour — ne rien inventer) :
+    //   - Google Business Profile
+    //   - LinkedIn (page entreprise Hanami / TROTT SASU)
+    //   - Instagram / YouTube si création de contenu
     contactPoint: {
       '@type': 'ContactPoint',
       telephone: PHONE,
@@ -44,9 +70,11 @@ export function localBusinessSchema() {
     '@id': `${BASE_URL}/#localbusiness`,
     name: 'Hanami — Coach gazon agronomique',
     url: BASE_URL,
-    image: `${BASE_URL}/opengraph-image`,
+    image: LOGO_URL,
     telephone: PHONE,
+    // Cohérent avec l'offre : coaching 29€/mois → rénovation jusqu'à 25€/m²
     priceRange: '€€',
+    knowsAbout: KNOWS_ABOUT,
     address: {
       '@type': 'PostalAddress',
       addressLocality: 'Le Vésinet',

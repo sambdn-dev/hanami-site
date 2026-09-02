@@ -12,7 +12,11 @@
  * - Les photos sont encodées en base64 et envoyées avec le formulaire
  *
  * Props :
- * - variant : 'particulier' | 'pro'
+ * - variant  : 'particulier' | 'pro'
+ * - source   : valeur du champ caché "source" (défaut : la variante) —
+ *              permet de distinguer l'origine du lead dans l'email
+ * - title    : titre de section personnalisé (défaut selon la variante)
+ * - subtitle : sous-titre personnalisé (défaut selon la variante)
  */
 
 'use client'
@@ -51,6 +55,13 @@ type FormData = ParticulierFormData | ProFormData
 
 interface ContactFormProps {
   variant: 'particulier' | 'pro'
+  /** Valeur du champ caché "source" envoyé à /api/contact (défaut : variant).
+      Ex. "coaching" sur /coaching pour tracer les leads essai coaching. */
+  source?: string
+  /** Titre de section personnalisé (défaut selon la variante). */
+  title?: string
+  /** Sous-titre personnalisé (défaut selon la variante). */
+  subtitle?: string
 }
 
 // ── Type pour une photo uploadée ────────────────────────────────────────────
@@ -61,9 +72,18 @@ interface UploadedPhoto {
   name: string     // Nom du fichier affiché
 }
 
-export default function ContactForm({ variant }: ContactFormProps) {
+export default function ContactForm({
+  variant,
+  source,
+  title: titleProp,
+  subtitle: subtitleProp,
+}: ContactFormProps) {
   const fadeRef = useFadeIn()
   const isPro = variant === 'pro'
+
+  // Valeur transmise dans le champ caché "source" (route /api/contact :
+  // formData 'data' → parsed.source, affichée telle quelle dans l'email)
+  const formSource = source ?? variant
 
   // États de soumission — remplacent state.submitting/succeeded/errors de Formspree.
   // On POST directement sur /api/contact (route Resend locale) : plus de dépendance
@@ -84,7 +104,7 @@ export default function ContactForm({ variant }: ContactFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const { register, handleSubmit, reset, control, formState: { errors } } = useForm<FormData>({
-    defaultValues: { source: variant } as FormData,
+    defaultValues: { source: formSource } as FormData,
   })
 
   // ── Gestion des photos ──────────────────────────────────────────────────
@@ -201,8 +221,8 @@ export default function ContactForm({ variant }: ContactFormProps) {
     return `https://wa.me/33667277614?text=${encodeURIComponent(lines.join('\n'))}`
   }
 
-  const title   = isPro ? 'Parlons de votre activité' : 'Discutons de votre gazon'
-  const subtitle = isPro ? 'Réponse sous 24h. Premier échange offert.' : 'Réponse sous 24h. Diagnostic initial offert.'
+  const title    = titleProp ?? (isPro ? 'Parlons de votre activité' : 'Discutons de votre gazon')
+  const subtitle = subtitleProp ?? (isPro ? 'Réponse sous 24h. Premier échange offert.' : 'Réponse sous 24h. 1er mois d\'essai offert.')
 
   return (
     <section id="contact" className="py-20 lg:py-28 bg-stone-50">
@@ -251,7 +271,7 @@ export default function ContactForm({ variant }: ContactFormProps) {
               {/* ── Colonne gauche : champs texte ────────────────────── */}
               <div className="flex flex-col gap-5">
 
-                <input type="hidden" {...register('source')} value={variant} />
+                <input type="hidden" {...register('source')} value={formSource} />
 
                 {/* Entreprise + Ville (Pro uniquement) — 2 colonnes côte à côte */}
                 {isPro && (

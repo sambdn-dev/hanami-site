@@ -15,7 +15,7 @@
 
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
 
@@ -37,12 +37,37 @@ export default function PhotoLightbox({ src, caption, onClose }: PhotoLightboxPr
   const [portalRoot, setPortalRoot] = useState<HTMLElement | null>(null)
   useEffect(() => { setPortalRoot(document.body) }, [])
 
-  // Touche Esc pour fermer + bloque le scroll body pendant l'ouverture
+  // Refs pour la gestion du focus (accessibilité clavier)
+  const dialogRef   = useRef<HTMLDivElement>(null)
+  const closeBtnRef = useRef<HTMLButtonElement>(null)
+
+  // Touche Esc pour fermer + piège Tab dans le dialog + bloque le scroll body
   useEffect(() => {
     if (!src) return
 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
+
+      // Piège le focus dans le dialog : Tab boucle sur les éléments focusables
+      if (e.key === 'Tab') {
+        const focusables = dialogRef.current?.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        )
+        if (!focusables || focusables.length === 0) return
+        const first = focusables[0]
+        const last  = focusables[focusables.length - 1]
+
+        if (!dialogRef.current?.contains(document.activeElement)) {
+          e.preventDefault()
+          first.focus()
+        } else if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault()
+          last.focus()
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault()
+          first.focus()
+        }
+      }
     }
     document.addEventListener('keydown', onKey)
 
@@ -55,10 +80,24 @@ export default function PhotoLightbox({ src, caption, onClose }: PhotoLightboxPr
     }
   }, [src, onClose])
 
+  // À l'ouverture : mémorise l'élément déclencheur puis focus le bouton
+  // Fermer ; à la fermeture : rend le focus au déclencheur.
+  useEffect(() => {
+    if (!src || !portalRoot) return
+
+    const trigger = document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : null
+    closeBtnRef.current?.focus()
+
+    return () => { trigger?.focus() }
+  }, [src, portalRoot])
+
   if (!src || !portalRoot) return null
 
   return createPortal(
     <div
+      ref={dialogRef}
       role="dialog"
       aria-modal="true"
       aria-label="Photo de la zone"
@@ -67,6 +106,7 @@ export default function PhotoLightbox({ src, caption, onClose }: PhotoLightboxPr
     >
       {/* Bouton fermeture en haut à droite */}
       <button
+        ref={closeBtnRef}
         type="button"
         onClick={onClose}
         aria-label="Fermer"

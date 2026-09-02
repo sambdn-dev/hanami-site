@@ -17,6 +17,7 @@ import { AlertCircle, CheckCircle2, Info } from 'lucide-react'
 import StepNav from '../StepNav'
 import AdresseAutocomplete, { type SelectedAdresse } from '../AdresseAutocomplete'
 import { isValidCodePostalFormat, getZoneType, TRAVEL_FEE_PAID_ZONE } from '@/lib/chantier/postal-codes'
+import { PRICING_DISPLAY } from '@/lib/chantier/pricing'
 import type { ChantierFormState } from '@/lib/chantier/types'
 
 interface Props {
@@ -24,6 +25,7 @@ interface Props {
   onUpdate: (patch: Partial<ChantierFormState>) => void
   onNext: () => void
   onBack: () => void
+  stepNumber: number
 }
 
 /** Tente d'extraire un CP français (5 chiffres) d'un texte libre */
@@ -32,7 +34,7 @@ function extractCodePostal(text: string): string {
   return match ? match[0] : ''
 }
 
-export default function StepCodePostal({ state, onUpdate, onNext, onBack }: Props) {
+export default function StepCodePostal({ state, onUpdate, onNext, onBack, stepNumber }: Props) {
   const [touched, setTouched] = useState(false)
 
   /** Quand l'utilisateur tape librement, on tente d'extraire un CP au passage.
@@ -42,8 +44,9 @@ export default function StepCodePostal({ state, onUpdate, onNext, onBack }: Prop
     onUpdate({
       adresseComplete: label,
       codePostal: cp,
-      // Si on retape, on reset la ville (sera reseté à la prochaine sélection)
-      ville: cp ? state.ville : '',
+      // On ne conserve la ville que si le CP extrait est resté le même —
+      // sinon elle serait obsolète (elle sera resetée à la prochaine sélection)
+      ville: cp && cp === state.codePostal ? state.ville : '',
     })
   }
 
@@ -70,7 +73,7 @@ export default function StepCodePostal({ state, onUpdate, onNext, onBack }: Prop
   return (
     <div>
       <span className="font-[family-name:var(--font-space-mono)] text-[10px] font-semibold tracking-widest uppercase text-hanami-500">
-        Étape 4
+        Étape {stepNumber}
       </span>
       <h1 className="font-[family-name:var(--font-fraunces)] text-3xl lg:text-4xl font-semibold text-hanami-900 mt-2 leading-tight">
         Dans quelle ville se trouve votre jardin ?
@@ -135,7 +138,7 @@ export default function StepCodePostal({ state, onUpdate, onNext, onBack }: Prop
               Vous êtes hors zone d&apos;intervention sur place.
             </p>
             <p className="text-sm text-stone-700 mt-1 leading-relaxed">
-              Pas de problème : on vous proposera notre <strong>Coaching Hanami</strong> (29 €/mois TTC),
+              Pas de problème : on vous proposera notre <strong>Coaching Hanami</strong> ({PRICING_DISPLAY.coachingMois} €/mois TTC),
               un suivi 100 % en ligne avec protocole personnalisé sur 12 mois et accès aux produits
               professionnels. Disponible partout en France.
             </p>

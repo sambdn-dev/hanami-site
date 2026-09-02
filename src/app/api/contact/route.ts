@@ -17,6 +17,12 @@ import { Resend } from 'resend'
 // Email de destination — modifiable via .env.local (CONTACT_EMAIL)
 const CONTACT_EMAIL = process.env.CONTACT_EMAIL ?? 'samibouden@gmail.com'
 
+/* Expéditeur : onboarding@resend.dev (sandbox Resend) ne délivre QUE vers
+   l'adresse du propriétaire du compte — les visiteurs ne reçoivent rien.
+   Vérifier le domaine hanami-gazon.fr dans le dashboard Resend, puis définir
+   RESEND_FROM_EMAIL='Hanami <noreply@hanami-gazon.fr>' sur Vercel. */
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? 'Hanami <onboarding@resend.dev>'
+
 // ── Sécurité : échapper les caractères HTML ─────────────────────────────────
 // Empêche l'injection HTML dans le corps de l'email.
 // Sans ça, un utilisateur malveillant pourrait injecter des balises HTML
@@ -51,7 +57,26 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const data = JSON.parse(rawData) as Record<string, string>
+    let parsed: Record<string, unknown>
+    try {
+      parsed = JSON.parse(rawData) as Record<string, unknown>
+    } catch {
+      return NextResponse.json({ error: 'Données invalides' }, { status: 400 })
+    }
+
+    // Coercition en chaînes — le payload vient du client, rien n'est garanti
+    const data = {
+      fullName: String(parsed.fullName ?? '').trim(),
+      companyName: String(parsed.companyName ?? '').trim(),
+      email: String(parsed.email ?? '').trim(),
+      phone: String(parsed.phone ?? '').trim(),
+      surface: String(parsed.surface ?? '').trim(),
+      postalCode: String(parsed.postalCode ?? '').trim(),
+      requestType: String(parsed.requestType ?? '').trim(),
+      projectsPerYear: String(parsed.projectsPerYear ?? '').trim(),
+      message: String(parsed.message ?? ''),
+      source: String(parsed.source ?? '').trim(),
+    }
 
     // ── 2. Validation des champs obligatoires ─────────────────────────────
     // Téléphone facultatif côté particulier (réduction de friction) — seuls
@@ -73,7 +98,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Longueur max des champs texte pour éviter les abus (1000 chars pour le message)
-    if ((data.message ?? '').length > 1000) {
+    if (data.message.length > 1000) {
       return NextResponse.json(
         { error: 'Message trop long (max 1000 caractères)' },
         { status: 400 }
@@ -112,20 +137,22 @@ export async function POST(request: NextRequest) {
 
     // ── 4. Construction de l'email (avec échappement HTML) ────────────────
     const isPro = data.source === 'pro'
-    const safeName    = escapeHtml(data.fullName ?? '')
-    const safeCompany = escapeHtml(data.companyName ?? '')
-    const safeEmail   = escapeHtml(data.email ?? '')
-    const safePhone   = escapeHtml(data.phone ?? '')
-    const safeSurface = escapeHtml(data.surface ?? '')
-    const safePostal  = escapeHtml(data.postalCode ?? '')
-    const safeReqType = escapeHtml(data.requestType ?? '')
-    const safeProjects= escapeHtml(data.projectsPerYear ?? '')
+    const safeName    = escapeHtml(data.fullName)
+    const safeCompany = escapeHtml(data.companyName)
+    const safeEmail   = escapeHtml(data.email)
+    const safePhone   = escapeHtml(data.phone)
+    const safeSurface = escapeHtml(data.surface)
+    const safePostal  = escapeHtml(data.postalCode)
+    const safeReqType = escapeHtml(data.requestType)
+    const safeProjects= escapeHtml(data.projectsPerYear)
     // Le message est affiché en texte brut (pre-wrap) — pas besoin d'échapper les \n
-    const safeMessage = escapeHtml(data.message ?? '')
+    const safeMessage = escapeHtml(data.message)
 
+    // Sujet en texte brut — valeurs brutes trimées, PAS d'échappement HTML
+    // (sinon des entités &#039; apparaîtraient dans l'objet du mail)
     const subject = isPro
-      ? `[Hanami Pro] Nouvelle demande de ${safeCompany || safeName}`
-      : `[Hanami] Nouvelle demande de ${safeName}`
+      ? `[Hanami Pro] Nouvelle demande de ${data.companyName || data.fullName}`
+      : `[Hanami] Nouvelle demande de ${data.fullName}`
 
     const photosNote = attachments.length > 0
       ? `<p style="color:#4a8c3f;font-weight:600;margin:0 0 12px;">${attachments.length} photo(s) jointe(s)</p>`
@@ -185,17 +212,24 @@ export async function POST(request: NextRequest) {
     `
 
     // ── 5. Envoi via Resend ───────────────────────────────────────────────
-    await resend.emails.send({
-      /* Temporaire : onboarding@resend.dev est un expéditeur vérifié par Resend
-         qui fonctionne sans DNS. À remplacer par noreply@hanami-gazon.fr une
-         fois le domaine vérifié dans le dashboard Resend. */
-      from: 'Hanami Contact <onboarding@resend.dev>',
+    // Le SDK Resend ne throw pas : il retourne { data, error }. Si la
+    // notification interne échoue, le lead est perdu → 502 pour que le
+    // front affiche le fallback WhatsApp.
+    const { error: sendError } = await resend.emails.send({
+      from: FROM_EMAIL,
       to: [CONTACT_EMAIL],
       replyTo: data.email,
       subject,
       html: htmlBody,
       ...(attachments.length > 0 ? { attachments } : {}),
     })
+    if (sendError) {
+      console.error('[API /contact] Échec envoi Resend:', sendError)
+      return NextResponse.json(
+        { error: "L'envoi a échoué, contactez-nous sur WhatsApp" },
+        { status: 502 }
+      )
+    }
 
     return NextResponse.json({ success: true }, { status: 200 })
 

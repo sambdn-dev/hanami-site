@@ -4,8 +4,9 @@
  * Affichée en haut du wizard sur écrans < lg. Tap → ouvre un menu déroulant
  * listant toutes les étapes (analogue au panneau gauche desktop).
  *
- * Les étapes "done" sont tapables pour revenir/sauter ; les "pending"
- * (jamais visitées) sont grisées et inertes.
+ * Une étape est cochée ("done") seulement si ses données sont réellement
+ * valides. Les étapes complétées et la prochaine à remplir (frontière) sont
+ * tapables ; les étapes verrouillées au-delà sont grisées et inertes.
  *
  * Sur l'écran final (Estimation), la barre devient inerte (envoi déjà fait).
  */
@@ -19,13 +20,15 @@ import type { StepDefinition } from './ProgressPanel'
 interface ProgressBarProps {
   steps: StepDefinition[]
   currentStep: number
-  /** Plus haute étape jamais atteinte */
-  maxVisitedStep: number
-  /** Callback déclenché quand l'utilisateur tape sur une étape déjà visitée */
+  /** Complétude réelle de chaque étape (dérivée des données saisies) */
+  completed: boolean[]
+  /** Première étape non complétée — borne supérieure de la navigation */
+  frontier: number
+  /** Callback déclenché quand l'utilisateur tape sur une étape accessible */
   onStepClick: (stepIndex: number) => void
 }
 
-export default function ProgressBar({ steps, currentStep, maxVisitedStep, onStepClick }: ProgressBarProps) {
+export default function ProgressBar({ steps, currentStep, completed, frontier, onStepClick }: ProgressBarProps) {
   const [open, setOpen] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -49,10 +52,11 @@ export default function ProgressBar({ steps, currentStep, maxVisitedStep, onStep
   useEffect(() => { setOpen(false) }, [currentStep])
 
   function handleStepTap(i: number) {
-    // Navigation libre vers les étapes de saisie (sauf l'Estimation finale,
-    // qui nécessite la soumission pour avoir un résultat à afficher).
+    // Navigation vers une étape complétée ou la prochaine à remplir (≤ frontière).
+    // Jamais l'Estimation finale (nécessite la soumission) ni au-delà de la frontière.
     if (onFinalStep || i === currentStep) return
     if (i === steps.length - 1) return
+    if (i > frontier) return
     onStepClick(i)
   }
 
@@ -101,13 +105,12 @@ export default function ProgressBar({ steps, currentStep, maxVisitedStep, onStep
       {open && (
         <ol className="absolute left-0 right-0 top-full bg-white border-b border-stone-200 shadow-lg max-h-[70vh] overflow-y-auto">
           {steps.map((step, i) => {
-            const isVisited = i <= maxVisitedStep && i !== currentStep
             const status =
               i === currentStep ? 'active'
-              : isVisited ? 'done'
+              : completed[i] ? 'done'
               : 'pending'
             const isFinalStep = i === steps.length - 1
-            const tappable = i !== currentStep && !onFinalStep && !isFinalStep
+            const tappable = i !== currentStep && i <= frontier && !onFinalStep && !isFinalStep
 
             return (
               <li key={step.index}>

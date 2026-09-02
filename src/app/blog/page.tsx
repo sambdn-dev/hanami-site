@@ -14,8 +14,9 @@ import WhatsAppButton from '@/components/shared/WhatsAppButton'
 import ArticleCard from '@/components/blog/ArticleCard'
 import { getAllArticles } from '@/lib/blog'
 
+// Titre sans la marque : le template '%s | Hanami' du layout l'ajoute déjà
 export const metadata: Metadata = {
-  title: 'Journal — Techniques et conseils agronomiques | Hanami',
+  title: 'Journal — Techniques et conseils agronomiques',
   description:
     'Techniques de saison, cas clients réels, mythes jardinerie démontés. Le journal agronomique de Hanami : du contenu utile, pas du remplissage.',
   openGraph: {

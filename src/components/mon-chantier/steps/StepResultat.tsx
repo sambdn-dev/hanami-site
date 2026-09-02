@@ -17,7 +17,7 @@ import { Check, Calendar, Mail, MessageCircle, Sparkles } from 'lucide-react'
 import { PopupModal } from 'react-calendly'
 import { useEffect, useState } from 'react'
 import { SERVICES } from '@/lib/chantier/services'
-import { computeEstimation, formatEstimation, formatPrice } from '@/lib/chantier/pricing'
+import { computeEstimation, formatEstimation, formatPrice, PRICING_DISPLAY } from '@/lib/chantier/pricing'
 import { track } from '@/lib/analytics'
 import type { ChantierFormState, ChantierResult } from '@/lib/chantier/types'
 
@@ -78,8 +78,9 @@ export default function StepResultat({ state, result, submissionStatus }: Props)
         <div className="mt-5 p-4 rounded-lg bg-red-50 border border-red-200">
           <p className="text-sm font-semibold text-red-800 mb-1">L&apos;envoi par email a échoué.</p>
           <p className="text-sm text-red-700 leading-relaxed">
-            Vos données sont sauvegardées localement. Cliquez sur le bouton WhatsApp en bas
-            de page pour me joindre directement avec votre simulation.
+            Vos réponses restent affichées sur cette page — ne la fermez pas.
+            Cliquez sur le bouton WhatsApp en bas de page pour me joindre
+            directement avec votre simulation.
           </p>
         </div>
       )}
@@ -117,7 +118,8 @@ export default function StepResultat({ state, result, submissionStatus }: Props)
             <p className="font-[family-name:var(--font-space-mono)] text-[10px] font-semibold tracking-widest uppercase text-stone-500 mb-1">
               {result.serviceId === 'reconstruction' ? 'Fourchette estimative' : 'Estimation'}
             </p>
-            <p className="font-[family-name:var(--font-fraunces)] text-3xl lg:text-4xl font-semibold text-hanami-900">
+            {/* Chiffre clé en Space Mono (charte) */}
+            <p className="font-[family-name:var(--font-space-mono)] text-3xl lg:text-4xl font-bold text-hanami-900">
               {result.estimation.fromOnly && 'Dès '}
               {formatEstimation(result.estimation)}
             </p>
@@ -129,7 +131,7 @@ export default function StepResultat({ state, result, submissionStatus }: Props)
                 <p className="font-[family-name:var(--font-space-mono)] text-[10px] font-semibold tracking-widest uppercase text-amber-700 mb-1">
                   Avec option Terreau professionnel
                 </p>
-                <p className="font-[family-name:var(--font-fraunces)] text-2xl font-semibold text-hanami-900">
+                <p className="font-[family-name:var(--font-space-mono)] text-2xl font-bold text-hanami-900">
                   Dès {formatPrice(result.estimation.withTerreau.min)} TTC
                 </p>
                 <p className="text-xs text-stone-500 mt-1.5">
@@ -190,7 +192,7 @@ export default function StepResultat({ state, result, submissionStatus }: Props)
                 Vous préférez faire vous-même ?
               </p>
               <h3 className="font-[family-name:var(--font-fraunces)] text-xl font-semibold text-hanami-900 mt-1 leading-tight">
-                Coaching Hanami — {formatPrice(29)}/mois TTC
+                Coaching Hanami — {formatPrice(PRICING_DISPLAY.coachingMois)}/mois TTC
               </h3>
             </div>
           </div>
@@ -216,7 +218,8 @@ export default function StepResultat({ state, result, submissionStatus }: Props)
             Vous préférez ne pas vous en occuper ?
           </p>
           <p className="text-sm text-stone-700 mt-2 leading-relaxed">
-            Une rénovation Express (dès 6 €/m² TTC) ou Reconstruction (15-25 €/m² TTC)
+            Une rénovation Express (dès {PRICING_DISPLAY.expressMinM2} €/m² TTC) ou
+            Reconstruction ({PRICING_DISPLAY.recoMinM2}-{PRICING_DISPLAY.recoMaxM2} €/m² TTC)
             est aussi possible. Réservez un créneau pour en discuter.
           </p>
         </div>

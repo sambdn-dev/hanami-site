@@ -17,7 +17,7 @@ import { ShieldCheck, RefreshCw, Clock } from 'lucide-react'
 const items = [
   {
     icon: ShieldCheck,
-    text: 'Diagnostic initial offert',
+    text: '1er mois d\'essai offert',
   },
   {
     icon: RefreshCw,

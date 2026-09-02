@@ -1,12 +1,10 @@
 import type { Metadata } from 'next'
-import { Fraunces, DM_Sans, Space_Mono, Geist } from 'next/font/google'
+import { Fraunces, DM_Sans, Space_Mono } from 'next/font/google'
 import './globals.css'
 import CookieBanner from '@/components/shared/CookieBanner'
 import AnalyticsProvider from '@/components/shared/AnalyticsProvider'
 import { organizationSchema } from '@/lib/structured-data'
 import { cn } from "@/lib/utils";
-
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const fraunces = Fraunces({
   subsets: ['latin'],
@@ -36,6 +34,12 @@ export const metadata: Metadata = {
   },
   description:
     'Diagnostic personnalisé, protocole daté, produits professionnels. Des résultats visibles pour votre gazon — partout en France.',
+  // Canonical auto-référent par route : './' est résolu contre le pathname
+  // de chaque page via metadataBase (voir "URL Composition" dans la doc
+  // generate-metadata de Next) — chaque page pointe vers sa propre URL.
+  alternates: {
+    canonical: './',
+  },
   keywords: [
     'coaching gazon',
     'agronomie pelouse',
@@ -86,7 +90,7 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
-      className={cn(fraunces.variable, dmSans.variable, spaceMono.variable, "font-sans", geist.variable)}
+      className={cn(fraunces.variable, dmSans.variable, spaceMono.variable, "font-sans")}
     >
       <body className="min-h-screen flex flex-col font-[family-name:var(--font-dm-sans)]">
         {/* JSON-LD Organization — identité de marque sur tout le site */}

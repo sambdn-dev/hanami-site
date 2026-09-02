@@ -6,6 +6,8 @@
  * source. Modifier ici = le composant ET le schéma restent synchrones.
  */
 
+import { PRICING_DISPLAY } from '@/lib/chantier/pricing'
+
 export interface FaqEntry {
   question: string
   answer: string
@@ -14,10 +16,10 @@ export interface FaqEntry {
 export const FAQS: FaqEntry[] = [
   {
     question: 'Combien ça coûte ?',
-    answer: 'Le premier mois de coaching est offert — vous jugez sur pièces. Ensuite, 29€/mois sans engagement (ou 290€/an, soit 2 mois offerts) — moins cher qu\'un sac d\'engrais en jardinerie. Les rénovations vont de 6 à 25€/m² TTC selon l\'état du terrain, estimation précise en 2 minutes avec la simulation gratuite.',
+    answer: `Le premier mois de coaching est offert — vous jugez sur pièces. Ensuite, ${PRICING_DISPLAY.coachingMois}€/mois sans engagement (ou ${PRICING_DISPLAY.coachingAnnuel}€/an, soit 2 mois offerts) — moins cher qu'un sac d'engrais en jardinerie. Les rénovations vont de 6 à 25€/m² TTC selon l'état du terrain, estimation précise en 2 minutes avec la simulation gratuite.`,
   },
   {
-    question: '29€/mois, c\'est rentable ?',
+    question: `${PRICING_DISPLAY.coachingMois}€/mois, c'est rentable ?`,
     answer: 'Une rénovation ratée coûte 500 à 1 500€ en semences, engrais et temps perdu. Le coaching vous évite ces erreurs et vous fait économiser sur les produits en vous donnant les bons dosages. Le suivi illimité toute l\'année est inclus — c\'est rentabilisé dès le premier achat évité.',
   },
   {

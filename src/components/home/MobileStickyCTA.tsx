@@ -14,6 +14,7 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { track } from '@/lib/analytics'
+import { PRICING_DISPLAY } from '@/lib/chantier/pricing'
 
 interface MobileStickyCTAProps {
   href?: string
@@ -24,7 +25,7 @@ interface MobileStickyCTAProps {
 export default function MobileStickyCTA({
   href = '/coaching',
   label = 'Découvrir le coaching →',
-  reassurance = '1ᵉʳ mois offert · Puis 29 €/mois · Sans engagement',
+  reassurance = `1ᵉʳ mois offert · Puis ${PRICING_DISPLAY.coachingMois} €/mois · Sans engagement`,
 }: MobileStickyCTAProps) {
   const [visible, setVisible] = useState(false)
 
@@ -50,6 +51,7 @@ export default function MobileStickyCTA({
   return (
     <div
       className={`
+        mobile-sticky-cta
         fixed bottom-0 left-0 right-0 z-40
         md:hidden
         bg-white border-t border-stone-200
@@ -57,10 +59,14 @@ export default function MobileStickyCTA({
         transition-transform duration-300
         ${visible ? 'translate-y-0' : 'translate-y-full'}
       `}
-      aria-hidden={!visible}
+      /* `inert` (plutôt qu'aria-hidden) : retire aussi le Link du parcours
+         Tab quand la barre est masquée hors-champ */
+      inert={!visible}
+      /* Lu par globals.css pour remonter le bouton WhatsApp flottant */
+      data-visible={visible}
     >
       {/* Réassurance compacte au-dessus du bouton */}
-      <p className="font-[family-name:var(--font-space-mono)] text-[10px] text-stone-400 uppercase tracking-wider text-center mb-1.5">
+      <p className="font-[family-name:var(--font-space-mono)] text-xs text-stone-600 uppercase tracking-wider text-center mb-1.5">
         {reassurance}
       </p>
       <Link

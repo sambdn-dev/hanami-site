@@ -1,12 +1,14 @@
 /**
  * ProgressPanel.tsx — Panneau de progression vertical (desktop only)
  *
- * Affiché à gauche du wizard sur écrans ≥ lg. Liste les 7 étapes,
- * met en avant l'étape courante, coche les étapes complétées.
+ * Affiché à gauche du wizard sur écrans ≥ lg. Liste les étapes,
+ * met en avant l'étape courante, coche UNIQUEMENT les étapes réellement
+ * complétées (données valides — pas le simple fait de les avoir traversées).
  *
- * Les étapes déjà visitées (status "done") sont cliquables pour permettre
- * à l'utilisateur de revenir en arrière modifier une réponse — le bouton
- * "Retour" sous chaque étape ne permettait que de reculer d'un cran.
+ * Navigation : les étapes complétées sont cliquables pour revenir modifier
+ * une réponse ; la prochaine étape à remplir (frontière) est accessible ;
+ * les étapes au-delà restent verrouillées tant que les précédentes ne sont
+ * pas remplies.
  */
 
 'use client'
@@ -23,13 +25,15 @@ export interface StepDefinition {
 interface ProgressPanelProps {
   steps: StepDefinition[]
   currentStep: number
-  /** Plus haute étape jamais atteinte — détermine ce qui est cliquable */
-  maxVisitedStep: number
-  /** Callback déclenché quand l'utilisateur clique sur une étape déjà visitée */
+  /** Complétude réelle de chaque étape (dérivée des données saisies) */
+  completed: boolean[]
+  /** Première étape non complétée — borne supérieure de la navigation */
+  frontier: number
+  /** Callback déclenché quand l'utilisateur clique sur une étape accessible */
   onStepClick: (stepIndex: number) => void
 }
 
-export default function ProgressPanel({ steps, currentStep, maxVisitedStep, onStepClick }: ProgressPanelProps) {
+export default function ProgressPanel({ steps, currentStep, completed, frontier, onStepClick }: ProgressPanelProps) {
   return (
     <aside className="hidden lg:flex flex-col bg-hanami-900 text-white px-8 py-8 sticky top-24 h-[calc(100vh-6rem)] overflow-hidden">
       {/* En-tête */}
@@ -45,20 +49,18 @@ export default function ProgressPanel({ steps, currentStep, maxVisitedStep, onSt
       {/* Liste des étapes — scrollable mais barre masquée pour rester épuré */}
       <ol className="flex flex-col gap-1 flex-1 overflow-y-auto min-h-0 scrollbar-hide">
         {steps.map((step, i) => {
-          // Une étape est "done" si on l'a déjà dépassée OU si on est revenu en
-          // arrière mais qu'on était allé plus loin (maxVisitedStep > i).
-          const isVisited = i <= maxVisitedStep && i !== currentStep
+          // "done" = données réellement valides (jamais le simple passage).
           const status =
             i === currentStep ? 'active'
-            : isVisited ? 'done'
+            : completed[i] ? 'done'
             : 'pending'
 
-          // Navigation libre vers les étapes de SAISIE (0 à length-2).
-          // L'étape Estimation (dernière) reste verrouillée jusqu'à la
-          // soumission — un accès direct afficherait une page vide.
+          // Cliquable : étape complétée (revenir modifier) ou frontière
+          // (prochaine à remplir). Jamais au-delà de la frontière, ni l'écran
+          // Estimation (verrouillé jusqu'à la soumission).
           const onFinalStep = currentStep >= steps.length - 1
           const isFinalStep = i === steps.length - 1
-          const clickable = i !== currentStep && !onFinalStep && !isFinalStep
+          const clickable = i !== currentStep && i <= frontier && !onFinalStep && !isFinalStep
 
           const Tag = clickable ? 'button' : 'div'
 
@@ -94,7 +96,9 @@ export default function ProgressPanel({ steps, currentStep, maxVisitedStep, onSt
                       ? 'bg-amber-500 border-amber-500 text-hanami-900 group-hover:scale-110'
                       : status === 'active'
                         ? 'bg-white text-hanami-900 border-white'
-                        : 'bg-transparent border-white/25 text-white/50'
+                        : clickable
+                          ? 'bg-transparent border-white/50 text-white/75 group-hover:border-amber-100'
+                          : 'bg-transparent border-white/25 text-white/50'
                   }`}
                 >
                   {status === 'done' ? <Check className="w-4 h-4" strokeWidth={2.5} /> : i + 1}

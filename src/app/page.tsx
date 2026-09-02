@@ -31,6 +31,8 @@ import type { Metadata } from 'next'
 // Données structurées SEO (JSON-LD) — SEO local + rich snippets FAQ
 import { localBusinessSchema, serviceSchemas, faqPageSchema } from '@/lib/structured-data'
 import { FAQS } from '@/lib/faq-data'
+// Tarif coaching — source unique (jamais de prix hardcodé dans la copy)
+import { PRICING_DISPLAY } from '@/lib/chantier/pricing'
 
 // Composants partagés (utilisés aussi sur la page Pro)
 import Navbar from '@/components/shared/Navbar'
@@ -57,8 +59,9 @@ import NewsletterSection from '@/components/home/NewsletterSection'
 import LatestArticles from '@/components/home/LatestArticles'
 
 // Métadonnées SEO spécifiques à cette page
+// (sans la marque : le template '%s | Hanami' du layout l'ajoute déjà)
 export const metadata: Metadata = {
-  title: 'Coaching agronomique pour votre gazon — Hanami',
+  title: 'Coaching agronomique pour votre gazon',
   description:
     'Votre gazon mérite un expert, pas une étiquette en jardinerie. Diagnostic personnalisé, protocole daté, produits professionnels. Partout en France.',
   openGraph: {
@@ -120,7 +123,7 @@ export default function HomePage() {
 
         {/* CTA intermédiaire 2 */}
         <IntermediateCTA
-          message="Vous aussi, passez à la méthode pro — dès 29 €/mois."
+          message={`Vous aussi, passez à la méthode pro — dès ${PRICING_DISPLAY.coachingMois} €/mois.`}
           ctaLabel="Découvrir le coaching"
           href="/coaching"
           trackingId="intermediate_2"

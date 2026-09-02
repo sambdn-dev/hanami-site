@@ -16,6 +16,7 @@
 import Link from 'next/link'
 import { useFadeIn } from '@/hooks/useFadeIn'
 import { track } from '@/lib/analytics'
+import { PRICING_DISPLAY } from '@/lib/chantier/pricing'
 import BeforeAfterSlider from '@/components/shared/BeforeAfterSlider'
 
 export default function Hero() {
@@ -99,7 +100,7 @@ export default function Hero() {
             {/* Réassurance sous les CTA — lève les 3 freins au clic.
                 (WhatsApp reste accessible via le bouton flottant) */}
             <p className="font-[family-name:var(--font-space-mono)] text-[11px] text-stone-400 uppercase tracking-wider mt-4">
-              1ᵉʳ mois offert · Puis 29 €/mois · Sans engagement
+              1ᵉʳ mois offert · Puis {PRICING_DISPLAY.coachingMois} €/mois · Sans engagement
             </p>
           </div>
 
