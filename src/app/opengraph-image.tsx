@@ -160,7 +160,7 @@ export default async function Image() {
               boxShadow: '0 4px 12px rgba(45, 90, 39, 0.25)',
             }}
           >
-            Diagnostic gratuit
+            1er mois coaching offert
             <span style={{ fontSize: 22, transform: 'translateY(-1px)' }}>→</span>
           </div>
         </div>

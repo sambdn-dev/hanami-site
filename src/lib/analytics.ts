@@ -1,8 +1,21 @@
 /**
- * analytics.ts — Tracking d'événements consent-aware (Vercel Analytics)
+ * analytics.ts — Mesure d'audience anonyme (Vercel Web Analytics)
  *
- * Le consentement vient de CookieBanner (localStorage 'hanami-cookies-prefs').
- * Pas de choix enregistré = pas de tracking (consent-first).
+ * MODÈLE : opt-OUT, pas opt-in.
+ *
+ * Vercel Web Analytics est *cookieless* : aucun cookie n'est déposé, aucun
+ * identifiant persistant, aucun suivi inter-sites, aucune revente de données.
+ * On est donc sur de la simple mesure d'audience, et la mesure tourne par
+ * défaut — sinon la quasi-totalité du trafic serait invisible (la majorité
+ * des visiteurs ignore les bandeaux et ne clique jamais "Accepter").
+ *
+ * Le visiteur qui refuse explicitement via CookieBanner est respecté : on
+ * enregistre `analytics: false` et plus rien n'est envoyé.
+ *
+ * Note : la CNIL exempte de consentement la mesure d'audience strictement
+ * anonyme et limitée à cet usage. Vercel ne figure pas nommément sur la liste
+ * des solutions pré-exemptées — le choix d'un modèle opt-out relève donc
+ * d'une décision de l'éditeur du site.
  *
  * Taxonomie alignée sur les KPIs funnel du doc marketing §1.5 :
  * visiteur → lead (cta_click, wizard_step) → conversion (wizard_submit,
@@ -20,13 +33,21 @@ export type HanamiEvent =
   | 'contact_submit'
   | 'newsletter_signup'
   | 'calculator_action'
+  | 'visualizer_upload'
+  | 'visualizer_generate'
+  | 'visualizer_gate_shown'
+  | 'visualizer_lead'
+  | 'visualizer_download'
 
 type EventProps = Record<string, string | number | boolean | null | undefined>
 
 const STORAGE_KEY = 'hanami-cookies-prefs'
 
-/** Lit le consentement analytics posé par CookieBanner. Défaut : false. */
-export function hasAnalyticsConsent(): boolean {
+/**
+ * true uniquement si le visiteur a EXPLICITEMENT refusé la mesure d'audience.
+ * Absence de choix = pas de refus = on mesure (cf. modèle opt-out ci-dessus).
+ */
+export function hasOptedOutOfAnalytics(): boolean {
   if (typeof window === 'undefined') return false
   try {
     const stored = localStorage.getItem(STORAGE_KEY)
@@ -35,9 +56,11 @@ export function hasAnalyticsConsent(): boolean {
     return (
       typeof prefs === 'object' &&
       prefs !== null &&
-      (prefs as { analytics?: unknown }).analytics === true
+      (prefs as { analytics?: unknown }).analytics === false
     )
   } catch {
+    // localStorage indisponible (mode privé strict, navigateur verrouillé) :
+    // aucun refus lisible → on ne bloque pas la mesure anonyme.
     return false
   }
 }
@@ -45,7 +68,7 @@ export function hasAnalyticsConsent(): boolean {
 /** Envoie un événement custom — ne fait jamais échouer l'UI. */
 export function track(event: HanamiEvent, props?: EventProps): void {
   if (typeof window === 'undefined') return
-  if (!hasAnalyticsConsent()) return
+  if (hasOptedOutOfAnalytics()) return
   try {
     vercelTrack(event, props)
   } catch {

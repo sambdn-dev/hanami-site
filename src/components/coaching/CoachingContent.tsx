@@ -24,12 +24,16 @@ function scrollToContact(location: string) {
 }
 
 /* Extrait de protocole affiché dans la carte du hero — incarne la promesse
-   "protocole daté au jour près" sans avoir besoin de photos. */
+   "protocole daté au jour près" sans avoir besoin de photos.
+   On utilise des repères relatifs (Semaine 1, 3, …) plutôt que des dates
+   fixes : un exemple daté en dur devient périmé (dates passées) et peut
+   afficher une opération hors-saison. Le repère relatif reste juste toute
+   l'année et illustre la cadence du vrai protocole personnalisé. */
 const SAMPLE_PROTOCOL = [
-  { date: '12 mars', action: 'Scarification croisée + regarnissage Pro 12' },
-  { date: '26 mars', action: 'Engrais racinaire 25 g/m² + arrosage 5 mm' },
-  { date: '14 avril', action: 'Première tonte à 6 cm, ramassage' },
-  { date: '2 mai', action: 'Biostimulant algues 10 L/ha' },
+  { date: 'Semaine 1', action: 'Scarification croisée + regarnissage Pro 12' },
+  { date: 'Semaine 3', action: 'Engrais racinaire 25 g/m² + arrosage 5 mm' },
+  { date: 'Semaine 6', action: 'Première tonte à 6 cm, ramassage' },
+  { date: 'Semaine 9', action: 'Biostimulant algues 10 L/ha' },
 ]
 
 export default function CoachingContent() {

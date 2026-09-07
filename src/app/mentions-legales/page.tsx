@@ -168,13 +168,16 @@ export default function MentionsLegalesPage() {
             {/* Article 6 */}
             <section>
               <h2 className="font-[family-name:var(--font-fraunces)] text-xl font-semibold text-hanami-900 mb-4 pb-2 border-b border-stone-200">
-                6. Cookies
+                6. Cookies et mesure d&apos;audience
               </h2>
               <p className="text-sm text-stone-700 leading-relaxed">
-                Le site utilise des cookies pour mémoriser vos préférences de navigation et améliorer votre expérience. Ces cookies ne collectent aucune donnée personnelle identifiable.
+                Le site ne dépose aucun cookie publicitaire et ne pratique aucun suivi entre sites. Seul un stockage local technique est utilisé pour mémoriser vos préférences de navigation.
               </p>
               <p className="text-sm text-stone-700 leading-relaxed mt-3">
-                Vous pouvez accepter ou refuser les cookies via la bannière affichée lors de votre première visite. Le refus des cookies n'affecte pas l'accès aux contenus du site.
+                Pour savoir quelles pages sont consultées, nous utilisons une mesure d&apos;audience anonyme et sans cookie (Vercel Web Analytics) : aucun identifiant persistant, aucun profilage publicitaire, aucune revente ni recoupement de vos données avec d&apos;autres sites. Les statistiques produites sont strictement agrégées.
+              </p>
+              <p className="text-sm text-stone-700 leading-relaxed mt-3">
+                Cette mesure étant anonyme, elle est active par défaut. Vous pouvez la refuser à tout moment via le bouton « Refuser » du bandeau affiché lors de votre première visite. Votre refus est conservé sur votre appareil et n&apos;affecte en rien l&apos;accès aux contenus du site.
               </p>
             </section>
 

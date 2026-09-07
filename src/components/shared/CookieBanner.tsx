@@ -1,208 +1,107 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Cookie } from 'lucide-react'
+import { Sprout } from 'lucide-react'
+
+/**
+ * CookieBanner — Note de transparence sur la mesure d'audience (modèle opt-out)
+ *
+ * Le site ne dépose AUCUN cookie de mesure : Vercel Web Analytics est
+ * cookieless (pas d'identifiant persistant, pas de suivi inter-sites, pas de
+ * publicité, pas de revente). Ce bandeau n'est donc plus une barrière de
+ * consentement — la mesure tourne par défaut (cf. src/lib/analytics.ts) — mais
+ * une information affichée une seule fois, avec un refus possible en un clic.
+ *
+ * Pourquoi ce changement : en opt-in strict, tout visiteur qui ignorait le
+ * bandeau (la grande majorité) était invisible dans les statistiques. Le site
+ * ne mesurait donc qu'une petite fraction de son trafic réel.
+ *
+ * Rétro-compatibilité : le format stocké garde la clé `analytics`, donc un
+ * ancien refus (`analytics: false`) continue d'être respecté. L'ancien réglage
+ * "marketing" est retiré — aucun script marketing n'existe sur le site, la
+ * case ne pilotait rien.
+ */
 
 interface CookiePrefs {
   functional: true
   analytics: boolean
-  marketing: boolean
 }
-
-type BannerState = 'hidden' | 'banner' | 'preferences'
 
 const STORAGE_KEY = 'hanami-cookies-prefs'
 
 export default function CookieBanner() {
-  const [state, setState] = useState<BannerState>('hidden')
-  const [analytics, setAnalytics] = useState(true)
-  const [marketing, setMarketing] = useState(false)
+  const [visible, setVisible] = useState(false)
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (!stored) {
-      setState('banner')
+    try {
+      if (!localStorage.getItem(STORAGE_KEY)) setVisible(true)
+    } catch {
+      // localStorage inaccessible (mode privé strict) : on n'affiche rien
+      // plutôt que de ré-afficher le bandeau à chaque navigation.
     }
   }, [])
 
-  const save = (prefs: CookiePrefs) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs))
-    setState('hidden')
+  const save = (analytics: boolean) => {
+    const prefs: CookiePrefs = { functional: true, analytics }
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs))
+    } catch {
+      // Pas de stockage possible — on ferme quand même le bandeau.
+    }
+    setVisible(false)
   }
 
-  const acceptAll = () => save({ functional: true, analytics: true, marketing: true })
-  const declineAll = () => save({ functional: true, analytics: false, marketing: false })
-  const savePrefs = () => save({ functional: true, analytics, marketing })
-
-  if (state === 'hidden') return null
+  if (!visible) return null
 
   return (
-    <>
-      {/* Backdrop pour le panel préférences sur mobile */}
-      {state === 'preferences' && (
-        <div
-          className="fixed inset-0 bg-black/40 z-[99] md:hidden"
-          onClick={() => setState('banner')}
-          aria-hidden="true"
-        />
-      )}
-
-      <div
-        className={[
-          'fixed z-[100] transition-all duration-300',
-          // Mobile : pleine largeur en bas
-          'bottom-0 left-0 right-0',
-          // Desktop : petite card en bas à gauche
-          'md:bottom-6 md:left-6 md:right-auto md:max-w-sm md:rounded-2xl',
-          'bg-[#1a2e1a] text-white shadow-2xl',
-          state === 'preferences' ? 'md:rounded-2xl' : 'rounded-t-2xl md:rounded-2xl',
-        ].join(' ')}
-        /* role="region" (pas "dialog") : le bandeau n'est pas modal — la
-           page reste utilisable derrière, pas de piège de focus */
-        role="region"
-        aria-label="Gestion des cookies"
-      >
-        {/* ── État 1 : Banner ──────────────────────────────────────── */}
-        {state === 'banner' && (
-          <div className="p-5">
-            <div className="flex items-start gap-3 mb-3">
-              <span className="flex-shrink-0 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center" aria-hidden="true">
-                <Cookie className="w-4.5 h-4.5 text-amber-500" strokeWidth={1.8} />
-              </span>
-              <div>
-                <p className="font-semibold text-sm leading-snug mb-1">
-                  Nous respectons votre vie privée
-                </p>
-                <p className="text-xs text-stone-300 leading-relaxed">
-                  Ce site utilise des cookies pour améliorer votre expérience et mesurer notre audience de manière anonyme.
-                </p>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <button
-                onClick={acceptAll}
-                className="w-full py-2 px-4 rounded-full bg-[#4a8c3f] hover:bg-[#3a7030] text-white text-sm font-medium transition-colors cursor-pointer"
-              >
-                Tout accepter
-              </button>
-              <button
-                onClick={declineAll}
-                className="w-full py-2 px-4 rounded-full bg-stone-700 hover:bg-stone-600 text-stone-200 text-sm font-medium transition-colors cursor-pointer"
-              >
-                Refuser
-              </button>
-              <button
-                onClick={() => setState('preferences')}
-                className="w-full py-1.5 text-xs text-stone-400 hover:text-stone-200 underline underline-offset-2 transition-colors cursor-pointer"
-              >
-                Gérer les préférences
-              </button>
-            </div>
+    <div
+      className={[
+        'no-print fixed z-[100] transition-all duration-300',
+        // Mobile : pleine largeur en bas
+        'bottom-0 left-0 right-0 rounded-t-2xl',
+        // Desktop : carte discrète en bas à gauche
+        'md:bottom-6 md:left-6 md:right-auto md:max-w-xs md:rounded-2xl',
+        'bg-[#1a2e1a] text-white shadow-2xl',
+      ].join(' ')}
+      /* role="region" (pas "dialog") : rien n'est bloqué, la page reste
+         entièrement utilisable derrière — pas de piège de focus */
+      role="region"
+      aria-label="Mesure d'audience"
+    >
+      <div className="p-4 sm:p-5">
+        <div className="flex items-start gap-3">
+          <span
+            className="flex-shrink-0 w-8 h-8 rounded-full bg-white/10 flex items-center justify-center"
+            aria-hidden="true"
+          >
+            <Sprout className="w-4 h-4 text-[#4a8c3f]" strokeWidth={1.8} />
+          </span>
+          <div className="min-w-0">
+            <p className="font-semibold text-sm leading-snug">
+              Mesure d&apos;audience anonyme
+            </p>
+            <p className="text-xs text-stone-300 leading-relaxed mt-1">
+              Pour savoir quelles pages vous sont utiles — sans cookie, sans
+              publicité, sans revente de données.
+            </p>
           </div>
-        )}
+        </div>
 
-        {/* ── État 2 : Panel préférences ───────────────────────────── */}
-        {state === 'preferences' && (
-          <div className="p-5">
-            <div className="flex items-center justify-between mb-4">
-              <p className="font-semibold text-sm">Mes préférences</p>
-              <button
-                onClick={() => setState('banner')}
-                className="text-stone-400 hover:text-white transition-colors text-xs underline cursor-pointer"
-                aria-label="Retour"
-              >
-                ← Retour
-              </button>
-            </div>
-
-            <div className="space-y-4">
-              {/* Toggle Fonctionnels — toujours ON */}
-              <ToggleRow
-                label="Fonctionnels"
-                description="Nécessaires au fonctionnement du site"
-                checked={true}
-                disabled={true}
-                onChange={() => {}}
-              />
-
-              {/* Toggle Analytiques */}
-              <ToggleRow
-                label="Analytiques"
-                description="Statistiques de visite anonymes (pas de tracking publicitaire)"
-                checked={analytics}
-                disabled={false}
-                onChange={setAnalytics}
-              />
-
-              {/* Toggle Marketing */}
-              <ToggleRow
-                label="Marketing"
-                description="Personnalisation et réseaux sociaux"
-                checked={marketing}
-                disabled={false}
-                onChange={setMarketing}
-              />
-            </div>
-
-            <button
-              onClick={savePrefs}
-              className="mt-5 w-full py-2 px-4 rounded-full bg-[#4a8c3f] hover:bg-[#3a7030] text-white text-sm font-medium transition-colors cursor-pointer"
-            >
-              Sauvegarder mes préférences
-            </button>
-          </div>
-        )}
+        <div className="flex items-center gap-2 mt-4">
+          <button
+            onClick={() => save(true)}
+            className="flex-1 py-2 px-4 rounded-full bg-[#4a8c3f] hover:bg-[#3a7030] text-white text-sm font-medium transition-colors cursor-pointer"
+          >
+            J&apos;ai compris
+          </button>
+          <button
+            onClick={() => save(false)}
+            className="py-2 px-3 rounded-full text-stone-300 hover:text-white text-xs font-medium underline underline-offset-2 transition-colors cursor-pointer whitespace-nowrap"
+          >
+            Refuser
+          </button>
+        </div>
       </div>
-    </>
-  )
-}
-
-// ── Sous-composant Toggle ──────────────────────────────────────────────────────
-
-interface ToggleRowProps {
-  label: string
-  description: string
-  checked: boolean
-  disabled: boolean
-  onChange: (v: boolean) => void
-}
-
-function ToggleRow({ label, description, checked, disabled, onChange }: ToggleRowProps) {
-  return (
-    <div className="flex items-start justify-between gap-3">
-      <div className="flex-1">
-        <p className={`text-xs font-medium ${disabled ? 'text-stone-400' : 'text-white'}`}>
-          {label}
-          {disabled && <span className="ml-2 text-[10px] text-stone-500">(obligatoire)</span>}
-        </p>
-        <p className="text-[11px] text-stone-400 leading-relaxed mt-0.5">{description}</p>
-      </div>
-
-      {/* Switch — positionnement via `left` (plus robuste que translate-x) */}
-      <button
-        role="switch"
-        aria-checked={checked}
-        disabled={disabled}
-        onClick={() => !disabled && onChange(!checked)}
-        className={[
-          'relative flex-shrink-0 w-10 h-5 rounded-full transition-colors duration-200',
-          disabled
-            // Disabled + ON (Fonctionnels) → vert atténué pour montrer "actif verrouillé"
-            ? 'bg-[#4a8c3f]/50 cursor-not-allowed'
-            : checked
-              ? 'bg-[#4a8c3f] cursor-pointer'
-              : 'bg-stone-600 cursor-pointer',
-        ].join(' ')}
-        aria-label={label}
-      >
-        <span
-          className={[
-            'absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-[left] duration-200',
-            checked ? 'left-[22px]' : 'left-0.5',
-          ].join(' ')}
-        />
-      </button>
     </div>
   )
 }
