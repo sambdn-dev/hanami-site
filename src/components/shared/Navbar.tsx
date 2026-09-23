@@ -11,6 +11,7 @@ const links = [
   { href: '/', label: 'Particuliers' },
   { href: '/pro', label: 'Hanami Pro' },
   { href: '/mon-chantier', label: 'Mon chantier' },
+  { href: '/calculatrice', label: 'Dosage Intelligent' },
   { href: '/blog', label: 'Le journal' },
   { href: '/pourquoi-hanami', label: 'Notre approche' },
 ]
@@ -90,7 +91,7 @@ export default function Navbar({ variant = 'light' }: { variant?: 'light' | 'dar
         <div className={styles.mobileTop}><Image src="/brand/2026/logo-principal-vert.png" alt="Hanami Expert Gazon" width={100} height={36} /><button ref={closeRef} type="button" onClick={() => setMenuOpen(false)} aria-label="Fermer le menu"><X size={25} aria-hidden="true" /></button></div>
         <div className={styles.mobileLinks}>
           {links.map((link, index) => <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}><span>{String(index + 1).padStart(2, '0')}</span>{link.label}<ArrowUpRight size={19} aria-hidden="true" /></Link>)}
-          <Link href="/pro/studio" onClick={() => setMenuOpen(false)}><span>06</span>Hanami Studio <strong>PRO</strong><ArrowUpRight size={19} aria-hidden="true" /></Link>
+          <Link href="/pro/studio" onClick={() => setMenuOpen(false)}><span>07</span>Hanami Studio <strong>PRO</strong><ArrowUpRight size={19} aria-hidden="true" /></Link>
         </div>
         <div className={styles.mobileBottom}><Link href={ctaHref} onClick={() => setMenuOpen(false)}>{ctaText} <ArrowUpRight size={18} aria-hidden="true" /></Link><a href="https://wa.me/33667277614" target="_blank" rel="noopener noreferrer">WhatsApp · +33 6 67 27 76 14</a></div>
       </div>

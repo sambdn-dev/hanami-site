@@ -9,18 +9,8 @@
  */
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { ChevronLeft } from 'lucide-react'
-
-function GrassLogo() {
-  return (
-    <svg viewBox="0 0 32 32" className="w-6 h-6 shrink-0" aria-hidden="true">
-      <path d="M9 28 C8 21 7 13 9.5 6 C11 13 11.5 21 11.5 28 Z"  fill="#4a8c3f" />
-      <path d="M15 28 C14 19 14.5 10 16 2 C17.5 10 18 19 17 28 Z" fill="#2d5a27" />
-      <path d="M20.5 28 C20 21 21 14 22.5 8 C24 14 24.5 21 23.5 28 Z" fill="#4a8c3f" />
-      <rect x="5" y="28.5" width="22" height="1.5" rx="0.75" fill="#1a2e1a" />
-    </svg>
-  )
-}
 
 export default function MobileAppBar() {
   return (
@@ -35,18 +25,10 @@ export default function MobileAppBar() {
         Accueil
       </Link>
 
-      {/* Logo centré */}
-      <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2">
-        <GrassLogo />
-        <div className="flex flex-col leading-none gap-0.5">
-          <span className="font-[family-name:var(--font-fraunces)] text-base font-semibold tracking-tight text-hanami-900">
-            hanami.
-          </span>
-          <span className="text-[8px] font-semibold tracking-[0.18em] uppercase text-hanami-500">
-            Expert Gazon
-          </span>
-        </div>
-      </div>
+      {/* Logo officiel centré, au même format discret que la navigation */}
+      <Link href="/" className="absolute left-1/2 -translate-x-1/2 flex items-center" aria-label="Hanami — accueil">
+        <Image src="/brand/2026/logo-principal-vert.png" alt="Hanami Expert Gazon" width={94} height={34} priority />
+      </Link>
 
     </header>
   )

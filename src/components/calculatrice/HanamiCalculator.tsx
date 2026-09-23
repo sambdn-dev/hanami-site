@@ -13,7 +13,8 @@
  */
 
 import { useState, useEffect, useRef } from 'react'
-import { Plus, Trash2, AlertTriangle, Info, Calculator, Download, ChevronLeft, ImageDown, Camera, Loader2, Share2, Sprout, Sparkles, Droplets, Mountain, Package, Settings, Lightbulb, Mail, Check, Globe, FlaskConical, Timer, Play, X } from 'lucide-react'
+import Image from 'next/image'
+import { Plus, Trash2, AlertTriangle, Info, Download, ChevronLeft, ImageDown, Camera, Loader2, Share2, Sprout, Sparkles, Droplets, Mountain, Package, Settings, Lightbulb, Mail, Check, Globe, FlaskConical, Timer, Play, X } from 'lucide-react'
 import { compressPhoto } from '@/lib/photo-utils'
 import { track } from '@/lib/analytics'
 import { fmt, plural } from '@/lib/calculatrice/format'
@@ -1471,9 +1472,7 @@ export default function HanamiCalculator() {
 
           {/* ── Card header ───────────────────────────────────────────────── */}
           <div className="no-print bg-hanami-900 px-5 py-4 flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0">
-              <Calculator className="w-4 h-4 text-white" />
-            </div>
+            <Image src="/brand/2026/icone-h-cercle-vert.png" alt="" width={32} height={32} className="w-8 h-8 rounded-full shrink-0" aria-hidden="true" />
             <div className="min-w-0">
               <h1 className="text-white font-semibold text-base leading-tight truncate" style={{ fontFamily: 'var(--font-fraunces)' }}>
                 Dosage Intelligent · Hanami
