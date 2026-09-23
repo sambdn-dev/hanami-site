@@ -22,7 +22,7 @@
 .heroCopy { align-self: center; animation: hero-rise 1s cubic-bezier(.22,1,.36,1) both; }
 .heroEyebrow { display: flex; align-items: center; gap: 14px; margin-bottom: 35px; color: #c7d8b1; font-size: 11px; font-weight: 700; letter-spacing: .19em; text-transform: uppercase; }
 .heroEyebrowLine { display: block; width: 35px; height: 1px; background: #d5b76d; }
-.heroTitle { font-family: var(--font-fraunces), serif; font-size: clamp(70px, 8vw, 116px); line-height: .935; letter-spacing: -.072em; font-weight: 410; }
+.heroTitle { font-family: var(--font-fraunces), serif; font-size: clamp(45px, 5vw, 76px); line-height: 1.04; letter-spacing: -.06em; font-weight: 410; white-space: nowrap; }
 .heroTitle em { color: #c9d6ac; }
 .heroDescription { max-width: 515px; margin-top: 34px; color: #e2e9d9; font-size: 17px; line-height: 1.75; }
 .heroActions { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 26px; margin-top: 34px; }
@@ -31,7 +31,7 @@
 .heroTextLink { display: inline-flex; align-items: center; gap: 11px; min-height: 48px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #a7c29a; transition: gap .25s; }
 .heroTextLink:hover { gap: 17px; }
 .heroMicroProof { display: flex; align-items: center; gap: 14px; margin-top: 45px; color: #bfceb9; font-size: 12px; line-height: 1.5; }
-.heroMicroMark { display: grid; place-items: center; width: 41px; height: 41px; border: 1px solid #a7c29a80; border-radius: 50%; color: #d5b76d; font-family: var(--font-fraunces), serif; font-size: 19px; }
+.heroMicroMark { flex-shrink: 0; width: 42px; height: 42px; border-radius: 50%; box-shadow: 0 0 0 1px #a7c29a80; object-fit: contain; }
 .heroFigure { min-width: 0; animation: hero-rise 1.1s .16s cubic-bezier(.22,1,.36,1) both; }
 .heroPhoto { position: relative; overflow: hidden; height: 590px; background: #345c35; }
 .coverPhoto { object-fit: cover; object-position: center 69%; animation: hero-photo 13s ease-in-out infinite alternate; }
@@ -141,7 +141,7 @@
 .protocolLine p { color: var(--muted); font-size: 11px; line-height: 1.45; }
 .protocolLine > span:last-child { align-self: center; color: #75936f; font-size: 19px; }
 .protocolCardFoot { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 24px; background: #153928; color: #cbd9ba; font-family: var(--font-space-mono), monospace; font-size: 9px; letter-spacing: .04em; }
-.protocolCardFoot strong { color: #e9c878; font-family: var(--font-fraunces), serif; font-size: 26px; font-weight: 400; }
+.protocolCardFoot img { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; box-shadow: 0 0 0 1px #a7c29a80; }
 .protocolFloating { position: absolute; bottom: 27px; right: 21px; padding: 12px 15px; background: #e3c474; color: #153928; font-family: var(--font-fraunces), serif; font-size: 16px; transform: rotate(3deg); box-shadow: 0 8px 20px rgba(14,56,33,.13); }
 @keyframes protocol-float { 50% { transform: rotate(-.5deg) translateY(-9px); } }
 
@@ -214,7 +214,7 @@
 @media (min-width: 1100px) {
   .heroGrid { gap: 64px; }
   .heroPhoto { height: 620px; }
-  .heroTitle { font-size: clamp(88px, 7.8vw, 116px); }
+  .heroTitle { font-size: clamp(59px, 5vw, 76px); }
   .serviceCard { padding: 30px 32px; }
   .featuredText { padding: 47px; }
   .miniSlider { height: 385px; }
@@ -222,7 +222,7 @@
 @media (max-width: 767px) {
   .hero { padding-top: 128px; }
   .heroEyebrow { margin-bottom: 24px; font-size: 9px; }
-  .heroTitle { font-size: clamp(58px, 15vw, 78px); }
+  .heroTitle { font-size: clamp(31px, 9.5vw, 47px); }
   .heroDescription { margin-top: 25px; font-size: 15px; }
   .heroActions { margin-top: 25px; }
   .heroButton { width: 100%; }

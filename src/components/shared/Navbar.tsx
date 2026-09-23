@@ -72,7 +72,7 @@ export default function Navbar({ variant = 'light' }: { variant?: 'light' | 'dar
       <nav className={`${styles.nav} ${dark ? styles.dark : styles.light} ${scrolled ? styles.scrolled : ''}`} style={{ top: bannerGone ? 0 : 40 }} aria-label="Navigation principale">
         <div className={styles.navInner}>
           <Link href="/" className={styles.logo} aria-label="Hanami — accueil">
-            <Image src={dark ? '/brand/2026/logo-principal-blanc.png' : '/brand/2026/logo-principal-vert.png'} alt="Hanami Expert Gazon" width={152} height={55} priority />
+            <Image src={dark ? '/brand/2026/logo-principal-blanc.png' : '/brand/2026/logo-principal-vert.png'} alt="Hanami Expert Gazon" width={100} height={36} priority />
           </Link>
           <div className={styles.desktopLinks}>
             {links.map((link) => {
@@ -87,7 +87,7 @@ export default function Navbar({ variant = 'light' }: { variant?: 'light' | 'dar
 
       <div className={`${styles.backdrop} ${menuOpen ? styles.backdropOpen : ''}`} onClick={() => setMenuOpen(false)} aria-hidden="true" />
       <div id="mobile-menu" ref={menuRef} className={`${styles.mobileMenu} ${menuOpen ? styles.mobileMenuOpen : ''}`} role="dialog" aria-modal="true" aria-label="Menu principal" inert={!menuOpen}>
-        <div className={styles.mobileTop}><Image src="/brand/2026/logo-principal-vert.png" alt="Hanami Expert Gazon" width={138} height={50} /><button ref={closeRef} type="button" onClick={() => setMenuOpen(false)} aria-label="Fermer le menu"><X size={25} aria-hidden="true" /></button></div>
+        <div className={styles.mobileTop}><Image src="/brand/2026/logo-principal-vert.png" alt="Hanami Expert Gazon" width={100} height={36} /><button ref={closeRef} type="button" onClick={() => setMenuOpen(false)} aria-label="Fermer le menu"><X size={25} aria-hidden="true" /></button></div>
         <div className={styles.mobileLinks}>
           {links.map((link, index) => <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}><span>{String(index + 1).padStart(2, '0')}</span>{link.label}<ArrowUpRight size={19} aria-hidden="true" /></Link>)}
           <Link href="/pro/studio" onClick={() => setMenuOpen(false)}><span>06</span>Hanami Studio <strong>PRO</strong><ArrowUpRight size={19} aria-hidden="true" /></Link>

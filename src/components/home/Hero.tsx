@@ -14,12 +14,12 @@ export default function Hero() {
       <div className={styles.container}>
         <div className={styles.heroGrid}>
           <div className={styles.heroCopy}>
-            <p className={styles.heroEyebrow}><span className={styles.heroEyebrowLine} /> Hanami · L’expert de votre gazon</p>
+            <p className={styles.heroEyebrow}><span className={styles.heroEyebrowLine} /> Hanami · Coaching gazon sur mesure</p>
             <h1 id="home-title" className={styles.heroTitle}>
-              Tout change<br />au bon<br /><em>moment.</em>
+              Votre gazon<br /><em>mérite un expert.</em>
             </h1>
             <p className={styles.heroDescription}>
-              Un diagnostic pour comprendre. Un protocole daté pour agir. Un expert à vos côtés pour faire de votre pelouse le cœur du jardin.
+              Un diagnostic pour comprendre. Un protocole daté pour agir. Un accompagnement précis pour faire de votre pelouse le cœur du jardin.
             </p>
             <div className={styles.heroActions}>
               <Link href="/coaching" className={styles.heroButton}
@@ -29,7 +29,7 @@ export default function Hero() {
               <a href="#resultats" className={styles.heroTextLink}>Voir les résultats <ArrowDown size={17} aria-hidden="true" /></a>
             </div>
             <div className={styles.heroMicroProof}>
-              <span className={styles.heroMicroMark}>H.</span>
+              <Image src="/brand/2026/icone-h-cercle-vert.png" alt="" width={42} height={42} className={styles.heroMicroMark} aria-hidden="true" />
               <span>Votre pelouse est unique.<br />Votre plan doit l’être aussi.</span>
             </div>
           </div>

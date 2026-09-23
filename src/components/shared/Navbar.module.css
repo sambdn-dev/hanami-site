@@ -3,9 +3,9 @@
 .nav.light { color: #173c29; background: #f8f6efee; }
 .nav.scrolled.dark { background: #123724ed; box-shadow: 0 9px 25px #071e1340; backdrop-filter: blur(16px); }
 .nav.scrolled.light { background: #f8f6efed; box-shadow: 0 8px 25px #1539281c; backdrop-filter: blur(16px); }
-.navInner { display: flex; align-items: center; gap: 20px; width: min(100% - 40px,1280px); height: 75px; margin-inline: auto; }
+.navInner { display: flex; align-items: center; gap: 20px; width: min(100% - 40px,1280px); height: 68px; margin-inline: auto; }
 .logo { flex-shrink: 0; display: flex; align-items: center; }
-.logo img { width: 145px; height: auto; }
+.logo img { width: 100px; height: auto; }
 .desktopLinks { display: none; align-items: center; justify-content: center; gap: clamp(16px,1.8vw,30px); margin-left: auto; }
 .desktopLinks a { position: relative; padding: 10px 0; font-size: 12px; font-weight: 600; white-space: nowrap; transition: opacity .25s; }
 .desktopLinks a:hover { opacity: .68; }
@@ -20,7 +20,7 @@
 .mobileMenu { position: fixed; z-index: 100; top: 0; right: 0; bottom: 0; display: flex; flex-direction: column; width: min(92vw,430px); overflow-y: auto; background: #f8f6ef; color: #173c29; box-shadow: -20px 0 60px #061e1540; transform: translateX(102%); transition: transform .35s cubic-bezier(.22,1,.36,1); }
 .mobileMenuOpen { transform: none; }
 .mobileTop { display: flex; align-items: center; justify-content: space-between; padding: 21px 23px; border-bottom: 1px solid #15392824; }
-.mobileTop img { width: 138px; height: auto; }
+.mobileTop img { width: 100px; height: auto; }
 .mobileTop button { display: grid; place-items: center; width: 44px; height: 44px; }
 .mobileLinks { display: grid; padding: 25px 23px; }
 .mobileLinks a { display: flex; align-items: center; gap: 13px; min-height: 60px; border-bottom: 1px solid #15392824; font-family: var(--font-fraunces),serif; font-size: 23px; line-height: 1.1; }
@@ -31,5 +31,6 @@
 .mobileBottom > a:first-child { display: flex; justify-content: space-between; align-items: center; min-height: 50px; padding: 12px 15px; background: #173c29; color: #fff; font-size: 13px; font-weight: 700; }
 .mobileBottom > a:last-child { font-size: 12px; font-weight: 700; }
 @media (min-width: 768px) { .navInner { width: min(100% - 72px,1280px); } }
+@media (max-width: 767px) { .logo img { width: 92px; } }
 @media (min-width: 1100px) { .desktopLinks, .desktopCta { display: flex; } .menuButton { display: none; } }
 @media (prefers-reduced-motion: reduce) { .nav, .backdrop, .mobileMenu, .desktopCta { transition: none; } }

@@ -38,7 +38,7 @@ export function HomeProof() {
         <div className={styles.proofGrid}>
           <div><span>01</span><strong>Diagnostic personnel</strong><p>Comprendre avant d’agir.</p></div>
           <div><span>02</span><strong>Timing précis</strong><p>Le bon geste à la bonne date.</p></div>
-          <div><span>03</span><strong>Expert à vos côtés</strong><p>Un plan qui évolue avec le jardin.</p></div>
+          <div><span>03</span><strong>Suivi à vos côtés</strong><p>Un plan qui évolue avec le jardin.</p></div>
         </div>
       </div>
     </section>
@@ -156,7 +156,7 @@ export function HomeProcess() {
               <div className={styles.protocolLine}><span className={styles.protocolIcon}><ScanSearch size={18} aria-hidden="true" /></span><div><small>ÉTAPE 01</small><strong>Diagnostic du terrain</strong><p>Comprendre le sol, l’exposition, la densité.</p></div><span>✓</span></div>
               <div className={styles.protocolLine}><span className={styles.protocolIcon}><CalendarDays size={18} aria-hidden="true" /></span><div><small>ÉTAPE 02</small><strong>Intervention au bon moment</strong><p>La bonne action, la bonne dose, la bonne date.</p></div><span>→</span></div>
               <div className={styles.protocolLine}><span className={styles.protocolIcon}><Sprout size={18} aria-hidden="true" /></span><div><small>ÉTAPE 03</small><strong>Suivi de la repousse</strong><p>Observer et ajuster au fil des saisons.</p></div><span>→</span></div>
-              <div className={styles.protocolCardFoot}><span>DIAGNOSTIC → DÉCISION → SUIVI</span><strong>H.</strong></div>
+              <div className={styles.protocolCardFoot}><span>DIAGNOSTIC → DÉCISION → SUIVI</span><Image src="/brand/2026/icone-h-cercle-vert.png" alt="" width={30} height={30} aria-hidden="true" /></div>
             </div>
             <span className={styles.protocolFloating}>Le bon conseil, au bon moment.</span>
           </div>
