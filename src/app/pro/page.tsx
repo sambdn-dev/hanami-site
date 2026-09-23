@@ -1,69 +1,33 @@
-/**
- * page.tsx — Page Professionnels (/pro)
- *
- * Destinée aux paysagistes et entrepreneurs en espaces verts.
- * Le logiciel et ses aperçus précèdent les besoins métier.
- * L’expertise gazon et son appel Calendly restent disponibles plus bas.
- * Studio appartient à Hanami Pro ; la page détaillée est /pro/logiciel.
- */
-
 import type { Metadata } from 'next'
-
-// Composants partagés
 import Navbar from '@/components/shared/Navbar'
 import Footer from '@/components/shared/Footer'
 import WhatsAppButton from '@/components/shared/WhatsAppButton'
 import SeasonalBanner from '@/components/shared/SeasonalBanner'
 import ContactForm from '@/components/shared/ContactForm'
-
-// Composants spécifiques à la page Pro
-import ProHero2026 from '@/components/pro/ProHero2026'
-import ProStudioModules from '@/components/pro/ProStudioModules'
-import SoftwareDemoScreens from '@/components/pro/SoftwareDemoScreens'
 import MobileStickyCTA from '@/components/home/MobileStickyCTA'
+import ProLanding from '@/components/pro/ProLanding'
 
 export const metadata: Metadata = {
-  // `absolute` : le nom commercial "Hanami Pro" contient déjà la marque,
-  // on court-circuite le template '%s | Hanami' du layout (sinon doublon)
-  title: { absolute: 'Hanami Pro — Outils métier pour paysagistes' },
-  description:
-    'Hanami Pro prépare des outils métier pour paysagistes : planning, équipes, interventions, rendez-vous, CRM et devis. Découvrez Hanami Studio.',
-  openGraph: {
-    title: 'Hanami Pro — Outils métier pour paysagistes',
-    description:
-      'Une vision claire des outils métier pour les paysagistes, avec l’expertise terrain Hanami.',
-  },
+  title: { absolute: 'Hanami Pro — Organisation et expertise gazon pour paysagistes' },
+  description: 'Hanami Pro : vision d’un outil métier pour paysagistes, réunissant planning, contrats d’entretien, équipes, dossiers clients et assistance gazon directe.',
+  alternates: { canonical: '/pro' },
+  openGraph: { title: 'Hanami Pro — L’activité paysagiste, au même endroit', description: 'Planning, équipes, clients et expertise gazon dans une même vision.' },
 }
 
 export default function ProPage() {
   return (
     <>
-      {/* Bandeau saisonnier */}
       <SeasonalBanner />
-
-      <Navbar variant="light" />
-
-      <main className="flex-1 bg-brand-cream">
-
-        <ProHero2026 />
-        <SoftwareDemoScreens showDetailsLink />
-        <ProStudioModules />
-        <ContactForm
-          variant="pro"
-          source="hanami-pro-outils-metier"
-          title="Construisons des outils utiles sur le terrain"
-          subtitle="Parlez-nous de votre activité et des tâches qui vous prennent le plus de temps. Nous vous répondrons personnellement."
-        />
-
+      <Navbar variant="dark" />
+      <main className="flex-1">
+        <ProLanding />
+        <ContactForm variant="pro" source="hanami-pro" photosEnabled={false}
+          title="Parlons de votre façon de travailler."
+          subtitle="Racontez-nous votre organisation et vos chantiers gazon. Nous vous recontacterons pour vous présenter la vision Hanami Pro et écouter vos besoins." />
       </main>
-
       <Footer />
       <WhatsAppButton />
-      <MobileStickyCTA
-        href="/pro/logiciel"
-        label="Découvrir le logiciel Hanami Pro"
-        reassurance="Prototype · Démonstration accompagnée"
-      />
+      <MobileStickyCTA href="/pro#contact" label="Parler de Hanami Pro" reassurance="Vision produit · Démo accompagnée" />
     </>
   )
 }

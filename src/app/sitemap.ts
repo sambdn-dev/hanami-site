@@ -31,7 +31,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
-      url: `${BASE_URL}/pro/logiciel`,
+      url: `${BASE_URL}/pro/studio`,
       changeFrequency: 'monthly',
       priority: 0.8,
     },

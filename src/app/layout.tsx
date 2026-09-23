@@ -3,6 +3,7 @@ import { Fraunces, DM_Sans, Space_Mono } from 'next/font/google'
 import './globals.css'
 import CookieBanner from '@/components/shared/CookieBanner'
 import AnalyticsProvider from '@/components/shared/AnalyticsProvider'
+import ScrollReveal from '@/components/shared/ScrollReveal'
 import { organizationSchema } from '@/lib/structured-data'
 import { cn } from "@/lib/utils";
 
@@ -102,6 +103,7 @@ export default function RootLayout({
             pointer-events: none fonctionne correctement sur iOS Safari */}
         <div className="grain-overlay" aria-hidden="true" />
         {children}
+        <ScrollReveal />
         <CookieBanner />
         <AnalyticsProvider />
       </body>

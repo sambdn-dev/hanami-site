@@ -3,59 +3,54 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowDown, ArrowUpRight } from 'lucide-react'
+import GrassField from '@/components/shared/GrassField'
 import { track } from '@/lib/analytics'
-import { PRICING_DISPLAY } from '@/lib/chantier/pricing'
 import styles from './HomeEditorial.module.css'
 
 export default function Hero() {
   return (
     <section className={styles.hero} aria-labelledby="home-title">
+      <div className={styles.heroAura} aria-hidden="true" />
       <div className={styles.container}>
         <div className={styles.heroGrid}>
           <div className={styles.heroCopy}>
-            <p className={styles.eyebrow}>Hanami · L’expertise au naturel</p>
+            <p className={styles.heroEyebrow}><span className={styles.heroEyebrowLine} /> Hanami · L’expert de votre gazon</p>
             <h1 id="home-title" className={styles.heroTitle}>
-              Des pelouses<br /> plus belles,<br /> <em>durablement.</em>
+              Tout change<br />au bon<br /><em>moment.</em>
             </h1>
-            <div className={styles.shortRule} aria-hidden="true" />
             <p className={styles.heroDescription}>
-              Votre jardin est unique. Son accompagnement aussi.
-              Un expert vous guide avec les bons gestes, les bons produits, au bon moment.
+              Un diagnostic pour comprendre. Un protocole daté pour agir. Un expert à vos côtés pour faire de votre pelouse le cœur du jardin.
             </p>
             <div className={styles.heroActions}>
-              <Link href="/coaching" className={styles.button}
+              <Link href="/coaching" className={styles.heroButton}
                 onClick={() => track('cta_click', { location: 'hero_primary', page: '/' })}>
-                Découvrir le coaching <ArrowUpRight size={18} aria-hidden="true" />
+                Découvrir le coaching <ArrowUpRight size={19} aria-hidden="true" />
               </Link>
-              <Link href="/mon-chantier" className={styles.textLink}
-                onClick={() => track('cta_click', { location: 'hero_secondary', page: '/' })}>
-                Estimer mon chantier <ArrowUpRight size={16} aria-hidden="true" />
-              </Link>
+              <a href="#resultats" className={styles.heroTextLink}>Voir les résultats <ArrowDown size={17} aria-hidden="true" /></a>
             </div>
-            <p className={styles.reassurance}>
-              1ᵉʳ mois offert · Puis {PRICING_DISPLAY.coachingMois} €/mois · Sans engagement
-            </p>
+            <div className={styles.heroMicroProof}>
+              <span className={styles.heroMicroMark}>H.</span>
+              <span>Votre pelouse est unique.<br />Votre plan doit l’être aussi.</span>
+            </div>
           </div>
           <figure className={styles.heroFigure}>
             <div className={styles.heroPhoto}>
-              <Image src="/images/apres-susan.jpg"
-                alt="La pelouse de Susan au Vésinet après rénovation Hanami"
-                fill preload sizes="(max-width: 767px) calc(100vw - 40px), (max-width: 1279px) 48vw, 610px"
-                className={styles.coverPhoto} />
-              <span className={styles.photoLabel}>Un vrai jardin accompagné par Hanami</span>
-              <span className={styles.photoBlades} aria-hidden="true" />
+              <Image src="/images/apres-susan.jpg" alt="Pelouse rénovée de Susan D. au Vésinet, entourée d’arbres" fill preload sizes="(max-width: 767px) 100vw, 50vw" className={styles.coverPhoto} />
+              <span className={styles.heroPhotoShade} aria-hidden="true" />
+              <span className={styles.heroPhotoTop}>01 / Une histoire de jardin</span>
+              <figcaption className={styles.heroPhotoCaption}>
+                <span>Le jardin de Susan D.<small>Le Vésinet · Rénovation réelle</small></span>
+                <strong>600 <small>m²</small></strong>
+              </figcaption>
             </div>
-            <figcaption className={styles.heroCaption}>
-              <span>Le Vésinet <span aria-hidden="true">—</span> jardin de Susan</span>
-              <span className={styles.mono}>600 m²</span>
-            </figcaption>
           </figure>
         </div>
-        <div className={styles.heroFoot}>
-          <p>Nature <span>·</span> Expertise <span>·</span> Résultats durables</p>
-          <a href="#accompagnement" className={styles.textLink}>L’approche Hanami <ArrowDown size={16} aria-hidden="true" /></a>
+        <div className={styles.heroBottom}>
+          <span>Diagnostic · Décision · Résultat</span>
+          <a href="#accompagnement">Explorer l’approche <ArrowDown size={16} aria-hidden="true" /></a>
         </div>
       </div>
+      <GrassField tone="dark" className={styles.heroGrass} />
     </section>
   )
 }

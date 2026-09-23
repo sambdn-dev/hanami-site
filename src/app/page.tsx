@@ -7,7 +7,7 @@ import WhatsAppButton from '@/components/shared/WhatsAppButton'
 import SeasonalBanner from '@/components/shared/SeasonalBanner'
 import ContactForm from '@/components/shared/ContactForm'
 import Hero from '@/components/home/Hero'
-import { HomeServices, HomeCaseStudies, HomeProcess, HomeTestimonials, HomeJournal } from '@/components/home/HomeEditorial'
+import { HomeProof, HomeServices, HomeCaseStudies, HomeProcess, HomeClientPreview, HomeTestimonials, HomeJournal } from '@/components/home/HomeEditorial'
 import FAQ from '@/components/home/FAQ'
 import MobileStickyCTA from '@/components/home/MobileStickyCTA'
 import styles from '@/components/home/HomeEditorial.module.css'
@@ -32,12 +32,14 @@ export default function HomePage() {
       ))}
       <a href="#contenu" className={styles.skipLink}>Aller au contenu</a>
       <SeasonalBanner />
-      <Navbar variant="light" />
+      <Navbar variant="dark" />
       <main id="contenu" tabIndex={-1}>
         <Hero />
+        <HomeProof />
         <HomeServices />
         <HomeCaseStudies />
         <HomeProcess />
+        <HomeClientPreview />
         <HomeTestimonials />
         <HomeJournal />
         <div className={styles.faqWrap}><FAQ /></div>

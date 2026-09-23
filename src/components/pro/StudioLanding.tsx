@@ -1,0 +1,54 @@
+import Image from 'next/image'
+import Link from 'next/link'
+import { ArrowDown, ArrowUpRight, Camera, Check, Cuboid, MessageSquareText, Sparkles } from 'lucide-react'
+import ProProductNav from './ProProductNav'
+import styles from './ProEditorial.module.css'
+
+const stages = [
+  { number: '01', icon: Camera, title: 'Vos photos', text: 'Le paysagiste importe les vues du jardin existant. La réalité du lieu devient le point de départ.' },
+  { number: '02', icon: MessageSquareText, title: 'Vos consignes', text: 'Ambiance, usages, matériaux, plantations : quelques instructions décrivent le projet souhaité.' },
+  { number: '03', icon: Sparkles, title: 'Une image à valider', text: 'Une proposition photoréaliste aide le client à se projeter avant d’engager la modélisation.' },
+  { number: '04', icon: Cuboid, title: 'Puis la 3D', text: 'Une fois la direction validée, le projet peut passer au rendu en volume et aux détails.' },
+] as const
+
+export default function StudioLanding() {
+  return (
+    <>
+      <section className={styles.studioHero} aria-labelledby="studio-title">
+        <div className={styles.container}>
+          <ProProductNav active="studio" />
+          <div className={styles.studioHeroGrid}>
+            <div className={styles.studioHeroCopy}>
+              <p className={styles.kicker}><span /> HANAMI STUDIO · PRO / VISION CRÉATIVE</p>
+              <h1 id="studio-title">Imaginez le jardin.<br /><em>Montrez-le.</em></h1>
+              <p>Une idée de chantier devient d’abord une image photoréaliste que votre client peut comprendre et valider. La 3D vient ensuite, quand la direction est claire.</p>
+              <div className={styles.proHeroActions}><a href="#parcours" className={styles.darkButton}>Voir le parcours <ArrowDown size={18} aria-hidden="true" /></a><a href="#contact" className={styles.studioTextLink}>Parler de Studio <ArrowUpRight size={18} aria-hidden="true" /></a></div>
+              <span className={styles.studioDevelopmentNote}>Vision de produit · Visuels conceptuels, non générés en direct</span>
+            </div>
+            <figure className={styles.studioHeroImage}><Image src="/brand/2026/ambiance-jardin-fictif.png" alt="Exemple conceptuel de jardin photoréaliste pour présenter la direction de Hanami Studio Pro" fill preload sizes="(max-width: 767px) 100vw, 50vw" /><div className={styles.studioImageBadge}><Sparkles size={17} aria-hidden="true" /><span>PROPOSITION VISUELLE</span></div><figcaption>Jardin fictif · Projection illustrative</figcaption></figure>
+          </div>
+          <div className={styles.studioHeroBottom}><span>PHOTO RÉELLE</span><span>→</span><span>IMAGE PHOTORÉALISTE</span><span>→</span><span>VALIDATION</span><span>→</span><span>3D</span></div>
+        </div>
+      </section>
+
+      <section id="parcours" className={styles.studioFlow} aria-labelledby="studio-flow-title">
+        <div className={styles.container}>
+          <div className={styles.sectionHeading} data-reveal><div><p className={styles.sectionKicker}>01 / UN FLUX PLUS SIMPLE</p><h2 id="studio-flow-title">D’abord l’idée.<br /><em>Ensuite le volume.</em></h2></div><p>Un parcours pensé pour vendre un projet sans perdre du temps à modéliser une piste que le client n’a pas encore choisie.</p></div>
+          <div className={styles.studioStages}>{stages.map(({ number, icon: Icon, title, text }, index) => <article key={number} data-reveal data-reveal-delay={String(index % 3 + 1)}><div><span>{number}</span><Icon size={26} strokeWidth={1.4} aria-hidden="true" /></div><h3>{title}</h3><p>{text}</p></article>)}</div>
+        </div>
+      </section>
+
+      <section className={styles.studioExample} aria-labelledby="studio-example-title">
+        <div className={styles.container}>
+          <div className={styles.studioExampleIntro} data-reveal><p className={styles.sectionKicker}>02 / APERÇU DE PARCOURS</p><h2 id="studio-example-title">Une vision compréhensible<br /><em>en quelques images.</em></h2><p>Ces visuels illustrent l’expérience envisagée pour Studio. Ils ne représentent pas une génération effectuée par l’outil.</p></div>
+          <div className={styles.studioExampleGrid}>
+            <figure className={styles.studioExamplePhoto} data-reveal><div><Image src="/brand/2026/ambiance-jardin-fictif.png" alt="Jardin fictif photoréaliste illustrant une proposition paysagère" fill sizes="(max-width: 767px) 100vw, 62vw" /></div><figcaption><span>01 / PROPOSITION PHOTORÉALISTE</span><strong>Visualiser l’intention</strong></figcaption></figure>
+            <div className={styles.studioExampleSide} data-reveal data-reveal-delay="1"><div className={styles.studioPrompt}><small>EXEMPLE DE CONSIGNES</small><p>« Préserver la grande pelouse, créer un cheminement naturel, végétaliser les bordures et conserver une ambiance douce. »</p><span><Check size={16} aria-hidden="true" /> Direction validée par le client</span></div><figure><div><Image src="/brand/2026/studio-jardin-fictif-3d.png" alt="Vue 3D conceptuelle d’un jardin fictif, indépendante de la photo illustrée" fill sizes="(max-width: 767px) 100vw, 35vw" /></div><figcaption>02 / EXEMPLE DE VUE 3D · PROJET FICTIF DISTINCT</figcaption></figure></div>
+          </div>
+        </div>
+      </section>
+
+      <section className={styles.studioEnd} aria-labelledby="studio-end-title"><div className={styles.container}><div data-reveal><p className={styles.sectionKicker}>HANAMI STUDIO · PRO</p><h2 id="studio-end-title">Le projet se vend mieux quand il se voit.</h2></div><div data-reveal data-reveal-delay="1"><p>Studio est imaginé comme un module créatif distinct, relié à Hanami Pro pour garder les photos, les échanges et l’historique du client au même endroit.</p><Link href="/pro" className={styles.lightLink}>Découvrir Hanami Pro <ArrowUpRight size={18} aria-hidden="true" /></Link></div></div></section>
+    </>
+  )
+}

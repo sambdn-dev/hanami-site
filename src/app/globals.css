@@ -157,6 +157,47 @@ body {
   background-size: 128px 128px;
 }
 
+html.motion-ready [data-reveal] {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity .8s cubic-bezier(.22,1,.36,1), transform .8s cubic-bezier(.22,1,.36,1);
+}
+html.motion-ready [data-reveal].is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+[data-reveal-delay="1"] { transition-delay: .1s !important; }
+[data-reveal-delay="2"] { transition-delay: .2s !important; }
+[data-reveal-delay="3"] { transition-delay: .3s !important; }
+
+.grass-field {
+  --grass-0: #4d7950;
+  --grass-1: #789b67;
+  --grass-2: #9ebc7a;
+  --grass-3: #2b6044;
+  display: block;
+  pointer-events: none;
+}
+.grass-field--dark {
+  --grass-0: #a7c29a;
+  --grass-1: #d3dda7;
+  --grass-2: #88ad75;
+  --grass-3: #699962;
+}
+.grass-field__blade {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: grass-sway 4s ease-in-out infinite alternate;
+}
+@keyframes grass-sway {
+  from { transform: rotate(-5deg) skewX(-1deg); }
+  to { transform: rotate(7deg) skewX(1deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html.motion-ready [data-reveal] { opacity: 1; transform: none; transition: none; }
+  .grass-field__blade { animation: none; }
+}
+
 /* ─── Gradient separator hero/sections ──────────────────────── */
 .gradient-separator {
   height: 2px;

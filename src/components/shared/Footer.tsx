@@ -1,106 +1,24 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import { ArrowUpRight } from 'lucide-react'
 import NewsletterCapture from '@/components/shared/NewsletterCapture'
+import styles from './Footer.module.css'
 
 export default function Footer() {
   return (
-    <footer className="bg-brand-forest text-brand-cream/80">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
-
-          {/* Col 1 — Brand */}
-          <div>
-            <Image src="/brand/2026/logo-principal-blanc.png" alt="Hanami Expert Gazon" width={170} height={61} className="mb-3 h-auto w-[170px]" />
-            <p className="text-sm text-brand-cream/80 leading-relaxed">
-              Coaching agronomique &amp; produits professionnels pour votre gazon.
-            </p>
-          </div>
-
-          {/* Col 2 — Contact */}
-          <div>
-            <p className="text-xs font-[family-name:var(--font-dm-sans)] uppercase tracking-[0.2em] text-brand-sage mb-4">
-              Contact
-            </p>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <a
-                  href="https://wa.me/33667277614"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-brand-cream hover:text-brand-sage transition-colors"
-                >
-                  WhatsApp : +33 6 67 27 76 14
-                </a>
-              </li>
-              <li className="text-brand-cream/75 text-xs mt-3">
-                Île-de-France (interventions)
-                <br />
-                France, Belgique, Suisse et pays francophones (coaching)
-              </li>
-            </ul>
-          </div>
-
-          {/* Col 3 — Légal */}
-          <div>
-            <p className="text-xs font-[family-name:var(--font-dm-sans)] uppercase tracking-[0.2em] text-brand-sage mb-4">
-              Légal
-            </p>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link
-                  href="/mentions-legales"
-                  className="text-brand-cream hover:text-brand-sage transition-colors"
-                >
-                  Mentions légales
-                </Link>
-              </li>
-              <li className="text-brand-cream/70 text-xs mt-3">
-                TROTT SASU — SIREN 891 868 143
-              </li>
-            </ul>
-          </div>
-
-          {/* Col 4 — Newsletter */}
-          <div>
-            <p className="text-xs font-[family-name:var(--font-dm-sans)] uppercase tracking-[0.2em] text-brand-sage mb-4">
-              Restez informé
-            </p>
-            <p className="text-sm text-brand-cream/80 leading-relaxed mb-4">
-              Conseils saisonniers et protocoles agronomiques dans votre boîte mail.
-            </p>
-            <NewsletterCapture variant="footer" />
-          </div>
-
+    <footer className={styles.footer}>
+      <div className={styles.container}>
+        <div className={styles.footerLead}>
+          <div><p>HANAMI / UN NOUVEAU REGARD SUR LE GAZON</p><h2>Les bons projets commencent<br /><em>par une conversation.</em></h2></div>
+          <a href="https://wa.me/33667277614" target="_blank" rel="noopener noreferrer">Parler à Sami <ArrowUpRight size={19} aria-hidden="true" /></a>
         </div>
-
-        <div className="mt-12 pt-8 pb-12 lg:pb-16 border-t border-brand-cream/20 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-brand-cream/75">
-            © {new Date().getFullYear()} hanami. Tous droits réservés.
-          </p>
-          <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 text-xs text-brand-cream/80 sm:justify-end">
-            <Link href="/" className="hover:text-brand-sage transition-colors">
-              Particuliers
-            </Link>
-              <Link href="/pro" className="hover:text-brand-cream transition-colors">
-                Professionnels
-              </Link>
-              <Link href="/pro/logiciel" className="hover:text-brand-cream transition-colors">
-                Logiciel Hanami Pro
-              </Link>
-            <Link href="/coaching" className="hover:text-brand-sage transition-colors">
-              Coaching
-            </Link>
-            <Link href="/calculatrice" className="hover:text-brand-sage transition-colors">
-              Dosage Intelligent
-            </Link>
-            <Link href="/blog" className="hover:text-brand-sage transition-colors">
-              Journal
-            </Link>
-            <Link href="/pourquoi-hanami" className="hover:text-brand-sage transition-colors">
-              Pourquoi Hanami ?
-            </Link>
-          </div>
+        <div className={styles.footerGrid}>
+          <div className={styles.footerBrand}><Link href="/" aria-label="Hanami — accueil"><Image src="/brand/2026/logo-principal-blanc.png" alt="Hanami Expert Gazon" width={190} height={69} /></Link><p>La décision juste. Le bon moment.<br />Un gazon qui dure.</p><span>Le Vésinet · Île-de-France<br />Coaching partout en France</span></div>
+          <div><h3>PARTICULIERS</h3><Link href="/coaching">Coaching gazon</Link><Link href="/mon-chantier">Estimer mon chantier</Link><Link href="/pourquoi-hanami">Notre approche</Link><Link href="/blog">Le journal</Link></div>
+          <div><h3>PROFESSIONNELS</h3><Link href="/pro">Hanami Pro</Link><Link href="/pro/studio">Hanami Studio · Pro</Link><Link href="/calculatrice">Dosage Intelligent</Link><a href="https://wa.me/33667277614" target="_blank" rel="noopener noreferrer">Assistance gazon</a></div>
+          <div className={styles.footerNewsletter}><h3>LE BON CONSEIL, AU BON MOMENT</h3><p>Un email utile de temps en temps, au rythme du jardin.</p><NewsletterCapture variant="footer" /></div>
         </div>
+        <div className={styles.footerBottom}><span>© {new Date().getFullYear()} Hanami · TROTT SASU · SIREN 891 868 143</span><Link href="/mentions-legales">Mentions légales</Link><span>Fait pour les jardins vivants.</span></div>
       </div>
     </footer>
   )
