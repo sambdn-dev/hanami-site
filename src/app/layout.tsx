@@ -58,14 +58,14 @@ export const metadata: Metadata = {
     description:
       'Diagnostic personnalisé, protocole daté, produits professionnels. Des résultats visibles pour votre gazon.',
     // L'image est générée par src/app/opengraph-image.tsx (PNG 1200×630
-    // à partir du logo brins d'herbe). On la référence explicitement ici
+    // à partir du logo maître raster). On la référence explicitement ici
     // pour documenter la structure — Next.js l'injecte automatiquement.
     images: [
       {
         url: '/opengraph-image',
         width: 1200,
         height: 630,
-        alt: 'Hanami — Coach gazon dans votre poche',
+        alt: 'Hanami — Des pelouses plus belles, durablement.',
       },
     ],
   },

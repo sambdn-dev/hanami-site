@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
     }
 
     // ── 4. Construction de l'email (avec échappement HTML) ────────────────
-    const isPro = data.source === 'pro'
+    const isPro = ['pro', 'hanami-pro-saas', 'hanami-pro-outils-metier'].includes(data.source)
     const safeName    = escapeHtml(data.fullName)
     const safeCompany = escapeHtml(data.companyName)
     const safeEmail   = escapeHtml(data.email)

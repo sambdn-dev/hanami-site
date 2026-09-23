@@ -62,6 +62,8 @@ interface ContactFormProps {
   title?: string
   /** Sous-titre personnalisé (défaut selon la variante). */
   subtitle?: string
+  /** Masque l'upload lorsque la prise de contact ne concerne pas un diagnostic gazon. */
+  photosEnabled?: boolean
 }
 
 // ── Type pour une photo uploadée ────────────────────────────────────────────
@@ -77,6 +79,7 @@ export default function ContactForm({
   source,
   title: titleProp,
   subtitle: subtitleProp,
+  photosEnabled = true,
 }: ContactFormProps) {
   const fadeRef = useFadeIn()
   const isPro = variant === 'pro'
@@ -104,7 +107,10 @@ export default function ContactForm({
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const { register, handleSubmit, reset, control, formState: { errors } } = useForm<FormData>({
-    defaultValues: { source: formSource } as FormData,
+    defaultValues: {
+      source: formSource,
+      ...(formSource === 'hanami-pro-saas' ? { requestType: 'hanami-pro' } : {}),
+    } as FormData,
   })
 
   // ── Gestion des photos ──────────────────────────────────────────────────
@@ -171,7 +177,7 @@ export default function ContactForm({
     setSucceeded(false)
     setSubmitting(true)
 
-    const d = data as Record<string, string>
+    const d = { ...data, source: formSource } as Record<string, string>
     setLastFormData(d)
 
     const fd = new window.FormData()
@@ -217,7 +223,7 @@ export default function ContactForm({
       if (d.postalCode) lines.push(`Code postal : ${d.postalCode}`)
       if (d.message)    lines.push(`Message : ${d.message}`)
     }
-    lines.push("J'envoie mes photos dans ce chat.")
+    if (photosEnabled) lines.push("Je peux envoyer mes photos dans ce chat.")
     return `https://wa.me/33667277614?text=${encodeURIComponent(lines.join('\n'))}`
   }
 
@@ -225,7 +231,7 @@ export default function ContactForm({
   const subtitle = subtitleProp ?? (isPro ? 'Réponse sous 24h. Premier échange offert.' : 'Réponse sous 24h. 1er mois d\'essai offert.')
 
   return (
-    <section id="contact" className="py-20 lg:py-28 bg-stone-50">
+    <section id="contact" className="scroll-mt-28 py-20 lg:py-28 bg-stone-50">
       <div className="max-w-6xl mx-auto px-6 lg:px-8">
         <div ref={fadeRef} className="fade-in">
 
@@ -248,7 +254,8 @@ export default function ContactForm({
               <p className="font-semibold text-red-800 mb-1">L&apos;envoi par email a échoué.</p>
               <p className="text-sm text-red-700 mb-3">
                 Pas d&apos;inquiétude : cliquez sur le bouton ci-dessous pour nous joindre directement sur WhatsApp
-                avec votre message pré-rempli. Vous pourrez y envoyer vos photos dans la foulée.
+                avec votre message pré-rempli.
+                {photosEnabled ? ' Vous pourrez y envoyer vos photos dans la foulée.' : ''}
               </p>
               <a
                 href={buildWhatsAppUrl(lastFormData)}
@@ -266,7 +273,7 @@ export default function ContactForm({
 
           {/* ── Layout 2 colonnes : formulaire + zone upload ─────────── */}
           <form onSubmit={handleSubmit(onSubmit)} noValidate autoComplete="on">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14">
+            <div className={`grid grid-cols-1 gap-10 lg:gap-14 ${photosEnabled ? 'lg:grid-cols-2' : 'max-w-2xl'}`}>
 
               {/* ── Colonne gauche : champs texte ────────────────────── */}
               <div className="flex flex-col gap-5">
@@ -373,6 +380,8 @@ export default function ContactForm({
                       <option value="dosage">Dosage et mesure</option>
                       <option value="suivi">Suivi toutes saisons</option>
                       <option value="partenariat">Partenariat</option>
+                      <option value="studio">Hanami Studio — premiers échanges</option>
+                      <option value="hanami-pro">Hanami Pro — logiciel métier</option>
                       <option value="autre">Autre</option>
                     </select>
                   </FormField>
@@ -428,7 +437,7 @@ export default function ContactForm({
               </div>
 
               {/* ── Colonne droite : zone upload photos ──────────────── */}
-              <div className="flex flex-col gap-5">
+              {photosEnabled && <div className="flex flex-col gap-5">
 
                 {/* Titre de la colonne */}
                 <div>
@@ -526,7 +535,7 @@ export default function ContactForm({
                     Vos photos sont utilisées uniquement pour établir votre diagnostic. Elles ne sont jamais partagées ni publiées sans votre accord.
                   </p>
                 </div>
-              </div>
+              </div>}
 
               {/* Bouton submit — 3e enfant du grid : après champs et photos sur mobile,
                   positionné en col 1 row 2 sur desktop grâce à l'auto-placement */}

@@ -43,7 +43,7 @@ export default function NewsletterCapture({ variant = 'section' }: NewsletterCap
 
   if (submitted) {
     return (
-      <div className={variant === 'footer' ? 'text-stone-300' : 'text-stone-700'}>
+      <div className={variant === 'footer' ? 'text-brand-cream' : 'text-stone-700'}>
         <p className="text-sm font-medium">
           ✓ Inscription confirmée !
         </p>
@@ -68,7 +68,7 @@ export default function NewsletterCapture({ variant = 'section' }: NewsletterCap
             'flex-1 min-w-0 text-sm px-3 py-2 rounded-lg outline-none',
             'transition-colors',
             isFooter
-              ? 'bg-stone-700 text-white placeholder:text-stone-500 border border-stone-600 focus:border-[#4a8c3f]'
+              ? 'bg-brand-cream text-brand-forest placeholder:text-brand-forest/60 border border-brand-cream focus:border-brand-sage'
               : 'bg-white text-stone-800 placeholder:text-stone-400 border border-stone-200 focus:border-[#4a8c3f]',
           ].join(' ')}
           aria-label="Votre adresse email"
@@ -76,7 +76,7 @@ export default function NewsletterCapture({ variant = 'section' }: NewsletterCap
         />
         <button
           type="submit"
-          className="flex-shrink-0 text-sm font-medium px-4 py-2 rounded-lg bg-[#4a8c3f] hover:bg-[#3a7030] text-white transition-colors cursor-pointer"
+          className={`flex-shrink-0 text-sm font-medium px-4 py-2 rounded-lg transition-colors cursor-pointer ${isFooter ? 'bg-brand-sage hover:bg-brand-cream text-brand-forest' : 'bg-[#4a8c3f] hover:bg-[#3a7030] text-white'}`}
         >
           Je m&apos;inscris
         </button>

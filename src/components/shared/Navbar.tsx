@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { ChevronRight, X, Menu } from 'lucide-react'
@@ -23,6 +24,7 @@ const NAV_LINKS = [
 
 export default function Navbar({ variant = 'light' }: NavbarProps) {
   const pathname = usePathname()
+  const isProRoute = pathname === '/pro' || pathname.startsWith('/pro/') || pathname === '/studio'
   const [scrolled, setScrolled]     = useState(false)
   const [bannerGone, setBannerGone] = useState(false)
   const [menuOpen, setMenuOpen]     = useState(false)
@@ -49,9 +51,6 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
     return () => { document.body.style.overflow = '' }
   }, [menuOpen])
 
-  // Fermer le menu lors d'un changement de route
-  useEffect(() => { setMenuOpen(false) }, [pathname])
-
   // Accessibilité du drawer : Échap ferme, focus déplacé sur "Fermer" à
   // l'ouverture, puis rendu au bouton hamburger à la fermeture.
   useEffect(() => {
@@ -75,42 +74,14 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
   const navBg = scrolled
     ? isPro
       ? 'bg-hanami-900/95 backdrop-blur-md shadow-lg'
-      : 'bg-white/95 backdrop-blur-md shadow-sm border-b border-stone-100'
+      : 'bg-brand-cream/95 backdrop-blur-md shadow-sm border-b border-brand-forest/10'
     : isPro
       ? 'bg-transparent'
-      : 'bg-white/90 backdrop-blur-sm border-b border-stone-100/80'
+      : 'bg-brand-cream/90 backdrop-blur-sm border-b border-brand-forest/10'
 
   const textColor = isPro ? 'text-white' : 'text-stone-700'
-  const logoColor = isPro ? 'text-white' : 'text-hanami-900'
-
-  function scrollToContact(e: React.MouseEvent) {
-    e.preventDefault()
-    setMenuOpen(false)
-    const target = document.getElementById('contact')
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth' })
-    } else {
-      window.location.href = '/#contact'
-    }
-  }
 
   const navTop = bannerGone ? 0 : BANNER_H
-
-  // ── Logo SVG réutilisé dans navbar + drawer ──────────────────────────────
-  function GrassLogo({ pro }: { pro: boolean }) {
-    return (
-      <svg viewBox="0 0 32 32" className="w-7 h-7 shrink-0" aria-hidden="true">
-        <path d="M9 28 C8 21 7 13 9.5 6 C11 13 11.5 21 11.5 28 Z"
-          fill={pro ? 'rgba(255,255,255,0.6)' : '#4a8c3f'} />
-        <path d="M15 28 C14 19 14.5 10 16 2 C17.5 10 18 19 17 28 Z"
-          fill={pro ? 'white' : '#2d5a27'} />
-        <path d="M20.5 28 C20 21 21 14 22.5 8 C24 14 24.5 21 23.5 28 Z"
-          fill={pro ? 'rgba(255,255,255,0.6)' : '#4a8c3f'} />
-        <rect x="5" y="28.5" width="22" height="1.5" rx="0.75"
-          fill={pro ? 'rgba(255,255,255,0.2)' : '#1a2e1a'} />
-      </svg>
-    )
-  }
 
   return (
     <>
@@ -123,26 +94,19 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
           <div className="flex items-center justify-between h-16 lg:h-18">
 
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
-              <GrassLogo pro={isPro} />
-              <div className="flex flex-col leading-none gap-0.5">
-                <span className={`font-[family-name:var(--font-fraunces)] text-xl font-semibold tracking-tight ${logoColor}`}>
-                  hanami.
-                </span>
-                <span className={`text-[9px] font-semibold tracking-[0.18em] uppercase ${
-                  isPro ? 'text-white/50' : 'text-hanami-500'
-                }`}>
-                  Expert Gazon
-                </span>
-              </div>
+            <Link href="/" className="flex items-center hover:opacity-80 transition-opacity" aria-label="Hanami — accueil">
+              <Image
+                src={isPro ? '/brand/2026/logo-principal-blanc.png' : '/brand/2026/logo-principal-vert.png'}
+                alt="Hanami Expert Gazon"
+                width={142}
+                height={51}
+                priority
+                className="h-auto w-[142px]"
+              />
             </Link>
 
-            {/* Desktop nav — visible uniquement à partir de lg (1024px).
-                En dessous, on bascule sur le drawer hamburger pour éviter
-                les wraps multi-lignes inesthétiques (constatés à 768-1023px
-                avec 6 items qui ne tenaient plus sur une seule ligne).
-                Sur lg+ : whitespace-nowrap garantit une seule ligne. */}
-            <div className={`hidden lg:flex items-center gap-5 xl:gap-7 ${textColor}`}>
+            {/* Le menu complet nécessite 1280 px avec ses six liens et son CTA. */}
+            <div className={`hidden xl:flex items-center gap-7 ${textColor}`}>
               {NAV_LINKS.map(({ href, label }) => {
                 const active = pathname === href
                 return (
@@ -160,20 +124,19 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
                   </Link>
                 )
               })}
-              {/* CTA principal — coaching pour les particuliers (offre scalable
-                  nationale), simulation pour la page pro */}
+              {/* CTA adapté au parcours professionnel sans modifier la couleur de la nav. */}
               <Link
-                href={isPro ? '/mon-chantier' : '/coaching'}
-                className="text-sm font-medium px-4 py-2 rounded-lg bg-hanami-700 text-white hover:bg-hanami-900 transition-colors cursor-pointer shadow-sm"
+                href={isProRoute ? '/pro/logiciel#contact' : '/coaching'}
+                className="text-sm font-medium px-4 py-2 rounded-lg bg-brand-forest text-brand-cream hover:bg-brand-forest-hover transition-colors cursor-pointer shadow-sm"
               >
-                {isPro ? 'Faire ma simulation' : 'Découvrir le coaching'}
+                {isProRoute ? 'Demander une démo' : 'Découvrir le coaching'}
               </Link>
             </div>
 
             {/* Mobile — bouton hamburger */}
             <button
               ref={hamburgerRef}
-              className="lg:hidden flex items-center justify-center w-9 h-9 rounded-lg transition-colors"
+              className="xl:hidden flex items-center justify-center w-11 h-11 rounded-lg transition-colors"
               onClick={() => setMenuOpen(true)}
               aria-label="Ouvrir le menu"
               aria-expanded={menuOpen}
@@ -189,7 +152,7 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
       {/* ── Drawer mobile plein écran ───────────────────────────────────── */}
       {/* Fond semi-transparent */}
       <div
-        className={`fixed inset-0 z-[90] bg-black/30 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${
+        className={`fixed inset-0 z-[90] bg-black/30 backdrop-blur-sm transition-opacity duration-300 xl:hidden ${
           menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
         onClick={() => setMenuOpen(false)}
@@ -201,7 +164,7 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
           quand il est fermé (il reste dans le DOM, juste hors-champ). */}
       <div
         id="mobile-menu"
-        className={`fixed top-0 right-0 bottom-0 w-[85vw] max-w-sm bg-white z-[100] shadow-2xl flex flex-col transition-transform duration-300 ease-out lg:hidden ${
+        className={`fixed top-0 right-0 bottom-0 w-[85vw] max-w-sm bg-brand-cream z-[100] shadow-2xl flex flex-col transition-transform duration-300 ease-out xl:hidden ${
           menuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         role="dialog"
@@ -212,16 +175,8 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
 
         {/* En-tête du drawer */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-stone-100">
-          <Link href="/" className="flex items-center gap-2.5" onClick={() => setMenuOpen(false)}>
-            <GrassLogo pro={false} />
-            <div className="flex flex-col leading-none gap-0.5">
-              <span className="font-[family-name:var(--font-fraunces)] text-xl font-semibold tracking-tight text-hanami-900">
-                hanami.
-              </span>
-              <span className="text-[9px] font-semibold tracking-[0.18em] uppercase text-hanami-500">
-                Expert Gazon
-              </span>
-            </div>
+          <Link href="/" className="flex items-center" onClick={() => setMenuOpen(false)} aria-label="Hanami — accueil">
+            <Image src="/brand/2026/logo-principal-vert.png" alt="Hanami Expert Gazon" width={142} height={51} className="h-auto w-[142px]" />
           </Link>
           <button
             ref={closeBtnRef}
@@ -242,6 +197,7 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
               <Link
                 key={href}
                 href={href}
+                onClick={() => setMenuOpen(false)}
                 className={`flex items-center justify-between px-6 py-4 border-b border-stone-100 transition-colors ${
                   active
                     ? 'text-hanami-700 bg-hanami-100/40'
@@ -258,11 +214,11 @@ export default function Navbar({ variant = 'light' }: NavbarProps) {
         {/* CTA en bas */}
         <div className="px-6 py-6 border-t border-stone-100 flex flex-col gap-3">
           <Link
-            href={isPro ? '/mon-chantier' : '/coaching'}
+            href={isProRoute ? '/pro/logiciel#contact' : '/coaching'}
             onClick={() => setMenuOpen(false)}
-            className="w-full py-3.5 rounded-xl bg-hanami-700 text-white font-semibold text-sm hover:bg-hanami-900 transition-colors text-center"
+            className="w-full py-3.5 rounded-xl bg-brand-forest text-brand-cream font-semibold text-sm hover:bg-brand-forest-hover transition-colors text-center"
           >
-            {isPro ? 'Faire ma simulation gratuite' : 'Découvrir le coaching — 1ᵉʳ mois offert'}
+            {isProRoute ? 'Demander une démonstration' : 'Découvrir le coaching — 1ᵉʳ mois offert'}
           </Link>
           <a
             href="https://wa.me/33667277614"

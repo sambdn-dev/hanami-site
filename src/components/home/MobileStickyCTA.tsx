@@ -66,9 +66,11 @@ export default function MobileStickyCTA({
       data-visible={visible}
     >
       {/* Réassurance compacte au-dessus du bouton */}
-      <p className="font-[family-name:var(--font-space-mono)] text-xs text-stone-600 uppercase tracking-wider text-center mb-1.5">
-        {reassurance}
-      </p>
+      {reassurance && (
+        <p className="font-[family-name:var(--font-space-mono)] text-xs text-stone-600 uppercase tracking-wider text-center mb-1.5">
+          {reassurance}
+        </p>
+      )}
       <Link
         href={href}
         onClick={() => track('cta_click', { location: 'sticky_mobile', page: window.location.pathname })}

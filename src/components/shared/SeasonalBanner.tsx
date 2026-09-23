@@ -5,13 +5,13 @@ import { useState } from 'react'
 function getSeasonalMessage(): string {
   const month = new Date().getMonth() + 1 // 1-12
   if (month >= 3 && month <= 5) {
-    return 'Les semis de printemps se préparent maintenant — places limitées en France'
+    return 'Au printemps, densifions votre pelouse.'
   } else if (month >= 6 && month <= 8) {
-    return "Canicule : protégez votre gazon avant qu'il ne soit trop tard"
+    return 'En été, adaptons l’arrosage de votre gazon.'
   } else if (month >= 9 && month <= 11) {
-    return "L'automne est LA saison pour rénover votre gazon. Contactez-nous."
+    return 'L’automne, le bon moment pour rénover.'
   } else {
-    return "Préparez le printemps : diagnostic offert jusqu'au 1er mars"
+    return 'En hiver, préparons le printemps.'
   }
 }
 

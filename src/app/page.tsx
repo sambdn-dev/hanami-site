@@ -1,178 +1,55 @@
-/**
- * page.tsx — Page d'accueil Particuliers (route /)
- *
- * C'est la page principale du site Hanami, destinée aux particuliers
- * qui souhaitent améliorer leur gazon.
- *
- * Les 17 sections s'affichent dans l'ordre défini par le cahier des charges :
- * 1.  SeasonalBanner   — Bandeau saisonnier (hors main, au-dessus de la nav)
- * 2.  Navbar           — Navigation fixe
- * 3.  Hero             — Section principale avec titre et CTA
- * 4.  gradient-separator — Barre décorative verte→ambrée
- * 5.  SocialProofBanner — Chiffres clés
- * 6.  Arguments        — 6 cartes "Ce que la jardinerie ne vous dira jamais"
- * 7.  IntermediateCTA  — Appel à l'action intermédiaire
- * 8.  Savings          — Ce que vous économisez (budget, temps, eau)
- * 9.  Services         — 4 services Hanami (fond vert foncé)
- * 10. SeasonalMoments  — Carousel 5 moments clés de l'année
- * 11. IntermediateCTA  — Appel à l'action intermédiaire
- * 12. CaseStudies      — 3 études de cas clients
- * 13. Testimonials     — 3 témoignages
- * 14. IntermediateCTA  — Appel à l'action intermédiaire
- * 15. HowItWorks       — 4 étapes du processus
- * 16. FAQ              — 7 questions fréquentes (accordéon)
- * 17. GuaranteeBlock   — 3 éléments de réassurance
- * 18. ContactForm      — Formulaire de contact (ancre #contact)
- * 19. MobileStickyCTA  — Barre fixe mobile (apparaît après 400px de scroll)
- */
-
 import type { Metadata } from 'next'
-
-// Données structurées SEO (JSON-LD) — SEO local + rich snippets FAQ
 import { localBusinessSchema, serviceSchemas, faqPageSchema } from '@/lib/structured-data'
 import { FAQS } from '@/lib/faq-data'
-// Tarif coaching — source unique (jamais de prix hardcodé dans la copy)
-import { PRICING_DISPLAY } from '@/lib/chantier/pricing'
-
-// Composants partagés (utilisés aussi sur la page Pro)
 import Navbar from '@/components/shared/Navbar'
 import Footer from '@/components/shared/Footer'
 import WhatsAppButton from '@/components/shared/WhatsAppButton'
 import SeasonalBanner from '@/components/shared/SeasonalBanner'
-import IntermediateCTA from '@/components/shared/IntermediateCTA'
-import GuaranteeBlock from '@/components/shared/GuaranteeBlock'
 import ContactForm from '@/components/shared/ContactForm'
-
-// Composants spécifiques à la page Particuliers
 import Hero from '@/components/home/Hero'
-import SocialProofBanner from '@/components/home/SocialProofBanner'
-import Arguments from '@/components/home/Arguments'
-import Savings from '@/components/home/Savings'
-import Services from '@/components/home/Services'
-import SeasonalMoments from '@/components/home/SeasonalMoments'
-import CaseStudies from '@/components/home/CaseStudies'
-import Testimonials from '@/components/home/Testimonials'
-import HowItWorks from '@/components/home/HowItWorks'
+import { HomeServices, HomeCaseStudies, HomeProcess, HomeTestimonials, HomeJournal } from '@/components/home/HomeEditorial'
 import FAQ from '@/components/home/FAQ'
 import MobileStickyCTA from '@/components/home/MobileStickyCTA'
-import NewsletterSection from '@/components/home/NewsletterSection'
-import LatestArticles from '@/components/home/LatestArticles'
+import styles from '@/components/home/HomeEditorial.module.css'
 
-// Métadonnées SEO spécifiques à cette page
-// (sans la marque : le template '%s | Hanami' du layout l'ajoute déjà)
 export const metadata: Metadata = {
-  title: 'Coaching agronomique pour votre gazon',
-  description:
-    'Votre gazon mérite un expert, pas une étiquette en jardinerie. Diagnostic personnalisé, protocole daté, produits professionnels. Partout en France.',
+  title: 'Coaching gazon — Des pelouses plus belles, durablement',
+  description: 'Un expert pour votre pelouse : diagnostic personnalisé, protocole daté et suivi au fil des saisons. Coaching partout en France, rénovation en Île-de-France.',
   openGraph: {
-    title: 'Hanami — Coaching agronomique pour votre gazon',
-    description:
-      'Diagnostic personnalisé, protocole daté, produits professionnels. Des résultats visibles pour votre gazon.',
+    title: 'Hanami — Des pelouses plus belles, durablement.',
+    description: 'Votre pelouse, notre expertise. Coaching personnalisé, rénovation et produits professionnels adaptés à votre jardin.',
   },
 }
 
 export default function HomePage() {
-  // JSON-LD : LocalBusiness (SEO local Le Vésinet/IDF), les 3 Services, FAQPage
   const jsonLdBlocks = [localBusinessSchema(), ...serviceSchemas(), faqPageSchema(FAQS)]
 
   return (
-    <>
+    <div className={styles.page}>
       {jsonLdBlocks.map((block, i) => (
-        <script
-          key={i}
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(block) }}
-        />
+        <script key={i} type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(block) }} />
       ))}
-
-      {/* Bandeau saisonnier — au-dessus de tout, fermable */}
+      <a href="#contenu" className={styles.skipLink}>Aller au contenu</a>
       <SeasonalBanner />
-
-      {/* Navigation fixe — variante claire pour la page Particuliers */}
       <Navbar variant="light" />
-
-      {/* Contenu principal */}
-      <main className="flex-1">
-
-        {/* 1. Hero — headline + CTA + photo décalée */}
+      <main id="contenu" tabIndex={-1}>
         <Hero />
-
-        {/* 2. Bandeau preuve sociale — chiffres clés */}
-        <SocialProofBanner />
-
-        {/* 3. Arguments — "Ce que la jardinerie ne vous dira jamais" */}
-        <Arguments />
-
-        {/* CTA intermédiaire 1 */}
-        {/* CTA intermédiaires orientés coaching — l'offre primaire du site */}
-        <IntermediateCTA
-          message="Prêt à changer de méthode ? Un expert vous guide toute l'année."
-          ctaLabel="Découvrir le coaching"
-          href="/coaching"
-          trackingId="intermediate_1"
-        />
-
-        {/* 4. Ce que vous économisez */}
-        <Savings />
-
-        {/* 5. Services Hanami — fond vert foncé */}
-        <Services />
-
-        {/* 6. Carousel saisonnier — 5 moments clés */}
-        <SeasonalMoments />
-
-        {/* CTA intermédiaire 2 */}
-        <IntermediateCTA
-          message={`Vous aussi, passez à la méthode pro — dès ${PRICING_DISPLAY.coachingMois} €/mois.`}
-          ctaLabel="Découvrir le coaching"
-          href="/coaching"
-          trackingId="intermediate_2"
-        />
-
-        {/* 7. Études de cas — Susan, Véronique, Noël */}
-        <CaseStudies />
-
-        {/* 8. Témoignages — Luc, Joséphine, Guy */}
-        <Testimonials />
-
-        {/* CTA intermédiaire 3 */}
-        <IntermediateCTA
-          message="C'est simple. Commencez maintenant."
-          ctaLabel="Découvrir le coaching"
-          href="/coaching"
-          trackingId="intermediate_3"
-        />
-
-        {/* 9. Comment ça marche — 4 étapes */}
-        <HowItWorks />
-
-        {/* 10. Articles récents — 3 derniers billets du Journal */}
-        <LatestArticles />
-
-        {/* 11. FAQ — 7 questions fréquentes */}
-        <FAQ />
-
-        {/* 11. Bloc de réassurance — juste avant le formulaire */}
-        <GuaranteeBlock />
-
-        {/* 12. Formulaire de contact — ancre #contact (fin de la séquence
-            de conversion : la newsletter ne s'intercale plus avant) */}
-        <ContactForm variant="particulier" />
-
-        {/* 13. Section newsletter — capture de sortie pour les visiteurs
-            pas encore prêts à convertir */}
-        <NewsletterSection />
-
+        <HomeServices />
+        <HomeCaseStudies />
+        <HomeProcess />
+        <HomeTestimonials />
+        <HomeJournal />
+        <div className={styles.faqWrap}><FAQ /></div>
+        <div className={styles.contact}>
+          <span className={styles.contactBlades} aria-hidden="true" />
+          <ContactForm variant="particulier" title="Tout commence par votre jardin."
+            subtitle="Quelques mots, une surface, vos photos si vous en avez. Parlons de ce dont votre pelouse a besoin. Réponse sous 24 h." />
+        </div>
       </main>
-
-      {/* Footer partagé */}
       <Footer />
-
-      {/* Bouton WhatsApp flottant — toujours visible */}
       <WhatsAppButton />
-
-      {/* Barre CTA fixe mobile — apparaît après 400px de scroll */}
-      <MobileStickyCTA />
-    </>
+      <MobileStickyCTA label="Découvrir le coaching" reassurance="" />
+    </div>
   )
 }

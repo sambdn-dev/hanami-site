@@ -1,25 +1,24 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import NewsletterCapture from '@/components/shared/NewsletterCapture'
 
 export default function Footer() {
   return (
-    <footer className="bg-stone-800 text-stone-200">
+    <footer className="bg-brand-forest text-brand-cream/80">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12 lg:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12">
 
           {/* Col 1 — Brand */}
           <div>
-            <p className="font-[family-name:var(--font-fraunces)] text-xl font-semibold text-white mb-3">
-              hanami.
-            </p>
-            <p className="text-sm text-stone-400 leading-relaxed">
+            <Image src="/brand/2026/logo-principal-blanc.png" alt="Hanami Expert Gazon" width={170} height={61} className="mb-3 h-auto w-[170px]" />
+            <p className="text-sm text-brand-cream/80 leading-relaxed">
               Coaching agronomique &amp; produits professionnels pour votre gazon.
             </p>
           </div>
 
           {/* Col 2 — Contact */}
           <div>
-            <p className="text-xs font-[family-name:var(--font-space-mono)] uppercase tracking-widest text-stone-500 mb-4">
+            <p className="text-xs font-[family-name:var(--font-dm-sans)] uppercase tracking-[0.2em] text-brand-sage mb-4">
               Contact
             </p>
             <ul className="space-y-2 text-sm">
@@ -28,12 +27,12 @@ export default function Footer() {
                   href="https://wa.me/33667277614"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-stone-300 hover:text-white transition-colors"
+                  className="text-brand-cream hover:text-brand-sage transition-colors"
                 >
                   WhatsApp : +33 6 67 27 76 14
                 </a>
               </li>
-              <li className="text-stone-400 text-xs mt-3">
+              <li className="text-brand-cream/75 text-xs mt-3">
                 Île-de-France (interventions)
                 <br />
                 France, Belgique, Suisse et pays francophones (coaching)
@@ -43,19 +42,19 @@ export default function Footer() {
 
           {/* Col 3 — Légal */}
           <div>
-            <p className="text-xs font-[family-name:var(--font-space-mono)] uppercase tracking-widest text-stone-500 mb-4">
+            <p className="text-xs font-[family-name:var(--font-dm-sans)] uppercase tracking-[0.2em] text-brand-sage mb-4">
               Légal
             </p>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
                   href="/mentions-legales"
-                  className="text-stone-300 hover:text-white transition-colors"
+                  className="text-brand-cream hover:text-brand-sage transition-colors"
                 >
                   Mentions légales
                 </Link>
               </li>
-              <li className="text-stone-500 text-xs mt-3">
+              <li className="text-brand-cream/70 text-xs mt-3">
                 TROTT SASU — SIREN 891 868 143
               </li>
             </ul>
@@ -63,10 +62,10 @@ export default function Footer() {
 
           {/* Col 4 — Newsletter */}
           <div>
-            <p className="text-xs font-[family-name:var(--font-space-mono)] uppercase tracking-widest text-stone-500 mb-4">
+            <p className="text-xs font-[family-name:var(--font-dm-sans)] uppercase tracking-[0.2em] text-brand-sage mb-4">
               Restez informé
             </p>
-            <p className="text-sm text-stone-400 leading-relaxed mb-4">
+            <p className="text-sm text-brand-cream/80 leading-relaxed mb-4">
               Conseils saisonniers et protocoles agronomiques dans votre boîte mail.
             </p>
             <NewsletterCapture variant="footer" />
@@ -74,27 +73,30 @@ export default function Footer() {
 
         </div>
 
-        <div className="mt-12 pt-8 border-t border-stone-700 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-stone-600">
+        <div className="mt-12 pt-8 pb-12 lg:pb-16 border-t border-brand-cream/20 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-brand-cream/75">
             © {new Date().getFullYear()} hanami. Tous droits réservés.
           </p>
-          <div className="flex gap-6 text-xs text-stone-600">
-            <Link href="/" className="hover:text-stone-400 transition-colors">
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 text-xs text-brand-cream/80 sm:justify-end">
+            <Link href="/" className="hover:text-brand-sage transition-colors">
               Particuliers
             </Link>
-            <Link href="/pro" className="hover:text-stone-400 transition-colors">
-              Professionnels
-            </Link>
-            <Link href="/coaching" className="hover:text-stone-400 transition-colors">
+              <Link href="/pro" className="hover:text-brand-cream transition-colors">
+                Professionnels
+              </Link>
+              <Link href="/pro/logiciel" className="hover:text-brand-cream transition-colors">
+                Logiciel Hanami Pro
+              </Link>
+            <Link href="/coaching" className="hover:text-brand-sage transition-colors">
               Coaching
             </Link>
-            <Link href="/calculatrice" className="hover:text-stone-400 transition-colors">
+            <Link href="/calculatrice" className="hover:text-brand-sage transition-colors">
               Dosage Intelligent
             </Link>
-            <Link href="/blog" className="hover:text-stone-400 transition-colors">
+            <Link href="/blog" className="hover:text-brand-sage transition-colors">
               Journal
             </Link>
-            <Link href="/pourquoi-hanami" className="hover:text-stone-400 transition-colors">
+            <Link href="/pourquoi-hanami" className="hover:text-brand-sage transition-colors">
               Pourquoi Hanami ?
             </Link>
           </div>

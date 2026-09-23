@@ -6,6 +6,13 @@
 
 /* ─── Design tokens ─────────────────────────────────────────── */
 :root {
+  /* Identité Hanami 2026-2027 : références maîtresses pour la refonte du site.
+     Les anciens tokens ci-dessous restent en place le temps de migrer
+     les pages sans casser les parcours existants. */
+  --brand-forest: #0F3D28;
+  --brand-cream: #F8F6EF;
+  --brand-sage: #A7C29A;
+  --brand-forest-hover: #0B3020;
   --hanami-900: #1a2e1a;
   --hanami-700: #2d5a27;
   --hanami-500: #4a8c3f;
@@ -57,6 +64,10 @@
 /* ─── Tailwind v4 theme extension ───────────────────────────── */
 @theme inline {
   /* Colors */
+  --color-brand-forest: var(--brand-forest);
+  --color-brand-cream: var(--brand-cream);
+  --color-brand-sage: var(--brand-sage);
+  --color-brand-forest-hover: var(--brand-forest-hover);
   --color-hanami-900: var(--hanami-900);
   --color-hanami-700: var(--hanami-700);
   --color-hanami-500: var(--hanami-500);
