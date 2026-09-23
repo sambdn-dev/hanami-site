@@ -19,7 +19,7 @@ export default function CaseStudies() {
   const headerRef = useFadeIn()
 
   return (
-    <section className="py-20 lg:py-28 bg-stone-50">
+    <section id="resultats" className="py-20 lg:py-28 bg-stone-50">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
 
         {/* En-tête de section */}

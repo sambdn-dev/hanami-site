@@ -10,7 +10,7 @@ export default function Footer() {
       <div className={styles.container}>
         <div className={styles.footerLead}>
           <div><p>HANAMI / UN NOUVEAU REGARD SUR LE GAZON</p><h2>Les bons projets commencent<br /><em>par une conversation.</em></h2></div>
-          <a href="https://wa.me/33667277614" target="_blank" rel="noopener noreferrer">Parler à Sami <ArrowUpRight size={19} aria-hidden="true" /></a>
+          <a href="https://wa.me/33667277614" target="_blank" rel="noopener noreferrer">Contacter Hanami <ArrowUpRight size={19} aria-hidden="true" /></a>
         </div>
         <div className={styles.footerGrid}>
           <div className={styles.footerBrand}><Link href="/" aria-label="Hanami — accueil"><Image src="/brand/2026/logo-principal-blanc.png" alt="Hanami Expert Gazon" width={190} height={69} /></Link><p>La décision juste. Le bon moment.<br />Un gazon qui dure.</p><span>Le Vésinet · Île-de-France<br />Coaching partout en France</span></div>

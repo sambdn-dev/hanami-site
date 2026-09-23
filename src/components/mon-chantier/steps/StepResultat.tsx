@@ -46,7 +46,7 @@ export default function StepResultat({ state, result, submissionStatus }: Props)
 
   // Lien WhatsApp pré-rempli avec le récap minimal
   const waMessage = encodeURIComponent(
-    `Bonjour Sami, je viens de faire ma simulation Hanami.\n` +
+    `Bonjour Hanami, je viens de faire ma simulation.\n` +
     `Surface : ${state.surface} m²\n` +
     `Code postal : ${state.codePostal}\n` +
     `Je voulais ${submissionStatus === 'error' ? 'vous joindre car le formulaire a eu un souci' : 'vous envoyer quelques photos en plus'}.`
