@@ -1468,46 +1468,68 @@
             <h1 style="font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:27px;color:#1a2e1a;margin:0;letter-spacing:-.015em">Expert à la demande</h1>
             <p style="font-size:13.5px;color:#78716c;margin:6px 0 0;max-width:560px">Vos équipes vous joignent en un geste — photo, urgence et mini-questionnaire pré-rempli. Le dossier réunit les photos et le contexte du chantier.</p>
           </div>
-          <span style="display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:#2d5a27;background:#eef4ec;border:1px solid #cfe4ca;padding:7px 13px;border-radius:20px"><span style="width:7px;height:7px;border-radius:50%;background:#4a8c3f"></span>Parcours de démonstration</span>
+          <span style="display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:#57534e;background:#f4f1ec;border:1px solid #ece8e2;padding:7px 13px;border-radius:20px"><span style="width:7px;height:7px;border-radius:50%;background:#a8a29e"></span>Prototype · enregistré sur cet appareil</span>
         </div>
-        <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
-          <div style="flex:1.5;min-width:320px;background:#fff;border:1px solid #eeeae5;border-radius:14px;overflow:hidden">
-            <div style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-bottom:1px solid #f4f1ec">
-              <span style="width:38px;height:38px;border-radius:10px;background:#2d5a27;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;flex-shrink:0">ÉN</span>
-              <div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600;color:#1c1917">Équipe Nord demande un avis</div><div style="font-size:12px;color:#a8a29e">Copropriété Les Tilleuls · Le Vésinet · il y a 8 min</div></div>
-              <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:#c0473a;background:#fbeeec;padding:4px 10px;border-radius:20px;white-space:nowrap"><span style="width:6px;height:6px;border-radius:50%;background:#c0473a"></span>Urgent</span>
+        <div data-screen-label="Urgence gazon" style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+          <div style="flex:1 1 280px;max-width:380px;min-width:0;background:#fff;border:1px solid #eeeae5;border-radius:14px;overflow:hidden">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px 10px"><h3 style="font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:15px;color:#1a2e1a;margin:0">Demandes du mardi 23 juin</h3><sc-if value="{{ uzHasOpen }}" hint-placeholder-val="{{ true }}"><span style="font-family:'Space Mono',monospace;font-size:11.5px;font-weight:700;color:#c0473a;background:#fbeeec;padding:3px 8px;border-radius:6px">{{ uzOpenCount }} à traiter</span></sc-if></div>
+            <div role="group" aria-label="Filtrer les demandes" style="display:flex;gap:2px;margin:0 14px 12px;padding:3px;background:#f4f1ec;border:1px solid #ece8e2;border-radius:10px">
+              <button onClick="{{ uzSetAll }}" style="{{ uzSegAll }}">Toutes</button><button onClick="{{ uzSetOpen }}" style="{{ uzSegOpen }}">À traiter</button><button onClick="{{ uzSetDone }}" style="{{ uzSegDone }}">Répondues</button>
             </div>
-            <div style="{{ hheroImg }}"><span style="position:absolute;bottom:10px;left:10px;font-size:11px;font-weight:600;color:#fff;background:rgba(20,33,15,.7);padding:5px 11px;border-radius:7px">Pelouse arrière · photo du jour</span></div>
-            <div style="padding:16px 18px">
-              <div style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#a8a29e;margin-bottom:11px">Pré-diagnostic de l'équipe</div>
-              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:13px;margin-bottom:16px">
-                <div><div style="font-size:11px;color:#a8a29e;margin-bottom:3px">Symptôme</div><div style="font-size:13px;font-weight:600;color:#1c1917">Taches jaunes circulaires qui s'étendent</div></div>
-                <div><div style="font-size:11px;color:#a8a29e;margin-bottom:3px">Zone &amp; surface</div><div style="font-size:13px;font-weight:600;color:#1c1917">Pelouse arrière · 240 m²</div></div>
-                <div><div style="font-size:11px;color:#a8a29e;margin-bottom:3px">Depuis</div><div style="font-size:13px;font-weight:600;color:#1c1917">3 jours</div></div>
-                <div><div style="font-size:11px;color:#a8a29e;margin-bottom:3px">Météo agro <span style="color:#4a8c3f">· auto</span></div><div style="font-size:13px;font-weight:600;color:#1c1917">28°C · sec depuis 9 j</div></div>
-              </div>
-              <div style="display:flex;gap:8px;flex-wrap:wrap">
-                <button onClick="{{ aVisio }}" style="display:flex;align-items:center;gap:7px;height:42px;padding:0 16px;background:#2d5a27;color:#fff;border:0;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer" style-hover="background:#1a2e1a"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m23 7-7 5 7 5z"></path><rect x="1" y="5" width="15" height="14" rx="2"></rect></svg>Répondre en visio</button>
-                <button onClick="{{ aWhatsapp }}" style="display:flex;align-items:center;gap:7px;height:42px;padding:0 16px;background:#25d366;color:#fff;border:0;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer" style-hover="background:#1da851"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5A11.5 11.5 0 0 0 2 18l-1.5 5.5 5.6-1.5A11.5 11.5 0 1 0 12 .5Z"></path></svg>WhatsApp</button>
-                <button onClick="{{ aReco }}" style="display:flex;align-items:center;gap:7px;height:42px;padding:0 16px;background:#fff;color:#292524;border:1px solid #e7e5e4;border-radius:9px;font-size:13.5px;font-weight:500;cursor:pointer" style-hover="border-color:#4a8c3f;color:#2d5a27"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v5.5L5.6 18A1.5 1.5 0 0 0 7 20h10a1.5 1.5 0 0 0 1.4-2L14 8.5V3"></path></svg>Envoyer une reco</button>
-              </div>
-            </div>
+            <sc-for list="{{ uzList }}" as="q" hint-placeholder-count="3">
+            <button onClick="{{ q.pick }}" style="{{ q.row }}">
+              <span style="{{ q.av }}">{{ q.init }}</span>
+              <span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px"><span style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span style="font-size:13.5px;font-weight:600;color:#1c1917">{{ q.site }}</span><span style="font-family:'Space Mono',monospace;font-size:11.5px;color:#a8a29e">{{ q.at }}</span></span><span style="font-size:12px;color:#78716c">{{ q.team }} · {{ q.stop }}</span><span style="font-size:12px;color:#57534e">{{ q.symptom }}</span><span style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap"><span style="{{ q.pill }}">{{ q.stLabel }}</span><sc-if value="{{ q.urgent }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:700;color:#c0473a;padding:4px 0">Urgent</span></sc-if></span></span>
+            </button>
+            </sc-for>
+            <sc-if value="{{ uzEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:22px 16px;border-top:1px solid #f4f1ec;font-size:13px;color:#78716c;text-align:center">Aucune demande dans ce filtre.</div></sc-if>
+            <div style="padding:10px 14px;border-top:1px solid #f4f1ec"><button onClick="{{ uzReset }}" style="height:32px;padding:0 10px;border:0;border-radius:8px;background:transparent;color:#78716c;font-size:12.5px;cursor:pointer;font-family:'DM Sans',system-ui,sans-serif" style-hover="background:#f4f1ec;color:#2d5a27">Réinitialiser la démonstration</button></div>
           </div>
-          <div style="flex:1;min-width:280px;display:flex;flex-direction:column;gap:14px">
-            <div style="background:#fff;border:1px solid #eeeae5;border-radius:14px;overflow:hidden">
-              <div style="padding:14px 18px;border-bottom:1px solid #f4f1ec"><h3 style="font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:15px;color:#1a2e1a;margin:0">Autres demandes</h3></div>
-              <sc-for list="{{ hotlineOthers }}" as="hq" hint-placeholder-count="2">
-              <div style="display:flex;align-items:center;gap:11px;padding:12px 16px;border-top:1px solid #f4f1ec"><span style="{{ hq.av }}">{{ hq.init }}</span><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:#1c1917">{{ hq.team }}</div><div style="font-size:11.5px;color:#a8a29e">{{ hq.site }} · {{ hq.sub }}</div></div><span style="font-size:11px;color:#a8a29e;white-space:nowrap">{{ hq.time }}</span></div>
+          <div style="flex:2.4 1 360px;min-width:0;background:#fff;border:1px solid #eeeae5;border-radius:14px;overflow:hidden">
+            <div style="display:flex;align-items:center;gap:11px;padding:15px 18px;border-bottom:1px solid #f4f1ec;flex-wrap:wrap">
+              <span style="{{ uzCur.av }}">{{ uzCur.init }}</span>
+              <div style="flex:1;min-width:0"><div style="font-size:14.5px;font-weight:600;color:#1c1917">{{ uzCur.team }} demande un avis</div><div style="font-size:12px;color:#a8a29e">{{ uzCur.site }} · {{ uzCur.city }} · {{ uzCur.stop }} · reçue à {{ uzCur.at }}</div></div>
+              <span style="{{ uzCur.pill }}">{{ uzCur.stLabel }}</span>
+            </div>
+            <div style="{{ uzCur.hero }}"><span style="position:absolute;bottom:10px;left:10px;font-size:11px;font-weight:600;color:#fff;background:rgba(20,33,15,.72);padding:5px 11px;border-radius:7px">{{ uzCur.zone }} · photo de l'équipe</span></div>
+            <div style="padding:16px 18px;border-bottom:1px solid #f4f1ec">
+              <div style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#a8a29e;margin-bottom:11px">Pré-diagnostic de l'équipe</div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:13px">
+                <div><div style="font-size:11px;color:#a8a29e;margin-bottom:3px">Symptôme</div><div style="font-size:13px;font-weight:600;color:#1c1917">{{ uzCur.symptom }}</div></div>
+                <div><div style="font-size:11px;color:#a8a29e;margin-bottom:3px">Zone</div><div style="font-size:13px;font-weight:600;color:#1c1917">{{ uzCur.zone }}</div></div>
+                <div><div style="font-size:11px;color:#a8a29e;margin-bottom:3px">Depuis</div><div style="font-size:13px;font-weight:600;color:#1c1917">{{ uzCur.since }}</div></div>
+                <div><div style="font-size:11px;color:#a8a29e;margin-bottom:3px">Météo du jour</div><div style="font-size:13px;font-weight:600;color:#1c1917">{{ uzCur.weather }}</div></div>
+              </div>
+            </div>
+            <div style="padding:16px 18px;display:flex;flex-direction:column;gap:10px">
+              <div style="font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#a8a29e">Échanges</div>
+              <sc-for list="{{ uzThread }}" as="m" hint-placeholder-count="1">
+              <div style="{{ m.bubble }}"><div>{{ m.text }}</div><sc-if value="{{ m.hasProduct }}" hint-placeholder-val="{{ false }}"><div style="margin-top:7px;font-size:12px;font-weight:600;opacity:.9">Produit conseillé : {{ m.product }}</div></sc-if></div>
+              <div style="{{ m.meta }}">{{ m.who }} · {{ m.at }}</div>
               </sc-for>
             </div>
-            <div style="background:#fff;border:1px solid #eeeae5;border-radius:14px;padding:18px">
-              <h3 style="font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:15px;color:#1a2e1a;margin:0 0 11px">Réponse rapide</h3>
-              <div style="min-height:70px;border:1px solid #e7e5e4;border-radius:10px;padding:11px 13px;font-size:13px;color:#78716c;line-height:1.5;background:#faf9f7;margin-bottom:11px">Maladie probable (rouille / fil rouge sur stress hydrique). Arrosage profond 2×/sem, fer chélaté, ne pas tondre trop court…</div>
-              <div style="display:flex;align-items:center;gap:7px;margin-bottom:12px;flex-wrap:wrap"><span style="font-size:11px;color:#a8a29e">Dosage suggéré :</span><span style="display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:600;color:#2d5a27;background:#eef4ec;padding:4px 10px;border-radius:7px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6M10 3v5.5L5.6 18A1.5 1.5 0 0 0 7 20h10a1.5 1.5 0 0 0 1.4-2L14 8.5V3"></path></svg>Fer chélaté 15 g/m²</span></div>
-              <button onClick="{{ aEnvEquipe }}" style="display:flex;align-items:center;justify-content:center;gap:7px;width:100%;height:42px;background:#2d5a27;color:#fff;border:0;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer" style-hover="background:#1a2e1a"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"></path></svg>Envoyer à l'équipe</button>
+            <sc-if value="{{ uzNotAnswered }}" hint-placeholder-val="{{ true }}">
+            <div style="padding:16px 18px;border-top:1px solid #f4f1ec;background:#fcfbf9;display:flex;flex-direction:column;gap:11px">
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#44403c">Votre recommandation
+                <textarea value="{{ uzDraft }}" onChange="{{ uzSetDraft }}" rows="3" placeholder="Diagnostic, geste à faire sur place, ce qu'il faut éviter…" style="padding:11px 13px;border:1px solid #e7e5e4;border-radius:10px;background:#fff;font-family:'DM Sans',system-ui,sans-serif;font-size:14px;font-weight:400;color:#1c1917;line-height:1.5;resize:vertical"></textarea>
+              </label>
+              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span style="font-size:12px;color:#78716c;margin-right:2px">Produit :</span><sc-for list="{{ uzProducts }}" as="p" hint-placeholder-count="4"><button onClick="{{ p.pick }}" style="{{ p.style }}">{{ p.label }}</button></sc-for></div>
+              <sc-if value="{{ uzHasErr }}" hint-placeholder-val="{{ false }}"><div role="alert" style="font-size:13px;color:#a83a26;background:#fbe6df;border:1px solid #e8ac9b;border-radius:9px;padding:9px 12px">{{ uzErr }}</div></sc-if>
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <button onClick="{{ uzSend }}" style="display:flex;align-items:center;gap:7px;height:42px;padding:0 16px;background:#2d5a27;color:#fff;border:0;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer" style-hover="background:#1a2e1a"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"></path></svg>Envoyer à l'équipe</button>
+                <button onClick="{{ uzAskPhoto }}" style="display:flex;align-items:center;gap:7px;height:42px;padding:0 15px;background:#fff;color:#292524;border:1px solid #e7e5e4;border-radius:9px;font-size:13.5px;font-weight:500;cursor:pointer" style-hover="border-color:#4a8c3f;color:#2d5a27">Demander une photo</button>
+                <button onClick="{{ uzNotConnected }}" style="display:flex;align-items:center;gap:7px;height:42px;padding:0 15px;background:#fff;color:#a8a29e;border:1px dashed #d6d3d1;border-radius:9px;font-size:13.5px;font-weight:500;cursor:pointer">Visio · WhatsApp — non connectés</button>
+              </div>
             </div>
+            </sc-if>
+            <sc-if value="{{ uzIsAnswered }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:14px 18px;border-top:1px solid #f4f1ec;background:#f6f9f4;font-size:13px;color:#2d5a27"><span>Réponse enregistrée dans cette demande.</span><button onClick="{{ uzReopen }}" style="height:34px;padding:0 12px;border:1px solid #cfe4ca;border-radius:8px;background:#fff;color:#2d5a27;font-size:12.5px;font-weight:600;cursor:pointer">Rouvrir la demande</button></div>
+            </sc-if>
           </div>
         </div>
+        <sc-if value="{{ uzHasNotice }}" hint-placeholder-val="{{ false }}">
+        <div role="status" style="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:130;display:flex;align-items:center;gap:12px;padding:10px 10px 10px 16px;background:#1a2e1a;color:#fff;border-radius:12px;box-shadow:0 14px 34px rgba(0,0,0,.25);font-size:14px"><span>{{ uzNotice }}</span><button onClick="{{ uzCloseNotice }}" aria-label="Fermer" style="width:30px;height:30px;border:0;border-radius:8px;background:transparent;color:rgba(255,255,255,.7);cursor:pointer">✕</button></div>
+        </sc-if>
       </div>
       </sc-if>
 
@@ -2936,6 +2958,7 @@
           <button onClick="{{ setCSites }}" style="{{ ftStyle.sites }}">Sites</button>
           <button onClick="{{ setCContrat }}" style="{{ ftStyle.contrat }}">Contrat</button>
           <button onClick="{{ setCPhotos }}" style="{{ ftStyle.photos }}">Photos</button>
+          <button onClick="{{ setCEchanges }}" style="{{ ftEchanges }}">Échanges</button>
         </div>
 
         <sc-if value="{{ cPlan }}" hint-placeholder-val="{{ true }}">
@@ -3079,6 +3102,42 @@
           <h3 style="font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:18px;color:#1a2e1a;margin:0 0 8px">Site vitrine — usage interne</h3>
           <p style="font-size:13.5px;color:#78716c;line-height:1.55;margin:0 0 20px">Aucun contrat d'entretien rattaché. Vous pouvez établir un devis puis le convertir en contrat.</p>
           <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button onClick="{{ openNewDevis }}" style="height:40px;padding:0 16px;background:#2d5a27;color:#fff;border:0;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer">Établir un devis</button><button onClick="{{ nav.contrats }}" style="height:40px;padding:0 16px;background:#fff;color:#292524;border:1px solid #e7e5e4;border-radius:9px;font-size:13px;font-weight:500;cursor:pointer">Voir les contrats</button></div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ cEchanges }}" hint-placeholder-val="{{ false }}">
+        <div data-screen-label="Dossier client · échanges" style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start">
+          <div style="flex:2 1 420px;min-width:0;background:#fff;border:1px solid #eeeae5;border-radius:14px;overflow:hidden">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:16px 20px 12px"><div><h3 style="font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:16px;color:#1a2e1a;margin:0">Historique des échanges</h3><div style="font-size:12px;color:#a8a29e;margin-top:2px">Messages, passages, devis et notes du dossier</div></div><span style="font-size:11.5px;font-weight:600;color:#57534e;background:#f4f1ec;padding:5px 10px;border-radius:20px">Prototype · enregistré sur cet appareil</span></div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;padding:0 20px 14px"><sc-for list="{{ exFilters }}" as="f" hint-placeholder-count="5"><button onClick="{{ f.pick }}" style="{{ f.style }}">{{ f.label }} <span style="font-family:'Space Mono',monospace;opacity:.7">{{ f.n }}</span></button></sc-for></div>
+            <sc-if value="{{ exHasRows }}" hint-placeholder-val="{{ true }}">
+            <div style="position:relative;padding:4px 20px 18px">
+              <div style="position:absolute;left:24px;top:12px;bottom:24px;width:2px;background:#f1ede7"></div>
+              <sc-for list="{{ exRows }}" as="x" hint-placeholder-count="4">
+              <div style="position:relative;display:flex;gap:14px;padding:10px 0">
+                <span style="{{ x.dot }}"></span>
+                <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:4px">
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="{{ x.kStyle }}">{{ x.kLabel }}</span><span style="font-size:12.5px;font-weight:600;color:#1c1917">{{ x.who }}</span><sc-if value="{{ x.inbound }}" hint-placeholder-val="{{ false }}"><span style="font-size:11.5px;color:#78716c">a écrit</span></sc-if><span style="margin-left:auto;font-family:'Space Mono',monospace;font-size:11.5px;color:#a8a29e">{{ x.dateL }} · {{ x.time }}</span></div>
+                  <div style="font-size:13.5px;color:#292524;line-height:1.5">{{ x.text }}</div>
+                  <div style="font-size:11.5px;color:#a8a29e">{{ x.channel }}</div>
+                </div>
+              </div>
+              </sc-for>
+            </div>
+            </sc-if>
+            <sc-if value="{{ exNoRows }}" hint-placeholder-val="{{ false }}"><div style="padding:30px 20px;border-top:1px solid #f4f1ec;text-align:center;font-size:13.5px;color:#78716c">Aucun échange dans ce filtre pour {{ exClient }}.</div></sc-if>
+          </div>
+          <div style="flex:1 1 280px;min-width:0;background:#fff;border:1px solid #eeeae5;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:12px">
+            <h3 style="font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:15px;color:#1a2e1a;margin:0">Ajouter au dossier</h3>
+            <div style="display:flex;gap:6px"><button onClick="{{ exSetNote }}" style="{{ exNewNote }}">Note interne</button><button onClick="{{ exSetMsg }}" style="{{ exNewMsg }}">Message client</button></div>
+            <textarea value="{{ exDraft }}" onChange="{{ exSetDraft }}" rows="4" maxlength="2000" placeholder="{{ exPlaceholder }}" style="padding:11px 13px;border:1px solid #e7e5e4;border-radius:10px;background:#fff;font-family:'DM Sans',system-ui,sans-serif;font-size:14px;color:#1c1917;line-height:1.5;resize:vertical"></textarea>
+            <sc-if value="{{ exIsMsg }}" hint-placeholder-val="{{ false }}"><div style="font-size:12px;color:#9a6b12;background:#fbf3e0;border-radius:8px;padding:8px 10px;line-height:1.45">L'envoi par e-mail ou SMS n'est pas connecté : le message est seulement enregistré dans l'historique.</div></sc-if>
+            <sc-if value="{{ exHasErr }}" hint-placeholder-val="{{ false }}"><div role="alert" style="font-size:13px;color:#a83a26;background:#fbe6df;border:1px solid #e8ac9b;border-radius:9px;padding:9px 12px">{{ exErr }}</div></sc-if>
+            <button onClick="{{ exAdd }}" style="height:42px;border:0;border-radius:9px;background:#2d5a27;color:#fff;font-size:13.5px;font-weight:600;cursor:pointer;font-family:'DM Sans',system-ui,sans-serif" style-hover="background:#1a2e1a">{{ exSubmitLabel }}</button>
+          </div>
+          <sc-if value="{{ exHasNotice }}" hint-placeholder-val="{{ false }}">
+          <div role="status" style="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:130;display:flex;align-items:center;gap:12px;padding:10px 10px 10px 16px;background:#1a2e1a;color:#fff;border-radius:12px;box-shadow:0 14px 34px rgba(0,0,0,.25);font-size:14px"><span>{{ exNotice }}</span><sc-if value="{{ exCanUndo }}" hint-placeholder-val="{{ false }}"><button onClick="{{ exUndo }}" style="height:30px;padding:0 11px;border:1px solid rgba(255,255,255,.2);border-radius:8px;background:rgba(255,255,255,.08);color:#fff;font-size:13px;font-weight:600;cursor:pointer">Annuler</button></sc-if><button onClick="{{ exCloseNotice }}" aria-label="Fermer" style="width:30px;height:30px;border:0;border-radius:8px;background:transparent;color:rgba(255,255,255,.7);cursor:pointer">✕</button></div>
+          </sc-if>
         </div>
         </sc-if>
 
@@ -3609,6 +3668,8 @@ class Component extends DCLogic {
     this._onResize();
     this.initCapture();
     this.cmInit();
+    this.uzInit();
+    this.exInit();
   }
 
   // ── Mode capture : ?capture=<écran> — état figé, contrôles de démo masqués, signal de fin de chargement ──
@@ -3621,6 +3682,7 @@ class Component extends DCLogic {
       'choix-creneau': () => this.setState({ route: 'booking', bookingDone: false }),
       'urgence-gazon': () => this.setState({ route: 'hotline' }),
       'fiche-client': () => this.setState({ route: 'client', selectedClient: 'tilleuls', selectedZone: 'ar', clientTab: 'plan' }),
+      'dossier-echanges': () => this.setState({ route: 'client', selectedClient: 'tilleuls', clientTab: 'echanges', exKind: 'all' }),
       'contrats-mois': () => this.setState({ route: 'contrats', contratMode: 'list', contratView: 'grille', cmTour: 'green', cmContract: 'active', cmStatus: 'all', cmQuery: '', cmAnnual: false }, () => setTimeout(() => {
         const el = document.querySelector('[data-screen-label="Contrats × Mois"]'); if (!el) return;
         let p = el.parentElement; while (p && !(p.scrollHeight > p.clientHeight + 20 && /auto|scroll/.test(getComputedStyle(p).overflowY))) p = p.parentElement;
@@ -3648,6 +3710,124 @@ class Component extends DCLogic {
     fontsReady.then(() => this.captureCheck());
   }
   // ── Contrats × Mois : structure, règles et états repris du planning ChatGPT Work (src/lib/planning.ts, App.tsx, visit-editor.tsx) ──
+  // ── Urgence gazon : demandes terrain du mardi 23 juin (prototype, stockage local) ──
+  uzDemo() {
+    return { schema: 1, sel: 'uz-1', items: [
+      { id: 'uz-1', team: 'Équipe Nord', who: 'Karim', color: '#2d5a27', init: 'ÉN', site: 'Le Clos Saint-Jean', city: 'Montigny-lès-Cormeilles', stop: 'Arrêt 3', at: '10:32', level: 'urgent', status: 'new', img: 'assets/w/case-verop-before.jpg', zone: 'Espaces communs · zone à scarifier', symptom: 'Plaques brunes et mousse après scarification', since: '10 jours', weather: '28 °C · sec', thread: [{ from: 'team', at: '10:32', text: 'Plaques brunes sur la zone prévue au regarnissage. On sème quand même le RPR ?' }] },
+      { id: 'uz-2', team: 'Équipe Sud', who: 'Moussa', color: '#bd8a2c', init: 'ÉS', site: 'Mme Hamel', city: 'Franconville', stop: 'Arrêt 1', at: '09:48', level: 'normal', status: 'new', img: 'assets/w/case-susan-before.jpg', zone: 'Pelouse ombragée sous les érables', symptom: 'Mousse et feuilles au sol, gazon clairsemé', since: 'Plusieurs semaines', weather: '28 °C · sec', thread: [{ from: 'team', at: '09:48', text: 'Cliente présente, elle demande ce qu\u2019on peut faire pour la mousse.' }] },
+      { id: 'uz-3', team: 'Équipe Nord', who: 'Tonio', color: '#2d5a27', init: 'ÉN', site: 'École Sainte-Marie', city: 'Cormeilles-en-Parisis', stop: 'Arrêt 4', at: '08:05', level: 'normal', status: 'answered', img: 'assets/w/case-noel-before.jpg', zone: 'Terrain de sport', symptom: 'Jaunissement en bandes', since: '5 jours', weather: '28 °C · sec', thread: [{ from: 'team', at: '08:05', text: 'Bandes jaunes sur le terrain de sport, on garde l\u2019engrais prévu ?' }, { from: 'expert', at: '08:20', text: 'Stress hydrique. Garder Sierrablen retard 15 g/m², arroser en fin de journée, tonte haute.', product: 'Sierrablen retard · 15 g/m²' }] },
+    ] };
+  }
+  uzInit() {
+    if (this.state.uz) return;
+    let d = null;
+    if (!this._capId) { try { const p = JSON.parse(localStorage.getItem('hp-urgence-v1') || 'null'); if (p && p.schema === 1 && Array.isArray(p.items)) d = p; } catch (e) {} }
+    this.setState({ uz: d || this.uzDemo(), uzDraft: '', uzProduct: '', uzFilter: 'all' });
+  }
+  uzSave(uz, notice) {
+    if (!this._capId) { try { localStorage.setItem('hp-urgence-v1', JSON.stringify(uz)); } catch (e) {} }
+    clearTimeout(this._uzT); if (notice) this._uzT = setTimeout(() => this.setState({ uzNotice: '' }), 5000);
+    return { uz, uzNotice: notice || '' };
+  }
+  uzNow() { const d = new Date(); return this._capId ? '10:40' : String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); }
+  uzVals() {
+    const s = this.state, uz = s.uz;
+    if (!uz) return { uzList: [], uzCur: {}, uzThread: [] };
+    const ST = { new: ['À traiter', '#c0473a', '#fbeeec'], waiting: ['Photo demandée', '#9a6b12', '#fbf3e0'], answered: ['Répondue', '#2d5a27', '#eef4ec'] };
+    const f = s.uzFilter || 'all';
+    const cur = uz.items.find((x) => x.id === uz.sel) || uz.items[0];
+    const upd = (fn, notice) => this.setState(this.uzSave({ ...uz, items: uz.items.map((x) => (x.id === cur.id ? fn(x) : x)) }, notice));
+    const pill = (st) => ({ display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '11px', fontWeight: 700, color: ST[st][1], background: ST[st][2], padding: '4px 10px', borderRadius: '20px', whiteSpace: 'nowrap' });
+    const products = ['Fer chélaté · 15 g/m²', 'Sierrablen retard · 15 g/m²', 'Semences RPR · 20 g/m²', 'Aucun produit'];
+    const segS = (on) => ({ flex: 1, height: '30px', border: 0, borderRadius: '7px', background: on ? '#fff' : 'transparent', boxShadow: on ? '0 1px 2px rgba(28,25,23,.08)' : 'none', color: on ? '#1a2e1a' : '#78716c', fontSize: '12.5px', fontWeight: on ? 600 : 500, cursor: 'pointer', fontFamily: "'DM Sans',system-ui,sans-serif" });
+    const list = uz.items.filter((x) => f === 'all' || (f === 'open' ? x.status !== 'answered' : x.status === 'answered'));
+    const open = uz.items.filter((x) => x.status !== 'answered').length;
+    return {
+      uzOpenCount: open, uzHasOpen: open > 0,
+      uzSegAll: segS(f === 'all'), uzSegOpen: segS(f === 'open'), uzSegDone: segS(f === 'done'),
+      uzSetAll: () => this.setState({ uzFilter: 'all' }), uzSetOpen: () => this.setState({ uzFilter: 'open' }), uzSetDone: () => this.setState({ uzFilter: 'done' }),
+      uzList: list.map((x) => ({ ...x, stLabel: ST[x.status][0], pill: pill(x.status), urgent: x.level === 'urgent',
+        av: { width: '34px', height: '34px', borderRadius: '9px', background: x.color, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '11px', flexShrink: 0 },
+        row: { display: 'flex', alignItems: 'flex-start', gap: '11px', width: '100%', padding: '12px 14px', border: 0, borderTop: '1px solid #f4f1ec', borderLeft: x.id === cur.id ? '3px solid #2d5a27' : '3px solid transparent', background: x.id === cur.id ? '#f6f9f4' : '#fff', cursor: 'pointer', textAlign: 'left', fontFamily: "'DM Sans',system-ui,sans-serif" },
+        pick: () => this.setState({ ...this.uzSave({ ...uz, sel: x.id }), uzDraft: '', uzProduct: '', uzErr: '' }) })),
+      uzEmpty: !list.length,
+      uzCur: { ...cur, stLabel: ST[cur.status][0], pill: pill(cur.status), urgent: cur.level === 'urgent', av: { width: '38px', height: '38px', borderRadius: '10px', background: cur.color, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '12px', flexShrink: 0 }, hero: { backgroundImage: 'url(' + cur.img + ')', backgroundSize: 'cover', backgroundPosition: 'center', height: '220px', position: 'relative' } },
+      uzThread: cur.thread.map((m) => ({ ...m, mine: m.from === 'expert', theirs: m.from !== 'expert', hasProduct: !!m.product, who: m.from === 'expert' ? 'Vous' : cur.who + ' · ' + cur.team,
+        bubble: { maxWidth: '82%', alignSelf: m.from === 'expert' ? 'flex-end' : 'flex-start', background: m.from === 'expert' ? '#2d5a27' : '#f4f1ec', color: m.from === 'expert' ? '#fff' : '#1c1917', borderRadius: m.from === 'expert' ? '12px 12px 4px 12px' : '12px 12px 12px 4px', padding: '10px 13px', fontSize: '13.5px', lineHeight: 1.5 },
+        meta: { fontSize: '11px', color: '#a8a29e', alignSelf: m.from === 'expert' ? 'flex-end' : 'flex-start', marginTop: '-4px' } })),
+      uzDraft: s.uzDraft || '', uzSetDraft: (e) => this.setState({ uzDraft: e.target.value, uzErr: '' }),
+      uzProducts: products.map((p) => ({ label: p, style: { height: '30px', padding: '0 11px', borderRadius: '8px', border: (s.uzProduct || '') === p ? '1.5px solid #2d5a27' : '1px solid #e7e5e4', background: (s.uzProduct || '') === p ? '#eef4ec' : '#fff', color: (s.uzProduct || '') === p ? '#2d5a27' : '#57534e', fontSize: '12px', fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans',system-ui,sans-serif" }, pick: () => this.setState({ uzProduct: s.uzProduct === p ? '' : p }) })),
+      uzErr: s.uzErr || '', uzHasErr: !!s.uzErr,
+      uzSend: () => {
+        const t = (s.uzDraft || '').trim();
+        if (t.length < 8) return this.setState({ uzErr: 'Écrivez une recommandation d\u2019au moins quelques mots avant d\u2019envoyer.' });
+        const pr = s.uzProduct && s.uzProduct !== 'Aucun produit' ? s.uzProduct : '';
+        this.setState({ uzDraft: '', uzProduct: '' });
+        upd((x) => ({ ...x, status: 'answered', thread: x.thread.concat([{ from: 'expert', at: this.uzNow(), text: t, product: pr }]) }), 'Recommandation envoyée à ' + cur.team + ' (dans le prototype).');
+      },
+      uzAskPhoto: () => upd((x) => ({ ...x, status: 'waiting', thread: x.thread.concat([{ from: 'expert', at: this.uzNow(), text: 'Pouvez-vous envoyer une photo rapprochée de la zone, avec une main pour l\u2019échelle ?' }]) }), 'Demande de photo envoyée à ' + cur.team + '.'),
+      uzReopen: () => upd((x) => ({ ...x, status: 'new' }), 'Demande rouverte.'),
+      uzIsAnswered: cur.status === 'answered', uzNotAnswered: cur.status !== 'answered',
+      uzNotConnected: () => this.setState({ uzNotice: 'Visio et WhatsApp ne sont pas connectés dans ce prototype.' }),
+      uzNotice: s.uzNotice || '', uzHasNotice: !!s.uzNotice, uzCloseNotice: () => this.setState({ uzNotice: '' }),
+      uzReset: () => this.setState({ ...this.uzSave(this.uzDemo(), 'Démonstration réinitialisée.'), uzDraft: '', uzProduct: '', uzErr: '', uzFilter: 'all' }),
+    };
+  }
+  // ── Dossier client · historique des échanges (prototype, stockage local, données fictives Les Tilleuls) ──
+  exDemo() {
+    return { schema: 1, byClient: { tilleuls: [
+      { id: 'ex-1', kind: 'message', dir: 'in', who: 'M. Garnier · syndic', date: '2026-06-18', time: '17:42', channel: 'E-mail', text: 'Pouvez-vous éviter de tondre avant 9 h ? Des résidents se sont plaints du bruit.' },
+      { id: 'ex-2', kind: 'message', dir: 'out', who: 'Alexandre', date: '2026-06-19', time: '08:10', channel: 'E-mail', text: 'Bien noté. Les passages démarreront à 9 h à partir du prochain.' },
+      { id: 'ex-3', kind: 'passage', dir: 'out', who: 'Équipe Nord', date: '2026-05-26', time: '11:48', channel: 'Compte rendu signé', text: 'Tonte + fertilisation Floranid Twin 25 g/m² zone est. Signé par le gardien.' },
+      { id: 'ex-4', kind: 'devis', dir: 'out', who: 'Alexandre', date: '2026-05-12', time: '15:20', channel: 'Devis', text: 'Devis D-2026-044 envoyé : regarnissage pelouse arrière après relevé Moasure.' },
+      { id: 'ex-5', kind: 'note', dir: 'out', who: 'Alexandre', date: '2026-05-12', time: '14:55', channel: 'Note interne', text: 'Clés chez le gardien, loge côté rue. Code portail changé en mai.' },
+    ] } };
+  }
+  exInit() {
+    if (this.state.ex) return;
+    let d = null;
+    if (!this._capId) { try { const p = JSON.parse(localStorage.getItem('hp-echanges-v1') || 'null'); if (p && p.schema === 1 && p.byClient) d = p; } catch (e) {} }
+    this.setState({ ex: d || this.exDemo(), exKind: 'all', exDraft: '', exNewKind: 'note' });
+  }
+  exVals(cid, cname) {
+    const s = this.state, ex = s.ex;
+    if (!ex) return { exRows: [], exFilters: [] };
+    const K = { message: ['Message', '#2d5a27', '#eef4ec'], passage: ['Passage', '#4a6d8c', '#eaf1f7'], devis: ['Devis', '#9a6b12', '#fbf3e0'], note: ['Note interne', '#57534e', '#f4f1ec'] };
+    const all = (ex.byClient[cid] || []).slice().sort((a, b) => (b.date + b.time).localeCompare(a.date + a.time));
+    const kf = s.exKind || 'all';
+    const rows = all.filter((x) => kf === 'all' || x.kind === kf);
+    const chip = (on) => ({ height: '32px', padding: '0 12px', borderRadius: '8px', border: on ? '1.5px solid #2d5a27' : '1px solid #e7e5e4', background: on ? '#eef4ec' : '#fff', color: on ? '#2d5a27' : '#57534e', fontSize: '12.5px', fontWeight: 600, cursor: 'pointer', fontFamily: "'DM Sans',system-ui,sans-serif" });
+    const save = (list, notice) => {
+      const nx = { ...ex, byClient: { ...ex.byClient, [cid]: list } };
+      if (!this._capId) { try { localStorage.setItem('hp-echanges-v1', JSON.stringify(nx)); } catch (e) {} }
+      clearTimeout(this._exT); this._exT = setTimeout(() => this.setState({ exNotice: '' }), 5000);
+      this.setState({ ex: nx, exPrev: ex, exNotice: notice, exDraft: '', exErr: '' });
+    };
+    const nk = s.exNewKind || 'note';
+    return {
+      exClient: cname, exCount: all.length, exHasRows: rows.length > 0, exNoRows: rows.length === 0, exNoneAtAll: all.length === 0,
+      exFilters: [['all', 'Tout'], ['message', 'Messages'], ['passage', 'Passages'], ['devis', 'Devis'], ['note', 'Notes']].map((f) => ({ label: f[1], n: f[0] === 'all' ? all.length : all.filter((x) => x.kind === f[0]).length, style: chip(kf === f[0]), pick: () => this.setState({ exKind: f[0] }) })),
+      exRows: rows.map((x) => ({ ...x, kLabel: K[x.kind][0], kStyle: { fontSize: '11px', fontWeight: 700, color: K[x.kind][1], background: K[x.kind][2], padding: '3px 9px', borderRadius: '20px', whiteSpace: 'nowrap' },
+        dateL: new Date(x.date + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }), inbound: x.dir === 'in',
+        dot: { width: '10px', height: '10px', borderRadius: '50%', background: K[x.kind][1], marginTop: '5px', flexShrink: 0, boxShadow: '0 0 0 4px #fff' } })),
+      exNewNote: chip(nk === 'note'), exNewMsg: chip(nk === 'message'),
+      exSetNote: () => this.setState({ exNewKind: 'note' }), exSetMsg: () => this.setState({ exNewKind: 'message' }),
+      exIsMsg: nk === 'message', exPlaceholder: nk === 'message' ? 'Message au client (enregistré ici, non envoyé)…' : 'Note visible par votre équipe uniquement…',
+      exSubmitLabel: nk === 'message' ? 'Enregistrer le message' : 'Ajouter la note',
+      exDraft: s.exDraft || '', exSetDraft: (e) => this.setState({ exDraft: e.target.value, exErr: '' }),
+      exErr: s.exErr || '', exHasErr: !!s.exErr,
+      exAdd: () => {
+        const t = (s.exDraft || '').trim();
+        if (t.length < 3) return this.setState({ exErr: 'Le texte est vide.' });
+        if (t.length > 2000) return this.setState({ exErr: 'Limité à 2 000 caractères.' });
+        const d = new Date(), date = this._capId ? '2026-06-23' : this.cmLocal(d), time = this._capId ? '10:40' : String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+        save((ex.byClient[cid] || []).concat([{ id: 'ex-' + Date.now().toString(36), kind: nk, dir: 'out', who: 'Alexandre', date, time, channel: nk === 'message' ? 'Message (non envoyé)' : 'Note interne', text: t }]), nk === 'message' ? 'Message enregistré dans le dossier. Aucun envoi réel.' : 'Note ajoutée au dossier.');
+      },
+      exNotice: s.exNotice || '', exHasNotice: !!s.exNotice, exCanUndo: !!s.exPrev,
+      exUndo: () => { if (!s.exPrev) return; if (!this._capId) { try { localStorage.setItem('hp-echanges-v1', JSON.stringify(s.exPrev)); } catch (e) {} } this.setState({ ex: s.exPrev, exPrev: null, exNotice: '' }); },
+      exCloseNotice: () => this.setState({ exNotice: '' }),
+    };
+  }
   cmK() { return { ST: { pending: 'À confirmer', confirmed: 'Confirmé', done: 'Réalisé', blocked: 'À replanifier' }, TEAMS: ['Pedro · Smaïn', 'Luis · Étienne', 'Aziz · Ismaël', 'Non affectée'], MONTHS: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'] }; }
   cmLocal(d) { d = d || new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
   // Date de démonstration figée (jour de vérification du planning Work) : états stables, y compris en capture
@@ -5926,6 +6106,9 @@ class Component extends DCLogic {
 
       // contrats
       ...this.cmVals(isMobile),
+      ...this.uzVals(),
+      ...this.exVals(cur.id, cur.name),
+      cEchanges: s.clientTab === 'echanges', setCEchanges: () => this.setState({ clientTab: 'echanges' }), ftEchanges: this.subTab(s.clientTab === 'echanges'),
       isContrats: r === 'contrats', contratLst: s.contratMode === 'list', contratDet: s.contratMode === 'detail',
       contratsListView: this.contratsData().map((c) => ({ ...c, visitsL: c.visits + ' / an', st: this.contratStatusStyle(c.status), open: () => this.setState({ contratMode: 'detail', selectedContrat: c.id }),
         ctxOpen: (e) => this.showCtx(e, this.contratCtx(c)), ctxDown: (e) => this.ctxTouchStart(e, this.contratCtx(c)), ctxUp: () => this.ctxTouchEnd() })),

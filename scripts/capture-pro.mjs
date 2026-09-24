@@ -23,6 +23,7 @@ const SCREENS = [
   { id: 'urgence-gazon', viewport: { width: 1440, height: 1000 }, scale: 2 },
   { id: 'fiche-client', viewport: { width: 1440, height: 1000 }, scale: 2 },
   { id: 'choix-creneau', viewport: { width: 390, height: 844 }, scale: 3, mobile: true },
+  { id: 'dossier-echanges', viewport: { width: 1440, height: 1000 }, scale: 2 },
 ];
 const TILE_HOSTS = ['server.arcgisonline.com'];
 

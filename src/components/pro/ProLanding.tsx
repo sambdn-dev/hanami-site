@@ -57,19 +57,23 @@ export default function ProLanding() {
               <ProCapture src={proScreens['fiche-client'].src} alt="Capture du prototype Hanami Pro : fiche client avec plan du jardin, surfaces et dosages" caption="Fiche client · Démonstration" width={proScreens['fiche-client'].width} height={proScreens['fiche-client'].height} className={styles.demoCapture} />
             </article>
             <article className={styles.demoCard} data-reveal>
-              <div className={styles.demoCardCopy}><span>05 / ASSISTANCE GAZON</span><h3>Un avis technique quand le terrain le demande.</h3><p>Le prototype illustre la demande d’aide : photo, symptômes et contexte du chantier réunis pour Hanami.</p></div>
-              <ProCapture src={proScreens['urgence-gazon'].src} alt="Capture du prototype Hanami Pro : écran simulé de demande d’assistance gazon" caption="Urgence gazon · Démonstration" width={proScreens['urgence-gazon'].width} height={proScreens['urgence-gazon'].height} className={styles.demoCapture} />
+              <div className={styles.demoCardCopy}><span>05 / HISTORIQUE CLIENT</span><h3>Retrouvez le fil des échanges.</h3><p>Messages, passages, devis et notes internes réunis dans la fiche. Le prototype permet d’ajouter une note et de la retrouver.</p></div>
+              <ProCapture src={proScreens['dossier-echanges'].src} alt="Capture du prototype Hanami Pro : onglet Échanges d’un dossier client avec historique et ajout de note" caption="Dossier client · Échanges" width={proScreens['dossier-echanges'].width} height={proScreens['dossier-echanges'].height} className={styles.demoCapture} />
+            </article>
+            <article className={`${styles.demoCard} ${styles.demoCardWide}`} data-reveal>
+              <div className={styles.demoCardCopy}><span>06 / ASSISTANCE GAZON</span><h3>Un avis technique quand le terrain le demande.</h3><p>Photo, symptômes, échange avec l’équipe et recommandation dans un seul parcours. Le prototype permet de traiter une demande et d’enregistrer la réponse sur cet appareil.</p></div>
+              <ProCapture src={proScreens['urgence-gazon'].src} alt="Capture du prototype Hanami Pro : demandes d’assistance gazon, échanges et rédaction d’une recommandation" caption="Urgence gazon · Prototype interactif" width={proScreens['urgence-gazon'].width} height={proScreens['urgence-gazon'].height} className={styles.demoCaptureWide} sizes="(max-width: 767px) 100vw, 70vw" />
             </article>
             <article className={styles.demoCard} data-reveal>
-              <div className={styles.demoCardCopy}><span>06 / SUR LE TERRAIN</span><h3>Le prochain arrêt, dans la poche.</h3><p>L’application terrain garde l’essentiel lisible sur téléphone, même au milieu d’une journée chargée.</p></div>
+              <div className={styles.demoCardCopy}><span>07 / SUR LE TERRAIN</span><h3>Le prochain arrêt, dans la poche.</h3><p>L’application terrain garde l’essentiel lisible sur téléphone, même au milieu d’une journée chargée.</p></div>
               <ProCapture src={proScreens['tournee-mobile'].src} alt="Capture mobile réelle du prototype Hanami Pro Terrain : tournée et prochain arrêt" caption="Hanami Pro Terrain · Prototype mobile" width={proScreens['tournee-mobile'].width} height={proScreens['tournee-mobile'].height} className={`${styles.demoCapture} ${styles.demoCapturePhone}`} sizes="(max-width: 767px) 78vw, 320px" />
             </article>
             <article className={styles.demoCard} data-reveal>
-              <div className={styles.demoCardCopy}><span>07 / CÔTÉ CLIENT</span><h3>Un créneau choisi sans aller-retour.</h3><p>Aperçu de la page mobile sur laquelle le client peut choisir une disponibilité proposée.</p></div>
+              <div className={styles.demoCardCopy}><span>08 / CÔTÉ CLIENT</span><h3>Un créneau choisi sans aller-retour.</h3><p>Aperçu de la page mobile sur laquelle le client peut choisir une disponibilité proposée.</p></div>
               <ProCapture src={proScreens['choix-creneau'].src} alt="Capture du prototype Hanami Pro : page mobile de choix du créneau pour un contrat d’entretien" caption="Choix du créneau · Démonstration" width={proScreens['choix-creneau'].width} height={proScreens['choix-creneau'].height} className={`${styles.demoCapture} ${styles.demoCaptureBooking}`} />
             </article>
           </div>
-          <p className={styles.demoFoot}>Captures du prototype. La fiche client, l’assistance gazon et le choix du créneau restent des démonstrations avec des données fictives ; ces écrans ne sont pas encore reliés entre eux.</p>
+          <p className={styles.demoFoot}>Captures du prototype et données de démonstration. Les notes et réponses sont enregistrées sur l’appareil ; les messages ne sont pas envoyés par e-mail ou SMS et ces modules ne se synchronisent pas encore entre eux.</p>
           <a href="#contact" className={styles.darkButton}>Voir comment cela s’appliquerait à mon entreprise <ArrowUpRight size={17} aria-hidden="true" /></a>
         </div>
       </section>
@@ -100,7 +104,7 @@ export default function ProLanding() {
       <section className={styles.studioTeaser} aria-labelledby="studio-teaser-title">
         <div className={styles.container}>
           <div data-reveal><p className={styles.sectionKicker}>04 / POUR ALLER PLUS LOIN</p><h2 id="studio-teaser-title">Le jardin de demain,<br /><em>visible dès aujourd’hui.</em></h2><p>Hanami Studio · Pro explore une autre étape : partir des photos et de vos consignes, proposer une image photoréaliste, puis approfondir le projet en 3D après validation.</p><Link href="/pro/studio" className={styles.darkButton}>Découvrir Hanami Studio <ArrowUpRight size={18} aria-hidden="true" /></Link></div>
-          <figure className={styles.studioTeaserImage} data-reveal data-reveal-delay="1"><Image src="/images/studio/jardin-a-organique-v2.jpg" alt="Jardin contemporain fictif avec pelouse délimitée, pas japonais et massifs" fill sizes="(max-width: 767px) 100vw, 50vw" /><figcaption>Étude fictive · Une des trois variantes à explorer dans Studio</figcaption></figure>
+          <figure className={styles.studioTeaserImage} data-reveal data-reveal-delay="1"><Image src="/images/studio/jardin-geometrique-jour-v3.jpg" alt="Jardin contemporain fictif avec pelouse rectangulaire et chemin de dalles sur gravier à droite" fill sizes="(max-width: 767px) 100vw, 50vw" /><figcaption>Étude fictive · Trois jardins à explorer de jour et de nuit</figcaption></figure>
         </div>
       </section>
     </>

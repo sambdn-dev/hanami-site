@@ -8,16 +8,16 @@ import styles from './StudioShowcase.module.css'
 export type GardenId = 'cour' | 'lineaire' | 'patio'
 type CameraView = 'perspective' | 'plan' | 'angle'
 
-type GardenPlan = { width: number; depth: number; left: (z: number) => number; right: (z: number) => number; stones: number; pathSide: 'left' | 'right' }
+type GardenPlan = { width: number; depth: number; left: (z: number) => number; right: (z: number) => number; stones: number; pathSide: 'right' | 'back' }
 const plans: Record<GardenId, GardenPlan> = {
-  cour: { width: 12, depth: 16, left: z => -3.65 + .52 * Math.sin(z * .58 + .4), right: z => 3.15 + .66 * Math.sin(z * .48 - .7), stones: 5, pathSide: 'left' },
-  lineaire: { width: 8, depth: 18, left: z => -2.55 + .38 * Math.sin(z * .38), right: z => 1.75 + .43 * Math.sin(z * .52 + .7), stones: 6, pathSide: 'right' },
-  patio: { width: 12, depth: 12, left: z => -3.5 + .48 * Math.sin(z * .72 + .7), right: z => 3.2 + .58 * Math.sin(z * .61 - .2), stones: 4, pathSide: 'left' },
+  cour: { width: 12, depth: 16, left: () => -4.15, right: () => 3.2, stones: 10, pathSide: 'right' },
+  lineaire: { width: 12, depth: 16, left: z => -3.7 + .28 * Math.sin(z * .5), right: z => 3.65 - 1.9 * Math.exp(-((z + .45) ** 2) / 9), stones: 11, pathSide: 'right' },
+  patio: { width: 12, depth: 12, left: z => -4.25 * Math.sqrt(Math.max(.02, 1 - (z / 3.6) ** 2)), right: z => 4.25 * Math.sqrt(Math.max(.02, 1 - (z / 3.6) ** 2)), stones: 8, pathSide: 'back' },
 }
 const material = (color: string, roughness = 1) => new THREE.MeshStandardMaterial({ color, roughness, side: THREE.DoubleSide })
 function random(seed: number) { return () => { seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0; return seed / 4294967296 } }
 
-function addGarden(scene: THREE.Scene, id: GardenId) {
+function addGarden(scene: THREE.Scene, id: GardenId, night: boolean) {
   const p = plans[id], rand = random(id === 'cour' ? 11 : id === 'lineaire' ? 29 : 47)
   const front = p.depth / 2 - 2.05, back = -p.depth / 2 + 1.5
   const add = (mesh: THREE.Mesh) => { mesh.castShadow = true; mesh.receiveShadow = true; scene.add(mesh); return mesh }
@@ -26,9 +26,9 @@ function addGarden(scene: THREE.Scene, id: GardenId) {
     mesh.position.set(x, y, z)
     return mesh
   }
-  const dirt = material('#574f40'), gravel = material('#c9c2ac'), plaster = material('#d8d1c1')
+  const dirt = material('#574f40'), gravel = material(id === 'cour' ? '#54585a' : id === 'lineaire' ? '#c7ad83' : '#d9ccb0'), plaster = material('#d8d1c1')
   const bronze = material('#373b32'), timber = material('#755d43'), corten = material('#854d32')
-  const edging = material('#333c31'), stone = material('#eee9db', .86)
+  const edging = material('#333c31'), stone = material(id === 'patio' ? '#373b39' : '#eee9db', .86)
   const foliage = ['#496b38', '#5e7742', '#74854b', '#3d603d', '#81915a'].map(c => material(c))
   const blooms = ['#e8dfc6', '#f7f0dd', '#9a83a4', '#bca6ba'].map(c => material(c))
   const grasses = [material('#9b9870'), material('#b3a87a'), material('#78885f')]
@@ -56,15 +56,20 @@ function addGarden(scene: THREE.Scene, id: GardenId) {
   // Side boundaries stop below the planting canopy so they never obscure the garden.
   box(-p.width / 2 + .08, .38, 0, .16, .76, p.depth, id === 'patio' ? plaster : bronze)
   box(p.width / 2 - .08, .38, 0, .16, .76, p.depth, id === 'patio' ? plaster : bronze)
-  if (id === 'lineaire') for (let i = 0; i < 19; i++) box(-p.width / 2 + .12 + i * .42, .79, -p.depth / 2 + .23, .32, 1.55, .07, timber)
+  if (id === 'lineaire') for (let i = 0; i < 19; i++) box(-p.width / 2 + .12 + i * .62, .79, -p.depth / 2 + .23, .5, 1.55, .07, timber)
 
   const lawnShape = new THREE.Shape()
   const pts: THREE.Vector2[] = []
-  lawnShape.moveTo(p.left(front), -front)
-  lawnShape.quadraticCurveTo(0, -(front + .17), p.right(front), -front)
-  for (let i = 1; i <= 32; i++) { const z = front + (back - front) * i / 32; lawnShape.lineTo(p.right(z), -z) }
-  lawnShape.quadraticCurveTo(0, -(back - .3), p.left(back), -back)
-  for (let i = 31; i >= 0; i--) { const z = front + (back - front) * i / 32; lawnShape.lineTo(p.left(z), -z) }
+  if (id === 'patio') lawnShape.absellipse(0, 0, 4.25, 3.6, 0, Math.PI * 2, false, 0)
+  else {
+    lawnShape.moveTo(p.left(front), -front)
+    if (id === 'cour') lawnShape.lineTo(p.right(front), -front)
+    else lawnShape.quadraticCurveTo(0, -(front + .17), p.right(front), -front)
+    for (let i = 1; i <= 32; i++) { const z = front + (back - front) * i / 32; lawnShape.lineTo(p.right(z), -z) }
+    if (id === 'cour') lawnShape.lineTo(p.left(back), -back)
+    else lawnShape.quadraticCurveTo(0, -(back - .3), p.left(back), -back)
+    for (let i = 31; i >= 0; i--) { const z = front + (back - front) * i / 32; lawnShape.lineTo(p.left(z), -z) }
+  }
   lawnShape.closePath()
   const lawnGeo = new THREE.ShapeGeometry(lawnShape, 28)
   lawnGeo.rotateX(-Math.PI / 2)
@@ -90,17 +95,27 @@ function addGarden(scene: THREE.Scene, id: GardenId) {
     mesh.receiveShadow = true
     scene.add(mesh)
   }
-  bed('left', p.pathSide === 'left')
+  bed('left')
   bed('right', p.pathSide === 'right')
-  const stoneGeo = new THREE.CylinderGeometry(1, 1, .075, 9)
+  if (id === 'patio') box(0, .014, -p.depth / 2 + 1.7, p.width - .7, .03, 1.6, gravel)
+  const stoneGeo = new THREE.CylinderGeometry(1, 1, .075, id === 'patio' ? 24 : 7)
   for (let i = 0; i < p.stones; i++) {
-    const z = front - .55 + (back - front + 1.15) * i / (p.stones - 1)
-    const border = p.pathSide === 'left' ? p.left(z) : p.right(z)
-    const x = border + (p.pathSide === 'left' ? -.91 : .91) + Math.sin(i * 1.8) * .13
-    const rock = add(new THREE.Mesh(stoneGeo.clone(), stone))
-    rock.position.set(x, .09, z)
-    rock.scale.set(.65 + rand() * .09, 1, .46 + rand() * .08)
-    rock.rotation.y = (rand() - .5) * .35
+    if (id === 'cour') {
+      const z = front - .45 + (back - front + .9) * i / (p.stones - 1)
+      box(p.right(z) + .96, .085, z, 1.45, .08, .36, stone)
+    } else if (id === 'patio') {
+      const x = -3.1 + 6.2 * i / (p.stones - 1)
+      const rock = add(new THREE.Mesh(stoneGeo.clone(), stone))
+      rock.position.set(x, .09, -p.depth / 2 + 1.7 + Math.sin(i * .45) * .18)
+      rock.scale.set(.28, 1, .28)
+    } else {
+      const z = front - .55 + (back - front + 1.15) * i / (p.stones - 1)
+      const x = p.right(z) + .85 + Math.sin(i * 1.8) * .15
+      const rock = add(new THREE.Mesh(stoneGeo.clone(), stone))
+      rock.position.set(x, .09, z)
+      rock.scale.set(.58 + rand() * .15, 1, .42 + rand() * .15)
+      rock.rotation.y = (rand() - .5) * .6
+    }
   }
 
   // Botanical volume: many small varied leaf masses, never a row of identical balls.
@@ -137,7 +152,7 @@ function addGarden(scene: THREE.Scene, id: GardenId) {
     const side = i % 2 ? 'left' : 'right'
     const edge = side === 'left' ? p.left(z) : p.right(z)
     let x: number
-    if (side === p.pathSide) x = side === 'left' ? -p.width / 2 + .35 + rand() * .67 : p.width / 2 - .35 - rand() * .67
+    if (side === p.pathSide) x = p.width / 2 - .35 - rand() * .67
     else x = side === 'left' ? -p.width / 2 + .3 + rand() * Math.max(.15, edge + p.width / 2 - .65) : p.width / 2 - .3 - rand() * Math.max(.15, p.width / 2 - edge - .65)
     if (i % 3 === 0) tuft(x, z, .47 + rand() * .45)
     else shrub(x, z, .46 + rand() * .58, i % 2 === 0 || i % 7 === 0)
@@ -203,14 +218,29 @@ function addGarden(scene: THREE.Scene, id: GardenId) {
     box(x, 2.27, z + .72, 2.5, .12, .14, timber)
     box(x, .45, z, 1.25, .09, .7, timber)
   }
-  // Contact shadows and warm highlights add depth without claiming a real-time ray-traced render.
-  const lamp = new THREE.PointLight('#f5b76c', 1.4, 4)
-  lamp.position.set(id === 'patio' ? -p.width / 2 + 1.4 : 0, 1.8, -p.depth / 2 + .8)
-  scene.add(lamp)
+  if (night) {
+    const lampPositions = id === 'patio'
+      ? Array.from({ length: 5 }, (_, i) => [-3 + i * 1.5, -p.depth / 2 + 1.6] as const)
+      : Array.from({ length: 6 }, (_, i) => { const z = front - i * (front - back) / 5; return [p.right(z) + .95, z] as const })
+    lampPositions.push(id === 'patio' ? [-p.width / 2 + 1.15, -p.depth / 2 + 2.3] : [0, -p.depth / 2 + 1.1])
+    for (const [x, z] of lampPositions) {
+      const lamp = new THREE.PointLight('#ffd09a', 2.6, 4.6, 2)
+      lamp.position.set(x, .42, z)
+      scene.add(lamp)
+      const source = new THREE.Mesh(new THREE.SphereGeometry(.06, 8, 6), new THREE.MeshBasicMaterial({ color: '#ffe2aa' }))
+      source.position.set(x, .16, z)
+      scene.add(source)
+    }
+    if (id === 'patio') {
+      const pendant = new THREE.PointLight('#ffce8b', 8, 6, 2)
+      pendant.position.set(-p.width / 2 + 1.48, 2.05, -p.depth / 2 + 1.4)
+      scene.add(pendant)
+    }
+  }
   return [concreteTexture, grassTexture, grassNormal]
 }
 
-export default function Garden3DViewer({ garden }: { garden: GardenId }) {
+export default function Garden3DViewer({ garden, lightMode }: { garden: GardenId; lightMode: 'jour' | 'nuit' }) {
   const mountRef = useRef<HTMLDivElement>(null)
   const viewRef = useRef<(view: CameraView) => void>(() => {})
   const [activeView, setActiveView] = useState<CameraView>('perspective')
@@ -227,11 +257,12 @@ export default function Garden3DViewer({ garden }: { garden: GardenId }) {
     renderer.shadowMap.type = THREE.PCFSoftShadowMap
     renderer.outputColorSpace = THREE.SRGBColorSpace
     renderer.toneMapping = THREE.ACESFilmicToneMapping
-    renderer.toneMappingExposure = 1.28
+    const night = lightMode === 'nuit'
+    renderer.toneMappingExposure = night ? 1.7 : 1.28
     mount.appendChild(renderer.domElement)
     const scene = new THREE.Scene()
-    scene.background = new THREE.Color('#e7e5d9')
-    scene.fog = new THREE.Fog('#e7e5d9', 27, 66)
+    scene.background = new THREE.Color(night ? '#253349' : '#e7e5d9')
+    scene.fog = new THREE.Fog(night ? '#253349' : '#e7e5d9', 27, 66)
     const { width, depth } = plans[garden]
     const camera = new THREE.PerspectiveCamera(39, mount.clientWidth / mount.clientHeight, .1, 100)
     const controls = new OrbitControls(camera, renderer.domElement)
@@ -243,8 +274,8 @@ export default function Garden3DViewer({ garden }: { garden: GardenId }) {
     controls.maxPolarAngle = Math.PI * .49
     controls.minDistance = 9
     controls.maxDistance = 38
-    scene.add(new THREE.HemisphereLight('#fff8e9', '#667b61', 1.55))
-    const sun = new THREE.DirectionalLight('#ffe8bc', 2.8)
+    scene.add(new THREE.HemisphereLight(night ? '#8ca3c6' : '#fff8e9', '#354836', night ? .62 : 1.55))
+    const sun = new THREE.DirectionalLight(night ? '#b7c6e3' : '#ffe8bc', night ? .48 : 2.8)
     sun.position.set(-8, 15, 8)
     sun.castShadow = true
     sun.shadow.mapSize.set(2048, 2048)
@@ -252,7 +283,7 @@ export default function Garden3DViewer({ garden }: { garden: GardenId }) {
     sun.shadow.camera.top = 19; sun.shadow.camera.bottom = -19
     sun.shadow.bias = -.0003
     scene.add(sun)
-    const textures = addGarden(scene, garden)
+    const textures = addGarden(scene, garden, night)
     const setView = (view: CameraView) => {
       const distance = Math.max(width, depth)
       if (view === 'plan') camera.position.set(.01, distance * 1.2, 1.5)
@@ -280,7 +311,7 @@ export default function Garden3DViewer({ garden }: { garden: GardenId }) {
       geometries.forEach(geo => geo.dispose()); materials.forEach(mat => mat.dispose()); textures.forEach(t => t.dispose())
       renderer.dispose(); mount.removeChild(renderer.domElement)
     }
-  }, [garden])
+  }, [garden, lightMode])
 
   return <div className={styles.viewer}>
     <div ref={mountRef} className={styles.canvas} aria-label="Maquette 3D interactive du projet de jardin" role="img" />
