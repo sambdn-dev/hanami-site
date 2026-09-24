@@ -32,6 +32,38 @@
 .proGrass { position: absolute; z-index: 0; bottom: -2px; left: -1%; width: 102%; height: 100px; opacity: .45; }
 @keyframes pro-rise { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: none; } }
 
+/* Captures du prototype Hanami Pro */
+.heroCaptureWrap { min-width: 0; position: relative; z-index: 1; animation: pro-rise 1s .13s cubic-bezier(.22,1,.36,1) both; }
+.heroCaptureEyebrow { display: block; margin: 0 0 13px; color: #c2d5b9; font-family: var(--font-space-mono),monospace; font-size: 10px; letter-spacing: .1em; }
+.heroCapture { position: relative; padding: 8px; border: 1px solid #d9e8d054; border-radius: 18px; background: #e9eddd18; box-shadow: 0 32px 75px #07170e75; }
+.heroCapture .captureButton { border-radius: 11px; }
+.heroCapture figcaption { padding: 11px 5px 3px; color: #c9d9bf; font-size: 11px; }
+.captureButton { position: relative; display: block; width: 100%; padding: 0; overflow: hidden; border: 0; background: #e7e9df; text-align: left; cursor: zoom-in; }
+.captureButton img { display: block; width: 100%; height: auto; }
+.captureZoom { position: absolute; right: 15px; bottom: 15px; display: inline-flex; align-items: center; gap: 7px; padding: 9px 12px; border: 1px solid #d7e4d4a8; border-radius: 50px; background: #153b2de8; color: #f9f7ef; font-family: var(--font-dm-sans),sans-serif; font-size: 11px; font-weight: 700; backdrop-filter: blur(8px); transition: transform .25s, background .25s; }
+.captureButton:hover .captureZoom { transform: translateY(-3px); background: #24583c; }
+.captureButton:focus-visible { outline: 3px solid #9bbd87; outline-offset: 3px; }
+.proDemo { scroll-margin-top: 95px; padding: 105px 0 110px; background: #f8f6ef; color: #173825; }
+.demoIntro { display: grid; gap: 20px; align-items: end; margin-bottom: 43px; }
+.demoIntro h2 { font-family: var(--font-fraunces),serif; font-size: clamp(43px,5.1vw,73px); line-height: 1.04; letter-spacing: -.055em; font-weight: 430; }
+.demoIntro h2 em { color: #72916b; font-weight: 350; }
+.demoIntro > p { max-width: 440px; color: #536b59; font-size: 15px; line-height: 1.7; }
+.demoGrid { display: grid; gap: 16px; }
+.demoCard { min-width: 0; display: flex; flex-direction: column; padding: 25px; border: 1px solid #cbd6c4; background: #eef2e9; }
+.demoCard:nth-child(3), .demoCard:nth-child(5) { background: #e4ebdf; }
+.demoCardCopy { max-width: 530px; margin-bottom: 26px; }
+.demoCardCopy > span { color: #597e58; font-family: var(--font-space-mono),monospace; font-size: 10px; letter-spacing: .07em; }
+.demoCardCopy h3 { margin: 13px 0 10px; font-family: var(--font-fraunces),serif; font-size: clamp(28px,3vw,41px); line-height: 1.11; letter-spacing: -.035em; font-weight: 450; }
+.demoCardCopy p { color: #566d57; font-size: 14px; line-height: 1.6; }
+.demoCard figure { margin-top: auto; }
+.demoCard figure figcaption { margin-top: 10px; color: #617963; font-family: var(--font-space-mono),monospace; font-size: 10px; }
+.demoCaptureWide .captureButton { max-height: 590px; border: 1px solid #cad7c5; }
+.demoCapture .captureButton { border: 1px solid #cad7c5; }
+.demoCapturePhone, .demoCaptureFeed, .demoCaptureBooking { width: min(100%,360px); margin-inline: auto; }
+.demoCapturePhone { width: min(100%,250px); }
+.demoCaptureFeed { width: min(100%,430px); }
+.demoFoot { margin: 24px 0 24px; color: #617865; font-size: 11px; line-height: 1.6; }
+
 /* Aperçu conceptuel du tableau de bord Pro */
 .dashboardWrap { position: relative; min-width: 0; padding-bottom: 54px; animation: pro-rise 1s .13s cubic-bezier(.22,1,.36,1) both; }
 .dashboard { overflow: hidden; border: 1px solid #bfd5b838; border-radius: 10px; background: #eef2e9; color: #163c29; box-shadow: 0 30px 70px #06180d73; }
@@ -175,6 +207,10 @@
 @media (min-width: 768px) {
   .container { width: min(100% - 72px, 1280px); }
   .proHeroGrid { grid-template-columns: minmax(0,.95fr) minmax(0,1.05fr); gap: 51px; }
+  .demoIntro { grid-template-columns: minmax(0,1fr) minmax(0,.7fr); gap: 45px; }
+  .demoGrid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .demoCardWide { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0,.4fr) minmax(0,.6fr); align-items: center; gap: 35px; }
+  .demoCardWide .demoCardCopy { margin-bottom: 0; }
   .sectionHeading { grid-template-columns: minmax(0,1.2fr) minmax(0,.8fr); gap: 55px; }
   .featureGrid { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .expertiseGrid { grid-template-columns: minmax(0,1fr) minmax(0,.9fr); gap: 70px; }
@@ -197,6 +233,10 @@
   .productNav a { flex: 1; justify-content: center; padding: 7px 5px; font-size: 13px; gap: 5px; }
   .productNav strong { min-width: 27px; height: 19px; font-size: 7px; }
   .proHeroGrid, .studioHeroGrid { margin-top: 47px; }
+  .heroCaptureWrap { margin-right: -8px; }
+  .proDemo { padding: 78px 0 82px; }
+  .demoCard { padding: 18px; }
+  .demoCardCopy { margin-bottom: 21px; }
   .proHeroCopy h1, .studioHeroCopy h1 { font-size: clamp(55px,14vw,72px); }
   .proHeroCopy > p:not(.kicker), .studioHeroCopy > p:not(.kicker) { font-size: 15px; }
   .goldButton { width: 100%; }

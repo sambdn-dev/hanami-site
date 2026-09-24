@@ -22,12 +22,12 @@ export default function ProPage() {
       <main className="flex-1">
         <ProLanding />
         <ContactForm variant="pro" source="hanami-pro" photosEnabled={false}
-          title="Parlons de votre façon de travailler."
-          subtitle="Racontez-nous votre organisation et vos chantiers gazon. Nous vous recontacterons pour vous présenter la vision Hanami Pro et écouter vos besoins." />
+          title="Voyons ce que Hanami Pro peut simplifier chez vous."
+          subtitle="Présentez-nous votre équipe, vos contrats et votre façon d’organiser les tournées. Nous vous recontacterons pour une démonstration du prototype et un échange sur vos besoins." />
       </main>
       <Footer />
       <WhatsAppButton />
-      <MobileStickyCTA href="/pro#contact" label="Parler de Hanami Pro" reassurance="Vision produit · Démo accompagnée" />
+      <MobileStickyCTA href="/pro#contact" label="Demander une démo" reassurance="Prototype · Démo accompagnée" />
     </>
   )
 }
