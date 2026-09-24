@@ -1,15 +1,18 @@
 'use client'
 
+import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowDown, ArrowUpRight } from 'lucide-react'
+import { ArrowDown, ArrowUpRight, Maximize2 } from 'lucide-react'
 import GrassField from '@/components/shared/GrassField'
+import PhotoLightbox from '@/components/shared/PhotoLightbox'
 import { track } from '@/lib/analytics'
 import styles from './HomeEditorial.module.css'
 
 export default function Hero() {
+  const [photoOpen, setPhotoOpen] = useState(false)
   return (
-    <section className={styles.hero} aria-labelledby="home-title">
+    <><section className={styles.hero} aria-labelledby="home-title">
       <div className={styles.heroAura} aria-hidden="true" />
       <div className={styles.container}>
         <div className={styles.heroGrid}>
@@ -35,9 +38,11 @@ export default function Hero() {
           </div>
           <figure className={styles.heroFigure}>
             <div className={styles.heroPhoto}>
-              <Image src="/images/apres-susan.jpg" alt="Pelouse rénovée de Susan D. au Vésinet, entourée d’arbres" fill preload sizes="(max-width: 767px) 100vw, 50vw" className={styles.coverPhoto} />
+              <Image src="/images/apres-susan.jpg" alt="Pelouse rénovée de Susan D. au Vésinet, entourée d’arbres" fill loading="eager" sizes="(max-width: 767px) 100vw, 50vw" className={styles.coverPhoto} />
+              <button className={styles.heroPhotoOpen} type="button" onClick={() => setPhotoOpen(true)} aria-label="Agrandir la photo du jardin de Susan D." />
               <span className={styles.heroPhotoShade} aria-hidden="true" />
               <span className={styles.heroPhotoTop}>01 / Une histoire de jardin</span>
+              <span className={styles.heroPhotoZoom}><Maximize2 size={16} aria-hidden="true" /> Agrandir le jardin</span>
               <figcaption className={styles.heroPhotoCaption}>
                 <span>Le jardin de Susan D.<small>Le Vésinet · Rénovation réelle</small></span>
                 <strong>600 <small>m²</small></strong>
@@ -51,6 +56,6 @@ export default function Hero() {
         </div>
       </div>
       <GrassField tone="dark" className={styles.heroGrass} />
-    </section>
+    </section><PhotoLightbox src={photoOpen ? '/images/apres-susan.jpg' : null} caption="Le jardin de Susan D. · Le Vésinet · 600 m²" onClose={() => setPhotoOpen(false)} /></>
   )
 }

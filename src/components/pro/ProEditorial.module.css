@@ -11,8 +11,8 @@
 .sectionHeading h2, .studioTeaser h2, .studioExampleIntro h2 { font-family: var(--font-fraunces), serif; font-size: clamp(43px,5.2vw,76px); line-height: 1.045; letter-spacing: -.052em; font-weight: 430; }
 .sectionHeading h2 em, .studioTeaser h2 em, .studioExampleIntro h2 em { color: #72916b; font-weight: 350; }
 .sectionHeading > p { max-width: 425px; align-self: end; color: #536b59; font-size: 16px; line-height: 1.75; }
-.goldButton, .darkButton { display: inline-flex; min-height: 55px; align-items: center; justify-content: space-between; gap: 22px; width: fit-content; padding: 15px 19px; color: #173825; background: #e7c574; font-size: 13px; font-weight: 700; transition: transform .25s, background .25s; }
-.goldButton:hover { background: #f3d99b; transform: translateY(-3px); }
+.goldButton, .darkButton { display: inline-flex; min-height: 55px; align-items: center; justify-content: space-between; gap: 22px; width: fit-content; padding: 15px 19px; color: #173825; background: #f8f6ef; font-size: 13px; font-weight: 700; transition: transform .25s, background .25s; }
+.goldButton:hover { background: #e8f0e6; transform: translateY(-3px); }
 .darkButton { color: #f8f6ef; background: #173e2a; }
 .darkButton:hover { background: #2c6240; transform: translateY(-3px); }
 .lightLink, .studioTextLink { display: inline-flex; align-items: center; gap: 11px; min-height: 44px; width: fit-content; border-bottom: 1px solid #bbd1ad; color: #f8f6ef; font-size: 13px; font-weight: 700; transition: gap .25s; }

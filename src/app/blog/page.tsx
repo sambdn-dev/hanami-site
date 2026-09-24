@@ -34,7 +34,7 @@ export default function BlogIndexPage() {
       <SeasonalBanner />
       <Navbar variant="light" />
 
-      <main className="flex-1 pt-24 pb-24 bg-stone-50">
+      <main className="flex-1 pt-36 pb-24 bg-stone-50">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
 
           {/* En-tête */}
@@ -42,7 +42,7 @@ export default function BlogIndexPage() {
             <p className="text-[11px] font-semibold tracking-[0.18em] uppercase text-hanami-700 mb-4">
               Journal Hanami
             </p>
-            <h1 className="font-[family-name:var(--font-fraunces)] text-4xl md:text-5xl lg:text-6xl font-semibold text-hanami-900 tracking-tight leading-[1.05]">
+            <h1 className="font-[family-name:var(--font-fraunces)] text-4xl md:text-5xl lg:text-6xl font-[430] text-hanami-900 tracking-[-0.052em] leading-[1.05]">
               Le savoir-faire agronomique, <span className="text-hanami-700">mis à nu.</span>
             </h1>
             <p className="mt-6 text-lg text-stone-600 leading-relaxed">

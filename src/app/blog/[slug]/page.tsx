@@ -150,7 +150,7 @@ export default async function ArticlePage(
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
-      <main className="flex-1 pt-24 pb-20">
+      <main className="flex-1 pt-36 pb-20">
 
         {/* Barre retour */}
         <div className="max-w-7xl mx-auto px-6 lg:px-8 mb-8">
@@ -171,7 +171,7 @@ export default async function ArticlePage(
               {article.category}
             </span>
 
-            <h1 className="mt-5 font-[family-name:var(--font-fraunces)] text-3xl md:text-4xl lg:text-5xl font-semibold text-hanami-900 tracking-tight leading-[1.1]">
+            <h1 className="mt-5 font-[family-name:var(--font-fraunces)] text-4xl md:text-5xl lg:text-6xl font-[430] text-hanami-900 tracking-[-0.052em] leading-[1.05]">
               {article.title}
             </h1>
 

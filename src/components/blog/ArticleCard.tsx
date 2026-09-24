@@ -57,7 +57,7 @@ export default function ArticleCard({ article, compact = false }: ArticleCardPro
           </span>
         </div>
 
-        <h3 className="font-[family-name:var(--font-fraunces)] text-xl font-semibold text-hanami-900 tracking-tight mb-3 group-hover:text-hanami-700 transition-colors">
+        <h3 className="font-[family-name:var(--font-fraunces)] text-2xl font-[430] text-hanami-900 tracking-[-0.035em] leading-[1.12] mb-3 group-hover:text-hanami-700 transition-colors">
           {article.title}
         </h3>
 

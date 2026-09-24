@@ -37,7 +37,7 @@ export default function EspaceClientPreview() {
         <div ref={headRef} className="fade-in mb-14 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
           <div className="max-w-2xl">
             <span className="section-label mb-3 block">Votre espace client</span>
-            <h2 className="font-[family-name:var(--font-fraunces)] text-3xl lg:text-4xl font-semibold text-hanami-900 leading-tight">
+            <h2 className="font-[family-name:var(--font-fraunces)] text-4xl lg:text-5xl font-[430] tracking-[-0.052em] text-hanami-900 leading-[1.05]">
               Tout votre coaching, réuni au même endroit
             </h2>
             <p className="text-stone-500 leading-relaxed mt-4">

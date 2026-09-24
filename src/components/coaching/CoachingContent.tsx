@@ -64,7 +64,7 @@ export default function CoachingContent() {
                 Coaching annuel · 100 % en ligne · Partout en France
               </span>
               <h1
-                className="font-[family-name:var(--font-fraunces)] text-4xl sm:text-5xl lg:text-6xl font-semibold leading-tight tracking-tight text-hanami-900 mb-6"
+                className="font-[family-name:var(--font-fraunces)] text-4xl sm:text-5xl lg:text-6xl font-[430] leading-[1.04] tracking-[-0.052em] text-hanami-900 mb-6"
                 style={{ fontOpticalSizing: 'auto' } as React.CSSProperties}
               >
                 Un expert gazon dans votre poche, toute l&apos;année.
@@ -114,7 +114,7 @@ export default function CoachingContent() {
                 <ul className="space-y-4">
                   {SAMPLE_PROTOCOL.map((step) => (
                     <li key={step.date} className="flex items-start gap-4">
-                      <span className="font-[family-name:var(--font-space-mono)] text-xs font-bold text-hanami-700 bg-hanami-100 rounded-md px-2 py-1 shrink-0 w-20 text-center">
+                  <span className="font-[family-name:var(--font-space-mono)] text-xs font-normal text-hanami-700 bg-hanami-100 rounded-md px-2 py-1 shrink-0 w-20 text-center">
                         {step.date}
                       </span>
                       <span className="text-sm text-stone-600 leading-relaxed">{step.action}</span>
@@ -154,7 +154,7 @@ export default function CoachingContent() {
                   1ᵉʳ mois offert — jugez sur pièces
                 </span>
               </p>
-              <p className="font-[family-name:var(--font-space-mono)] text-6xl lg:text-7xl font-bold text-white">
+              <p className="font-[family-name:var(--font-space-mono)] text-6xl lg:text-7xl font-normal tracking-[-0.08em] text-white">
                 {PRICING_DISPLAY.coachingMois}&nbsp;€
                 <span className="font-[family-name:var(--font-fraunces)] text-2xl font-semibold text-stone-300 italic"> /mois TTC</span>
               </p>
@@ -178,7 +178,7 @@ export default function CoachingContent() {
                 { value: 'Illimité', label: 'suivi et ajustements inclus' },
               ].map((stat) => (
                 <div key={stat.label} className="rounded-xl border border-white/10 bg-white/5 p-5">
-                  <p className="font-[family-name:var(--font-space-mono)] text-2xl font-bold text-amber-500">
+                  <p className="font-[family-name:var(--font-space-mono)] text-2xl font-normal tracking-[-0.06em] text-stone-50">
                     {stat.value}
                   </p>
                   <p className="text-stone-300 text-xs leading-relaxed mt-2">{stat.label}</p>
@@ -193,7 +193,7 @@ export default function CoachingContent() {
       <section className="py-20 lg:py-28 bg-stone-50">
         <div ref={includedRef} className="fade-in max-w-7xl mx-auto px-6 lg:px-8">
           <span className="section-label mb-3 block">Ce qui est inclus</span>
-          <h2 className="font-[family-name:var(--font-fraunces)] text-3xl lg:text-4xl font-semibold text-hanami-900 max-w-xl leading-tight mb-12">
+          <h2 className="font-[family-name:var(--font-fraunces)] text-4xl lg:text-5xl font-[430] tracking-[-0.052em] text-hanami-900 max-w-xl leading-[1.05] mb-12">
             Tout ce qu&apos;il faut pour réussir, rien de superflu
           </h2>
 
@@ -214,7 +214,7 @@ export default function CoachingContent() {
       <section className="py-20 lg:py-28 bg-hanami-100/40">
         <div ref={stepsRef} className="fade-in max-w-7xl mx-auto px-6 lg:px-8">
           <span className="section-label mb-3 block">Comment ça marche</span>
-          <h2 className="font-[family-name:var(--font-fraunces)] text-3xl lg:text-4xl font-semibold text-hanami-900 max-w-xl leading-tight mb-12">
+          <h2 className="font-[family-name:var(--font-fraunces)] text-4xl lg:text-5xl font-[430] tracking-[-0.052em] text-hanami-900 max-w-xl leading-[1.05] mb-12">
             Trois étapes, zéro jargon
           </h2>
 
@@ -244,11 +244,11 @@ export default function CoachingContent() {
                   <div className="w-10 h-10 rounded-lg bg-hanami-100 flex items-center justify-center">
                     <step.icon className="w-5 h-5 text-hanami-700" strokeWidth={1.5} />
                   </div>
-                  <span className="font-[family-name:var(--font-space-mono)] text-2xl font-bold text-stone-200">
+                  <span className="font-[family-name:var(--font-space-mono)] text-2xl font-normal tracking-[-0.06em] text-stone-200">
                     {step.num}
                   </span>
                 </div>
-                <h3 className="font-[family-name:var(--font-fraunces)] text-lg font-semibold text-hanami-900 mb-2">
+                <h3 className="font-[family-name:var(--font-fraunces)] text-2xl font-[430] tracking-[-0.035em] text-hanami-900 mb-2">
                   {step.title}
                 </h3>
                 <p className="text-stone-500 text-sm leading-relaxed">{step.text}</p>

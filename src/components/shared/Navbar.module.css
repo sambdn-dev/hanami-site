@@ -3,17 +3,17 @@
 .nav.light { color: #173c29; background: #f8f6efee; }
 .nav.scrolled.dark { background: #123724ed; box-shadow: 0 9px 25px #071e1340; backdrop-filter: blur(16px); }
 .nav.scrolled.light { background: #f8f6efed; box-shadow: 0 8px 25px #1539281c; backdrop-filter: blur(16px); }
-.navInner { display: flex; align-items: center; gap: 20px; width: min(100% - 40px,1280px); height: 68px; margin-inline: auto; }
+.navInner { display: flex; align-items: center; gap: 20px; width: min(100% - 32px,1560px); height: 68px; margin-inline: auto; }
 .logo { flex-shrink: 0; display: flex; align-items: center; }
 .logo img { width: 100px; height: auto; }
-.desktopLinks { display: none; align-items: center; justify-content: center; gap: clamp(16px,1.8vw,30px); margin-left: auto; }
-.desktopLinks a { position: relative; padding: 10px 0; font-size: 12px; font-weight: 600; white-space: nowrap; transition: opacity .25s; }
+.desktopLinks { display: none; align-items: center; justify-content: center; gap: clamp(14px,1.7vw,27px); margin-left: auto; }
+.desktopLinks a { position: relative; padding: 10px 0; font-size: 14px; font-weight: 600; white-space: nowrap; transition: opacity .25s; }
 .desktopLinks a:hover { opacity: .68; }
 .desktopLinks a.active::after { content: ''; position: absolute; left: 0; right: 0; bottom: 4px; height: 1px; background: #d4b66c; }
 .desktopCta { display: none; align-items: center; gap: 9px; min-height: 42px; margin-left: 14px; padding: 10px 14px; background: #173c29; color: #f8f6ef; font-size: 12px; font-weight: 700; white-space: nowrap; transition: background .25s, transform .25s; }
 .desktopCta:hover { background: #2b633d; transform: translateY(-2px); }
-.dark .desktopCta { background: #e7c575; color: #173c29; }
-.dark .desktopCta:hover { background: #f5d896; }
+.dark .desktopCta { background: #f8f6ef; color: #173c29; }
+.dark .desktopCta:hover { background: #e8f0e6; }
 .menuButton { display: grid; place-items: center; width: 48px; height: 48px; margin-left: auto; cursor: pointer; }
 .backdrop { position: fixed; z-index: 90; inset: 0; background: #061e1599; opacity: 0; pointer-events: none; transition: opacity .3s; }
 .backdropOpen { opacity: 1; pointer-events: auto; }
@@ -30,7 +30,7 @@
 .mobileBottom { display: grid; gap: 17px; margin-top: auto; padding: 24px 23px 30px; background: #e5ecde; }
 .mobileBottom > a:first-child { display: flex; justify-content: space-between; align-items: center; min-height: 50px; padding: 12px 15px; background: #173c29; color: #fff; font-size: 13px; font-weight: 700; }
 .mobileBottom > a:last-child { font-size: 12px; font-weight: 700; }
-@media (min-width: 768px) { .navInner { width: min(100% - 72px,1280px); } }
+@media (min-width: 768px) { .navInner { width: min(100% - 48px,1560px); } }
 @media (max-width: 767px) { .logo img { width: 92px; } }
 @media (min-width: 1100px) { .desktopLinks, .desktopCta { display: flex; } .menuButton { display: none; } }
 @media (prefers-reduced-motion: reduce) { .nav, .backdrop, .mobileMenu, .desktopCta { transition: none; } }

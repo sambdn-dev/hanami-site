@@ -17,13 +17,13 @@ type ElementProps<T extends keyof React.JSX.IntrinsicElements> =
 export const mdxComponents = {
   h2: (props: ElementProps<'h2'>) => (
     <h2
-      className="font-[family-name:var(--font-fraunces)] text-2xl md:text-3xl font-semibold text-hanami-900 tracking-tight mt-14 mb-5 scroll-mt-28"
+      className="font-[family-name:var(--font-fraunces)] text-3xl md:text-4xl font-[430] text-hanami-900 tracking-[-0.045em] leading-[1.1] mt-14 mb-5 scroll-mt-28"
       {...props}
     />
   ),
   h3: (props: ElementProps<'h3'>) => (
     <h3
-      className="font-[family-name:var(--font-fraunces)] text-xl md:text-2xl font-semibold text-hanami-900 tracking-tight mt-10 mb-3 scroll-mt-28"
+      className="font-[family-name:var(--font-fraunces)] text-2xl md:text-3xl font-[430] text-hanami-900 tracking-[-0.04em] leading-[1.12] mt-10 mb-3 scroll-mt-28"
       {...props}
     />
   ),
