@@ -4,7 +4,10 @@ import { ArrowDown, ArrowUpRight, CalendarDays, Camera, Clock3, FolderOpen, Mess
 import GrassField from '@/components/shared/GrassField'
 import ProProductNav from './ProProductNav'
 import ProCapture from './ProCapture'
+import captures from './pro-captures.json'
 import styles from './ProEditorial.module.css'
+
+const proScreens = captures.screens
 
 export default function ProLanding() {
   return (
@@ -22,7 +25,7 @@ export default function ProLanding() {
             </div>
             <div className={styles.heroCaptureWrap}>
               <span className={styles.heroCaptureEyebrow}>LA JOURNÉE EN UN REGARD / VUE DIRIGEANT</span>
-              <ProCapture src="/images/pro/briefing-dirigeant.png" alt="Capture réelle du prototype Hanami Pro : briefing du dirigeant, équipes en tournée et alertes du jour" caption="Briefing du matin · Prototype Hanami Pro" width={1192} height={882} className={styles.heroCapture} sizes="(max-width: 767px) 100vw, 52vw" priority />
+              <ProCapture src={proScreens['briefing-dirigeant'].src} alt="Capture réelle du prototype Hanami Pro : briefing du dirigeant, équipes en tournée et alertes du jour" caption="Briefing du matin · Prototype Hanami Pro" width={proScreens['briefing-dirigeant'].width} height={proScreens['briefing-dirigeant'].height} className={styles.heroCapture} sizes="(max-width: 767px) 100vw, 52vw" priority />
             </div>
           </div>
           <div className={styles.heroMicro}><span>MOINS D’ALLERS-RETOURS</span><span>PLUS DE TEMPS SUR LE TERRAIN</span><span>UN EXPERT GAZON À PORTÉE DE MAIN</span></div>
@@ -43,11 +46,11 @@ export default function ProLanding() {
             </article>
             <article className={styles.demoCard} data-reveal>
               <div className={styles.demoCardCopy}><span>02 / ÉQUIPE</span><h3>Chaque équipe part avec la bonne tournée.</h3><p>Arrêts, horaires, consignes et matériel à emporter dans une vue simple.</p></div>
-              <ProCapture src="/images/pro/briefing-equipe.png" alt="Capture réelle du prototype : briefing de l’équipe, arrêts de la tournée et matériel à charger" caption="Briefing de l’équipe · Prototype" width={1232} height={869} className={styles.demoCapture} />
+              <ProCapture src={proScreens['briefing-equipe'].src} alt="Capture réelle du prototype : briefing de l’équipe, arrêts de la tournée et matériel à charger" caption="Briefing de l’équipe · Prototype" width={proScreens['briefing-equipe'].width} height={proScreens['briefing-equipe'].height} className={styles.demoCapture} />
             </article>
             <article className={styles.demoCard} data-reveal>
               <div className={styles.demoCardCopy}><span>03 / SUR LE TERRAIN</span><h3>Le prochain arrêt, dans la poche.</h3><p>L’application terrain garde l’essentiel lisible sur téléphone, même au milieu d’une journée chargée.</p></div>
-              <ProCapture src="/images/pro/tournee-terrain-mobile.png" alt="Capture mobile réelle du prototype Hanami Pro Terrain : tournée et prochain arrêt" caption="Hanami Pro Terrain · Prototype mobile" width={401} height={878} className={`${styles.demoCapture} ${styles.demoCapturePhone}`} sizes="(max-width: 767px) 70vw, 240px" />
+              <ProCapture src={proScreens['tournee-mobile'].src} alt="Capture mobile réelle du prototype Hanami Pro Terrain : tournée et prochain arrêt" caption="Hanami Pro Terrain · Prototype mobile" width={proScreens['tournee-mobile'].width} height={proScreens['tournee-mobile'].height} className={`${styles.demoCapture} ${styles.demoCapturePhone}`} sizes="(max-width: 767px) 70vw, 240px" />
             </article>
             <article className={styles.demoCard} data-reveal>
               <div className={styles.demoCardCopy}><span>04 / PREUVES & SUIVI</span><h3>Les photos racontent ce qui a été fait.</h3><p>Avant/après, note agronomique et signature restent attachés au passage et au site.</p></div>

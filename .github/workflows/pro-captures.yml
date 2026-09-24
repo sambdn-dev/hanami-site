@@ -1,0 +1,48 @@
+name: Captures Hanami Pro
+
+# Se déclenche quand une nouvelle version du prototype arrive dans prototype/.
+# Le commit généré ne touche que public/images/pro/ et le manifeste : il ne relance pas ce workflow
+# (filtre paths + les pushs faits avec GITHUB_TOKEN ne déclenchent pas de workflow).
+on:
+  push:
+    branches: [main]
+    paths: ['prototype/**']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pro-captures
+  cancel-in-progress: false
+
+jobs:
+  captures:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm i --no-save playwright@1.48.2 && npx playwright install --with-deps chromium
+      - name: Captures + contrôle (échoue si carte, police ou photo manquante)
+        run: node scripts/capture-pro.mjs
+      - name: Compilation du site avec les nouvelles captures
+        run: npm run build
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: captures
+          path: public/images/pro/v/
+          if-no-files-found: ignore
+      - name: Commit des captures
+        run: |
+          git config user.name "hanami-captures[bot]"
+          git config user.email "captures@users.noreply.github.com"
+          git add public/images/pro/v src/components/pro/pro-captures.json
+          if git diff --cached --quiet; then echo "Aucun changement"; exit 0; fi
+          git commit -m "chore(pro): captures du prototype $(jq -r .version src/components/pro/pro-captures.json)"
+          git push
