@@ -684,9 +684,9 @@
       <h1 style="font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:25px;color:#1a2e1a;margin:0;line-height:1.15;letter-spacing:-.015em">Choisissez votre créneau</h1>
       <p style="font-size:14px;color:#78716c;line-height:1.55;margin:8px 0 0">Bonjour — le passage n° 7 de votre contrat d'entretien approche. Indiquez le créneau qui vous convient : la tournée s'organise autour de votre choix.</p>
       <div style="display:flex;flex-direction:column;gap:9px;margin-top:16px;padding:14px 15px;background:#faf8f4;border:1px solid #f0ece6;border-radius:12px;font-size:13px">
-        <div style="display:flex;justify-content:space-between;gap:10px"><span style="color:#a8a29e">Site</span><span style="color:#1c1917;font-weight:600;text-align:right">Jardin principal · Le Vésinet</span></div>
-        <div style="display:flex;justify-content:space-between;gap:10px"><span style="color:#a8a29e">Prestation</span><span style="color:#44403c;text-align:right">Tonte + fertilisation · ≈ 2 h</span></div>
-        <div style="display:flex;justify-content:space-between;gap:10px"><span style="color:#a8a29e">Équipe</span><span style="color:#44403c;text-align:right">Équipe Nord — Karim + Tonio</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;line-height:1.4"><span style="color:#a8a29e;flex-shrink:0">Site</span><span style="color:#1c1917;font-weight:600;text-align:right">Jardin principal · Le Vésinet</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;line-height:1.4"><span style="color:#a8a29e;flex-shrink:0">Prestation</span><span style="color:#44403c;text-align:right">Tonte + fertilisation · ≈ 2 h</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;line-height:1.4"><span style="color:#a8a29e;flex-shrink:0">Équipe</span><span style="color:#44403c;text-align:right">Équipe Nord — Karim + Tonio</span></div>
       </div>
     </div>
 
@@ -916,7 +916,7 @@
     <nav onMouseOver="{{ navOver }}" onMouseLeave="{{ navOut }}" style="flex:1;overflow-y:auto;padding:6px 12px 16px;display:flex;flex-direction:column;gap:3px">
       <button onClick="{{ nav.hotline }}" style="display:flex;align-items:center;gap:10px;width:100%;padding:10px 11px;margin:6px 0 4px;border:1px solid #f0dcae;border-radius:11px;background:#fbf3e0;cursor:pointer;text-align:left" style-hover="background:#f7e9cd">
         <span style="position:relative;width:32px;height:32px;border-radius:9px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#bd8a2c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path><path d="M9.4 9a2.5 2.5 0 0 1 5 .2c0 1.7-2.5 2-2.5 3.8"></path><path d="M12 17h.01"></path></svg><span style="position:absolute;top:-2px;right:-2px;width:9px;height:9px;border-radius:50%;background:#c0473a;border:2px solid #fbf3e0;animation:hp-pulse 2s infinite"></span></span>
-        <span style="flex:1;min-width:0"><span style="display:block;font-size:13px;font-weight:700;color:#7a5a17">Urgence · Expert</span><span style="display:block;font-size:11px;color:#b08a2f">Avis gazon en moins de 4 min</span></span>
+        <span style="flex:1;min-width:0"><span style="display:block;font-size:13px;font-weight:700;color:#7a5a17">Urgence · Expert</span><span style="display:block;font-size:11px;color:#b08a2f">Conseil gazon pour vos équipes</span></span>
       </button>
       <div style="font-size:10px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:#a8a29e;padding:12px 12px 6px">Pilotage</div>
       <button data-nav="dashboard" onClick="{{ nav.dashboard }}" style="{{ navStyle.dashboard }}" style-hover="background:#efece6"><sc-if value="{{ active.dashboard }}" hint-placeholder-val="{{ false }}"><span style="position:absolute;left:0;top:7px;bottom:7px;width:3px;background:#2d5a27;border-radius:0 3px 3px 0"></span></sc-if><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.4"></rect><rect x="14" y="3" width="7" height="5" rx="1.4"></rect><rect x="14" y="12" width="7" height="9" rx="1.4"></rect><rect x="3" y="16" width="7" height="5" rx="1.4"></rect></svg><span>Tableau de bord</span></button>
@@ -1466,9 +1466,9 @@
           <div>
             <div style="font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#4a8c3f;margin-bottom:8px">Expertise · Coaching gazon</div>
             <h1 style="font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:27px;color:#1a2e1a;margin:0;letter-spacing:-.015em">Expert à la demande</h1>
-            <p style="font-size:13.5px;color:#78716c;margin:6px 0 0;max-width:560px">Vos équipes vous joignent en un geste — photo, urgence et mini-questionnaire pré-rempli. Vous diagnostiquez en moins de 4 minutes.</p>
+            <p style="font-size:13.5px;color:#78716c;margin:6px 0 0;max-width:560px">Vos équipes vous joignent en un geste — photo, urgence et mini-questionnaire pré-rempli. Le dossier réunit les photos et le contexte du chantier.</p>
           </div>
-          <span style="display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:#2d5a27;background:#eef4ec;border:1px solid #cfe4ca;padding:7px 13px;border-radius:20px"><span style="width:7px;height:7px;border-radius:50%;background:#4a8c3f"></span>Réponse moyenne · 3 min 40</span>
+          <span style="display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:#2d5a27;background:#eef4ec;border:1px solid #cfe4ca;padding:7px 13px;border-radius:20px"><span style="width:7px;height:7px;border-radius:50%;background:#4a8c3f"></span>Parcours de démonstration</span>
         </div>
         <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start">
           <div style="flex:1.5;min-width:320px;background:#fff;border:1px solid #eeeae5;border-radius:14px;overflow:hidden">
@@ -3617,6 +3617,10 @@ class Component extends DCLogic {
       'briefing-dirigeant': () => { clearTimeout(this._wstepT); this.setState({ route: 'welcome', welcomeKind: 'patron', wStep: 1 }); },
       'briefing-equipe': () => { clearTimeout(this._wstepT); this.setState({ route: 'welcome', welcomeKind: 'equipe', wStep: 1 }); },
       'tournee-mobile': () => this.enterTerrain(),
+      'fil-activite': () => this.setState({ route: 'photos' }),
+      'choix-creneau': () => this.setState({ route: 'booking', bookingDone: false }),
+      'urgence-gazon': () => this.setState({ route: 'hotline' }),
+      'fiche-client': () => this.setState({ route: 'client', selectedClient: 'tilleuls', selectedZone: 'ar', clientTab: 'plan' }),
       'contrats-mois': () => this.setState({ route: 'contrats', contratMode: 'list', contratView: 'grille', cmTour: 'green', cmContract: 'active', cmStatus: 'all', cmQuery: '', cmAnnual: false }, () => setTimeout(() => {
         const el = document.querySelector('[data-screen-label="Contrats × Mois"]'); if (!el) return;
         let p = el.parentElement; while (p && !(p.scrollHeight > p.clientHeight + 20 && /auto|scroll/.test(getComputedStyle(p).overflowY))) p = p.parentElement;
@@ -4089,9 +4093,9 @@ class Component extends DCLogic {
   }
   feedPosts() {
     return [
-      { day: 'Aujourd\u2019hui · vendredi 27 juin', team: 'Équipe Nord', color: '#2d5a27', init: 'ÉN', time: '14:05', client: 'Copropriété Les Tilleuls', site: 'Le Vésinet · Pelouse arrière', task: 'Tonte + fertilisation Floranid Twin', before: 'assets/w/case-noel-before.jpg', after: 'assets/w/case-noel-after.jpg', signed: true, agro: 'Apport azote 30 g/m² · tonte haute conseillée' },
-      { team: 'Équipe Sud', color: '#bd8a2c', init: 'ÉS', time: '11:20', client: 'Groupe Mercier — siège', site: 'Rueil-Malmaison · Massifs entrée', task: 'Entretien massifs + désherbage sélectif', before: 'assets/w/case-susan-before.jpg', after: 'assets/w/case-susan-after.jpg', signed: true, agro: null },
-      { day: 'Hier · jeudi 26 juin', team: 'Équipe Nord', color: '#2d5a27', init: 'ÉN', time: '16:40', client: 'Résidence Bellevue', site: 'Maisons-Laffitte · Pelouse avant', task: 'Scarification + regarnissage', before: 'assets/w/case-verop-before.jpg', after: 'assets/w/case-verop-after.jpg', signed: true, agro: 'Regarnissage ICL RPR 20 g/m²' },
+      { day: 'Aujourd\u2019hui · mardi 23 juin', team: 'Équipe Nord', color: '#2d5a27', init: 'ÉN', time: '09:02', client: 'Résidence Les Charmilles', site: 'Pierrelaye · Pelouse centrale', task: 'Tonte complète + bordures · engrais pelouse centrale', before: 'assets/w/case-noel-before.jpg', after: 'assets/w/case-noel-after.jpg', signed: true, agro: 'Floranid Twin 25 g/m² · tonte haute conseillée' },
+      { team: 'Équipe Sud', color: '#bd8a2c', init: 'ÉS', time: '10:05', client: 'Mme Hamel', site: 'Franconville · Massifs entrée', task: 'Entretien massifs + désherbage sélectif', before: 'assets/w/case-susan-before.jpg', after: 'assets/w/case-susan-after.jpg', signed: true, agro: null },
+      { day: 'Hier · lundi 22 juin', team: 'Équipe Nord', color: '#2d5a27', init: 'ÉN', time: '16:40', client: 'Résidence Bellevue', site: 'Maisons-Laffitte · Pelouse avant', task: 'Scarification + regarnissage', before: 'assets/w/case-verop-before.jpg', after: 'assets/w/case-verop-after.jpg', signed: true, agro: 'Regarnissage ICL RPR 20 g/m²' },
       { team: 'Équipe Sud', color: '#bd8a2c', init: 'ÉS', time: '09:15', client: 'Clinique du Parc', site: 'Chatou · Bordures', task: 'Taille de haies + ramassage', before: null, after: 'assets/w/case-susan-after.jpg', signed: false, agro: null },
     ];
   }
@@ -4688,7 +4692,7 @@ class Component extends DCLogic {
       { t: 'Devis', n: 'Pipeline commercial complet : filtres par statut avec compteurs, montants recalculés en direct depuis les lignes réelles, taux d’acceptation.', go: () => this.setState({ route: 'devis', devisMode: 'list', companyMenu: false, userMenu: false, notifOpen: false, moreOpen: false }) },
       { t: 'Détail devis', n: 'Le crédit d\u2019impôt SAP (−50 %) calculé pour les particuliers, l\u2019aperçu PDF, la conversion en contrat. « Envoyer au client » ouvre une palette de recherche client ; les observations terrain acceptent photos et PDF en glisser-déposer horodaté.', go: () => this.setState({ route: 'devis', devisMode: 'edit', devisId: 'DEV-2026-0151', companyMenu: false, userMenu: false, notifOpen: false, moreOpen: false }) },
       { t: 'Nouveau devis · tarifs client', n: 'Le devis se compose au catalogue en un clic, et surtout : les prix unitaires s\u2019ajustent seuls au client. Choisissez Groupe Mercier (grand compte) et voyez le catalogue passer à −12 %, la marge estimée se recalculer en direct. La négociation est dans l\u2019outil, pas dans un coin de tête.', go: () => this.setState({ route: 'devis', devisMode: 'new', ndClient: null, ndObject: '', ndLines: [], companyMenu: false, userMenu: false, notifOpen: false, moreOpen: false }) },
-      { t: 'Assistance Expert Gazon', n: 'LE différenciant Hanami. Depuis le terrain, l\u2019équipier photographie un symptôme et déclenche un avis : l\u2019outil pré-remplit tout — zone, surface, ancienneté, et la météo agronomique en auto (28 °C, sec depuis 9 j). L\u2019expert diagnostique en moins de 4 min (réponse moyenne 3 min 40) et répond en visio, WhatsApp ou reco écrite. Un ingénieur agronome dans la poche de chaque équipe — c\u2019est ce qui justifie le positionnement premium face à la jardinerie.', go: () => this.nav('hotline') },
+      { t: 'Assistance Expert Gazon', n: 'LE différenciant Hanami. Depuis le terrain, l\u2019équipier photographie un symptôme et déclenche un avis : l\u2019outil pré-remplit tout — zone, surface, ancienneté, et la météo agronomique en auto (28 °C, sec depuis 9 j). Le prototype illustre une demande d’avis adressée à l’expert et répond en visio, WhatsApp ou reco écrite. Un ingénieur agronome dans la poche de chaque équipe — c\u2019est ce qui justifie le positionnement premium face à la jardinerie.', go: () => this.nav('hotline') },
       { t: 'Contrats d\u2019entretien', n: 'Le CA récurrent au centre : valeur annuelle, calendrier de passages généré automatiquement, statuts « à risque » repérés avant la résiliation. Le bouton Retour revient toujours à l\u2019écran précédent consulté.', go: () => this.setState({ route: 'contrats', contratMode: 'list', companyMenu: false, userMenu: false, notifOpen: false, moreOpen: false }) },
       { t: 'Prise de RDV', n: 'La file des passages à caler et l\u2019envoi de la page de créneaux au client. Un e-mail part automatiquement à J-3 avant chaque passage — le client choisit, la tournée s\u2019organise autour de lui.', go: () => this.nav('rdv') },
       { t: 'Page client · créneau', n: 'Ce que reçoit le client — pensée mobile d\u2019abord. Créneaux réellement disponibles (les complets sont grisés), confirmation en deux taps, mot pour l\u2019équipe. Sa réponse remonte instantanément dans Prise de RDV côté bureau. Aux couleurs de l\u2019entreprise, propulsé par Hanami.', go: () => this.nav('booking') },

@@ -49,19 +49,27 @@ export default function ProLanding() {
               <ProCapture src={proScreens['briefing-equipe'].src} alt="Capture réelle du prototype : briefing de l’équipe, arrêts de la tournée et matériel à charger" caption="Briefing de l’équipe · Prototype" width={proScreens['briefing-equipe'].width} height={proScreens['briefing-equipe'].height} className={styles.demoCapture} />
             </article>
             <article className={styles.demoCard} data-reveal>
-              <div className={styles.demoCardCopy}><span>03 / SUR LE TERRAIN</span><h3>Le prochain arrêt, dans la poche.</h3><p>L’application terrain garde l’essentiel lisible sur téléphone, même au milieu d’une journée chargée.</p></div>
-              <ProCapture src={proScreens['tournee-mobile'].src} alt="Capture mobile réelle du prototype Hanami Pro Terrain : tournée et prochain arrêt" caption="Hanami Pro Terrain · Prototype mobile" width={proScreens['tournee-mobile'].width} height={proScreens['tournee-mobile'].height} className={`${styles.demoCapture} ${styles.demoCapturePhone}`} sizes="(max-width: 767px) 70vw, 240px" />
+              <div className={styles.demoCardCopy}><span>03 / PREUVES & SUIVI</span><h3>Les photos racontent ce qui a été fait.</h3><p>Le fil rassemble les passages, les photos avant/après et les notes terrain dans un même historique.</p></div>
+              <ProCapture src={proScreens['fil-activite'].src} alt="Capture du prototype Hanami Pro : fil d’activité avec comptes rendus et photos avant après des équipes" caption="Fil d’activité · Prototype Hanami Pro" width={proScreens['fil-activite'].width} height={proScreens['fil-activite'].height} className={styles.demoCapture} />
             </article>
             <article className={styles.demoCard} data-reveal>
-              <div className={styles.demoCardCopy}><span>04 / PREUVES & SUIVI</span><h3>Les photos racontent ce qui a été fait.</h3><p>Avant/après, note agronomique et signature restent attachés au passage et au site.</p></div>
-              <ProCapture src="/images/pro/fil-activite.png" alt="Capture réelle du prototype : fil d’activité avec photos avant après, notes agronomiques et validation client" caption="Fil d’activité · Prototype" width={977} height={1125} className={`${styles.demoCapture} ${styles.demoCaptureFeed}`} />
+              <div className={styles.demoCardCopy}><span>04 / DOSSIER CLIENT</span><h3>Le contexte du jardin, sous les yeux.</h3><p>Plan du site, surfaces et besoins en produits : un aperçu du dossier que l’équipe pourra consulter.</p></div>
+              <ProCapture src={proScreens['fiche-client'].src} alt="Capture du prototype Hanami Pro : fiche client avec plan du jardin, surfaces et dosages" caption="Fiche client · Démonstration" width={proScreens['fiche-client'].width} height={proScreens['fiche-client'].height} className={styles.demoCapture} />
             </article>
             <article className={styles.demoCard} data-reveal>
-              <div className={styles.demoCardCopy}><span>05 / CÔTÉ CLIENT</span><h3>Un créneau choisi sans aller-retour.</h3><p>Le client indique sa disponibilité ; le bureau garde la maîtrise de l’organisation.</p></div>
-              <ProCapture src="/images/pro/choix-creneau-client.png" alt="Capture réelle du prototype : page de choix du créneau d’un contrat d’entretien" caption="Choix du créneau · Prototype client Pro" width={638} height={983} className={`${styles.demoCapture} ${styles.demoCaptureBooking}`} />
+              <div className={styles.demoCardCopy}><span>05 / ASSISTANCE GAZON</span><h3>Un avis technique quand le terrain le demande.</h3><p>Le prototype illustre la demande d’aide : photo, symptômes et contexte du chantier réunis pour Hanami.</p></div>
+              <ProCapture src={proScreens['urgence-gazon'].src} alt="Capture du prototype Hanami Pro : écran simulé de demande d’assistance gazon" caption="Urgence gazon · Démonstration" width={proScreens['urgence-gazon'].width} height={proScreens['urgence-gazon'].height} className={styles.demoCapture} />
+            </article>
+            <article className={styles.demoCard} data-reveal>
+              <div className={styles.demoCardCopy}><span>06 / SUR LE TERRAIN</span><h3>Le prochain arrêt, dans la poche.</h3><p>L’application terrain garde l’essentiel lisible sur téléphone, même au milieu d’une journée chargée.</p></div>
+              <ProCapture src={proScreens['tournee-mobile'].src} alt="Capture mobile réelle du prototype Hanami Pro Terrain : tournée et prochain arrêt" caption="Hanami Pro Terrain · Prototype mobile" width={proScreens['tournee-mobile'].width} height={proScreens['tournee-mobile'].height} className={`${styles.demoCapture} ${styles.demoCapturePhone}`} sizes="(max-width: 767px) 78vw, 320px" />
+            </article>
+            <article className={styles.demoCard} data-reveal>
+              <div className={styles.demoCardCopy}><span>07 / CÔTÉ CLIENT</span><h3>Un créneau choisi sans aller-retour.</h3><p>Aperçu de la page mobile sur laquelle le client peut choisir une disponibilité proposée.</p></div>
+              <ProCapture src={proScreens['choix-creneau'].src} alt="Capture du prototype Hanami Pro : page mobile de choix du créneau pour un contrat d’entretien" caption="Choix du créneau · Démonstration" width={proScreens['choix-creneau'].width} height={proScreens['choix-creneau'].height} className={`${styles.demoCapture} ${styles.demoCaptureBooking}`} />
             </article>
           </div>
-          <p className={styles.demoFoot}>Écrans de travail du prototype. Les parcours et fonctions montrés sont en cours de conception ; les données affichées servent à la démonstration.</p>
+          <p className={styles.demoFoot}>Captures du prototype. La fiche client, l’assistance gazon et le choix du créneau restent des démonstrations avec des données fictives ; ces écrans ne sont pas encore reliés entre eux.</p>
           <a href="#contact" className={styles.darkButton}>Voir comment cela s’appliquerait à mon entreprise <ArrowUpRight size={17} aria-hidden="true" /></a>
         </div>
       </section>

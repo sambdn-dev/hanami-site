@@ -19,6 +19,10 @@ const SCREENS = [
   { id: 'briefing-equipe', viewport: { width: 1440, height: 1000 }, scale: 2 },
   { id: 'tournee-mobile', viewport: { width: 390, height: 844 }, scale: 3, mobile: true },
   { id: 'contrats-mois', viewport: { width: 1440, height: 1000 }, scale: 2 },
+  { id: 'fil-activite', viewport: { width: 1440, height: 1000 }, scale: 2 },
+  { id: 'urgence-gazon', viewport: { width: 1440, height: 1000 }, scale: 2 },
+  { id: 'fiche-client', viewport: { width: 1440, height: 1000 }, scale: 2 },
+  { id: 'choix-creneau', viewport: { width: 390, height: 844 }, scale: 3, mobile: true },
 ];
 const TILE_HOSTS = ['server.arcgisonline.com'];
 

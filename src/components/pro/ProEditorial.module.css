@@ -59,9 +59,7 @@
 .demoCard figure figcaption { margin-top: 10px; color: #617963; font-family: var(--font-space-mono),monospace; font-size: 10px; }
 .demoCaptureWide .captureButton { max-height: 590px; border: 1px solid #cad7c5; }
 .demoCapture .captureButton { border: 1px solid #cad7c5; }
-.demoCapturePhone, .demoCaptureFeed, .demoCaptureBooking { width: min(100%,360px); margin-inline: auto; }
-.demoCapturePhone { width: min(100%,250px); }
-.demoCaptureFeed { width: min(100%,430px); }
+.demoCapturePhone, .demoCaptureBooking { width: min(100%,320px); margin-inline: auto; }
 .demoFoot { margin: 24px 0 24px; color: #617865; font-size: 11px; line-height: 1.6; }
 
 /* Aperçu conceptuel du tableau de bord Pro */

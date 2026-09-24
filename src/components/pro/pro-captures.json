@@ -1,26 +1,46 @@
 {
-  "version": "20260924-a65cbf1",
-  "generatedAt": "2026-09-24T09:53:29.755Z",
+  "version": "20260924-a71b601",
+  "generatedAt": "2026-09-24T10:20:22.107Z",
   "screens": {
     "briefing-dirigeant": {
-      "src": "/images/pro/v/20260924-a65cbf1/briefing-dirigeant.png",
+      "src": "/images/pro/v/20260924-a71b601/briefing-dirigeant.png",
       "width": 1440,
       "height": 1000
     },
     "briefing-equipe": {
-      "src": "/images/pro/v/20260924-a65cbf1/briefing-equipe.png",
+      "src": "/images/pro/v/20260924-a71b601/briefing-equipe.png",
       "width": 1440,
       "height": 1000
     },
     "tournee-mobile": {
-      "src": "/images/pro/v/20260924-a65cbf1/tournee-mobile.png",
+      "src": "/images/pro/v/20260924-a71b601/tournee-mobile.png",
       "width": 390,
       "height": 844
     },
     "contrats-mois": {
-      "src": "/images/pro/v/20260924-a65cbf1/contrats-mois.png",
+      "src": "/images/pro/v/20260924-a71b601/contrats-mois.png",
       "width": 1440,
       "height": 1000
+    },
+    "fil-activite": {
+      "src": "/images/pro/v/20260924-a71b601/fil-activite.png",
+      "width": 1440,
+      "height": 1000
+    },
+    "urgence-gazon": {
+      "src": "/images/pro/v/20260924-a71b601/urgence-gazon.png",
+      "width": 1440,
+      "height": 1000
+    },
+    "fiche-client": {
+      "src": "/images/pro/v/20260924-a71b601/fiche-client.png",
+      "width": 1440,
+      "height": 1000
+    },
+    "choix-creneau": {
+      "src": "/images/pro/v/20260924-a71b601/choix-creneau.png",
+      "width": 390,
+      "height": 844
     }
   }
 }
