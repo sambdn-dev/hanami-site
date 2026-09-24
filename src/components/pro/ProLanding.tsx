@@ -92,7 +92,7 @@ export default function ProLanding() {
       <section className={styles.studioTeaser} aria-labelledby="studio-teaser-title">
         <div className={styles.container}>
           <div data-reveal><p className={styles.sectionKicker}>04 / POUR ALLER PLUS LOIN</p><h2 id="studio-teaser-title">Le jardin de demain,<br /><em>visible dès aujourd’hui.</em></h2><p>Hanami Studio · Pro explore une autre étape : partir des photos et de vos consignes, proposer une image photoréaliste, puis approfondir le projet en 3D après validation.</p><Link href="/pro/studio" className={styles.darkButton}>Découvrir Hanami Studio <ArrowUpRight size={18} aria-hidden="true" /></Link></div>
-          <figure className={styles.studioTeaserImage} data-reveal data-reveal-delay="1"><Image src="/images/studio/jardin-a-contemporain.jpg" alt="Jardin contemporain fictif avec pelouse délimitée, pas japonais et massifs" fill sizes="(max-width: 767px) 100vw, 50vw" /><figcaption>Étude fictive · Une des trois variantes à explorer dans Studio</figcaption></figure>
+          <figure className={styles.studioTeaserImage} data-reveal data-reveal-delay="1"><Image src="/images/studio/jardin-a-organique-v2.jpg" alt="Jardin contemporain fictif avec pelouse délimitée, pas japonais et massifs" fill sizes="(max-width: 767px) 100vw, 50vw" /><figcaption>Étude fictive · Une des trois variantes à explorer dans Studio</figcaption></figure>
         </div>
       </section>
     </>
