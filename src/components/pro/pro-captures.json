@@ -1,24 +1,24 @@
 {
-  "version": "20260924-15d687e",
-  "generatedAt": "2026-09-24T09:50:53.636Z",
+  "version": "20260924-a65cbf1",
+  "generatedAt": "2026-09-24T09:53:29.755Z",
   "screens": {
     "briefing-dirigeant": {
-      "src": "/images/pro/v/20260924-15d687e/briefing-dirigeant.png",
+      "src": "/images/pro/v/20260924-a65cbf1/briefing-dirigeant.png",
       "width": 1440,
       "height": 1000
     },
     "briefing-equipe": {
-      "src": "/images/pro/v/20260924-15d687e/briefing-equipe.png",
+      "src": "/images/pro/v/20260924-a65cbf1/briefing-equipe.png",
       "width": 1440,
       "height": 1000
     },
     "tournee-mobile": {
-      "src": "/images/pro/v/20260924-15d687e/tournee-mobile.png",
+      "src": "/images/pro/v/20260924-a65cbf1/tournee-mobile.png",
       "width": 390,
       "height": 844
     },
     "contrats-mois": {
-      "src": "/images/pro/v/20260924-15d687e/contrats-mois.png",
+      "src": "/images/pro/v/20260924-a65cbf1/contrats-mois.png",
       "width": 1440,
       "height": 1000
     }
