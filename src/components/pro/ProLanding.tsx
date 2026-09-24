@@ -42,7 +42,7 @@ export default function ProLanding() {
           <div className={styles.demoGrid}>
             <article className={`${styles.demoCard} ${styles.demoCardWide}`} data-reveal>
               <div className={styles.demoCardCopy}><span>01 / CONTRATS & TOURNÉES</span><h3>Vos passages planifiés, contrat par contrat.</h3><p>Une vue pour repérer ce qui est confirmé, ce qui attend une réponse et ce qu’il faut replanifier.</p></div>
-              <ProCapture src="/images/pro/contrats-mois.png" alt="Capture du wireframe Hanami Pro : tableau des contrats d’entretien par mois avec états de confirmation" caption="Contrats × Mois · Wireframe avancé" width={2051} height={1726} className={styles.demoCaptureWide} sizes="(max-width: 767px) 100vw, 70vw" />
+              <ProCapture src={proScreens['contrats-mois'].src} alt="Capture du prototype Hanami Pro : grille des passages par mois, tournée et contrat avec états de confirmation" caption="Passages × mois · Prototype Hanami Pro" width={proScreens['contrats-mois'].width} height={proScreens['contrats-mois'].height} className={styles.demoCaptureWide} sizes="(max-width: 767px) 100vw, 70vw" />
             </article>
             <article className={styles.demoCard} data-reveal>
               <div className={styles.demoCardCopy}><span>02 / ÉQUIPE</span><h3>Chaque équipe part avec la bonne tournée.</h3><p>Arrêts, horaires, consignes et matériel à emporter dans une vue simple.</p></div>

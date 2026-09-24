@@ -1994,8 +1994,239 @@
             <h1 style="font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:27px;color:#1a2e1a;margin:0;letter-spacing:-.015em">Contrats d'entretien</h1>
             <p style="font-size:13.5px;color:#78716c;margin:6px 0 0">5 contrats actifs · 41 800 € de CA récurrent · 90 passages / an</p>
           </div>
-          <button onClick="{{ newContratToast }}" style="display:flex;align-items:center;gap:7px;height:38px;padding:0 15px;background:#2d5a27;color:#fff;border:0;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer" style-hover="background:#1a2e1a"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>Nouveau contrat</button>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <div role="group" aria-label="Affichage des contrats" style="display:flex;gap:2px;padding:3px;background:#f4f1ec;border:1px solid #ece8e2;border-radius:10px">
+              <button onClick="{{ cmSetGrid }}" style="{{ cmSegGrid }}">Passages × mois</button>
+              <button onClick="{{ cmSetList }}" style="{{ cmSegList }}">Liste</button>
+            </div>
+            <sc-if value="{{ cmViewGrid }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ cmExport }}" style="display:flex;align-items:center;gap:7px;height:38px;padding:0 14px;background:#fff;color:#1c1917;border:1px solid #e7e5e4;border-radius:9px;font-size:13.5px;font-weight:500;cursor:pointer" style-hover="border-color:#4a8c3f;color:#2d5a27"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3M7 10l5 5 5-5M5 21h14"></path></svg>Exporter la vue</button>
+            <button onClick="{{ cmNewVisit }}" style="display:flex;align-items:center;gap:7px;height:38px;padding:0 15px;background:#2d5a27;color:#fff;border:0;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer" style-hover="background:#1a2e1a"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>Nouveau passage</button>
+            </sc-if>
+            <sc-if value="{{ cmViewList }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ newContratToast }}" style="display:flex;align-items:center;gap:7px;height:38px;padding:0 15px;background:#2d5a27;color:#fff;border:0;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer" style-hover="background:#1a2e1a"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"></path></svg>Nouveau contrat</button>
+            </sc-if>
+          </div>
         </div>
+        <sc-if value="{{ cmViewGrid }}" hint-placeholder-val="{{ true }}">
+        <div data-screen-label="Contrats × Mois" style="background:#fff;border:1px solid #eeeae5;border-radius:14px;overflow:hidden;font-family:'DM Sans',system-ui,sans-serif" class="hp-bleed">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;padding:0 22px;border-bottom:1px solid #eeeae5">
+            <div role="tablist" aria-label="Tournées" style="display:flex;gap:26px;overflow-x:auto">
+              <sc-for list="{{ cmTabs }}" as="t" hint-placeholder-count="3">
+              <button role="tab" onClick="{{ t.pick }}" style="{{ t.style }}">
+                <sc-if value="{{ t.leaf }}" hint-placeholder-val="{{ false }}"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path></svg></sc-if>
+                <sc-if value="{{ t.dot }}" hint-placeholder-val="{{ true }}"><span style="{{ t.dotStyle }}"></span></sc-if>
+                <span>{{ t.label }}</span><span style="{{ t.cStyle }}">{{ t.count }}</span>
+              </button>
+              </sc-for>
+            </div>
+            <select onChange="{{ cmSetContract }}" aria-label="Type de contrats" style="height:36px;padding:0 12px;border:1px solid #e7e5e4;border-radius:9px;background:#fff;color:#44403c;font-family:'DM Sans',system-ui,sans-serif;font-size:13.5px;cursor:pointer">
+              <sc-for list="{{ cmContractOpts }}" as="o" hint-placeholder-count="5"><option value="{{ o.v }}" selected="{{ o.sel }}">{{ o.l }}</option></sc-for>
+            </select>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:16px 22px">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:4px">
+                <button onClick="{{ cmPrevP }}" aria-label="Période précédente" style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:0;border-radius:8px;background:transparent;color:#57534e;cursor:pointer" style-hover="background:#f4f1ec"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"></path></svg></button>
+                <span aria-live="polite" style="font-family:'Fraunces',Georgia,serif;font-size:17px;font-weight:600;color:#1a2e1a;min-width:210px;text-align:center">{{ cmDateLabel }}</span>
+                <button onClick="{{ cmNextP }}" aria-label="Période suivante" style="width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:0;border-radius:8px;background:transparent;color:#57534e;cursor:pointer" style-hover="background:#f4f1ec"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg></button>
+              </div>
+              <button onClick="{{ cmToToday }}" style="height:34px;padding:0 12px;border:0;border-radius:8px;background:transparent;color:#57534e;font-size:13.5px;font-weight:500;cursor:pointer;font-family:'DM Sans',system-ui,sans-serif" style-hover="background:#f4f1ec">Aujourd'hui</button>
+              <div role="group" aria-label="Période affichée" style="display:flex;gap:2px;padding:3px;background:#f4f1ec;border:1px solid #ece8e2;border-radius:10px">
+                <button onClick="{{ cmSet3m }}" style="{{ cm3m }}">3 mois</button>
+                <button onClick="{{ cmSetYear }}" style="{{ cmYear }}">Année</button>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:relative">
+              <label style="display:flex;align-items:center;gap:8px;height:38px;padding:0 10px 0 12px;border:1px solid #e7e5e4;border-radius:9px;background:#fff;color:#a8a29e;min-width:240px">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+                <input value="{{ cmQuery }}" onChange="{{ cmSetQuery }}" placeholder="Client, adresse, ville…" aria-label="Rechercher dans les contrats" style="flex:1;min-width:0;border:0;outline:0;background:transparent;font-family:'DM Sans',system-ui,sans-serif;font-size:14px;color:#1c1917">
+                <sc-if value="{{ cmHasQuery }}" hint-placeholder-val="{{ false }}"><button onClick="{{ cmClearQuery }}" aria-label="Effacer la recherche" style="width:24px;height:24px;display:flex;align-items:center;justify-content:center;border:0;border-radius:6px;background:transparent;color:#78716c;cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button></sc-if>
+              </label>
+              <select onChange="{{ cmSetStatus }}" aria-label="Filtrer par statut" style="height:38px;padding:0 12px;border:1px solid #e7e5e4;border-radius:9px;background:#fff;color:#44403c;font-family:'DM Sans',system-ui,sans-serif;font-size:13.5px;cursor:pointer">
+                <sc-for list="{{ cmStatusOpts }}" as="o" hint-placeholder-count="5"><option value="{{ o.v }}" selected="{{ o.sel }}">{{ o.l }}</option></sc-for>
+              </select>
+              <button onClick="{{ cmToggleMenu }}" aria-label="Options du planning" style="width:38px;height:38px;display:flex;align-items:center;justify-content:center;border:1px solid #e7e5e4;border-radius:9px;background:#fff;color:#57534e;cursor:pointer" style-hover="border-color:#4a8c3f"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6"></circle><circle cx="12" cy="12" r="1.6"></circle><circle cx="19" cy="12" r="1.6"></circle></svg></button>
+              <sc-if value="{{ cmMenuOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;right:0;top:44px;z-index:20;width:250px;background:#fff;border:1px solid #eeeae5;border-radius:12px;box-shadow:0 12px 30px rgba(28,25,23,.12);padding:6px">
+                <button onClick="{{ cmExportMenu }}" style="display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border:0;border-radius:8px;background:transparent;color:#1c1917;font-size:13.5px;text-align:left;cursor:pointer;font-family:'DM Sans',system-ui,sans-serif" style-hover="background:#f8f7f4">Exporter la vue (CSV)</button>
+                <div style="height:1px;background:#f1ede7;margin:4px 0"></div>
+                <button onClick="{{ cmResetDemo }}" style="display:flex;align-items:center;gap:10px;width:100%;padding:9px 10px;border:0;border-radius:8px;background:transparent;color:#1c1917;font-size:13.5px;text-align:left;cursor:pointer;font-family:'DM Sans',system-ui,sans-serif" style-hover="background:#f8f7f4">Réinitialiser la démonstration</button>
+              </div>
+              </sc-if>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:0 22px 14px;font-size:13.5px;color:#57534e">
+            <span><b style="font-family:'Space Mono',monospace;color:#1c1917">{{ cmCountClients }}</b> {{ cmClientsWord }}<span style="margin:0 8px;color:#cbc7c0">·</span><b style="font-family:'Space Mono',monospace;color:#1c1917">{{ cmCountVisits }}</b> {{ cmVisitsWord }} sur la période</span>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <button onClick="{{ cmTogglePending }}" style="{{ cmPendStyle }}"><span style="width:12px;height:12px;border:1.5px dashed #6f8f66;border-radius:3px"></span><b style="font-family:'Space Mono',monospace">{{ cmPending }}</b> à confirmer</button>
+              <sc-if value="{{ cmHasBlocked }}" hint-placeholder-val="{{ true }}">
+              <button onClick="{{ cmToggleBlocked }}" style="{{ cmBlockStyle }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4M12 16h.01"></path></svg><b style="font-family:'Space Mono',monospace">{{ cmBlocked }}</b> à replanifier</button>
+              </sc-if>
+            </div>
+          </div>
+          <sc-if value="{{ cmDesktop }}" hint-placeholder-val="{{ true }}">
+          <div style="overflow-x:auto;border-top:1px solid #eeeae5">
+            <div style="{{ cmMinW }}">
+              <div style="{{ cmGridCols }}">
+                <div style="padding:14px 18px;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#78716c;display:flex;align-items:center">Client</div>
+                <div style="padding:14px 18px;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#78716c;display:flex;align-items:center">Copropriété / site</div>
+                <div style="padding:14px 18px;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#78716c;display:flex;align-items:center">Adresse</div>
+                <sc-for list="{{ cmMonthsHead }}" as="m" hint-placeholder-count="3">
+                <div style="{{ m.style }}"><span>{{ m.label }}</span><sc-if value="{{ m.cur }}" hint-placeholder-val="{{ false }}"><small style="font-size:10px;letter-spacing:.14em">Ce mois-ci</small></sc-if></div>
+                </sc-for>
+                <div></div>
+              </div>
+              <sc-for list="{{ cmRows }}" as="row" hint-placeholder-count="6">
+              <div style="{{ cmGridCols }}">
+                <div style="padding:16px 18px;border-top:1px solid #f1ede7;display:flex;flex-direction:column;justify-content:center;gap:2px;min-width:0"><span style="font-family:'Fraunces',Georgia,serif;font-size:16px;font-weight:600;color:#1a2e1a">{{ row.name }}</span><span style="font-size:12.5px;color:#78716c">{{ row.kind }}</span></div>
+                <div style="padding:16px 18px;border-top:1px solid #f1ede7;display:flex;align-items:center;gap:9px;min-width:0;font-size:14px;color:#2d4a28"><span style="{{ row.dot }}"></span><span>{{ row.site }}</span></div>
+                <div style="padding:16px 18px;border-top:1px solid #f1ede7;display:flex;flex-direction:column;justify-content:center;gap:2px;min-width:0;font-size:13.5px;color:#44403c"><span>{{ row.address }}</span><span style="font-size:12.5px;color:#78716c">{{ row.zipCity }}</span></div>
+                <sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="3">
+                <div style="{{ cell.style }}">
+                  <sc-for list="{{ cell.chips }}" as="ch" hint-placeholder-count="1">
+                  <button onClick="{{ ch.open }}" title="{{ ch.title }}" aria-label="{{ ch.title }}" style="{{ ch.style }}"><sc-if value="{{ ch.done }}" hint-placeholder-val="{{ false }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></sc-if><sc-if value="{{ ch.blocked }}" hint-placeholder-val="{{ false }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4M12 16h.01"></path></svg></sc-if><span>{{ ch.day }}</span></button>
+                  </sc-for>
+                  <sc-if value="{{ cell.canAdd }}" hint-placeholder-val="{{ false }}"><button onClick="{{ cell.add }}" aria-label="Ajouter un passage" style="display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 7px;border:0;border-radius:7px;background:transparent;color:#a8a29e;font-size:12px;cursor:pointer;font-family:'DM Sans',system-ui,sans-serif" style-hover="background:rgba(255,255,255,.8);color:#2d5a27"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg><sc-if value="{{ cell.empty }}" hint-placeholder-val="{{ false }}"><span>Planifier</span></sc-if></button></sc-if>
+                </div>
+                </sc-for>
+                <div style="border-top:1px solid #f1ede7;display:flex;align-items:center;justify-content:center"><sc-if value="{{ row.canAdd }}" hint-placeholder-val="{{ true }}"><button onClick="{{ row.rowAdd }}" title="Ajouter un passage" aria-label="Nouveau passage" style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;border:0;border-radius:8px;background:transparent;color:#a8a29e;cursor:pointer" style-hover="background:#f4f1ec;color:#2d5a27"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button></sc-if></div>
+              </div>
+              </sc-for>
+            </div>
+          </div>
+          </sc-if>
+          <sc-if value="{{ cmMobile }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:10px;padding:0 14px 14px">
+            <sc-for list="{{ cmRows }}" as="row" hint-placeholder-count="4">
+            <article style="border:1px solid #eeeae5;border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:8px">
+              <div style="display:flex;align-items:center;gap:9px"><span style="{{ row.dot }}"></span><div style="min-width:0"><div style="font-family:'Fraunces',Georgia,serif;font-size:16px;font-weight:600;color:#1a2e1a">{{ row.site }}</div><div style="font-size:12.5px;color:#78716c">{{ row.name }} · {{ row.city }}</div></div></div>
+              <sc-for list="{{ row.cells }}" as="cell" hint-placeholder-count="3">
+              <div style="{{ cell.mStyle }}">
+                <span style="width:78px;font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#78716c">{{ cell.label }}</span>
+                <sc-for list="{{ cell.chips }}" as="ch" hint-placeholder-count="1"><button onClick="{{ ch.open }}" aria-label="{{ ch.title }}" style="{{ ch.style }}"><sc-if value="{{ ch.done }}" hint-placeholder-val="{{ false }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></sc-if><sc-if value="{{ ch.blocked }}" hint-placeholder-val="{{ false }}"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4M12 16h.01"></path></svg></sc-if><span>{{ ch.day }}</span></button></sc-for>
+                <sc-if value="{{ cell.canAdd }}" hint-placeholder-val="{{ false }}"><button onClick="{{ cell.add }}" aria-label="Ajouter un passage" style="width:44px;height:36px;display:flex;align-items:center;justify-content:center;border:0;border-radius:8px;background:rgba(255,255,255,.7);color:#57534e;cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button></sc-if>
+              </div>
+              </sc-for>
+            </article>
+            </sc-for>
+          </div>
+          </sc-if>
+          <sc-if value="{{ cmNoRows }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:48px 20px;text-align:center;border-top:1px solid #eeeae5">
+            <h3 style="font-family:'Fraunces',Georgia,serif;font-size:18px;font-weight:600;color:#1a2e1a;margin:0">Aucun contrat dans cette vue</h3>
+            <p style="font-size:13.5px;color:#78716c;margin:0">Essayez un autre nom ou élargissez les filtres.</p>
+            <button onClick="{{ cmResetFilters }}" style="margin-top:6px;height:36px;padding:0 14px;border:1px solid #e7e5e4;border-radius:9px;background:#fff;font-size:13.5px;cursor:pointer;font-family:'DM Sans',system-ui,sans-serif">Réinitialiser les filtres</button>
+          </div>
+          </sc-if>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 22px;border-top:1px solid #eeeae5;font-size:13px;color:#57534e">
+            <div style="display:flex;gap:18px;flex-wrap:wrap;align-items:center">
+              <span style="display:flex;align-items:center;gap:7px"><span style="display:inline-flex;align-items:center;justify-content:center;height:24px;min-width:28px;padding:0 5px;border:1.5px dashed #9fb897;border-radius:7px;font-family:'Space Mono',monospace;font-size:11.5px;font-weight:700;color:#2f4f29">24</span>À confirmer</span>
+              <span style="display:flex;align-items:center;gap:7px"><span style="display:inline-flex;align-items:center;justify-content:center;height:24px;min-width:28px;padding:0 5px;border:1.5px solid #a9c99e;background:#dcebd6;border-radius:7px;font-family:'Space Mono',monospace;font-size:11.5px;font-weight:700;color:#1a3d16">24</span>Confirmé</span>
+              <span style="display:flex;align-items:center;gap:7px"><span style="display:inline-flex;align-items:center;gap:2px;height:24px;padding:0 5px;font-family:'Space Mono',monospace;font-size:11.5px;font-weight:700;color:#5f8a55"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg>24</span>Réalisé</span>
+              <span style="display:flex;align-items:center;gap:7px"><span style="display:inline-flex;align-items:center;justify-content:center;height:24px;min-width:28px;border:1.5px solid #e8ac9b;background:#fbe6df;border-radius:7px;color:#a83a26"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4M12 16h.01"></path></svg></span>À replanifier</span>
+              <span style="display:flex;align-items:center;gap:7px;color:#78716c"><span style="width:14px;height:14px;border-radius:4px;background:#f4f8f1;border:1px solid #dfe9da"></span>Tournée verte<span style="width:14px;height:14px;border-radius:4px;background:#faf5ea;border:1px solid #efe4cc;margin-left:6px"></span>Tournée jaune</span>
+            </div>
+            <span style="color:#78716c">Cliquez sur une date pour modifier le passage.</span>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:12px;font-size:12px;color:#a8a29e">
+          <span>Jeu de démonstration du planning Contrats × Mois — distinct des tournées du 23 juin et de la liste des contrats.</span>
+          <span style="font-family:'Space Mono',monospace">Enregistré sur cet appareil · {{ cmSavedAt }}</span>
+        </div>
+        <sc-if value="{{ cmEditing }}" hint-placeholder-val="{{ false }}">
+        <div style="position:fixed;inset:0;z-index:120;display:flex;justify-content:flex-end;font-family:'DM Sans',system-ui,sans-serif">
+          <div onClick="{{ cmEdClose }}" style="position:absolute;inset:0;background:rgba(20,33,15,.3)"></div>
+          <form onSubmit="{{ cmEdSave }}" role="dialog" aria-label="{{ cmEd.title }}" style="position:relative;width:460px;max-width:100vw;height:100%;background:#fafaf9;display:flex;flex-direction:column;box-shadow:-20px 0 50px rgba(20,33,15,.18)">
+            <div style="padding:22px 24px 16px;border-bottom:1px solid #eeeae5;display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+              <div>
+                <div style="display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#4a8c3f"><span style="{{ cmEd.dot }}"></span>{{ cmEd.tourLabel }}</div>
+                <h2 style="font-family:'Fraunces',Georgia,serif;font-size:24px;font-weight:600;color:#1a2e1a;margin:8px 0 4px">{{ cmEd.title }}</h2>
+                <p style="font-size:13.5px;color:#78716c;margin:0">{{ cmEd.desc }}</p>
+              </div>
+              <button type="button" onClick="{{ cmEdClose }}" aria-label="Fermer" style="width:40px;height:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border:1px solid #e7e5e4;border-radius:9px;background:#fff;color:#57534e;cursor:pointer"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+            </div>
+            <div style="flex:1;overflow-y:auto;padding:18px 24px;display:flex;flex-direction:column;gap:16px">
+              <sc-if value="{{ cmEd.isNew }}" hint-placeholder-val="{{ false }}">
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#44403c">Client / site
+                <select onChange="{{ cmEdClient }}" style="height:44px;padding:0 12px;border:1px solid #e7e5e4;border-radius:10px;background:#fff;font-family:'DM Sans',system-ui,sans-serif;font-size:16px;font-weight:400;color:#1c1917"><sc-for list="{{ cmEd.clientOpts }}" as="o" hint-placeholder-count="6"><option value="{{ o.v }}" selected="{{ o.sel }}">{{ o.l }}</option></sc-for></select>
+              </label>
+              </sc-if>
+              <sc-if value="{{ cmEd.notNew }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;gap:12px;align-items:flex-start;padding:14px;background:#fff;border:1px solid #eeeae5;border-radius:12px">
+                <span style="width:40px;height:40px;border-radius:10px;background:#e8f0e6;color:#2d5a27;display:flex;align-items:center;justify-content:center;font-family:'Fraunces',Georgia,serif;font-size:18px;font-weight:600;flex-shrink:0">{{ cmEd.mono }}</span>
+                <div style="min-width:0"><div style="font-size:15px;font-weight:600;color:#1c1917">{{ cmEd.site }}</div><div style="font-size:13px;color:#78716c">{{ cmEd.client }}</div><div style="font-size:12.5px;color:#78716c;margin-top:4px">{{ cmEd.addr }}</div></div>
+              </div>
+              </sc-if>
+              <div style="font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#a8a29e;margin-top:4px">Organiser le passage</div>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#44403c">Date du passage
+                <input type="date" value="{{ cmEd.date }}" onChange="{{ cmEdDate }}" style="height:44px;padding:0 12px;border:1px solid #e7e5e4;border-radius:10px;background:#fff;font-family:'Space Mono',monospace;font-size:16px;font-weight:400;color:#1c1917">
+              </label>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#44403c">Heure d'arrivée
+                  <input type="time" value="{{ cmEd.time }}" onChange="{{ cmEdTime }}" style="height:44px;padding:0 12px;border:1px solid #e7e5e4;border-radius:10px;background:#fff;font-family:'Space Mono',monospace;font-size:16px;font-weight:400;color:#1c1917">
+                </label>
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#44403c">Durée prévue
+                  <select onChange="{{ cmEdDur }}" style="height:44px;padding:0 12px;border:1px solid #e7e5e4;border-radius:10px;background:#fff;font-family:'DM Sans',system-ui,sans-serif;font-size:16px;font-weight:400;color:#1c1917"><sc-for list="{{ cmEd.durOpts }}" as="o" hint-placeholder-count="8"><option value="{{ o.v }}" selected="{{ o.sel }}">{{ o.l }}</option></sc-for></select>
+                </label>
+              </div>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#44403c">Équipe / binôme
+                <select onChange="{{ cmEdTeam }}" style="height:44px;padding:0 12px;border:1px solid #e7e5e4;border-radius:10px;background:#fff;font-family:'DM Sans',system-ui,sans-serif;font-size:16px;font-weight:400;color:#1c1917"><sc-for list="{{ cmEd.teamOpts }}" as="o" hint-placeholder-count="4"><option value="{{ o.v }}" selected="{{ o.sel }}">{{ o.l }}</option></sc-for></select>
+              </label>
+              <sc-if value="{{ cmEd.conflict }}" hint-placeholder-val="{{ false }}">
+              <div role="status" style="display:flex;gap:10px;align-items:flex-start;padding:12px 14px;background:#fbf3e0;border:1px solid #f0dcae;border-radius:11px;font-size:13px;color:#7a5a1c;line-height:1.45"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v4M12 16h.01"></path></svg><span><b>Cette équipe a déjà un passage.</b> {{ cmEd.conflictText }}</span></div>
+              </sc-if>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#44403c">Statut du passage
+                <select onChange="{{ cmEdStatus }}" style="height:44px;padding:0 12px;border:1px solid #e7e5e4;border-radius:10px;background:#fff;font-family:'DM Sans',system-ui,sans-serif;font-size:16px;font-weight:400;color:#1c1917"><sc-for list="{{ cmEd.statusOpts }}" as="o" hint-placeholder-count="4"><option value="{{ o.v }}" selected="{{ o.sel }}">{{ o.l }}</option></sc-for></select>
+              </label>
+              <div style="font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#a8a29e;margin-top:4px">Accès au chantier</div>
+              <p style="font-size:13.5px;color:#57534e;margin:0;line-height:1.5;background:#f4f1ec;border-radius:10px;padding:11px 13px">{{ cmEd.access }}</p>
+              <button type="button" onClick="{{ cmEdAccess }}" role="checkbox" aria-checked="{{ cmEd.accessConfirmed }}" style="{{ cmEd.accessRow }}"><span style="{{ cmEd.accessBox }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></span><span style="text-align:left"><span style="display:block;font-size:14px;font-weight:600;color:#1c1917">Accès vérifié avec le client</span><span style="display:block;font-size:12.5px;color:#78716c">Clés, gardien ou présence sur place.</span></span></button>
+              <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#44403c">Consignes pour l'équipe <span style="font-weight:400;color:#a8a29e">facultatif</span>
+                <textarea value="{{ cmEd.notes }}" onChange="{{ cmEdNotes }}" rows="3" maxlength="4000" placeholder="Ce que l'équipe doit savoir avant d'arriver…" style="padding:11px 12px;border:1px solid #e7e5e4;border-radius:10px;background:#fff;font-family:'DM Sans',system-ui,sans-serif;font-size:16px;font-weight:400;color:#1c1917;resize:vertical"></textarea>
+              </label>
+              <sc-if value="{{ cmHasErr }}" hint-placeholder-val="{{ false }}">
+              <div role="alert" style="display:flex;gap:10px;align-items:flex-start;padding:12px 14px;background:#fbe6df;border:1px solid #e8ac9b;border-radius:11px;font-size:13px;color:#a83a26;line-height:1.45">{{ cmErr }}</div>
+              </sc-if>
+            </div>
+            <div style="padding:14px 24px;border-top:1px solid #eeeae5;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;background:#fff">
+              <span style="font-size:12px;color:#a8a29e">Sauvegarde sur cet appareil</span>
+              <div style="display:flex;gap:8px">
+                <sc-if value="{{ cmEd.notNew }}" hint-placeholder-val="{{ true }}"><button type="button" onClick="{{ cmAskDel }}" aria-label="Supprimer ce passage" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;border:1px solid #e7e5e4;border-radius:10px;background:#fff;color:#a83a26;cursor:pointer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"></path></svg></button></sc-if>
+                <button type="button" onClick="{{ cmEdClose }}" style="height:44px;padding:0 16px;border:1px solid #e7e5e4;border-radius:10px;background:#fff;color:#1c1917;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',system-ui,sans-serif">Annuler</button>
+                <button type="submit" style="height:44px;padding:0 18px;border:0;border-radius:10px;background:#2d5a27;color:#fff;font-size:14px;font-weight:600;cursor:pointer;font-family:'DM Sans',system-ui,sans-serif" style-hover="background:#1a2e1a">{{ cmEd.saveLabel }}</button>
+              </div>
+            </div>
+          </form>
+          <sc-if value="{{ cmConfirmDel }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;background:rgba(20,33,15,.35);padding:20px">
+            <div role="alertdialog" style="width:420px;max-width:100%;background:#fff;border-radius:16px;padding:22px;box-shadow:0 24px 60px rgba(20,33,15,.25)">
+              <h3 style="font-family:'Fraunces',Georgia,serif;font-size:20px;font-weight:600;color:#1a2e1a;margin:0 0 8px">Supprimer ce passage ?</h3>
+              <p style="font-size:14px;color:#57534e;margin:0 0 18px;line-height:1.5">{{ cmEd.delLabel }}</p>
+              <div style="display:flex;justify-content:flex-end;gap:8px"><button onClick="{{ cmKeep }}" style="height:42px;padding:0 16px;border:1px solid #e7e5e4;border-radius:10px;background:#fff;font-size:14px;cursor:pointer">Conserver</button><button onClick="{{ cmDoDel }}" style="height:42px;padding:0 16px;border:0;border-radius:10px;background:#a83a26;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Supprimer</button></div>
+            </div>
+          </div>
+          </sc-if>
+          <sc-if value="{{ cmConfirmLeave }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;background:rgba(20,33,15,.35);padding:20px">
+            <div role="alertdialog" style="width:420px;max-width:100%;background:#fff;border-radius:16px;padding:22px;box-shadow:0 24px 60px rgba(20,33,15,.25)">
+              <h3 style="font-family:'Fraunces',Georgia,serif;font-size:20px;font-weight:600;color:#1a2e1a;margin:0 0 8px">Quitter sans enregistrer ?</h3>
+              <p style="font-size:14px;color:#57534e;margin:0 0 18px;line-height:1.5">Les changements de cette fiche n'ont pas encore été enregistrés.</p>
+              <div style="display:flex;justify-content:flex-end;gap:8px"><button onClick="{{ cmStay }}" style="height:42px;padding:0 16px;border:1px solid #e7e5e4;border-radius:10px;background:#fff;font-size:14px;cursor:pointer">Continuer la modification</button><button onClick="{{ cmLeave }}" style="height:42px;padding:0 16px;border:0;border-radius:10px;background:#2d5a27;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Quitter la fiche</button></div>
+            </div>
+          </div>
+          </sc-if>
+        </div>
+        </sc-if>
+        <sc-if value="{{ cmNotice }}" hint-placeholder-val="{{ false }}">
+        <div role="status" style="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:130;display:flex;align-items:center;gap:12px;padding:10px 10px 10px 16px;background:#1a2e1a;color:#fff;border-radius:12px;box-shadow:0 14px 34px rgba(0,0,0,.25);font-family:'DM Sans',system-ui,sans-serif;font-size:14px">
+          <span>{{ cmNoticeText }}</span>
+          <sc-if value="{{ cmCanUndo }}" hint-placeholder-val="{{ false }}"><button onClick="{{ cmUndo }}" style="height:32px;padding:0 12px;border:1px solid rgba(255,255,255,.2);border-radius:8px;background:rgba(255,255,255,.08);color:#fff;font-size:13px;font-weight:600;cursor:pointer">Annuler</button></sc-if>
+          <button onClick="{{ cmCloseNotice }}" aria-label="Fermer la notification" style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;border:0;border-radius:8px;background:transparent;color:rgba(255,255,255,.7);cursor:pointer"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+        </div>
+        </sc-if>
+        </sc-if>
+        <sc-if value="{{ cmViewList }}" hint-placeholder-val="{{ false }}">
         <div style="background:#fff;border:1px solid #eeeae5;border-radius:14px;overflow:hidden" class="hp-bleed">
           <div style="overflow-x:auto"><div style="min-width:760px">
             <div style="display:flex;align-items:center;gap:14px;padding:11px 18px;background:#faf8f4;border-bottom:1px solid #f0ece6;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#a8a29e"><div style="flex:1">Client &amp; site</div><div style="width:96px;flex-shrink:0;text-align:right">Valeur / an</div><div style="width:84px;flex-shrink:0;text-align:right">Passages</div><div style="width:150px;flex-shrink:0">Fréquence</div><div style="width:86px;flex-shrink:0">Statut</div><div style="width:20px;flex-shrink:0"></div></div>
@@ -2011,6 +2242,7 @@
             </sc-for>
           </div></div>
         </div>
+        </sc-if>
         </sc-if>
 
         <sc-if value="{{ contratDet }}" hint-placeholder-val="{{ false }}">
@@ -3376,6 +3608,7 @@ class Component extends DCLogic {
     window.addEventListener('resize', this._onResize);
     this._onResize();
     this.initCapture();
+    this.cmInit();
   }
 
   // ── Mode capture : ?capture=<écran> — état figé, contrôles de démo masqués, signal de fin de chargement ──
@@ -3384,12 +3617,18 @@ class Component extends DCLogic {
       'briefing-dirigeant': () => { clearTimeout(this._wstepT); this.setState({ route: 'welcome', welcomeKind: 'patron', wStep: 1 }); },
       'briefing-equipe': () => { clearTimeout(this._wstepT); this.setState({ route: 'welcome', welcomeKind: 'equipe', wStep: 1 }); },
       'tournee-mobile': () => this.enterTerrain(),
+      'contrats-mois': () => this.setState({ route: 'contrats', contratMode: 'list', contratView: 'grille', cmTour: 'green', cmContract: 'active', cmStatus: 'all', cmQuery: '', cmAnnual: false }, () => setTimeout(() => {
+        const el = document.querySelector('[data-screen-label="Contrats × Mois"]'); if (!el) return;
+        let p = el.parentElement; while (p && !(p.scrollHeight > p.clientHeight + 20 && /auto|scroll/.test(getComputedStyle(p).overflowY))) p = p.parentElement;
+        const top = el.getBoundingClientRect().top - 16; if (p) p.scrollTop += top; else window.scrollBy(0, top);
+      }, 300)),
     };
   }
   initCapture() {
     let id = null;
     try { id = new URLSearchParams(window.location.search).get('capture') || ((window.location.hash || '').match(/capture=([\w-]+)/) || [])[1] || null; } catch (e) {}
     if (!id) return;
+    this._capId = id;
     const root = document.documentElement;
     root.setAttribute('data-capture', id); root.setAttribute('data-capture-state', 'loading');
     window.__HP_CAPTURE = { id, state: 'loading', errors: [] };
@@ -3403,6 +3642,217 @@ class Component extends DCLogic {
     this._capT0 = Date.now(); this._capOk = 0;
     const fontsReady = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
     fontsReady.then(() => this.captureCheck());
+  }
+  // ── Contrats × Mois : structure, règles et états repris du planning ChatGPT Work (src/lib/planning.ts, App.tsx, visit-editor.tsx) ──
+  cmK() { return { ST: { pending: 'À confirmer', confirmed: 'Confirmé', done: 'Réalisé', blocked: 'À replanifier' }, TEAMS: ['Pedro · Smaïn', 'Luis · Étienne', 'Aziz · Ismaël', 'Non affectée'], MONTHS: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'] }; }
+  cmLocal(d) { d = d || new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); }
+  // Date de démonstration figée (jour de vérification du planning Work) : états stables, y compris en capture
+  cmToday() { return '2026-09-20'; }
+  cmNorm(v) { return String(v).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('fr'); }
+  cmMin(t) { const p = String(t).split(':').map(Number); return p[0] * 60 + p[1]; }
+  cmValidDate(v) { if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) return false; const d = new Date(v + 'T12:00:00Z'); return Number.isFinite(d.getTime()) && d.toISOString().slice(0, 10) === v && +v.slice(0, 4) >= 2000 && +v.slice(0, 4) <= 2100; }
+  cmFriendly(v) { return new Date(v + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }); }
+  cmDemo(today) {
+    const K = this.cmK();
+    const rows = [
+      ['M. Berger', 'Syndic', 'Résidence Vaneau', '12 rue Vaneau', '75007', 'Paris', 'green', 'active'],
+      ['Cabinet Régis', 'Gestionnaire', 'Le Clos des Ternes', '3 rue Bayen', '75017', 'Paris', 'green', 'active'],
+      ['Mme Laurent', 'Particulier', 'Jardin des Sablons', '5 rue de Sablonville', '92200', 'Neuilly-sur-Seine', 'green', 'active'],
+      ['Copro Élysée', 'Copropriété', 'Résidence du Cirque', '4 rue du Cirque', '75008', 'Paris', 'green', 'active'],
+      ['Mme Aznar', 'Particulier', 'Terrasse Université', '17 rue de l\u2019Université', '75007', 'Paris', 'green', 'active'],
+      ['M. Lefèvre', 'Particulier', 'Jardin Bosquet', '8 avenue Bosquet', '75007', 'Paris', 'green', 'active'],
+      ['Cabinet Moreau', 'Gestionnaire', 'Les Terrasses de Seine', '24 quai de Seine', '92100', 'Boulogne-Billancourt', 'yellow', 'active'],
+      ['Mme Robert', 'Particulier', 'Maison des Lilas', '6 rue des Lilas', '92400', 'Courbevoie', 'yellow', 'active'],
+      ['Copro Mozart', 'Copropriété', 'Résidence Mozart', '21 avenue Mozart', '75016', 'Paris', 'yellow', 'active'],
+      ['M. Delmas', 'Particulier', 'Le Jardin des Roses', '14 rue des Rosiers', '92300', 'Levallois-Perret', 'yellow', 'active'],
+      ['Mme Martin', 'Particulier', 'Terrasse Saint-Cloud', '9 rue du Parc', '92210', 'Saint-Cloud', 'green', 'new'],
+      ['Atelier des jardins', 'Sous-traitant', 'Cour des Acacias', '10 rue des Acacias', '75017', 'Paris', 'yellow', 'subcontract'],
+      ['SCI du Square', 'Ancien contrat', 'Résidence du Square', '7 rue du Square', '75015', 'Paris', 'yellow', 'archived'],
+    ];
+    const clients = rows.map((r, i) => ({ id: 'client-' + (i + 1), name: r[0], kind: r[1], site: r[2], address: r[3], zip: r[4], city: r[5], tour: r[6], contract: r[7], annualVisits: i === 4 ? 12 : 16, access: i % 3 === 0 ? 'Prévenir le gardien la veille du passage.' : i % 3 === 1 ? 'Présence du client nécessaire. Confirmer le créneau par téléphone.' : 'Accès par le portail principal. Revalider les consignes avec le client.', team: K.TEAMS[i % 3] }));
+    const year = +today.slice(0, 4), visits = [];
+    clients.forEach((c, i) => {
+      if (c.contract === 'archived' || c.contract === 'new') return;
+      for (let month = 0; month < 12; month++) {
+        const days = c.annualVisits > 12 && [3, 5, 8, 9].indexOf(month) >= 0 ? [5 + i % 9, 20 + i % 8] : [5 + i % 9];
+        days.forEach((day, n) => {
+          const date = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+          const past = date < today;
+          const status = past ? 'done' : (i === 2 && month === +today.slice(5, 7) - 1 && n === 1) ? 'blocked' : (i + n + month) % 3 === 0 ? 'confirmed' : 'pending';
+          visits.push({ id: 'visit-' + i + '-' + month + '-' + n, clientId: c.id, date, time: ['08:30', '10:30', '13:30', '15:30'][Math.floor(i / 3) % 4], duration: 90, team: c.team, status, notes: status === 'blocked' ? 'Client indisponible : convenir d\u2019un nouveau créneau.' : i === 0 ? 'Entretien des massifs, tonte et finitions.' : 'Entretien courant du jardin.', accessConfirmed: past || status === 'confirmed' });
+        });
+      }
+    });
+    return { schema: 1, updatedAt: new Date().toISOString(), clients, visits };
+  }
+  cmInit() {
+    if (this.state.cmData) return;
+    let d = null;
+    if (!this._capId) { try { const raw = localStorage.getItem('hp-contrats-mois-v1'); if (raw) { const p = JSON.parse(raw); if (p && p.schema === 1 && Array.isArray(p.clients) && Array.isArray(p.visits)) d = p; } } catch (e) {} }
+    const t = this.cmToday();
+    this.setState({ cmData: d || this.cmDemo(t), cmPeriod: { y: +t.slice(0, 4), m: +t.slice(5, 7) - 1 } });
+  }
+  cmCommit(data, text) {
+    const prev = this.state.cmData;
+    if (!this._capId) { try { localStorage.setItem('hp-contrats-mois-v1', JSON.stringify(data)); } catch (e) {} }
+    clearTimeout(this._cmNT); this._cmNT = setTimeout(() => this.setState({ cmNotice: null }), 7000);
+    return { cmData: data, cmPrev: prev, cmNotice: { text } };
+  }
+  cmUndo() { const p = this.state.cmPrev; if (!p) return; if (!this._capId) { try { localStorage.setItem('hp-contrats-mois-v1', JSON.stringify(p)); } catch (e) {} } this.setState({ cmData: p, cmPrev: null, cmNotice: { text: 'Modification annulée.', noUndo: true } }); }
+  cmVisitError(v, clients) {
+    const K = this.cmK();
+    if (!clients.some((c) => c.id === v.clientId && c.contract !== 'archived')) return 'Choisissez un contrat actif.';
+    if (!this.cmValidDate(v.date)) return 'Choisissez une date valide, entre 2000 et 2100.';
+    if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(v.time)) return 'Indiquez une heure valide.';
+    if (!Number.isInteger(v.duration) || v.duration < 15 || v.duration > 720 || this.cmMin(v.time) + v.duration > 1440) return 'Le passage doit durer entre 15 minutes et 12 heures, et finir dans la journée.';
+    if (K.TEAMS.indexOf(v.team) < 0) return 'Choisissez une équipe.';
+    if (!K.ST[v.status]) return 'Choisissez un statut.';
+    if ((v.notes || '').length > 4000) return 'La note est limitée à 4 000 caractères.';
+    return null;
+  }
+  cmConflict(v, all) {
+    if (v.team === 'Non affectée' || v.status === 'blocked') return null;
+    return all.find((x) => x.id !== v.id && x.team === v.team && x.date === v.date && x.status !== 'blocked' && this.cmMin(x.time) < this.cmMin(v.time) + v.duration && this.cmMin(v.time) < this.cmMin(x.time) + x.duration) || null;
+  }
+  cmMonths() {
+    const s = this.state, p = s.cmPeriod || { y: 2026, m: 8 };
+    return Array.from({ length: s.cmAnnual ? 12 : 3 }, (_, i) => { const d = new Date(p.y, (s.cmAnnual ? 0 : p.m) + i, 1); return { month: d.getMonth(), year: d.getFullYear(), key: this.cmLocal(d).slice(0, 7) }; });
+  }
+  cmOpen(v) { this.setState({ cmEdit: { v: { ...v }, isNew: false, orig: JSON.stringify(v) }, cmErr: null, cmConfirmDel: false, cmConfirmLeave: false }); }
+  cmNew(client, monthKey) {
+    const s = this.state, data = s.cmData, today = this.cmToday();
+    const c = client || data.clients.find((x) => x.contract !== 'archived' && (s.cmTour === 'all' || !s.cmTour || x.tour === (s.cmTour || 'green'))) || data.clients.find((x) => x.contract !== 'archived');
+    if (!c) return;
+    const date = monthKey ? monthKey + '-' + (monthKey === today.slice(0, 7) ? today.slice(8) : '01') : today;
+    const v = { id: 'visit-' + Date.now().toString(36), clientId: c.id, date, time: '08:30', duration: 90, team: c.team, status: 'pending', notes: '', accessConfirmed: false };
+    this.setState({ cmEdit: { v, isNew: true, orig: JSON.stringify(v) }, cmErr: null, cmConfirmDel: false, cmConfirmLeave: false });
+  }
+  cmSet(k, val) { const ed = this.state.cmEdit; if (!ed) return; const v = { ...ed.v, [k]: val }; if (k === 'clientId') { const c = this.state.cmData.clients.find((x) => x.id === val); if (c) v.team = c.team; } this.setState({ cmEdit: { ...ed, v }, cmErr: null }); }
+  cmClose() { const ed = this.state.cmEdit; if (ed && JSON.stringify(ed.v) !== ed.orig) this.setState({ cmConfirmLeave: true }); else this.setState({ cmEdit: null, cmConfirmLeave: false }); }
+  cmSave() {
+    const s = this.state, ed = s.cmEdit; if (!ed) return;
+    const v = ed.v, data = s.cmData;
+    const err = this.cmVisitError(v, data.clients); if (err) return this.setState({ cmErr: err });
+    if (this.cmConflict(v, data.visits)) return this.setState({ cmErr: 'Ce créneau est déjà occupé pour cette équipe. Ajustez le créneau, changez l\u2019équipe ou choisissez « À replanifier ».' });
+    if (data.visits.some((x) => x.id !== v.id && x.clientId === v.clientId && x.date === v.date && x.time === v.time)) return this.setState({ cmErr: 'Un passage existe déjà pour ce client à cette date et à cette heure.' });
+    const visits = ed.isNew ? data.visits.concat([v]) : data.visits.map((x) => (x.id === v.id ? v : x));
+    const patch = { ...this.cmCommit({ ...data, visits, updatedAt: new Date().toISOString() }, ed.isNew ? 'Passage ajouté.' : 'Passage enregistré.'), cmEdit: null, cmErr: null };
+    if (this.cmMonths().map((m) => m.key).indexOf(v.date.slice(0, 7)) < 0) patch.cmPeriod = { y: +v.date.slice(0, 4), m: +v.date.slice(5, 7) - 1 };
+    this.setState(patch);
+  }
+  cmDelete() { const s = this.state, ed = s.cmEdit; if (!ed) return; this.setState({ ...this.cmCommit({ ...s.cmData, visits: s.cmData.visits.filter((x) => x.id !== ed.v.id), updatedAt: new Date().toISOString() }, 'Passage supprimé.'), cmEdit: null, cmConfirmDel: false }); }
+  cmMove(dir) { const s = this.state, p = s.cmPeriod; const d = new Date(p.y + (s.cmAnnual ? dir : 0), p.m + (s.cmAnnual ? 0 : 3 * dir), 1); if (d.getFullYear() < 2000 || d.getFullYear() > 2100) return; this.setState({ cmPeriod: { y: d.getFullYear(), m: d.getMonth() } }); }
+  cmCsv(clientsById, visits) {
+    const K = this.cmK();
+    const cell = (v) => '"' + String(v).replace(/^[=+@\-\t\r]/, (m) => "'" + m).split('"').join('""') + '"';
+    const rows = [['Client', 'Site', 'Adresse', 'Code postal', 'Ville', 'Tournée', 'Date', 'Heure', 'Durée (min)', 'Équipe', 'Statut', 'Accès confirmé', 'Notes']].concat(visits.map((v) => { const c = clientsById[v.clientId]; return [c.name, c.site, c.address, c.zip, c.city, c.tour === 'green' ? 'Verte' : 'Jaune', v.date, v.time, v.duration, v.team, K.ST[v.status], v.accessConfirmed ? 'Oui' : 'Non', v.notes]; }));
+    const blob = new Blob(['\uFEFF' + rows.map((r) => r.map(cell).join(';')).join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'hanami-passages-' + this.cmToday() + '.csv'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
+  cmVals(isMobile) {
+    const s = this.state, K = this.cmK(), data = s.cmData;
+    if (!data) return { cmReady: false, cmRows: [], cmMonthsHead: [], cmTabs: [], cmNoRows: false };
+    const today = this.cmToday(), curKey = today.slice(0, 7);
+    const tour = s.cmTour || 'green', contract = s.cmContract || 'active', status = s.cmStatus || 'all', query = s.cmQuery || '', annual = !!s.cmAnnual;
+    const months = this.cmMonths(), keys = months.map((m) => m.key), p = s.cmPeriod;
+    const q = this.cmNorm(query.trim());
+    const clients = data.clients.filter((c) => (tour === 'all' || c.tour === tour) && (contract === 'all' || c.contract === contract) && (!q || this.cmNorm([c.name, c.site, c.address, c.zip, c.city].join(' ')).indexOf(q) >= 0));
+    const ids = {}; clients.forEach((c) => { ids[c.id] = 1; });
+    const byId = {}; data.clients.forEach((c) => { byId[c.id] = c; });
+    const periodVisits = data.visits.filter((v) => ids[v.clientId] && keys.indexOf(v.date.slice(0, 7)) >= 0);
+    const visibleVisits = periodVisits.filter((v) => status === 'all' || v.status === status);
+    const visibleClients = clients.filter((c) => status === 'all' || visibleVisits.some((v) => v.clientId === c.id));
+    const byCell = {};
+    data.visits.forEach((v) => { const k = v.clientId + ':' + v.date.slice(0, 7); (byCell[k] = byCell[k] || []).push(v); });
+    Object.keys(byCell).forEach((k) => byCell[k].sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time)));
+    const pending = periodVisits.filter((v) => v.status === 'pending').length, blocked = periodVisits.filter((v) => v.status === 'blocked').length;
+    const monthLabel = (m) => K.MONTHS[m.month] + (m.year !== p.y ? ' ' + m.year : '');
+    const dateLabel = annual ? String(p.y) : K.MONTHS[months[0].month] + ' – ' + K.MONTHS[months[2].month].toLowerCase() + ' ' + months[2].year;
+    const chipStyle = (st) => {
+      const base = { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '3px', height: annual ? '26px' : '30px', minWidth: annual ? '28px' : '34px', padding: '0 7px', borderRadius: '8px', fontFamily: "'Space Mono',monospace", fontSize: annual ? '11.5px' : '13px', fontWeight: 700, cursor: 'pointer', lineHeight: 1 };
+      if (st === 'confirmed') return { ...base, background: '#dcebd6', border: '1.5px solid #a9c99e', color: '#1a3d16' };
+      if (st === 'done') return { ...base, background: 'transparent', border: '1.5px solid transparent', color: '#5f8a55' };
+      if (st === 'blocked') return { ...base, background: '#fbe6df', border: '1.5px solid #e8ac9b', color: '#a83a26' };
+      return { ...base, background: 'rgba(255,255,255,.7)', border: '1.5px dashed #9fb897', color: '#2f4f29' };
+    };
+    const cellBg = (c, cur) => (c.tour === 'green' ? (cur ? '#e9f2e5' : '#f4f8f1') : (cur ? '#f4ead2' : '#faf5ea'));
+    const cols = '190px 200px 200px ' + months.map(() => (annual ? 'minmax(88px,1fr)' : 'minmax(150px,1fr)')).join(' ') + ' 46px';
+    const minW = 190 + 200 + 200 + months.length * (annual ? 88 : 150) + 46;
+    const rows = visibleClients.map((c) => ({
+      id: c.id, name: c.name, kind: c.kind, site: c.site, address: c.address, zipCity: c.zip + ' ' + c.city, city: c.city,
+      dot: { width: '8px', height: '8px', borderRadius: '50%', background: c.tour === 'green' ? '#4a8c3f' : '#c9a24e', flexShrink: 0 },
+      canAdd: c.contract !== 'archived',
+      rowAdd: () => this.cmNew(c),
+      cells: months.map((m) => {
+        const cur = m.key === curKey;
+        const vs = (byCell[c.id + ':' + m.key] || []).filter((v) => status === 'all' || v.status === status);
+        return {
+          key: m.key, label: monthLabel(m), cur, canAdd: c.contract !== 'archived', empty: !vs.length,
+          style: { background: cellBg(c, cur), padding: annual ? '10px 6px' : '14px 12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: '6px', borderLeft: cur ? '1px solid #d5e4cf' : '1px solid #f1ede7', borderRight: cur ? '1px solid #d5e4cf' : '0' },
+          mStyle: { display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', padding: '9px 10px', borderRadius: '9px', background: cellBg(c, cur) },
+          add: () => this.cmNew(c, m.key),
+          chips: vs.map((v) => ({ day: Number(v.date.slice(8)), done: v.status === 'done', blocked: v.status === 'blocked', style: chipStyle(v.status), title: this.cmFriendly(v.date) + ' · ' + v.time + ' · ' + K.ST[v.status], open: () => this.cmOpen(v) })),
+        };
+      }),
+    }));
+    const tabCount = (t) => data.clients.filter((c) => (t === 'all' || c.tour === t) && (contract === 'all' || c.contract === contract)).length;
+    const tabStyle = (on) => ({ display: 'flex', alignItems: 'center', gap: '9px', height: '52px', padding: '0 4px', marginBottom: '-1px', border: '0', borderBottom: on ? '2.5px solid #1a2e1a' : '2.5px solid transparent', background: 'transparent', cursor: 'pointer', fontFamily: "'DM Sans',system-ui,sans-serif", fontSize: '15px', fontWeight: on ? 600 : 500, color: on ? '#1a2e1a' : '#78716c', whiteSpace: 'nowrap' });
+    const segStyle = (on) => ({ height: '32px', padding: '0 13px', border: '0', borderRadius: '7px', background: on ? '#fff' : 'transparent', boxShadow: on ? '0 1px 2px rgba(28,25,23,.08)' : 'none', color: on ? '#1a2e1a' : '#78716c', fontSize: '13px', fontWeight: on ? 600 : 500, cursor: 'pointer', fontFamily: "'DM Sans',system-ui,sans-serif" });
+    const sumStyle = (on, warn) => ({ display: 'inline-flex', alignItems: 'center', gap: '6px', height: '30px', padding: '0 10px', border: on ? (warn ? '1px solid #e8ac9b' : '1px solid #a9c99e') : '1px solid transparent', borderRadius: '8px', background: on ? (warn ? '#fbe6df' : '#eef4ec') : 'transparent', color: warn ? '#a83a26' : '#57534e', fontSize: '13px', fontWeight: 500, cursor: 'pointer', fontFamily: "'DM Sans',system-ui,sans-serif" });
+    const ed = s.cmEdit;
+    let cmEd = null;
+    if (ed) {
+      const v = ed.v, c = byId[v.clientId] || data.clients[0], conf = this.cmConflict(v, data.visits), confC = conf && byId[conf.clientId];
+      const durs = Array.from(new Set([15, 30, 45, 60, 90, 120, 180, 240, 360, 480, v.duration])).sort((a, b) => a - b);
+      cmEd = {
+        isNew: ed.isNew, notNew: !ed.isNew, saveLabel: ed.isNew ? 'Ajouter le passage' : 'Enregistrer', title: ed.isNew ? 'Nouveau passage' : 'Le passage en détail', desc: ed.isNew ? 'Un créneau, une équipe, des consignes.' : 'Un changement ? Tout se met à jour dans votre planning.',
+        tourLabel: c.tour === 'yellow' ? 'Tournée jaune' : 'Tournée verte', dot: { width: '8px', height: '8px', borderRadius: '50%', background: c.tour === 'green' ? '#4a8c3f' : '#c9a24e' },
+        site: c.site, client: c.name, mono: c.site.slice(0, 1), addr: c.address + ', ' + c.zip + ' ' + c.city, access: c.access,
+        clientId: v.clientId, date: v.date, time: v.time, duration: String(v.duration), team: v.team, status: v.status, notes: v.notes, accessConfirmed: !!v.accessConfirmed,
+        conflict: !!conf, conflictText: conf ? (confC ? confC.site : '') + ', à ' + conf.time + '. Choisissez un autre créneau ou une autre équipe.' : '',
+        clientOpts: data.clients.filter((x) => x.contract !== 'archived').map((x) => ({ v: x.id, l: x.site + ' · ' + x.name, sel: x.id === v.clientId })),
+        durOpts: durs.map((n) => ({ v: String(n), sel: n === v.duration, l: n < 60 ? n + ' min' : Math.floor(n / 60) + ' h' + (n % 60 ? ' ' + String(n % 60).padStart(2, '0') : '') })),
+        teamOpts: K.TEAMS.map((t) => ({ v: t, l: t, sel: t === v.team })), statusOpts: Object.keys(K.ST).map((k) => ({ v: k, l: K.ST[k], sel: k === v.status })),
+        accessBox: { display: 'flex', alignItems: 'center', justifyContent: 'center', width: '20px', height: '20px', borderRadius: '6px', flexShrink: 0, border: v.accessConfirmed ? '0' : '1.5px solid #cfc9c1', background: v.accessConfirmed ? '#2d5a27' : '#fff', color: '#fff' },
+        accessRow: { display: 'flex', alignItems: 'flex-start', gap: '11px', padding: '12px 14px', border: v.accessConfirmed ? '1px solid #a9c99e' : '1px solid #e7e5e4', background: v.accessConfirmed ? '#f1f7ee' : '#fff', borderRadius: '11px', cursor: 'pointer' },
+        delLabel: 'Le passage du ' + this.cmFriendly(v.date) + ' pour ' + c.site + ' sera retiré. Vous pourrez annuler cette suppression juste après.',
+      };
+    }
+    return {
+      cmReady: true, cmMobile: !!isMobile, cmDesktop: !isMobile,
+      cmViewGrid: (s.contratView || 'grille') === 'grille', cmViewList: s.contratView === 'liste',
+      cmSetGrid: () => this.setState({ contratView: 'grille' }), cmSetList: () => this.setState({ contratView: 'liste' }),
+      cmSegGrid: segStyle((s.contratView || 'grille') === 'grille'), cmSegList: segStyle(s.contratView === 'liste'),
+      cmTabs: [['green', 'Tournée verte'], ['yellow', 'Tournée jaune'], ['all', 'Toutes les tournées']].map((t) => ({ label: t[1], count: tabCount(t[0]), leaf: t[0] === 'all', dot: t[0] !== 'all', dotStyle: { width: '9px', height: '9px', borderRadius: '50%', background: t[0] === 'green' ? '#4a8c3f' : '#c9a24e' }, style: tabStyle(tour === t[0]), cStyle: { fontFamily: "'Space Mono',monospace", fontSize: '12px', fontWeight: 700, padding: '3px 7px', borderRadius: '6px', background: tour === t[0] ? '#e8f0e6' : '#f4f1ec', color: tour === t[0] ? '#2d5a27' : '#78716c' }, pick: () => this.setState({ cmTour: t[0] }) })),
+      cmContract: contract, cmSetContract: (e) => this.setState({ cmContract: e.target.value }),
+      cmContractOpts: [['active', 'Contrats actifs'], ['new', 'Nouveaux contrats'], ['subcontract', 'Sous-traitance'], ['archived', 'Contrats résiliés'], ['all', 'Tous les contrats']].map((o) => ({ v: o[0], l: o[1], sel: o[0] === contract })),
+      cmStatus: status, cmSetStatus: (e) => this.setState({ cmStatus: e.target.value }),
+      cmStatusOpts: [{ v: 'all', l: 'Tous les passages', sel: status === 'all' }].concat(Object.keys(K.ST).map((k) => ({ v: k, l: K.ST[k], sel: status === k }))),
+      cmQuery: query, cmSetQuery: (e) => this.setState({ cmQuery: e.target.value }), cmHasQuery: !!query, cmNoQuery: !query, cmClearQuery: () => this.setState({ cmQuery: '' }),
+      cmDateLabel: dateLabel, cmPrevP: () => this.cmMove(-1), cmNextP: () => this.cmMove(1),
+      cmToToday: () => this.setState({ cmPeriod: { y: +today.slice(0, 4), m: +today.slice(5, 7) - 1 } }),
+      cm3m: segStyle(!annual), cmYear: segStyle(annual), cmSet3m: () => this.setState({ cmAnnual: false }), cmSetYear: () => this.setState({ cmAnnual: true }),
+      cmCountClients: visibleClients.length, cmClientsWord: visibleClients.length > 1 ? 'contrats' : 'contrat', cmCountVisits: visibleVisits.length, cmVisitsWord: visibleVisits.length > 1 ? 'passages' : 'passage',
+      cmPending: pending, cmBlocked: blocked, cmHasBlocked: blocked > 0,
+      cmPendStyle: sumStyle(status === 'pending', false), cmBlockStyle: sumStyle(status === 'blocked', true),
+      cmTogglePending: () => this.setState({ cmStatus: status === 'pending' ? 'all' : 'pending' }), cmToggleBlocked: () => this.setState({ cmStatus: status === 'blocked' ? 'all' : 'blocked' }),
+      cmGridCols: { display: 'grid', gridTemplateColumns: cols, alignItems: 'stretch' }, cmMinW: { minWidth: minW + 'px' },
+      cmMonthsHead: months.map((m) => ({ label: monthLabel(m), cur: m.key === curKey, style: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '3px', padding: '14px 8px', fontSize: '11px', fontWeight: 600, letterSpacing: '.12em', textTransform: 'uppercase', color: m.key === curKey ? '#2d5a27' : '#78716c', background: m.key === curKey ? '#e9f2e5' : 'transparent', borderLeft: m.key === curKey ? '1px solid #d5e4cf' : '1px solid #f1ede7', borderRight: m.key === curKey ? '1px solid #d5e4cf' : '0' } })),
+      cmRows: rows, cmNoRows: !rows.length,
+      cmResetFilters: () => this.setState({ cmQuery: '', cmStatus: 'all', cmTour: 'green', cmContract: 'active' }),
+      cmNewVisit: () => this.cmNew(), cmExport: () => this.cmCsv(byId, visibleVisits),
+      cmResetDemo: () => { const d = this.cmDemo(today); this.setState({ ...this.cmCommit(d, 'Démonstration réinitialisée.'), cmQuery: '', cmStatus: 'all', cmTour: 'green', cmContract: 'active', cmMenu: false }); },
+      cmMenuOpen: !!s.cmMenu, cmToggleMenu: () => this.setState({ cmMenu: !s.cmMenu }), cmExportMenu: () => { this.setState({ cmMenu: false }); this.cmCsv(byId, visibleVisits); },
+      cmSavedAt: new Date(data.updatedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }),
+      cmEditing: !!ed, cmEd: cmEd || {}, cmErr: s.cmErr, cmHasErr: !!s.cmErr,
+      cmEdClose: () => this.cmClose(), cmEdSave: (e) => { if (e && e.preventDefault) e.preventDefault(); this.cmSave(); },
+      cmEdClient: (e) => this.cmSet('clientId', e.target.value), cmEdDate: (e) => this.cmSet('date', e.target.value), cmEdTime: (e) => this.cmSet('time', e.target.value),
+      cmEdDur: (e) => this.cmSet('duration', Number(e.target.value)), cmEdTeam: (e) => this.cmSet('team', e.target.value), cmEdStatus: (e) => this.cmSet('status', e.target.value),
+      cmEdAccess: () => this.cmSet('accessConfirmed', !(ed && ed.v.accessConfirmed)), cmEdNotes: (e) => this.cmSet('notes', e.target.value),
+      cmAskDel: () => this.setState({ cmConfirmDel: true }), cmConfirmDel: !!s.cmConfirmDel, cmKeep: () => this.setState({ cmConfirmDel: false }), cmDoDel: () => this.cmDelete(),
+      cmConfirmLeave: !!s.cmConfirmLeave, cmStay: () => this.setState({ cmConfirmLeave: false }), cmLeave: () => this.setState({ cmEdit: null, cmConfirmLeave: false }),
+      cmNotice: !!s.cmNotice, cmNoticeText: s.cmNotice ? s.cmNotice.text : '', cmCanUndo: !!(s.cmNotice && !s.cmNotice.noUndo && s.cmPrev), cmUndo: () => this.cmUndo(), cmCloseNotice: () => this.setState({ cmNotice: null }),
+    };
   }
   captureFail(errors) {
     const root = document.documentElement;
@@ -5471,6 +5921,7 @@ class Component extends DCLogic {
       ...this.computePrestations(),
 
       // contrats
+      ...this.cmVals(isMobile),
       isContrats: r === 'contrats', contratLst: s.contratMode === 'list', contratDet: s.contratMode === 'detail',
       contratsListView: this.contratsData().map((c) => ({ ...c, visitsL: c.visits + ' / an', st: this.contratStatusStyle(c.status), open: () => this.setState({ contratMode: 'detail', selectedContrat: c.id }),
         ctxOpen: (e) => this.showCtx(e, this.contratCtx(c)), ctxDown: (e) => this.ctxTouchStart(e, this.contratCtx(c)), ctxUp: () => this.ctxTouchEnd() })),

@@ -18,6 +18,7 @@ const SCREENS = [
   { id: 'briefing-dirigeant', viewport: { width: 1440, height: 1000 }, scale: 2 },
   { id: 'briefing-equipe', viewport: { width: 1440, height: 1000 }, scale: 2 },
   { id: 'tournee-mobile', viewport: { width: 390, height: 844 }, scale: 3, mobile: true },
+  { id: 'contrats-mois', viewport: { width: 1440, height: 1000 }, scale: 2 },
 ];
 const TILE_HOSTS = ['server.arcgisonline.com'];
 
