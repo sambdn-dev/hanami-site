@@ -15,12 +15,12 @@ const caseStudies = [
   },
   {
     name: 'Véronique P.', place: 'Coaching annuel', type: 'Accompagnement', surface: '170 m²',
-    before: '/images/veronique-avant-photo-v2.jpg', after: '/images/veronique-apres-photo-v3.jpg',
+    before: '/images/veronique-avant-photo-v2.jpg', after: '/images/veronique-apres-photo-v4.jpg',
     text: 'Un suivi pensé pour son jardin, ses habitudes et les saisons.',
   },
   {
     name: 'Noël P.', place: 'Produits professionnels', type: 'Produits adaptés', surface: '700 m²',
-    before: '/images/noel-avant-photo-v2.jpg', after: '/images/noel-apres-photo-v3.jpg',
+    before: '/images/noel-avant-photo-v2.jpg', after: '/images/noel-apres-photo-v4.jpg',
     text: 'Des produits et des quantités choisis pour la surface réelle.',
   },
 ] as const
