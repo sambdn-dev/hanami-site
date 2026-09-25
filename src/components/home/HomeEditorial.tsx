@@ -15,12 +15,12 @@ const caseStudies = [
   },
   {
     name: 'Véronique P.', place: 'Coaching annuel', type: 'Accompagnement', surface: '170 m²',
-    before: '/images/veronique-avant-photo-v2.jpg', after: '/images/veronique-apres-photo-v2.jpg',
+    before: '/images/veronique-avant-photo-v2.jpg', after: '/images/veronique-apres-photo-v3.jpg',
     text: 'Un suivi pensé pour son jardin, ses habitudes et les saisons.',
   },
   {
     name: 'Noël P.', place: 'Produits professionnels', type: 'Produits adaptés', surface: '700 m²',
-    before: '/images/noel-avant-photo-v2.jpg', after: '/images/noel-apres-photo-v2.jpg',
+    before: '/images/noel-avant-photo-v2.jpg', after: '/images/noel-apres-photo-v3.jpg',
     text: 'Des produits et des quantités choisis pour la surface réelle.',
   },
 ] as const
@@ -126,7 +126,6 @@ export function HomeCaseStudies() {
               <div className={styles.miniSlider}><BeforeAfterSlider beforeSrc={study.before} afterSrc={study.after} beforeAlt={`Pelouse de ${study.name} avant`} afterAlt={`Pelouse de ${study.name} après`} /></div>
               <div className={styles.miniCaseInfo}><span>{study.name}<small>{study.place}</small></span><strong>{study.surface}</strong></div>
               <p>{study.text}</p>
-              <small>Illustrations générées · cas client réel</small>
             </article>
           ))}
         </div>

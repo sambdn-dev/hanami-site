@@ -77,10 +77,9 @@ export default function CaseStudies() {
               { value: '2e année', label: 'de coaching' },
             ]}
             beforeSrc="/images/veronique-avant-photo-v2.jpg"
-            afterSrc="/images/veronique-apres-photo-v2.jpg"
+            afterSrc="/images/veronique-apres-photo-v3.jpg"
             beforeAlt="Gazon avant coaching Hanami — Véronique P."
             afterAlt="Gazon après coaching Hanami — Véronique P."
-            visualNote="Illustrations générées · cas client réel"
             reverse={true}
           />
 
@@ -97,10 +96,9 @@ export default function CaseStudies() {
               { value: '100%', label: 'autonome' },
             ]}
             beforeSrc="/images/noel-avant-photo-v2.jpg"
-            afterSrc="/images/noel-apres-photo-v2.jpg"
+            afterSrc="/images/noel-apres-photo-v3.jpg"
             beforeAlt="Gazon avant remise en état Hanami — Noël P."
             afterAlt="Gazon après remise en état Hanami — Noël P."
-            visualNote="Illustrations générées · cas client réel"
             reverse={false}
           />
 
@@ -118,7 +116,7 @@ function CaseStudyRowWithSlider({
   beforeAlt, afterAlt,
   beforeObjectPosition, afterObjectPosition,
   afterTransform, afterTransformOrigin,
-  reverse, index, visualNote,
+  reverse, index,
 }: {
   name: string
   tag: string
@@ -138,7 +136,6 @@ function CaseStudyRowWithSlider({
   afterTransformOrigin?: string
   reverse: boolean
   index: number
-  visualNote?: string
 }) {
   const ref = useFadeIn()
 
@@ -167,7 +164,7 @@ function CaseStudyRowWithSlider({
         />
         {/* Indication discrète sous le slider */}
         <p className="mt-3 text-center text-xs text-stone-400 font-[family-name:var(--font-space-mono)]">
-          Glisser pour comparer{visualNote ? ` · ${visualNote}` : ''}
+          Glisser pour comparer
         </p>
       </div>
     </div>
