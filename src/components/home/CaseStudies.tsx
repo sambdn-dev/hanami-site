@@ -76,15 +76,11 @@ export default function CaseStudies() {
               { value: 'Déc.', label: 'résultat visible' },
               { value: '2e année', label: 'de coaching' },
             ]}
-            beforeSrc="/images/avant-verop.jpg"
-            afterSrc="/images/apres-verop.jpg"
+            beforeSrc="/images/veronique-avant-photo-v2.jpg"
+            afterSrc="/images/veronique-apres-photo-v2.jpg"
             beforeAlt="Gazon avant coaching Hanami — Véronique P."
             afterAlt="Gazon après coaching Hanami — Véronique P."
-            // Légère variation de cadrage pour casser l'effet "clone IA" :
-            // avant légèrement plus haut (42%), après légèrement plus bas (56%)
-            // + avant un poil zoomé à droite pour simuler une prise de vue décalée
-            beforeObjectPosition="55% 42%"
-            afterObjectPosition="48% 56%"
+            visualNote="Illustrations générées · cas client réel"
             reverse={true}
           />
 
@@ -100,10 +96,11 @@ export default function CaseStudies() {
               { value: 'Août', label: 'prise en charge' },
               { value: '100%', label: 'autonome' },
             ]}
-            beforeSrc="/images/avant-noel.jpg"
-            afterSrc="/images/apres-noel.jpg"
+            beforeSrc="/images/noel-avant-photo-v2.jpg"
+            afterSrc="/images/noel-apres-photo-v2.jpg"
             beforeAlt="Gazon avant remise en état Hanami — Noël P."
             afterAlt="Gazon après remise en état Hanami — Noël P."
+            visualNote="Illustrations générées · cas client réel"
             reverse={false}
           />
 
@@ -121,7 +118,7 @@ function CaseStudyRowWithSlider({
   beforeAlt, afterAlt,
   beforeObjectPosition, afterObjectPosition,
   afterTransform, afterTransformOrigin,
-  reverse, index,
+  reverse, index, visualNote,
 }: {
   name: string
   tag: string
@@ -141,6 +138,7 @@ function CaseStudyRowWithSlider({
   afterTransformOrigin?: string
   reverse: boolean
   index: number
+  visualNote?: string
 }) {
   const ref = useFadeIn()
 
@@ -169,7 +167,7 @@ function CaseStudyRowWithSlider({
         />
         {/* Indication discrète sous le slider */}
         <p className="mt-3 text-center text-xs text-stone-400 font-[family-name:var(--font-space-mono)]">
-          Glisser pour comparer
+          Glisser pour comparer{visualNote ? ` · ${visualNote}` : ''}
         </p>
       </div>
     </div>
