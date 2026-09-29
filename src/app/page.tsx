@@ -9,6 +9,7 @@ import ContactForm from '@/components/shared/ContactForm'
 import Hero from '@/components/home/Hero'
 import { HomeProof, HomeServices, HomeProcess, HomeClientPreview, HomeTestimonials, HomeJournal } from '@/components/home/HomeEditorial'
 import CaseStudies from '@/components/home/CaseStudies'
+import EcoInterventions from '@/components/home/EcoInterventions'
 import FAQ from '@/components/home/FAQ'
 import MobileStickyCTA from '@/components/home/MobileStickyCTA'
 import styles from '@/components/home/HomeEditorial.module.css'
@@ -38,6 +39,7 @@ export default function HomePage() {
         <Hero />
         <HomeProof />
         <HomeServices />
+        <EcoInterventions />
         <CaseStudies />
         <HomeProcess />
         <HomeClientPreview />
