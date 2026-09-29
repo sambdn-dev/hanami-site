@@ -76,12 +76,10 @@ export default function CaseStudies() {
               { value: 'Déc.', label: 'résultat visible' },
               { value: '2e année', label: 'de coaching' },
             ]}
-            beforeSrc="/images/veronique-avant-photo-v3.jpg"
-            afterSrc="/images/veronique-apres-photo-v4.jpg"
+            beforeSrc="/images/veronique-avant-photo-v4.jpg"
+            afterSrc="/images/veronique-apres-photo-v5.jpg"
             beforeAlt="Gazon avant coaching Hanami — Véronique P."
             afterAlt="Gazon après coaching Hanami — Véronique P."
-            afterTransform="scale(1.03) rotate(0.45deg)"
-            afterTransformOrigin="center 48%"
             reverse={true}
           />
 
@@ -98,11 +96,9 @@ export default function CaseStudies() {
               { value: '100%', label: 'autonome' },
             ]}
             beforeSrc="/images/noel-avant-photo-v3.jpg"
-            afterSrc="/images/noel-apres-photo-v4.jpg"
+            afterSrc="/images/noel-apres-photo-v5.jpg"
             beforeAlt="Gazon avant remise en état Hanami — Noël P."
             afterAlt="Gazon après remise en état Hanami — Noël P."
-            afterTransform="scale(1.025) rotate(-0.4deg)"
-            afterTransformOrigin="center 52%"
             reverse={false}
           />
 
