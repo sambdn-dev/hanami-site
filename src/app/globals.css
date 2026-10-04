@@ -422,6 +422,18 @@ h3 .anchor-heading {
   }
 }
 
+/* Action mobile de la page particuliers : la hauteur réelle inclut le texte
+   et la zone sûre. Les parcours Pro et Studio gardent leurs règles existantes. */
+@media (max-width: 767px) {
+  body:has([data-visible="true"].home-mobile-cta) .whatsapp-float {
+    bottom: calc(var(--mobile-cta-height, 96px) + 16px);
+  }
+
+  body:has(.home-mobile-cta):has([role="dialog"]:not([inert]), [aria-label="Gestion des cookies"]) :is(.home-mobile-cta, .whatsapp-float) {
+    visibility: hidden;
+  }
+}
+
 /* ─── Scrollbar masquée (utilitaire) ────────────────────────────────────
    Pour les zones scrollables où on ne veut pas voir la barre standard du
    navigateur (panneaux internes, sliders, etc.). Le scroll reste fonctionnel

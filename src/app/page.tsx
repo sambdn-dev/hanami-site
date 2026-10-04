@@ -11,7 +11,7 @@ import { HomeProof, HomeServices, HomeProcess, HomeClientPreview, HomeTestimonia
 import CaseStudies from '@/components/home/CaseStudies'
 import EcoInterventions from '@/components/home/EcoInterventions'
 import FAQ from '@/components/home/FAQ'
-import MobileStickyCTA from '@/components/home/MobileStickyCTA'
+import HomeMobileCTA from '@/components/home/HomeMobileCTA'
 import styles from '@/components/home/HomeEditorial.module.css'
 
 export const metadata: Metadata = {
@@ -54,7 +54,7 @@ export default function HomePage() {
       </main>
       <Footer />
       <WhatsAppButton />
-      <MobileStickyCTA label="Découvrir le coaching" reassurance="" />
+      <HomeMobileCTA label="Découvrir le coaching" reassurance="" />
     </div>
   )
 }

@@ -1,0 +1,55 @@
+.bar {
+  position: fixed;
+  z-index: 40;
+  inset: auto 0 0;
+  padding: 12px max(16px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  border-top: 1px solid #0f3d2826;
+  background: var(--brand-cream);
+  box-shadow: 0 -8px 28px #0f3d2814;
+  transform: translateY(100%);
+  visibility: hidden;
+  transition: transform .25s ease, visibility .25s;
+}
+
+.visible {
+  transform: none;
+  visibility: visible;
+}
+
+.reassurance {
+  margin-bottom: 8px;
+  color: var(--brand-forest);
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.5;
+  text-wrap: balance;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 12px 16px;
+  background: var(--brand-forest);
+  color: var(--brand-cream);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+  text-align: center;
+  transition: background .2s;
+}
+
+.button svg { flex-shrink: 0; }
+.button:hover { background: var(--brand-forest-hover); }
+.button:focus-visible { outline: 2px solid var(--brand-forest); outline-offset: 3px; }
+.spacer { height: var(--mobile-cta-height, 72px); }
+
+@media (min-width: 768px) {
+  .bar, .spacer { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar, .button { transition: none; }
+}
