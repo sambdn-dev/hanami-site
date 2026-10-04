@@ -1,60 +1,10 @@
 import type { Metadata } from 'next'
-import { localBusinessSchema, serviceSchemas, faqPageSchema } from '@/lib/structured-data'
-import { FAQS } from '@/lib/faq-data'
-import Navbar from '@/components/shared/Navbar'
-import Footer from '@/components/shared/Footer'
-import WhatsAppButton from '@/components/shared/WhatsAppButton'
-import SeasonalBanner from '@/components/shared/SeasonalBanner'
-import ContactForm from '@/components/shared/ContactForm'
-import Hero from '@/components/home/Hero'
-import { HomeProof, HomeServices, HomeProcess, HomeClientPreview, HomeTestimonials, HomeJournal } from '@/components/home/HomeEditorial'
-import CaseStudies from '@/components/home/CaseStudies'
-import EcoInterventions from '@/components/home/EcoInterventions'
-import FAQ from '@/components/home/FAQ'
-import HomeMobileCTA from '@/components/home/HomeMobileCTA'
-import styles from '@/components/home/HomeEditorial.module.css'
+import LocalSitePage from '@/components/local/LocalSitePage'
 
 export const metadata: Metadata = {
-  title: 'Coaching gazon — Des pelouses plus belles, durablement',
-  description: 'Un expert pour votre pelouse : diagnostic personnalisé, protocole daté et suivi au fil des saisons. Coaching partout en France, rénovation en Île-de-France.',
-  openGraph: {
-    title: 'Hanami — Des pelouses plus belles, durablement.',
-    description: 'Votre pelouse, notre expertise. Coaching personnalisé, rénovation et produits professionnels adaptés à votre jardin.',
-  },
+  title: { absolute: 'Hanami — Entretien agronomique & rénovation du gazon au Vésinet' },
+  description: 'Hanami intervient chez vous au Vésinet et alentours : rénovation express sans retourner le sol, nutrition régulière et programmes agronomiques sur mesure, sur forfait ou abonnement.',
+  openGraph: { title: 'Hanami — Votre gazon, entre de bonnes mains.', description: 'Rénovation express et interventions agronomiques à domicile. Une surface mesurée, un soin sur mesure.' },
 }
 
-export default function HomePage() {
-  const jsonLdBlocks = [localBusinessSchema(), ...serviceSchemas(), faqPageSchema(FAQS)]
-
-  return (
-    <div className={styles.page}>
-      {jsonLdBlocks.map((block, i) => (
-        <script key={i} type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(block) }} />
-      ))}
-      <a href="#contenu" className={styles.skipLink}>Aller au contenu</a>
-      <SeasonalBanner />
-      <Navbar variant="dark" />
-      <main id="contenu" tabIndex={-1}>
-        <Hero />
-        <HomeProof />
-        <HomeServices />
-        <EcoInterventions />
-        <CaseStudies />
-        <HomeProcess />
-        <HomeClientPreview />
-        <HomeTestimonials />
-        <HomeJournal />
-        <div className={styles.faqWrap}><FAQ /></div>
-        <div className={styles.contact}>
-          <span className={styles.contactBlades} aria-hidden="true" />
-          <ContactForm variant="particulier" title="Tout commence par votre jardin."
-            subtitle="Quelques mots, une surface, vos photos si vous en avez. Parlons de ce dont votre pelouse a besoin. Réponse sous 24 h." />
-        </div>
-      </main>
-      <Footer />
-      <WhatsAppButton />
-      <HomeMobileCTA label="Découvrir le coaching" reassurance="" />
-    </div>
-  )
-}
+export default function HomePage() { return <LocalSitePage /> }

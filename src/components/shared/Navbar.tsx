@@ -16,7 +16,15 @@ const links = [
   { href: '/pourquoi-hanami', label: 'Notre approche' },
 ]
 
-export default function Navbar({ variant = 'light' }: { variant?: 'light' | 'dark' }) {
+const localLinks = [
+  { href: '/interventions-locales', label: 'Interventions locales' },
+  { href: '/renovation-express', label: 'Rénovation express' },
+  { href: '/coaching', label: 'Coaching à distance' },
+  { href: '/pro', label: 'Hanami Pro' },
+  { href: '/blog', label: 'Le journal' },
+]
+
+export default function Navbar({ variant = 'light', localOffers = false }: { variant?: 'light' | 'dark'; localOffers?: boolean }) {
   const pathname = usePathname()
   const [scrolled, setScrolled] = useState(false)
   const [bannerGone, setBannerGone] = useState(false)
@@ -28,8 +36,9 @@ export default function Navbar({ variant = 'light' }: { variant?: 'light' | 'dar
 
   const isPro = pathname === '/pro' || pathname.startsWith('/pro/')
   const isStudio = pathname === '/pro/studio'
-  const ctaHref = isStudio ? '/pro/studio#contact' : isPro ? '/pro#contact' : '/coaching'
-  const ctaText = isStudio ? 'Parler de Studio' : isPro ? 'Parler de Hanami Pro' : 'Découvrir le coaching'
+  const ctaHref = isStudio ? '/pro/studio#contact' : isPro ? '/pro#contact' : localOffers ? '#contact' : '/coaching'
+  const ctaText = isStudio ? 'Parler de Studio' : isPro ? 'Parler de Hanami Pro' : localOffers ? 'Parlons de votre jardin' : 'Découvrir le coaching'
+  const displayLinks = localOffers ? localLinks : links
   const dark = variant === 'dark'
 
   useEffect(() => {
@@ -76,8 +85,8 @@ export default function Navbar({ variant = 'light' }: { variant?: 'light' | 'dar
             <Image src={dark ? '/brand/2026/logo-principal-blanc.png' : '/brand/2026/logo-principal-vert.png'} alt="Hanami Expert Gazon" width={100} height={36} priority />
           </Link>
           <div className={styles.desktopLinks}>
-            {links.map((link) => {
-              const active = pathname === link.href || (link.href === '/pro' && isPro)
+            {displayLinks.map((link) => {
+              const active = pathname === link.href || (link.href === '/pro' && isPro) || (localOffers && pathname === '/' && link.href === '/interventions-locales')
               return <Link key={link.href} href={link.href} aria-current={active ? 'page' : undefined} className={active ? styles.active : ''}>{link.label}</Link>
             })}
           </div>
@@ -90,8 +99,8 @@ export default function Navbar({ variant = 'light' }: { variant?: 'light' | 'dar
       <div id="mobile-menu" ref={menuRef} className={`${styles.mobileMenu} ${menuOpen ? styles.mobileMenuOpen : ''}`} role="dialog" aria-modal="true" aria-label="Menu principal" inert={!menuOpen}>
         <div className={styles.mobileTop}><Image src="/brand/2026/logo-principal-vert.png" alt="Hanami Expert Gazon" width={100} height={36} /><button ref={closeRef} type="button" onClick={() => setMenuOpen(false)} aria-label="Fermer le menu"><X size={25} aria-hidden="true" /></button></div>
         <div className={styles.mobileLinks}>
-          {links.map((link, index) => <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}><span>{String(index + 1).padStart(2, '0')}</span>{link.label}<ArrowUpRight size={19} aria-hidden="true" /></Link>)}
-          <Link href="/pro/studio" onClick={() => setMenuOpen(false)}><span>07</span>Hanami Studio <strong>PRO</strong><ArrowUpRight size={19} aria-hidden="true" /></Link>
+          {displayLinks.map((link, index) => <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}><span>{String(index + 1).padStart(2, '0')}</span>{link.label}<ArrowUpRight size={19} aria-hidden="true" /></Link>)}
+          <Link href="/pro/studio" onClick={() => setMenuOpen(false)}><span>{String(displayLinks.length + 1).padStart(2, '0')}</span>Hanami Studio <strong>PRO</strong><ArrowUpRight size={19} aria-hidden="true" /></Link>
         </div>
         <div className={styles.mobileBottom}><Link href={ctaHref} onClick={() => setMenuOpen(false)}>{ctaText} <ArrowUpRight size={18} aria-hidden="true" /></Link><a href="https://wa.me/33667277614" target="_blank" rel="noopener noreferrer">WhatsApp · +33 6 67 27 76 14</a></div>
       </div>

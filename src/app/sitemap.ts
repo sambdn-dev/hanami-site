@@ -20,6 +20,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // articles portent leur vraie date. /mentions-legales est volontairement
   // absente : la page est en noindex, la lister serait contradictoire.
   const staticRoutes: MetadataRoute.Sitemap = [
+    { url: `${BASE_URL}/interventions-locales`, changeFrequency: 'monthly', priority: 0.95 },
+    { url: `${BASE_URL}/renovation-express`, changeFrequency: 'monthly', priority: 0.9 },
     {
       url: `${BASE_URL}/`,
       changeFrequency: 'weekly',

@@ -37,6 +37,7 @@ type ParticulierFormData = {
   postalCode: string
   message: string
   source: string
+  requestType?: string
 }
 
 type ProFormData = {
@@ -64,6 +65,8 @@ interface ContactFormProps {
   subtitle?: string
   /** Masque l'upload lorsque la prise de contact ne concerne pas un diagnostic gazon. */
   photosEnabled?: boolean
+  localServices?: boolean
+  defaultLocalService?: string
 }
 
 // ── Type pour une photo uploadée ────────────────────────────────────────────
@@ -80,6 +83,8 @@ export default function ContactForm({
   title: titleProp,
   subtitle: subtitleProp,
   photosEnabled = true,
+  localServices = false,
+  defaultLocalService = '',
 }: ContactFormProps) {
   const fadeRef = useFadeIn()
   const isPro = variant === 'pro'
@@ -110,6 +115,7 @@ export default function ContactForm({
     defaultValues: {
       source: formSource,
       ...(formSource === 'hanami-pro-saas' ? { requestType: 'hanami-pro' } : {}),
+      ...(!isPro && localServices ? { requestType: defaultLocalService } : {}),
     } as FormData,
   })
 
@@ -221,6 +227,7 @@ export default function ContactForm({
       if (d.email)      lines.push(`Email : ${d.email}`)
       if (d.surface)    lines.push(`Surface : ${d.surface} m²`)
       if (d.postalCode) lines.push(`Code postal : ${d.postalCode}`)
+      if (d.requestType) lines.push(`Demande : ${d.requestType}`)
       if (d.message)    lines.push(`Message : ${d.message}`)
     }
     if (photosEnabled) lines.push("Je peux envoyer mes photos dans ce chat.")
@@ -279,6 +286,18 @@ export default function ContactForm({
               <div className="flex flex-col gap-5">
 
                 <input type="hidden" {...register('source')} value={formSource} />
+
+                {!isPro && localServices && (
+                  <FormField htmlFor="localRequestType" label="Ce dont votre jardin a besoin">
+                    <select id="localRequestType" className={inputClass()} {...register('requestType')}>
+                      <option value="">Parlons-en ensemble</option>
+                      <option value="Interventions agronomiques">Interventions agronomiques régulières</option>
+                      <option value="Rénovation express">Rénovation express, sans retourner le sol</option>
+                      <option value="Arrosage">Arrosage automatique</option>
+                      <option value="Gazon en rouleaux">Gazon en rouleaux</option>
+                    </select>
+                  </FormField>
+                )}
 
                 {/* Entreprise + Ville (Pro uniquement) — 2 colonnes côte à côte */}
                 {isPro && (

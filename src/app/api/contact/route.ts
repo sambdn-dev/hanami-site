@@ -189,7 +189,7 @@ export async function POST(request: NextRequest) {
           <td style="padding:8px;border:1px solid #e7e5e4;font-weight:600;background:#f5f5f4;">Code postal</td>
           <td style="padding:8px;border:1px solid #e7e5e4;">${safePostal}</td>
         </tr>` : ''}
-        ${isPro && safeReqType ? `
+        ${safeReqType ? `
         <tr>
           <td style="padding:8px;border:1px solid #e7e5e4;font-weight:600;background:#f5f5f4;">Type de demande</td>
           <td style="padding:8px;border:1px solid #e7e5e4;">${safeReqType}</td>

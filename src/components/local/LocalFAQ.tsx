@@ -1,0 +1,14 @@
+import styles from './LocalSite.module.css'
+
+export const LOCAL_FAQS = [
+  { question: 'Vous faites les interventions, ou vous me conseillez à distance ?', answer: 'Pour les offres locales, je viens chez vous et je réalise les interventions convenues. Vous pouvez choisir un forfait ou un abonnement. Le coaching à distance est une autre offre, pour les personnes qui souhaitent réaliser elles-mêmes les gestes.' },
+  { question: 'Quel est votre secteur d’intervention ?', answer: 'Le Vésinet et ses alentours. Indiquez votre commune ou votre code postal lors du premier échange : nous confirmons le secteur et les conditions du déplacement avant tout engagement.' },
+  { question: 'À quelle fréquence intervenez-vous ?', answer: 'Entre toutes les deux semaines et tous les trois mois, selon votre niveau d’exigence, la saison et les besoins du gazon. Un programme peut se limiter à une nutrition de fond plusieurs fois par an ou prévoir un accompagnement beaucoup plus soutenu.' },
+  { question: 'Faut-il retourner le sol pour rénover le gazon ?', answer: 'La rénovation express travaille à partir de l’existant, sans retourner le sol. Elle préserve sa structure et limite la remontée des graines d’adventices enfouies. Une modification importante des niveaux ou un autre problème de terrain nécessite d’abord un diagnostic.' },
+  { question: 'Combien coûte un programme d’entretien ?', answer: 'Le devis dépend de la surface mesurée, du programme, du rythme de passage et des besoins du jardin. Il précise les prestations et les produits. Les prix du coaching à distance ne sont pas ceux des interventions à domicile.' },
+  { question: 'Puis-je choisir une approche naturelle ?', answer: 'Oui, nous pouvons étudier un programme privilégiant des produits d’origine naturelle, des références utilisables en agriculture biologique et des matières issues de l’économie circulaire. La sélection dépend des besoins du sol et des caractéristiques vérifiées de chaque référence.' },
+]
+
+export default function LocalFAQ() {
+  return <section className={styles.faq} aria-labelledby="local-faq-title"><div className={styles.container}><p className={styles.eyebrow}>Avant de se rencontrer</p><h2 id="local-faq-title">Quelques réponses.<br /><em>En toute simplicité.</em></h2><div className={styles.questions}>{LOCAL_FAQS.map(({question,answer})=><details key={question}><summary>{question}<span aria-hidden="true">+</span></summary><p>{answer}</p></details>)}</div></div></section>
+}

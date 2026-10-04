@@ -1,0 +1,146 @@
+.section {
+  padding: 108px 0 90px;
+  background: #f8f6ef;
+  color: #193d2c;
+}
+
+.container { width: min(1280px, calc(100% - 64px)); margin-inline: auto; }
+.introduction { display: grid; grid-template-columns: 1.3fr 1fr; align-items: end; gap: 64px; margin-bottom: 39px; }
+.eyebrow { margin: 0 0 22px; font-family: var(--font-space-mono), monospace; font-size: 10px; font-weight: 400; letter-spacing: .12em; color: #667e58; }
+.introduction h2 { margin: 0; font-family: var(--font-fraunces), Georgia, serif; font-size: clamp(38px, 4.75vw, 66px); font-weight: 430; line-height: 1.05; letter-spacing: -.05em; }
+.introduction h2 em { color: #7b956d; font-weight: 380; }
+.intro { max-width: 420px; margin: 0 0 5px; color: #576d5f; font-size: 15px; line-height: 1.85; }
+.tabs { display: flex; gap: 5px; width: 100%; padding: 0 0 18px; overflow-x: auto; scrollbar-width: thin; scrollbar-color: #afbaa4 transparent; }
+.tab { display: flex; align-items: center; justify-content: center; gap: 10px; flex: 1 0 auto; min-height: 49px; padding: 13px 18px; border: 1px solid #193d2c22; background: transparent; color: #5a6d5e; font-size: 12px; line-height: 1.3; cursor: pointer; transition: background .25s, color .25s, border-color .25s; }
+.tab:hover { border-color: #193d2c88; color: #193d2c; }
+.tabNumber { font-family: var(--font-space-mono), monospace; font-size: 9px; opacity: .6; }
+.selectedTab { background: #193d2c; border-color: #193d2c; color: #f8f6ef; }
+.selectedTab:hover { color: #f8f6ef; }
+.tab:focus-visible, .playback:focus-visible { outline: 2px solid #95ac67; outline-offset: 3px; }
+.panel:focus-visible { outline: 2px solid #95ac67; outline-offset: 5px; }
+.panel { display: grid; grid-template-columns: 1.48fr 1fr; overflow: hidden; min-width: 0; background: #172f24; color: #f4f2e7; }
+.visual { position: relative; display: flex; flex-direction: column; min-width: 0; justify-content: center; padding: 0 0 23px; border-right: 1px solid #dce5c31a; background: radial-gradient(ellipse at 40% 25%, #35523a33, transparent 70%); }
+.visualTop { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 26px 28px 6px; }
+.liveLabel { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-space-mono), monospace; font-size: 8px; line-height: 1.5; letter-spacing: .1em; color: #bfccab; }
+.liveLabel > span { display: block; width: 4px; height: 4px; border-radius: 50%; background: #bacc8c; box-shadow: 0 0 12px #bacc8c44; }
+.playback { display: inline-flex; gap: 6px; align-items: center; justify-content: center; flex-shrink: 0; min-height: 34px; padding: 7px 10px; border: 1px solid #dce5c333; background: #172f2477; color: #dce5c3; font-size: 10px; cursor: pointer; transition: border-color .2s; }
+.playback:hover { border-color: #dce5c380; }
+.playback:disabled { opacity: .6; cursor: default; }
+.sceneEntry { position: relative; flex: 1; display: flex; align-items: center; animation: enterScene .65s ease-out both; }
+.scene { display: block; width: 100%; height: auto; overflow: visible; }
+.granular, .foliar, .roots, .water, .potassium { isolation: isolate; }
+.visualLegend { display: flex; align-items: center; justify-content: center; gap: 23px; padding: 11px 20px 0; color: #b3c0a9; font-size: 9px; line-height: 1.5; }
+.visualLegend > span { display: inline-flex; gap: 7px; align-items: center; }
+.visualLegend i { display: inline-block; width: 5px; height: 5px; border-radius: 50%; }
+.rootDot { background: #d3bf97; }
+.nutrientDot { background: #e3cd8b; }
+.waterDot { background: #abdede; }
+.visualLegend .diagramLabel { margin-left: auto; color: #839984; font-family: var(--font-space-mono), monospace; font-size: 7px; letter-spacing: .04em; }
+.comparisonLabels { position: absolute; z-index: 1; top: 87px; left: 6%; right: 6%; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: center; color: #d8dcc7; font-size: 11px; line-height: 1.4; pointer-events: none; }
+.comparisonLabels span + span { color: #b9dfd6; }
+.explanation { align-self: center; padding: 38px 39px 40px; animation: enterCopy .45s ease-out both; }
+.kicker { margin: 0 0 27px; color: #b9c79e; font-family: var(--font-space-mono), monospace; font-size: 8px; line-height: 1.6; letter-spacing: .08em; }
+.chapterIcon { display: grid; place-items: center; width: 45px; height: 45px; margin-bottom: 18px; border: 1px solid #bfccab33; border-radius: 50%; color: #c1d09f; background: #bfccab06; }
+.explanation h3 { margin: 0; max-width: 330px; font-family: var(--font-fraunces), Georgia, serif; font-weight: 420; font-size: clamp(27px, 2.6vw, 36px); line-height: 1.12; letter-spacing: -.035em; text-wrap: balance; }
+.description { margin: 20px 0 0; color: #c1cbbd; font-size: 12px; line-height: 1.9; }
+.steps { display: grid; gap: 0; padding: 0; margin: 26px 0 22px; list-style: none; }
+.steps li { position: relative; display: flex; align-items: center; gap: 12px; min-height: 35px; padding: 7px 0; color: #e1e5d5; font-size: 11px; }
+.steps li > span { color: #a9bf8f; font-family: var(--font-space-mono), monospace; font-size: 8px; }
+.steps li > svg { position: absolute; bottom: -4px; left: 1px; color: #a9bf8f66; }
+.detail { margin: 0; padding-top: 18px; border-top: 1px solid #dce5c322; font-size: 10px; line-height: 1.8; color: #a5b5a0; }
+.disclaimer { max-width: 750px; margin: 15px 0 0; color: #788270; font-size: 10px; line-height: 1.75; }
+
+.blade { transform-origin: 4px 0; animation: bladeSway 6s ease-in-out infinite; }
+.fieldLines { animation: fieldBreathe 8s ease-in-out infinite; transform-origin: center; }
+.granuleHalo { animation: haloRelease 4.8s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+.nutrientParticle { animation: nutrientRelease 4.8s cubic-bezier(.18,.35,.49,1) infinite; }
+.rootPulse { stroke-dasharray: 12 88; animation: rootFlow 5s linear infinite; }
+.growingRoot { animation: rootGlow 6s ease-in-out infinite; }
+.microbe { animation: microbePulse 4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.leafStrength { transform-origin: 4px 0; animation: strengthenLeaf 7s ease-in-out infinite; }
+.foliarDrop { animation: foliarFall 3s linear infinite; }
+.leafSpark { animation: leafAbsorb 4s ease-in-out infinite; }
+.rainDrop { animation: rainfall 2.8s linear infinite; }
+.waterPaths { stroke-dasharray: 12 19; animation: channelFlow 3s linear infinite; }
+.distributedWater { stroke-dasharray: 6 13; animation: distributedFlow 3s linear infinite; }
+.wetZone { animation: wettingPulse 5s ease-in-out infinite; }
+.pooledWater { animation: poolPulse 4s ease-in-out infinite; }
+.upwardWater { stroke-dasharray: 16 84; animation: upwardFlow 4s linear infinite; }
+.sun { animation: sunlight 7s ease-in-out infinite; }
+.still *, .still *::before, .still *::after { animation-play-state: paused !important; }
+.still .sceneEntry, .still .explanation { animation: none; }
+
+@keyframes enterScene { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes enterCopy { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes bladeSway { 0%, 100% { rotate: -1.1deg; } 50% { rotate: 1.5deg; } }
+@keyframes fieldBreathe { 0%, 100% { opacity: .07; } 50% { opacity: .14; } }
+@keyframes haloRelease { 0% { scale: .4; opacity: .7; } 80%, 100% { scale: 2.4; opacity: 0; } }
+@keyframes nutrientRelease { 0% { transform: translateY(0); opacity: 0; } 12% { opacity: .85; } 80% { opacity: .3; } 100% { transform: translateY(115px); opacity: 0; } }
+@keyframes rootFlow { from { stroke-dashoffset: 110; } to { stroke-dashoffset: 10; } }
+@keyframes rootGlow { 0%, 100% { opacity: .6; } 50% { opacity: 1; } }
+@keyframes microbePulse { 0%, 100% { scale: .75; opacity: .2; } 50% { scale: 1.3; opacity: .8; } }
+@keyframes strengthenLeaf { 0%, 100% { opacity: .3; scale: .8 .86; } 45%, 70% { opacity: 1; scale: 1.08 1; } }
+@keyframes foliarFall { 0% { transform: translate(0, -26px); opacity: 0; } 15% { opacity: .85; } 70% { opacity: .5; } 100% { transform: translate(-15px, 95px); opacity: 0; } }
+@keyframes leafAbsorb { 0%, 100% { opacity: 0; } 35% { opacity: .9; } 80% { opacity: .1; } }
+@keyframes rainfall { 0% { transform: translateY(-30px); opacity: 0; } 20% { opacity: .9; } 85% { opacity: .85; } 100% { transform: translateY(80px); opacity: 0; } }
+@keyframes channelFlow { from { stroke-dashoffset: 62; } to { stroke-dashoffset: 0; } }
+@keyframes distributedFlow { from { stroke-dashoffset: 38; } to { stroke-dashoffset: 0; } }
+@keyframes wettingPulse { 0%, 100% { opacity: .45; } 50% { opacity: 1; } }
+@keyframes poolPulse { 0%, 100% { opacity: .35; } 50% { opacity: .85; } }
+@keyframes upwardFlow { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
+@keyframes sunlight { 0%, 100% { opacity: .6; } 50% { opacity: 1; } }
+
+@media (min-width: 1450px) { .scene { margin-top: -10px; } }
+@media (max-width: 1050px) {
+  .container { width: min(1280px, calc(100% - 48px)); }
+  .introduction { gap: 40px; }
+  .panel { grid-template-columns: 1.2fr 1fr; }
+  .explanation { padding: 30px 25px; }
+  .visualTop { padding-inline: 20px; }
+  .visualLegend { gap: 15px; flex-wrap: wrap; }
+  .visualLegend .diagramLabel { width: 100%; justify-content: center; margin: 0; }
+  .tab { padding-inline: 12px; font-size: 11px; }
+  .comparisonLabels { top: 90px; font-size: 9px; }
+}
+
+@media (max-width: 760px) {
+  .section { padding: 70px 0 58px; }
+  .container { width: calc(100% - 36px); }
+  .introduction { display: block; margin-bottom: 27px; }
+  .eyebrow { font-size: 9px; margin-bottom: 17px; }
+  .introduction h2 { font-size: clamp(39px, 10vw, 54px); }
+  .intro { margin-top: 22px; max-width: 500px; font-size: 13px; line-height: 1.8; }
+  .tabs { gap: 6px; padding-bottom: 13px; }
+  .tab { min-height: 47px; padding: 12px 16px; gap: 9px; font-size: 12px; }
+  .panel { display: block; }
+  .visual { border: 0; border-bottom: 1px solid #dce5c322; padding-bottom: 17px; }
+  .visualTop { padding: 18px 17px 0; }
+  .liveLabel { font-size: 7px; letter-spacing: .06em; }
+  .playback { min-height: 36px; font-size: 9px; }
+  .sceneEntry { margin-top: 4px; }
+  .scene { min-height: 210px; }
+  .visualLegend { padding-top: 7px; gap: 14px; font-size: 9px; }
+  .visualLegend .diagramLabel { display: none; }
+  .comparisonLabels { top: 67px; font-size: 9px; left: 5%; right: 5%; gap: 12px; }
+  .explanation { padding: 29px 23px 30px; }
+  .kicker { margin-bottom: 18px; font-size: 8px; }
+  .chapterIcon { float: right; margin: 0 0 8px 15px; width: 39px; height: 39px; }
+  .chapterIcon svg { width: 23px; height: 23px; }
+  .explanation h3 { max-width: 330px; font-size: 30px; }
+  .description { margin-top: 17px; font-size: 12px; }
+  .steps { margin: 21px 0 19px; }
+  .steps li { min-height: 33px; font-size: 11px; }
+  .detail { font-size: 10px; }
+  .disclaimer { margin-top: 13px; font-size: 9px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel *, .panel *::before, .panel *::after { animation: none !important; transition: none !important; }
+  .leafStrength { opacity: 1; }
+  .nutrientParticle { opacity: .5; transform: translateY(45px); }
+  .rainDrop { opacity: .75; transform: translateY(25px); }
+  .foliarDrop { opacity: .7; transform: translateY(22px); }
+  .rootPulse { stroke-dasharray: none; opacity: .5; }
+  .upwardWater { stroke-dasharray: 12 10; opacity: .8; }
+  .tab { transition: none; }
+}

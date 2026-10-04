@@ -1,0 +1,40 @@
+.page { background: var(--brand-cream); color: var(--brand-forest); }
+.page :is(a,button,input,select,textarea,summary):focus-visible { outline: 2px solid #b18d46; outline-offset: 5px; }
+.container { width: min(100% - 48px,1240px); margin-inline: auto; }
+.skip { position: fixed; z-index: 120; top: 12px; left: 12px; padding: 12px 18px; background: var(--brand-forest); color: var(--brand-cream); transform: translateY(-160%); }
+.skip:focus { transform: none; }
+.eyebrow { color: #628059; font-size: 10px; line-height: 1.6; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; }
+.proof { padding: 96px 0; background: #e9eee2; }
+.proof > .container { display: grid; grid-template-columns: .8fr 1.2fr; align-items: center; gap: 70px; }
+.proof h2,.faq h2,.directContact h2 { margin: 20px 0; font-family: var(--font-fraunces),serif; font-size: clamp(35px,4.1vw,57px); line-height: 1.09; letter-spacing: -.04em; font-weight: 430; }
+.proof h2 em,.faq h2 em,.directContact h2 em { color: #708b64; font-weight: 350; }
+.proofCopy > p:not(.eyebrow) { max-width: 370px; color: #526757; font-size: 15px; line-height: 1.8; }
+.proofDetails { display: flex; flex-wrap: wrap; gap: 30px; margin: 30px 0; }
+.proofDetails span { display: grid; gap: 6px; color: #526757; font-size: 11px; }
+.proofDetails strong { color: #153928; font-size: 18px; font-weight: 600; }
+.proofCopy > a { display: inline-flex; gap: 15px; align-items: center; min-height: 44px; border-bottom: 1px solid currentColor; font-size: 13px; font-weight: 700; }
+.proofImage { min-width: 0; }
+.proofImage figcaption { margin-top: 14px; color: #536a58; font-size: 10px; line-height: 1.7; }
+.faq { padding: 90px 0; }
+.questions { max-width: 880px; margin-top: 38px; }
+.questions details { border-top: 1px solid #15392829; }
+.questions details:last-child { border-bottom: 1px solid #15392829; }
+.questions summary { display: flex; justify-content: space-between; align-items: center; gap: 25px; padding: 22px 0; list-style: none; cursor: pointer; font-size: 15px; font-weight: 600; }
+.questions summary::-webkit-details-marker { display: none; }
+.questions summary > span { flex-shrink: 0; font-size: 24px; font-weight: 400; color: #748d63; transition: transform .2s; }
+.questions details[open] summary > span { transform: rotate(45deg); }
+.questions details > p { max-width: 760px; padding: 0 24px 25px 0; color: #536a58; font-size: 14px; line-height: 1.85; }
+.contactWrap { background: #e8eee2; }
+.directContact { display: flex; align-items: center; justify-content: space-between; gap: 40px; padding: 72px 0 30px; }
+.directContact h2 { font-size: clamp(32px,3.4vw,46px); }
+.directContact > div:last-child { display: grid; gap: 16px; }
+.directContact a { display: inline-flex; align-items: center; gap: 15px; min-height: 44px; font-size: 13px; font-weight: 700; }
+.directContact a:first-child { justify-content: space-between; min-height: 54px; padding: 15px 20px; background: var(--brand-forest); color: var(--brand-cream); }
+.directContact > div:last-child > p { max-width: 280px; color: #5c705e; font-size: 11px; line-height: 1.7; }
+.contactWrap :global(#contact) { padding-top: 40px; background: transparent; }
+.contactWrap :global(#contact > div) { max-width: 1240px; }
+.contactWrap :global(#contact h2) { color: var(--brand-forest); font-size: clamp(30px,3.5vw,45px); letter-spacing: -.04em; }
+.contactWrap :global(#contact input),.contactWrap :global(#contact textarea),.contactWrap :global(#contact select) { border-radius: 2px; background: #f8f6ef; border-color: #15392830; }
+.contactWrap :global(#contact button[type="submit"]) { background: var(--brand-forest); border-radius: 2px; }
+@media (max-width: 767px) { .container { width: calc(100% - 40px); } .proof,.faq { padding: 65px 0; } .proof > .container { grid-template-columns: 1fr; gap: 35px; } .directContact { display: grid; gap: 20px; padding-top: 60px; } .directContact > div:last-child { width: 100%; } .questions summary { font-size: 14px; } }
+@media (prefers-reduced-motion: reduce) { .questions summary > span { transition: none; } }

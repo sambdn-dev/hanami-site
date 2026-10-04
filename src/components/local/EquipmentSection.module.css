@@ -1,0 +1,52 @@
+.section { padding: 90px 0 84px; background: #f5f3eb; color: #173b2b; }
+.container { width: min(100% - 48px, 1240px); margin: 0 auto; }
+.heading { display: grid; grid-template-columns: 1.2fr 1fr; column-gap: 80px; align-items: end; margin-bottom: 44px; }
+.eyebrow { grid-column: 1 / -1; margin: 0 0 24px; font-family: var(--font-space-mono), monospace; font-size: 10px; letter-spacing: .12em; color: #69816a; }
+.heading h2 { margin: 0; font-family: var(--font-fraunces), serif; font-weight: 430; font-size: clamp(39px, 5.2vw, 68px); line-height: 1.04; letter-spacing: -.055em; }
+.heading h2 em { color: #76916a; font-weight: 350; }
+.heading > p:last-child { max-width: 400px; margin: 0 0 5px; color: #5b6d60; font-size: 15px; line-height: 1.75; }
+.showcase { display: grid; grid-template-columns: 1.45fr 1fr; gap: 18px; }
+.mower { min-width: 0; overflow: hidden; padding: 28px 30px 25px; background: #e9ede2; border: 1px solid #dce3d2; }
+.productTop { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin: 0; color: #687962; font-family: var(--font-space-mono), monospace; font-size: 9px; letter-spacing: .1em; }
+.badge { display: inline-flex; align-items: center; gap: 5px; color: #446b38; font-size: 8px; }
+.stage { position: relative; height: clamp(240px, 30vw, 385px); margin: 10px 0 0; }
+.stageRing { position: absolute; width: 76%; height: 78%; left: 12%; top: 10%; border: 1px solid #d1dac6; border-radius: 50%; transform: rotate(-15deg); }
+.stageRing::after { content: ''; position: absolute; inset: 16px; border: 1px solid #d7dece; border-radius: inherit; }
+.mowerImage { object-fit: contain; animation: enter .45s ease both; }
+.productInfo { position: relative; display: flex; justify-content: space-between; gap: 18px; align-items: flex-end; }
+.productModel { margin: 0 0 11px; font-family: var(--font-space-mono), monospace; font-size: 10px; letter-spacing: .07em; color: #6f7d67; }
+.productInfo h3, .side h3 { margin: 0; font-family: var(--font-fraunces), serif; font-size: clamp(25px, 2.6vw, 33px); font-weight: 440; line-height: 1.12; letter-spacing: -.035em; }
+.width { display: flex; flex-direction: column; gap: 7px; align-items: flex-end; flex-shrink: 0; }
+.width strong { font-family: var(--font-fraunces), serif; font-size: 54px; line-height: 1; font-weight: 400; letter-spacing: -.055em; }
+.width span { font-family: var(--font-space-mono), monospace; font-size: 8px; letter-spacing: .1em; }
+.gallery { display: flex; flex-wrap: wrap; gap: 6px; margin: 26px 0 14px; }
+.gallery button { cursor: pointer; min-height: 40px; padding: 8px 11px; border: 1px solid #ccd6c3; border-radius: 2px; background: transparent; color: #496144; font-size: 11px; transition: background .2s, color .2s, border-color .2s; }
+.gallery button[aria-pressed='true'] { background: #1b412e; color: #f5f3eb; border-color: #1b412e; }
+.gallery button:hover { border-color: #173b2b; }
+.gallery button:focus-visible { outline: 2px solid #517643; outline-offset: 3px; }
+.bladeNote { margin: 0; color: #687861; font-size: 12px; line-height: 1.65; }
+.side { display: grid; gap: 18px; min-width: 0; }
+.blower { padding: 25px 27px 27px; background: #fdfcf7; border: 1px solid #e4e4d9; }
+.blowerStage { position: relative; height: 180px; margin: 4px 0 8px; }
+.blowerStage img { object-fit: contain; }
+.side h3 { font-size: 27px; }
+.description { margin: 12px 0 0; font-size: 13px; line-height: 1.7; color: #647461; }
+.tools { padding: 27px; background: #183b2c; color: #f5f3eb; }
+.tools .productTop { color: #a8ba99; margin-bottom: 18px; }
+.tools .description { color: #c0ceb7; }
+.accessoryPhotos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 19px; }
+.accessoryPhotos figure { overflow: hidden; margin: 0; padding: 8px 8px 12px; background: #eef0e5; color: #45613d; }
+.accessoryPhotos img { width: 100%; height: 112px; object-fit: contain; }
+.accessoryPhotos figcaption { text-align: center; font-size: 10px; line-height: 1.5; }
+.illustrationNote { margin: 10px 0 0; color: #a8ba99; font-size: 10px; line-height: 1.5; }
+.toolNote { margin: 16px 0 0; padding-top: 15px; border-top: 1px solid #68846666; color: #a8ba99; font-size: 12px; line-height: 1.65; }
+.benefits { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; margin-top: 35px; }
+.benefits > div { display: flex; align-items: flex-start; gap: 14px; }
+.benefits svg { flex-shrink: 0; margin-top: 3px; color: #668454; }
+.benefits p { margin: 0; }
+.benefits strong { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 600; }
+.benefits span { display: block; color: #6b7969; font-size: 12px; line-height: 1.65; }
+@keyframes enter { from { opacity: 0; transform: translateY(8px) scale(.985); } to { opacity: 1; transform: none; } }
+@media (max-width: 900px) { .heading { column-gap: 35px; } .showcase { grid-template-columns: 1.2fr 1fr; } .mower { padding-inline: 22px; } .blower, .tools { padding-inline: 22px; } .benefits { gap: 23px; } }
+@media (max-width: 760px) { .section { padding: 60px 0; } .container { width: min(100% - 32px, 600px); } .heading { display: block; margin-bottom: 30px; } .eyebrow { margin-bottom: 20px; } .heading > p:last-child { margin: 22px 0 0; max-width: 450px; font-size: 14px; } .showcase { grid-template-columns: 1fr; gap: 14px; } .mower { padding: 23px 20px; } .stage { height: clamp(235px, 68vw, 390px); } .productInfo h3 { font-size: 28px; } .width strong { font-size: 48px; } .gallery { gap: 5px; margin-top: 23px; } .gallery button { padding-inline: 9px; font-size: 10px; min-height: 44px; } .side { gap: 14px; } .blowerStage { height: 220px; } .benefits { grid-template-columns: 1fr; gap: 21px; margin-top: 27px; } .benefits > div { padding-top: 18px; border-top: 1px solid #dfe3d6; } .benefits strong { font-size: 14px; } .benefits span { font-size: 13px; } }
+@media (prefers-reduced-motion: reduce) { .mowerImage { animation: none; } .gallery button { transition: none; } }

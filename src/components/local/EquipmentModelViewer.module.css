@@ -1,0 +1,28 @@
+.open { display: flex; align-items: center; gap: 13px; width: 100%; padding: 15px 17px; margin-top: 22px; border: 1px solid #c7d2bf; background: #e1e7d8; color: #254b32; text-align: left; cursor: pointer; transition: background .2s; }
+.open:hover { background: #d8e2cd; }
+.icon { display: grid; place-items: center; width: 37px; height: 37px; border: 1px solid #b9c8ae; border-radius: 50%; }
+.open strong { display: block; font-size: 12px; font-weight: 600; }
+.open small { display: block; margin-top: 4px; font-size: 10px; color: #6a7c60; }
+.arrow { margin-left: auto; font-size: 23px; font-weight: 300; }
+.viewer { margin-top: 22px; border: 1px solid #c8d1bf; background: #e3e8db; overflow: hidden; }
+.top { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; color: #6b7a61; font-family: var(--font-space-mono), monospace; font-size: 8px; letter-spacing: .08em; }
+.top button, .controls button { display: grid; place-items: center; cursor: pointer; color: #345533; border: 1px solid #c4cebc; background: #edf0e8; width: 34px; height: 34px; border-radius: 50%; }
+.top button { width: 28px; height: 28px; background: transparent; border: 0; }
+.stage { position: relative; width: 100%; height: 340px; }
+.stage > div { width: 100%; height: 100%; }
+.stage canvas { display: block; width: 100%; height: 100%; touch-action: pan-y; cursor: grab; }
+.stage canvas:active { cursor: grabbing; }
+.dimension { position: absolute; right: 20px; bottom: 15px; color: #839575; font-family: var(--font-space-mono), monospace; font-size: 10px; letter-spacing: .1em; pointer-events: none; }
+.bottom { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 0 14px 12px; }
+.bottom p { margin: 0; color: #74826b; font-size: 10px; }
+.controls { display: flex; gap: 5px; }
+.controls button:hover { background: #fff; }
+.controls button[aria-pressed='true'] { background: #254b32; color: #edf0e8; border-color: #254b32; }
+.open:focus-visible, .controls button:focus-visible, .top button:focus-visible { outline: 2px solid #527942; outline-offset: 3px; }
+.disclaimer { margin: 0; padding: 11px 14px; border-top: 1px solid #cbd5c2; font-size: 9px; color: #76836b; line-height: 1.5; }
+.loading, .fallback { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 13px; height: 100%; margin: 0; padding: 24px; color: #607355; font-size: 12px; text-align: center; }
+.fallback a { text-decoration: underline; text-underline-offset: 4px; }
+.spinner { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 760px) { .stage { height: 300px; } .controls button { width: 38px; height: 38px; } .top { font-size: 7px; } }
+@media (prefers-reduced-motion: reduce) { .open { transition: none; } .spinner { animation: none; } }
