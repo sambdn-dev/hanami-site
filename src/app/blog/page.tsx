@@ -32,7 +32,7 @@ export default function BlogIndexPage() {
   return (
     <>
       <SeasonalBanner />
-      <Navbar variant="light" />
+      <Navbar variant="light" localOffers />
 
       <main className="flex-1 pt-36 pb-24 bg-stone-50">
         <div className="max-w-7xl mx-auto px-6 lg:px-8">
@@ -61,7 +61,7 @@ export default function BlogIndexPage() {
                 href="/"
                 className="inline-block mt-6 text-sm font-semibold text-hanami-700 hover:text-hanami-900 underline decoration-hanami-500/50 underline-offset-4"
               >
-                ← Retour à l'accueil
+                ← Retour à l&apos;accueil
               </Link>
             </div>
           ) : (
@@ -74,7 +74,7 @@ export default function BlogIndexPage() {
         </div>
       </main>
 
-      <Footer />
+      <Footer localOffers />
       <WhatsAppButton />
     </>
   )

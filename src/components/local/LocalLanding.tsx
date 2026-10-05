@@ -1,9 +1,8 @@
 import type { ReactNode } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowDown, ArrowUpRight, CalendarDays, Check, CloudSun, Droplets, Leaf, MapPin, Ruler, Sprout, Target } from 'lucide-react'
+import { ArrowDown, ArrowUpRight, CalendarDays, Check, CloudSun, Droplets, Leaf, MapPin, Ruler, ShoppingBag, Sprout, Target } from 'lucide-react'
 import styles from './LocalLanding.module.css'
-import ServiceDirectory from './ServiceDirectory'
 
 const plans = [
   { number: '01', name: 'L’essentiel', detail: 'Une nutrition de fond', description: 'Quelques interventions dans l’année pour apporter au gazon les nutriments dont il a besoin, au bon moment.', bullets: ['Fertilisation adaptée aux saisons', 'Doses ajustées à votre surface', 'Conseils de tonte et d’arrosage'] },
@@ -14,7 +13,6 @@ const plans = [
 export function LocalHero() {
   return (
     <section className={styles.hero} aria-labelledby="local-hero-title">
-      <div className={styles.container}><ServiceDirectory /></div>
       <div className={`${styles.container} ${styles.heroGrid}`}>
         <div className={styles.heroCopy}>
           <p className={styles.eyebrow}><MapPin size={14} aria-hidden="true" /> Le Vésinet & alentours · Particuliers</p>
@@ -25,6 +23,7 @@ export function LocalHero() {
             <a href="#offres" className={styles.textLink}>Voir les interventions <ArrowDown size={17} aria-hidden="true" /></a>
           </div>
           <p className={styles.heroNote}>Interventions sur forfait ou abonnement.<br />Le bon rythme, du passage ponctuel au suivi premium.</p>
+          <Link href="/boutique" className={styles.shopAnnouncement}><ShoppingBag size={20} strokeWidth={1.5} aria-hidden="true" /><span><strong>La boutique Hanami prend racine.</strong><small>Produits professionnels & conseils · Découvrir la sélection</small></span><ArrowUpRight size={16} aria-hidden="true" /></Link>
         </div>
         <figure className={styles.heroFigure}>
           <div className={styles.heroPhoto}>
@@ -61,7 +60,7 @@ export function LocalOffers() {
             <div className={styles.cardTop}><span>Interventions agronomiques</span><CalendarDays size={25} strokeWidth={1.4} aria-hidden="true" /></div>
             <h3>Le bon soin.<br /><em>Au bon moment.</em></h3>
             <p>Nutrition, préparation à l’hiver et aux chaleurs, corrections ciblées&nbsp;: un suivi régulier pour renforcer le gazon, favoriser sa densité et limiter la place laissée aux adventices.</p>
-            <p className={styles.seasonNote}><strong>En ce moment : préparer l’hiver.</strong> Le froid et le manque de lumière mettent aussi le gazon à l’épreuve. J’adapte la nutrition et les pratiques avant cette période, puis prépare les fortes chaleurs quand la saison revient.</p>
+            <p className={styles.seasonNote}><strong>Le printemps se prépare dès l’automne.</strong> Je viens densifier et bien nourrir le gazon pour l’aider à reconstituer ses réserves, passer la saison froide et repartir naturellement au printemps. Le suivi reste aussi adapté aux chaleurs de l’été.</p>
             <div className={styles.frequency}><span>Le rythme s’adapte</span><strong>2 semaines <span>à</span> 3 mois</strong><p>entre deux passages, selon le niveau d’entretien souhaité.</p></div>
             <a href="#programmes" className={styles.textLink}>Trouver votre programme <ArrowDown size={18} aria-hidden="true" /></a>
           </article>

@@ -68,7 +68,7 @@ export default function CoachingPage() {
       ))}
 
       <SeasonalBanner />
-      <Navbar variant="light" />
+      <Navbar variant="light" localOffers />
 
       <main className="flex-1">
         {/* 1-4. Hero, prix, inclus, comment ça marche */}
@@ -95,7 +95,7 @@ export default function CoachingPage() {
         />
       </main>
 
-      <Footer />
+      <Footer localOffers />
       <WhatsAppButton />
     </>
   )

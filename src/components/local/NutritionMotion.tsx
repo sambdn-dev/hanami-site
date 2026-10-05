@@ -37,10 +37,10 @@ const chapters: { id: Mode; label: string; kicker: string; title: string; descri
   },
   {
     id: 'winter', label: 'Préparer l’hiver', kicker: '05 / ANTICIPER LE FROID ET LA LUMIÈRE RÉDUITE',
-    title: 'L’hiver se prépare dès l’automne.',
-    description: 'Le froid et le manque de lumière constituent un stress pour le gazon : sa croissance ralentit. Le programme évolue dès l’automne pour accompagner cette transition, avec une nutrition adaptée à son activité et aux conditions du jardin.',
-    steps: ['Anticiper le froid et les jours courts', 'Adapter la nutrition au gazon', 'Ajuster l’entretien à sa croissance'],
-    note: 'L’objectif est de préparer un gazon plus robuste pour la saison froide. Le suivi tient compte de l’exposition, de l’humidité du sol et de la météo, sans chercher à forcer sa croissance.', icon: Snowflake,
+    title: 'Le printemps se prépare dès l’automne.',
+    description: 'Les interventions d’automne visent à densifier et à bien nourrir le gazon. Une nutrition adaptée accompagne la reconstitution de ses réserves en sucres lorsque la photosynthèse le permet, puis leur préservation pendant la saison froide, pour favoriser une reprise naturelle plus vigoureuse au printemps.',
+    steps: ['Densifier à l’automne', 'Adapter la nutrition', 'Préparer la reprise au printemps'],
+    note: 'Le gazon fabrique ses sucres grâce à la photosynthèse. En hiver, le froid et la faible lumière ralentissent son activité : le suivi s’ajuste au jardin et à la météo, sans forcer la croissance.', icon: Snowflake,
   },
   {
     id: 'potassium', label: 'Préparer la chaleur', kicker: '06 / ANTICIPER LES PÉRIODES SENSIBLES',

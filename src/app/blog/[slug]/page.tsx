@@ -139,7 +139,7 @@ export default async function ArticlePage(
   return (
     <>
       <SeasonalBanner />
-      <Navbar variant="light" />
+      <Navbar variant="light" localOffers />
 
       <script
         type="application/ld+json"
@@ -271,9 +271,9 @@ export default async function ArticlePage(
       </main>
 
       {/* CTA diagnostic en bas d'article */}
-      <ContactForm variant="particulier" />
+      <ContactForm variant="particulier" source={article.slug === 'arrosage-automatique-intelligent-rain-bird-aiper' ? 'article-arrosage' : 'journal'} localServices title={article.slug === 'arrosage-automatique-intelligent-rain-bird-aiper' ? 'Préparons votre arrosage intelligent.' : 'Parlons de votre gazon.'} defaultLocalService={article.slug === 'arrosage-automatique-intelligent-rain-bird-aiper' ? 'Arrosage' : ''} />
 
-      <Footer />
+      <Footer localOffers />
       <WhatsAppButton />
     </>
   )

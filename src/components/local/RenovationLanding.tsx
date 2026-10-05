@@ -2,7 +2,6 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowUpRight, CalendarDays, Check, Droplets, Layers3, MapPin, Sprout, Timer, Worm } from 'lucide-react'
 import styles from './RenovationLanding.module.css'
-import ServiceDirectory from './ServiceDirectory'
 
 const soilReasons = [
   { icon: Layers3, number: '01', title: 'Préserver la structure', text: 'Le sol possède une organisation naturelle. Éviter de le retourner limite le bouleversement de ses horizons et permet de travailler à partir de ce qui est déjà en place.' },
@@ -14,7 +13,6 @@ export default function RenovationLanding() {
   return (
     <div className={styles.page}>
       <section className={styles.hero} aria-labelledby="renovation-title">
-        <div className={styles.container}><ServiceDirectory localBase="/interventions-locales" dark /></div>
         <div className={`${styles.container} ${styles.heroGrid}`}>
           <div className={styles.heroCopy}>
             <Link href="/interventions-locales" className={styles.backLink}>Les interventions locales <ArrowUpRight size={14} aria-hidden="true" /></Link>
