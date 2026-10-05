@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { ArrowUpRight, Check, Minus, Plus } from 'lucide-react'
 import { useShopSelection } from './ShopProvider'
+import ShopFulfillmentNotice from './ShopFulfillmentNotice'
 import type { ShopProduct } from '@/lib/shop-catalog'
 import styles from './Shop.module.css'
 
@@ -22,6 +23,7 @@ export default function AddToSelection({ product }: { product: ShopProduct }) {
     </div></div>
     <button type="button" className={styles.primaryButton} onClick={() => { add(product.id, formatId, quantity); setAdded(true) }}>{added ? <><Check size={18} aria-hidden="true" /> Ajouté à ma sélection</> : <>Ajouter à ma sélection <Plus size={18} aria-hidden="true" /></>}</button>
     <div aria-live="polite" className={styles.addedMessage}>{added && <Link href="/boutique/selection">Voir ma sélection et demander un tarif <ArrowUpRight size={15} aria-hidden="true" /></Link>}</div>
-    <p className={styles.finePrint}>Ajout sans engagement. Prix, poids du conditionnement, disponibilité et livraison seront confirmés avant toute commande.</p>
+    <p className={styles.finePrint}>Ajout sans engagement. Prix des produits, poids du conditionnement et disponibilité seront confirmés avant toute commande.</p>
+    <ShopFulfillmentNotice />
   </div>
 }

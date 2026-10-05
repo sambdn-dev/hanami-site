@@ -1,7 +1,9 @@
 /**
  * Boutique Hanami — brouillon commercial, distinct du catalogue de dosage.
  * Aucun coût d'achat fournisseur ne figure ici. Les champs null restent à
- * renseigner avant ouverture : prix de vente TTC, formats, stock, livraison.
+ * renseigner avant ouverture : prix de vente TTC, formats, stock, délais.
+ * Les frais Hanami ci-dessous concernent uniquement la livraison locale
+ * et le retrait ; ils ne constituent pas un tarif d'envoi fournisseur.
  */
 export type ShopFormat = {
   id: string
@@ -27,6 +29,13 @@ export type ShopProduct = {
   formats: ShopFormat[]
   delivery: { mode: 'hanami' | 'supplier-direct' | 'to-confirm'; priceTtcCents: number | null; leadTime: string | null }
 }
+
+export const SHOP_FULFILLMENT_OPTIONS = [
+  { id: 'hanami-local', label: 'Livraison locale Hanami', priceTtcCents: 1500 },
+  { id: 'pickup', label: 'Retrait', priceTtcCents: 400 },
+] as const
+
+export const SHOP_FULFILLMENT_NOTE = 'Zone desservie, délai et créneau à confirmer. Envoi direct fournisseur sur devis.'
 
 const pendingFormat = (): ShopFormat => ({
   id: 'format-a-confirmer',

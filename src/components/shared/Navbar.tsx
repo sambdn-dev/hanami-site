@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useEffect, useId, useRef, useState } from 'react'
 import { ArrowUpRight, ChevronDown, Menu, X } from 'lucide-react'
+import { SHOP_ENABLED } from '@/lib/site-features'
 import styles from './Navbar.module.css'
 
 const links = [
@@ -20,7 +21,7 @@ const localLinks = [
   { href: '/interventions-locales#offres', label: 'Interventions agronomiques' },
   { href: '/interventions-locales#arrosage-automatique', label: 'Arrosage intelligent' },
   { href: '/coaching', label: 'Coaching' },
-  { href: '/boutique', label: 'Boutique' },
+  ...(SHOP_ENABLED ? [{ href: '/boutique', label: 'Boutique' }] : []),
 ]
 
 const localSecondaryGroups = [

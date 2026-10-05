@@ -13,6 +13,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
+import { SHOP_ENABLED } from '@/lib/site-features'
 
 // Email de destination — modifiable via .env.local (CONTACT_EMAIL)
 const CONTACT_EMAIL = process.env.CONTACT_EMAIL ?? 'samibouden@gmail.com'
@@ -42,9 +43,6 @@ const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024
 const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif']
 
 export async function POST(request: NextRequest) {
-  // Instancié ici pour éviter une erreur au build (clé absente à ce stade)
-  const resend = new Resend(process.env.RESEND_API_KEY)
-
   try {
     // ── 1. Lecture du FormData ────────────────────────────────────────────
     const formData = await request.formData()
@@ -76,6 +74,13 @@ export async function POST(request: NextRequest) {
       projectsPerYear: String(parsed.projectsPerYear ?? '').trim(),
       message: String(parsed.message ?? ''),
       source: String(parsed.source ?? '').trim(),
+    }
+
+    if (!SHOP_ENABLED && data.source === 'boutique') {
+      return NextResponse.json(
+        { error: 'La boutique est temporairement fermée.' },
+        { status: 503, headers: { 'Cache-Control': 'no-store' } }
+      )
     }
 
     // ── 2. Validation des champs obligatoires ─────────────────────────────
@@ -215,6 +220,7 @@ export async function POST(request: NextRequest) {
     // Le SDK Resend ne throw pas : il retourne { data, error }. Si la
     // notification interne échoue, le lead est perdu → 502 pour que le
     // front affiche le fallback WhatsApp.
+    const resend = new Resend(process.env.RESEND_API_KEY)
     const { error: sendError } = await resend.emails.send({
       from: FROM_EMAIL,
       to: [CONTACT_EMAIL],

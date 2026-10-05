@@ -19,6 +19,7 @@
 import { useState } from 'react'
 import { Monitor, Smartphone } from 'lucide-react'
 import { useFadeIn } from '@/hooks/useFadeIn'
+import { SHOP_ENABLED } from '@/lib/site-features'
 import AppScreen from './AppScreen'
 
 type Device = 'web' | 'mobile'
@@ -143,7 +144,7 @@ export default function EspaceClientPreview() {
               <h3 className="font-[family-name:var(--font-fraunces)] text-xl lg:text-2xl font-semibold text-hanami-900 mb-8">
                 Et tout ce qu&apos;il faut pour passer à l&apos;action.
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
+              <div className={`grid grid-cols-1 ${SHOP_ENABLED ? 'md:grid-cols-2' : 'max-w-3xl mx-auto'} gap-8 lg:gap-10`}>
                 <div>
                   <AppScreen
                     src="/landing/screens/calendrier.webp"
@@ -157,7 +158,7 @@ export default function EspaceClientPreview() {
                     <strong className="text-stone-700">Calendrier &amp; rappels</strong> — vos interventions synchronisées avec votre agenda, rappel 24h avant.
                   </p>
                 </div>
-                <div>
+                {SHOP_ENABLED && <div>
                   <AppScreen
                     src="/landing/screens/boutique.webp"
                     alt="Boutique Hanami : produits professionnels sélectionnés par l'expert, doses pré-calculées sur la surface"
@@ -169,7 +170,7 @@ export default function EspaceClientPreview() {
                   <p className="text-sm text-stone-500 mt-4">
                     <strong className="text-stone-700">Les produits pros</strong> — sélectionnés par Hanami, dosés sur vos m², introuvables en jardinerie.
                   </p>
-                </div>
+                </div>}
               </div>
             </div>
           </div>
@@ -177,7 +178,7 @@ export default function EspaceClientPreview() {
 
         {/* ── Affichage MOBILE (cadres téléphone) ── */}
         {device === 'mobile' && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-x-10 max-w-4xl mx-auto">
+          <div className={`grid grid-cols-1 sm:grid-cols-2 ${SHOP_ENABLED ? 'lg:grid-cols-3' : ''} gap-12 lg:gap-x-10 max-w-4xl mx-auto`}>
             <PhoneBlock
               src="/landing/screens/dashboard-mobile.webp"
               alt="Tableau de bord Hanami sur mobile : prochaine étape, produit et dose"
@@ -206,13 +207,13 @@ export default function EspaceClientPreview() {
               title="Le calendrier"
               text="Vos interventions synchronisées avec votre agenda."
             />
-            <PhoneBlock
+            {SHOP_ENABLED && <PhoneBlock
               src="/landing/screens/boutique-mobile.webp"
               alt="Boutique Hanami sur mobile : produits professionnels dosés sur la surface du jardin"
               width={720} height={1506}
               title="Les produits pros"
               text="Sélectionnés et dosés pour vous, livrés chez vous."
-            />
+            />}
           </div>
         )}
 

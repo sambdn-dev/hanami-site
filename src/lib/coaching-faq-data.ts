@@ -13,6 +13,7 @@
 
 import { PRICING_DISPLAY } from '@/lib/chantier/pricing'
 import type { FaqEntry } from '@/lib/faq-data'
+import { SHOP_ENABLED } from '@/lib/site-features'
 
 export const COACHING_FAQS: FaqEntry[] = [
   {
@@ -33,7 +34,9 @@ export const COACHING_FAQS: FaqEntry[] = [
   },
   {
     question: 'Où acheter les produits recommandés dans le protocole ?',
-    answer: 'Les engrais et semences recommandés sont des références réservées aux professionnels du sport et du paysage : vous ne les trouverez pas en jardinerie. Hanami les sélectionne pour vous, avec la dose pré-calculée sur vos m², et vous pouvez les commander directement depuis la boutique de votre espace client, livrés chez vous.',
+    answer: SHOP_ENABLED
+      ? 'Les engrais et semences recommandés sont des références réservées aux professionnels du sport et du paysage : vous ne les trouverez pas en jardinerie. Hanami les sélectionne pour vous, avec la dose pré-calculée sur vos m², et vous pouvez les commander directement depuis la boutique de votre espace client, livrés chez vous.'
+      : 'Les engrais et semences recommandés sont des références professionnelles du sport et du paysage, indisponibles en jardinerie. Hanami vous conseille sur les références adaptées à votre gazon et la dose calculée sur vos m². Vous pouvez échanger directement avec Hanami pour connaître les possibilités d’approvisionnement et la disponibilité.',
   },
   {
     question: 'Faut-il des connaissances en jardinage pour suivre le coaching ?',

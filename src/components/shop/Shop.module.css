@@ -48,6 +48,11 @@
 .cardBottom span { color:#74806b;font-size:10px; }
 .cardBottom>a { border:1px solid var(--shop-line);border-radius:50%;display:grid;place-items:center;width:45px;height:45px; }
 .catalogNote { color:#61715b;font-size:11px;line-height:1.8;margin:22px 0 0;max-width:640px; }
+.fulfillmentNotice { border-top:1px solid var(--shop-line);padding:15px 0;margin:15px 0 7px; }
+.fulfillmentNotice p { display:flex;flex-wrap:wrap;gap:8px 25px;font-size:11px;line-height:1.8;margin:0; }
+.fulfillmentNotice p>span { display:inline-flex;flex-wrap:wrap;gap:4px 7px; }
+.fulfillmentNotice strong { font-weight:650; }
+.fulfillmentNotice small { display:block;font-size:10px;line-height:1.8;color:#68765e;margin-top:7px; }
 .adviceBand { background:#173d2b;color:#f8f6ef;padding:62px max(40px,calc((100vw - 1180px)/2));display:grid;grid-template-columns:1.1fr 1fr;gap:70px; }
 .adviceBand h2 { font-family:var(--font-fraunces),serif;font-size:40px;line-height:1.1;font-weight:400;letter-spacing:-1px;margin:0; }
 .adviceBand h2 em { color:#b9c69c; }
@@ -129,7 +134,8 @@
 .formGrid label { font-size:11px;font-weight:600;display:block;min-width:0; }
 .formGrid label>span { color:#a44e36; }
 .fullField { grid-column:1/-1; }
-.formGrid input,.formGrid textarea { width:100%;display:block;margin-top:8px;border:1px solid #bdc9b3;background:#fffdf6;font:400 12px var(--font-dm-sans),sans-serif;padding:13px 14px;min-height:47px;color:#153d2c;border-radius:2px; }
+.formGrid input,.formGrid select,.formGrid textarea { width:100%;display:block;margin-top:8px;border:1px solid #bdc9b3;background:#fffdf6;font:400 12px var(--font-dm-sans),sans-serif;padding:13px 14px;min-height:47px;color:#153d2c;border-radius:2px; }
+.formGrid .fieldHint { display:block;font-size:10px;font-weight:400;line-height:1.8;color:#68765e;margin-top:7px; }
 .formGrid input::placeholder,.formGrid textarea::placeholder { color:#899080; }
 .formGrid textarea { resize:vertical;line-height:1.7; }
 .formGrid small { display:block;text-align:right;font-size:9px;font-weight:400;color:#778369;margin-top:5px; }
@@ -150,6 +156,6 @@
  .catalog { padding:41px 20px; }.sectionHeading { display:block;margin-bottom:25px; }.sectionHeading h2 { font-size:32px; }.sectionHeading>p { font-size:12px;line-height:1.8;margin-top:14px; }.sectionHeading>p br { display:none; }.productGrid { grid-template-columns:1fr;gap:25px; }.cardContent { padding:24px; }.brandLine { margin-bottom:24px; }.brandLine>span { font-size:7px; }.cardContent h3 { font-size:32px; }.catalogNote { font-size:10px;margin-top:20px; }
  .adviceBand { display:block;padding:38px 24px; }.adviceBand h2 { font-size:34px; }.adviceBand>div:last-child { margin-top:25px; }.adviceBand>div>p:not(.eyebrow) { font-size:12px;max-width:none; }.footer { padding:29px 24px;display:flex;flex-wrap:wrap;gap:10px 30px; }.footer>div { flex-basis:100%;margin-bottom:14px; }.footer>a { font-size:10px; }
  .productPage { padding:16px 20px 40px; }.backLink { margin-bottom:16px; }.productDetail { display:block; }.productVisual { position:static; }.productVisual .botanical { aspect-ratio:1.35; }.productVisual .botanical svg { transform:translateY(12px) scale(.92); }.productVisual>p { font-size:8px; }.productInfo { padding-top:28px; }.productInfo>.eyebrow { font-size:8px;margin-top:24px; }.productInfo h1 { font-size:49px; }.productTagline { font-size:22px; }.productDescription { font-size:12px; }.productAdvice { margin-top:32px;padding:24px 20px;gap:15px; }.productAdvice>span { display:none; }.productAdvice h2 { font-size:25px; }.productAdvice>div>p:last-child { font-size:11px; }.productAdvice>svg { width:20px; }.productPractical { margin-top:32px; }.productPractical h2 { font-size:28px; }.productPractical>div { grid-template-columns:1fr;gap:23px; }.productPractical p { font-size:11px; }
- .selectionPage { padding:35px 20px 45px; }.selectionHeading { margin-bottom:26px; }.selectionHeading h1 { font-size:42px;letter-spacing:-1.2px; }.selectionHeading>.eyebrow { font-size:8px;margin-bottom:16px; }.selectionHeading>p:last-child { font-size:12px; }.selectionLayout { grid-template-columns:1fr;gap:32px; }.selectionSummary { padding:20px; }.summaryHeading h2 { font-size:26px; }.selectionItem { grid-template-columns:46px 1fr;gap:13px; }.miniArt { height:66px; }.miniArt svg { width:22px; }.selectionItem h3 { font-size:25px; }.selectionItem p { line-height:1.8;font-size:9px; }.requestPanel h2 { font-size:29px; }.formGrid { gap:16px 12px; }.formGrid input,.formGrid textarea { font-size:16px; }.formGrid input::placeholder,.formGrid textarea::placeholder { font-size:12px; }.consent { font-size:10px; }.requestPanel .primaryButton { font-size:11px;padding:16px 12px;gap:10px; }.success { margin:45px auto 70px;padding:0 24px; }.success h1 { font-size:45px; }.success>p:not(.eyebrow) { font-size:12px; }
+ .selectionPage { padding:35px 20px 45px; }.selectionHeading { margin-bottom:26px; }.selectionHeading h1 { font-size:42px;letter-spacing:-1.2px; }.selectionHeading>.eyebrow { font-size:8px;margin-bottom:16px; }.selectionHeading>p:last-child { font-size:12px; }.selectionLayout { grid-template-columns:1fr;gap:32px; }.selectionSummary { padding:20px; }.summaryHeading h2 { font-size:26px; }.selectionItem { grid-template-columns:46px 1fr;gap:13px; }.miniArt { height:66px; }.miniArt svg { width:22px; }.selectionItem h3 { font-size:25px; }.selectionItem p { line-height:1.8;font-size:9px; }.requestPanel h2 { font-size:29px; }.formGrid { gap:16px 12px; }.formGrid input,.formGrid select,.formGrid textarea { font-size:16px; }.formGrid input::placeholder,.formGrid textarea::placeholder { font-size:12px; }.consent { font-size:10px; }.requestPanel .primaryButton { font-size:11px;padding:16px 12px;gap:10px; }.success { margin:45px auto 70px;padding:0 24px; }.success h1 { font-size:45px; }.success>p:not(.eyebrow) { font-size:12px; }
 }
 @media (prefers-reduced-motion:reduce) { .shop * { transition:none!important;scroll-behavior:auto!important; } }
