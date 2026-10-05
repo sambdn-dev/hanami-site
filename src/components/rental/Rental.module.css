@@ -37,12 +37,15 @@
 .productGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
 .productCard { min-width: 0; border: 1px solid var(--rental-line); background: #fffdf7; display: flex; flex-direction: column; }
 .cardVisual { display: block; }
-.illustration { color: #153d2c; background: #ebeedf; position: relative; overflow: hidden; aspect-ratio: 1.42; display: grid; place-items: center; }
-.illustration svg { width: 100%; height: 100%; }
-.illustration>span { position: absolute; bottom: 11px; left: 16px; color: #68785d; font-size: 8px; letter-spacing: .35px; }
-.compactIllustration { aspect-ratio: 1.8; }
-.compactIllustration svg { width: 91%; }
-.packIllustration { background: #e6eadb; }
+.photo { background: #fff; position: relative; overflow: hidden; aspect-ratio: 1.24; }
+.photo img { object-fit: contain; padding: 20px; }
+.compactPhoto { aspect-ratio: 1.38; }
+.compactPhoto img { padding: 18px; }
+.packGallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.packGalleryItem { min-width: 0; background: #fff; padding-bottom: 12px; }
+.packGalleryPhoto { aspect-ratio: 1.22; position: relative; overflow: hidden; }
+.packGalleryPhoto img { object-fit: contain; padding: 15px; }
+.packGalleryItem>span { display: block; padding: 0 12px; font-size: 9px; line-height: 1.6; color: #68775e; }
 .cardContent { padding: 23px 22px 21px; flex: 1; display: flex; flex-direction: column; }
 .brand { font-size: 9px; font-weight: 650; letter-spacing: 1.7px; text-transform: uppercase; margin: 0 0 10px; color: #718265; }
 .cardContent h3 { font-family: var(--font-fraunces), serif; font-weight: 400; font-size: 27px; line-height: 1.12; letter-spacing: -.5px; margin: 0 0 12px; }
@@ -56,18 +59,19 @@
 .detailPage .primaryButton { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 47px; background: var(--rental-cta); color: #fffdf7; padding: 13px 16px; font-size: 11px; font-weight: 600; transition: background .18s; }
 .primaryButton:hover { background: #8a412e; }
 .primaryButton>svg { flex-shrink: 0; }
-.packCard { background: var(--rental-forest); color: var(--rental-paper); padding: 35px 29px 25px; display: flex; flex-direction: column; min-width: 0; }
-.packCardHeading { display: flex; align-items: center; gap: 12px; color: #c2cfac; margin-bottom: 36px; }
+.packCard { grid-column: 1 / -1; background: var(--rental-forest); color: var(--rental-paper); padding: 32px 35px; display: grid; grid-template-columns: 1.05fr 1fr .95fr; gap: 30px; align-items: center; min-width: 0; }
+.packCardHeading { display: flex; align-items: center; gap: 12px; color: #c2cfac; margin-bottom: 18px; }
 .packCardHeading>span { font-size: 8px; letter-spacing: 1.1px; font-weight: 600; }
-.packCard h3 { font-family: var(--font-fraunces), serif; font-weight: 400; font-size: 37px; line-height: 1.08; letter-spacing: -.8px; margin: 0 0 18px; }
+.packCard h3 { font-family: var(--font-fraunces), serif; font-weight: 400; font-size: 34px; line-height: 1.08; letter-spacing: -.8px; margin: 0 0 13px; }
 .packCard h3 em { color: #bdcba5; }
-.packCard>p { font-size: 12px; line-height: 1.8; margin: 0 0 21px; color: #dae2ce; }
-.packCard>ul { padding: 0; list-style: none; margin: 0 0 34px; }
+.packLead>p { max-width: 330px; font-size: 11px; line-height: 1.8; margin: 0; color: #dae2ce; }
+.packCard>ul { padding: 0; list-style: none; margin: 0; }
 .packCard li { display: flex; align-items: flex-start; gap: 8px; font-size: 11px; line-height: 1.7; margin: 10px 0; }
 .packCard li>svg { flex-shrink: 0; margin-top: 2px; color: #bdcba5; }
-.lightButton { display: flex; justify-content: space-between; gap: 12px; min-height: 47px; align-items: center; border: 1px solid #bdcba5; padding: 13px 16px; font-size: 11px; font-weight: 600; margin-top: auto; transition: background .18s; }
+.packActions { min-width: 0; }
+.lightButton { display: flex; justify-content: space-between; gap: 12px; min-height: 47px; align-items: center; border: 1px solid #bdcba5; padding: 13px 16px; font-size: 11px; font-weight: 600; transition: background .18s; }
 .lightButton:hover { background: #234a37; }
-.packCardNote { font-size: 9px; color: #bdcba5; line-height: 1.7; margin-top: 14px; }
+.packCardNote { display: block; font-size: 9px; color: #bdcba5; line-height: 1.7; margin-top: 14px; }
 .catalogNote { color: #718066; font-size: 10px; line-height: 1.8; max-width: 810px; margin: 23px 0 0; }
 .howSection { background: var(--rental-sage); padding: 40px max(40px, calc((100vw - 1180px)/2)); display: grid; grid-template-columns: 1fr 1.2fr; gap: 55px; }
 .howHeading>svg { margin-bottom: 15px; }
@@ -84,7 +88,7 @@
 .backLink { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 11px; margin-bottom: 22px; }
 .detailGrid { display: grid; grid-template-columns: 1fr 1fr; grid-template-areas: 'visual intro' 'features booking'; gap: 29px 52px; align-items: start; }
 .detailIntro { grid-area: intro; padding-top: 10px; }
-.detailIntro h1 { font-size: clamp(39px, 3.8vw, 56px); line-height: 1.07; letter-spacing: -1.5px; margin-bottom: 17px; overflow-wrap: anywhere; }
+.detailIntro h1 { font-size: clamp(39px, 3.8vw, 56px); line-height: 1.07; letter-spacing: -1.5px; margin-bottom: 17px; overflow-wrap: anywhere; text-wrap: balance; }
 .detailIntro .eyebrow { font-size: 9px; }
 .detailSummary { font-family: var(--font-fraunces), serif; font-size: 21px; line-height: 1.35; color: #758368; margin: 0 0 17px; }
 .description { color: var(--rental-muted); font-size: 12px; line-height: 1.9; margin: 0; }
@@ -120,8 +124,8 @@
   .productGrid { gap: 18px; }
   .cardContent { padding: 21px 18px; }
   .cardContent h3 { font-size: 24px; }
-  .packCard { padding: 29px 23px 23px; }
-  .packCard h3 { font-size: 33px; }
+  .packCard { padding: 28px; gap: 22px; }
+  .packCard h3 { font-size: 31px; }
   .packCardHeading { gap: 9px; }
   .packCardHeading>span { font-size: 7px; }
   .detailGrid { gap: 28px 33px; }
@@ -129,8 +133,9 @@
 
 @media (max-width: 900px) {
   .productGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 23px; }
-  .packCard { padding: 34px 26px 26px; }
-  .packCardHeading { margin-bottom: 26px; }
+  .packCard { grid-template-columns: 1fr 1fr; padding: 30px; gap: 22px 30px; }
+  .packLead { grid-row: 1 / 3; }
+  .packCardHeading { margin-bottom: 18px; }
   .howSection { gap: 35px; }
   .howHeading h2 { font-size: 31px; }
   .detailIntro h1 { font-size: 42px; }
@@ -164,12 +169,14 @@
   .cardRates dd { font-size: 10px; }
   .availabilityNote { font-size: 9px; }
   .primaryButton { min-height: 49px; }
-  .illustration>span { font-size: 8px; }
-  .packCard { padding: 29px 25px 25px; min-height: 425px; }
-  .packCardHeading { margin-bottom: 24px; }
+  .compactPhoto { aspect-ratio: 1.4; }
+  .compactPhoto img { padding: 16px; }
+  .packCard { display: block; padding: 28px 25px 25px; }
+  .packCardHeading { margin-bottom: 19px; }
   .packCardHeading>span { font-size: 8px; }
   .packCard h3 { font-size: 36px; }
-  .packCard>ul { margin-bottom: 26px; }
+  .packLead>p { font-size: 12px; }
+  .packCard>ul { margin: 21px 0 25px; }
   .catalogNote { font-size: 9px; line-height: 1.8; margin-top: 20px; }
   .howSection { display: block; padding: 31px 23px; }
   .howHeading { margin-bottom: 26px; }
@@ -187,8 +194,12 @@
   .detailSummary { font-size: 20px; margin-bottom: 12px; }
   .description { font-size: 11px; line-height: 1.85; }
   .jumpLink { margin-top: 8px; font-size: 11px; }
-  .detailVisual .illustration { aspect-ratio: 1.9; }
-  .detailVisual .illustration svg { width: 83%; }
+  .detailVisual .photo { aspect-ratio: 1.3; }
+  .detailVisual .photo img { padding: 18px; }
+  .packGallery { gap: 10px; }
+  .packGalleryPhoto { aspect-ratio: 1.12; }
+  .packGalleryPhoto img { padding: 10px; }
+  .packGalleryItem>span { padding: 0 10px; font-size: 8px; }
   .detailVisual figcaption { font-size: 8px; margin-top: 8px; }
   .bookingPlacement { scroll-margin-top: 18px; }
   .detailFeatures { padding-top: 7px; }

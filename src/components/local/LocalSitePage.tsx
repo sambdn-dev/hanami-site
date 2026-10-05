@@ -13,6 +13,7 @@ import LocalFAQ, { LOCAL_FAQS } from './LocalFAQ'
 import LocalContact from './LocalContact'
 import IrrigationSection from './IrrigationSection'
 import LocalJournal from './LocalJournal'
+import GardenPreventionSection from './GardenPreventionSection'
 import styles from './LocalSite.module.css'
 
 export default function LocalSitePage() {
@@ -27,7 +28,7 @@ export default function LocalSitePage() {
     <a href="#contenu" className={styles.skip}>Aller au contenu</a>
     <SeasonalBanner /><Navbar variant="light" localOffers />
     <main id="contenu" tabIndex={-1}>
-      <LocalHero /><LocalOffers /><LocalJournal /><BrandStrip /><LocalMethod /><NutritionMotion /><LocalClimate /><IrrigationSection /><LocalProof /><EquipmentSection /><LocalApproach /><LocalFAQ /><LocalContact />
+      <LocalHero /><LocalOffers /><LocalJournal /><BrandStrip /><LocalMethod /><NutritionMotion /><LocalClimate /><IrrigationSection /><GardenPreventionSection /><LocalProof /><EquipmentSection /><LocalApproach /><LocalFAQ /><LocalContact />
     </main>
     <Footer localOffers /><WhatsAppButton /><HomeMobileCTA href="#contact" label="Parlons de votre jardin" reassurance="Interventions à domicile · Le Vésinet & alentours" />
   </div>

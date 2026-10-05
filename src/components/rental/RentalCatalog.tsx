@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { ArrowUpRight, CalendarDays, Check, SlidersHorizontal, Sprout } from 'lucide-react'
 import { RENTAL_DURATIONS, RENTAL_PRODUCTS } from '@/lib/rentals'
-import RentalIllustration from './RentalIllustration'
+import RentalPhoto from './RentalPhoto'
 import styles from './Rental.module.css'
 
 function formatPrice(cents: number | null) {
@@ -24,10 +24,10 @@ export default function RentalCatalog() {
       </div>
     </section>
     <section className={styles.catalogSection} aria-labelledby="equipment-title">
-      <div className={styles.sectionHeading}><div><p className={styles.eyebrow}>LA SÉLECTION HANAMI</p><h2 id="equipment-title">L’essentiel, selon votre besoin.</h2></div><p>Cinq outils · un pack modulable</p></div>
+      <div className={styles.sectionHeading}><div><p className={styles.eyebrow}>LA SÉLECTION HANAMI</p><h2 id="equipment-title">L’essentiel, selon votre besoin.</h2></div><p>{RENTAL_PRODUCTS.length} outils · un pack modulable</p></div>
       <div className={styles.productGrid}>
         {RENTAL_PRODUCTS.map(product => <article key={product.id} className={styles.productCard}>
-          <Link className={styles.cardVisual} href={`/boutique/location/${product.slug}`} tabIndex={-1} aria-hidden="true"><RentalIllustration variant={product.illustration} compact /></Link>
+          <Link className={styles.cardVisual} href={`/boutique/location/${product.slug}`} tabIndex={-1} aria-hidden="true"><RentalPhoto product={product} compact /></Link>
           <div className={styles.cardContent}>
             <p className={styles.brand}>{product.brand}</p>
             <h3><Link href={`/boutique/location/${product.slug}`}>{product.name}</Link></h3>
@@ -38,15 +38,15 @@ export default function RentalCatalog() {
           </div>
         </article>)}
         <article className={styles.packCard}>
-          <div className={styles.packCardHeading}><SlidersHorizontal size={25} strokeWidth={1.25} aria-hidden="true" /><span>COMPOSEZ VOTRE PACK</span></div>
+          <div className={styles.packLead}><div className={styles.packCardHeading}><SlidersHorizontal size={25} strokeWidth={1.25} aria-hidden="true" /><span>COMPOSEZ VOTRE PACK</span></div>
           <h3>Un regarnissage.<br /><em>À votre mesure.</em></h3>
-          <p>La bonne combinaison d’outils, sans ajouter ce dont votre jardin n’a pas besoin.</p>
+          <p>La bonne combinaison d’outils, sans ajouter ce dont votre jardin n’a pas besoin.</p></div>
           <ul><li><Check size={16} aria-hidden="true" />Landzie Overseeding Tool</li><li><Check size={16} aria-hidden="true" />Un épandeur au choix</li><li><Check size={16} aria-hidden="true" />Deux outils complémentaires en option</li></ul>
-          <Link className={styles.lightButton} href="/boutique/location/pack-regarnissage">Composer mon pack <ArrowUpRight size={17} aria-hidden="true" /></Link>
-          <span className={styles.packCardNote}>24 h · 48 h · week-end — tarifs à renseigner</span>
+          <div className={styles.packActions}><Link className={styles.lightButton} href="/boutique/location/pack-regarnissage">Composer mon pack <ArrowUpRight size={17} aria-hidden="true" /></Link>
+          <span className={styles.packCardNote}>24 h · 48 h · week-end — tarifs à renseigner</span></div>
         </article>
       </div>
-      <p className={styles.catalogNote}>Les visuels sont des illustrations d’usage. Les photos, les références exactes des équipements Ryobi et Gardena, les tarifs et le planning seront renseignés avant l’ouverture des réservations confirmées.</p>
+      <p className={styles.catalogNote}>Photos des modèles constructeur. Les références et configurations du matériel Hanami restent à confirmer. Les tarifs et le planning seront renseignés avant l’ouverture des réservations confirmées.</p>
     </section>
     <section className={styles.howSection} aria-labelledby="how-title">
       <div className={styles.howHeading}><Sprout size={27} strokeWidth={1.25} aria-hidden="true" /><h2 id="how-title">Simple du début<br /><em>à la remise du matériel.</em></h2></div>

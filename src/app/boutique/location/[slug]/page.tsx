@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ArrowLeft, ArrowUpRight, Check, PackageCheck, Sprout } from 'lucide-react'
 import { getRentalProduct, RENTAL_PRODUCTS } from '@/lib/rentals'
-import RentalIllustration from '@/components/rental/RentalIllustration'
+import RentalPhoto from '@/components/rental/RentalPhoto'
 import RentalBooking from '@/components/rental/RentalBooking'
 import styles from '@/components/rental/Rental.module.css'
 
@@ -36,8 +36,8 @@ export default async function RentalProductPage({ params }: Props) {
         <a className={styles.jumpLink} href="#reservation">Choisir mes dates <ArrowUpRight size={17} aria-hidden="true" /></a>
       </div>
       <figure className={styles.detailVisual}>
-        <RentalIllustration variant={product.illustration} />
-        <figcaption>Illustration d’usage. Photo du matériel à ajouter avant ouverture.</figcaption>
+        <RentalPhoto product={product} />
+        <figcaption>Photo du modèle constructeur. Référence et configuration Hanami à confirmer.</figcaption>
       </figure>
       <div id="reservation" className={styles.bookingPlacement}><RentalBooking productId={product.id} /></div>
       <div className={styles.detailFeatures}>

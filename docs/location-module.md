@@ -1,13 +1,13 @@
 # Module Location Hanami
 
-Le module est développé sur `dev/hanami-location-2026`. Il comprend le catalogue de cinq équipements, leurs fiches, les formules 24 h / 48 h / week-end, un pack regarnissage modulable et un parcours de demande de réservation. La boutique reste fermée par défaut : l’intégration du catalogue commercial et l’ouverture au public sont des étapes distinctes.
+Le module est développé sur `dev/hanami-location-2026`. Il comprend le catalogue de six équipements, leurs fiches, les formules 24 h / 48 h / week-end, un pack regarnissage modulable et un parcours de demande de réservation. La boutique reste fermée par défaut : l’intégration du catalogue commercial et l’ouverture au public sont des étapes distinctes.
 
 ## État actuel
 
 - Les équipements et les accessoires annoncés viennent de la liste fournie par Hanami.
 - Les tarifs, les quantités physiques, le calendrier réel, les horaires du week-end et les frais propres à la location sont **à renseigner**.
 - Une information non renseignée reste « À confirmer ». Elle ne devient ni un prix nul ni une disponibilité annoncée.
-- Les représentations du matériel sont des illustrations conceptuelles. Voir [location-assets.md](./location-assets.md) pour les sources et les références à confirmer.
+- Les visuels sont désormais des photos officielles de produits, provenant de Ryobi, Gardena et du représentant Landzie UK/Europe. Voir [location-assets.md](./location-assets.md) pour les sources et les références à confirmer.
 - La transmission de la demande utilise Resend. Les tests automatisés simulent ce transport : ils n’envoient aucun e-mail et ne prouvent pas la réception dans la boîte Hanami.
 - Aucune demande ne bloque du stock, ne confirme une location ou ne déclenche un paiement.
 
@@ -88,7 +88,7 @@ Les prix de **vente** évoqués auparavant — livraison à 15 € TTC et retrai
 
 Le total comprend les tarifs de tous les équipements et les frais de remise configurés. Un seul montant inconnu laisse le total à confirmer. Un montant explicitement configuré à `0` est reconnu comme gratuit ; il ne doit pas remplacer une valeur inconnue.
 
-Le pack combine le Landzie Overseeding Tool, un épandeur Ryobi **ou** Gardena, et les options Compost Spreader / scarificateur. Les tarifs des équipements sélectionnés sont additionnés ; aucune remise n’est inventée. Semences, engrais et terreau restent des consommables distincts de la location.
+Le pack combine le Landzie Overseeding Tool, un épandeur Ryobi à main, Gardena L **ou** Gardena XL, et les options Compost Spreader / scarificateur. Les tarifs des équipements sélectionnés sont additionnés ; aucune remise n’est inventée. Semences, engrais et terreau restent des consommables distincts de la location.
 
 ## Demande de réservation et notification
 

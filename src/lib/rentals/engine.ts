@@ -11,7 +11,7 @@ import type {
 } from "./types";
 
 const HOUR_MS = 60 * 60 * 1000;
-const MAX_ITEMS = 5;
+const MAX_ITEMS = 6;
 
 function validCents(value: unknown): value is number {
   return typeof value === "number" && Number.isSafeInteger(value) && value >= 0;
@@ -101,7 +101,7 @@ export function quoteRental(input: RentalQuoteInput, options: RentalQuoteOptions
   if (!fulfillmentValid) errors.push("Choisissez un mode de remise du matériel.");
   const ids = Array.isArray(input.itemIds) ? input.itemIds : [];
   if (!ids.length) errors.push("Choisissez au moins un équipement.");
-  if (ids.length > MAX_ITEMS) errors.push("La sélection ne peut pas dépasser cinq équipements.");
+  if (ids.length > MAX_ITEMS) errors.push("La sélection ne peut pas dépasser six équipements.");
   if (new Set(ids).size !== ids.length) errors.push("Un équipement ne peut figurer qu’une fois dans la sélection.");
   const selected: RentalProduct[] = [];
   for (const id of [...new Set(ids)].slice(0, MAX_ITEMS)) {

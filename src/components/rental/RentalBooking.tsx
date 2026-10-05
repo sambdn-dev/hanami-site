@@ -32,8 +32,9 @@ const durations: { id: RentalDuration; label: string; hint: string }[] = [
 ]
 
 const spreaders = [
-  { id: 'epandeur-ryobi-batterie', label: 'Ryobi sur batterie', detail: 'Deux batteries supplémentaires et un chargeur inclus.' },
-  { id: 'epandeur-rotatif-gardena', label: 'Gardena rotatif', detail: 'Une solution manuelle, sans batterie.' },
+  { id: 'epandeur-ryobi-batterie', label: 'Ryobi à main sur batterie', detail: 'Épandage assisté par batterie. Deux batteries supplémentaires et un chargeur inclus.' },
+  { id: 'epandeur-gardena-l', label: 'Gardena L — en ligne', detail: 'À pousser : les graines ou granulés sont déposés en ligne sous l’appareil.' },
+  { id: 'epandeur-rotatif-gardena', label: 'Gardena XL — rotatif', detail: 'À pousser : les graines ou granulés sont répartis latéralement par rotation.' },
 ]
 
 const packExtras = [

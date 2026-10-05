@@ -4,13 +4,6 @@ export type RentalFulfillment = "pickup" | "delivery" | "to-confirm";
 
 export type RentalAvailability = "available" | "unavailable" | "unknown";
 
-export type RentalIllustration =
-  | "overseeding-tool"
-  | "compost-spreader"
-  | "battery-spreader"
-  | "rotary-spreader"
-  | "scarifier";
-
 /** A calendar entry consumes units for [startISO, endISO), in UTC. */
 export interface RentalBlockedPeriod {
   startISO: string;
@@ -27,7 +20,7 @@ export interface RentalProduct {
   description: string;
   benefits: readonly [string, string, string, string];
   included: readonly string[];
-  illustration: RentalIllustration;
+  photo: { src: string; alt: string };
   ratesTtcCents: Readonly<Record<RentalDuration, number | null>>;
   units: number | null;
   calendarConfigured: boolean;

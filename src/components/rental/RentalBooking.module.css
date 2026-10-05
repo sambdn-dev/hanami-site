@@ -16,7 +16,7 @@
 .includedTool p{font-size:11px;color:#65735c;line-height:1.65;margin:5px 0 0;}
 .includedTool>span{font-size:9px;color:#4b6745;white-space:nowrap;line-height:1.5;margin-top:3px;}
 .spreaderFieldset>legend,.extrasFieldset>legend{font-size:11px;font-weight:600;margin:0 0 10px;padding:0;}
-.spreaderOptions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px;}
+.spreaderOptions{display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:20px;}
 .spreaderOption{border:1px solid #d4dccd;display:flex;align-items:flex-start;gap:10px;padding:14px 12px;cursor:pointer;min-height:86px;transition:background .18s,border-color .18s;}
 .spreaderOption input,.extraOption input,.consent input{accent-color:#153d2c;min-width:18px;width:18px;height:18px;flex-shrink:0;margin-top:2px;}
 .optionSelected{background:#eff3e8;border-color:#648158;}

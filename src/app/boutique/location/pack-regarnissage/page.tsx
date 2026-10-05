@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowLeft, ArrowUpRight, Check, SlidersHorizontal, Sprout } from 'lucide-react'
 import { RENTAL_PACK, getRentalProduct } from '@/lib/rentals'
-import RentalIllustration from '@/components/rental/RentalIllustration'
+import { RentalPackGallery } from '@/components/rental/RentalPhoto'
 import RentalBooking from '@/components/rental/RentalBooking'
 import styles from '@/components/rental/Rental.module.css'
 
@@ -23,8 +23,8 @@ export default function RentalPackPage() {
         <a className={styles.jumpLink} href="#reservation">Composer mon pack <ArrowUpRight size={17} aria-hidden="true" /></a>
       </div>
       <figure className={styles.detailVisual}>
-        <RentalIllustration variant="pack" />
-        <figcaption>Illustration d’usage. La composition dépend des options choisies.</figcaption>
+        <RentalPackGallery />
+        <figcaption>Photos des modèles constructeur. La composition dépend des options choisies.</figcaption>
       </figure>
       <div id="reservation" className={styles.bookingPlacement}><RentalBooking pack /></div>
       <div className={styles.detailFeatures}>

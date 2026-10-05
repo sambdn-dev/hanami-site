@@ -6,7 +6,6 @@ export type {
   RentalDuration,
   RentalFulfillment,
   RentalAvailability,
-  RentalIllustration,
   RentalBlockedPeriod,
   RentalProduct,
   RentalWeekendRule,
