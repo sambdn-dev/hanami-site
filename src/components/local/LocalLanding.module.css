@@ -15,6 +15,9 @@
 .heroTitle { font-family: var(--font-fraunces), serif; font-size: clamp(54px, 6vw, 83px); line-height: 1.01; letter-spacing: -.055em; font-weight: 430; }
 .heroTitle em { color: #728b60; font-weight: 350; }
 .heroDescription { max-width: 440px; margin-top: 28px; color: #526657; font-size: 16px; line-height: 1.8; }
+.heroPromise { display: block; margin-bottom: 9px; color: #173f2c; font-size: 16px; font-weight: 600; }
+.followCard > .seasonNote { max-width: none; margin: 0 0 25px; padding: 17px 19px; border-left: 2px solid #68875e; background: #f8f6ef9c; font-size: 12px; line-height: 1.8; }
+.seasonNote strong { display: block; margin-bottom: 5px; color: #173f2c; font-weight: 600; }
 .heroActions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 24px; margin-top: 28px; }
 .heroNote { margin-top: 26px; color: #657562; font-size: 11px; line-height: 1.8; }
 .heroFigure { position: relative; min-width: 0; padding: 9px; border: 1px solid #a3b19580; }

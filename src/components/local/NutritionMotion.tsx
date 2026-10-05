@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect, useId, useRef, useState, useSyncExternalStore } from 'react'
-import { ArrowDown, Droplets, Leaf, Pause, Play, Sprout, Sun } from 'lucide-react'
+import { ArrowDown, Droplets, Leaf, Pause, Play, Snowflake, Sprout, Sun } from 'lucide-react'
 import styles from './NutritionMotion.module.css'
 
-type Mode = 'granular' | 'foliar' | 'roots' | 'water' | 'potassium'
+type Mode = 'granular' | 'foliar' | 'roots' | 'water' | 'winter' | 'potassium'
 
 const chapters: { id: Mode; label: string; kicker: string; title: string; description: string; steps: string[]; note: string; icon: typeof Leaf }[] = [
   {
@@ -36,7 +36,14 @@ const chapters: { id: Mode; label: string; kicker: string; title: string; descri
     note: 'Sur un sol sableux ou très drainant, le choix de la formulation et la gestion de l’arrosage restent essentiels : un agent mouillant ne supprime pas le drainage.', icon: Droplets,
   },
   {
-    id: 'potassium', label: 'Préparer la chaleur', kicker: '05 / ANTICIPER LES PÉRIODES SENSIBLES',
+    id: 'winter', label: 'Préparer l’hiver', kicker: '05 / ANTICIPER LE FROID ET LA LUMIÈRE RÉDUITE',
+    title: 'L’hiver se prépare dès l’automne.',
+    description: 'Le froid et le manque de lumière constituent un stress pour le gazon : sa croissance ralentit. Le programme évolue dès l’automne pour accompagner cette transition, avec une nutrition adaptée à son activité et aux conditions du jardin.',
+    steps: ['Anticiper le froid et les jours courts', 'Adapter la nutrition au gazon', 'Ajuster l’entretien à sa croissance'],
+    note: 'L’objectif est de préparer un gazon plus robuste pour la saison froide. Le suivi tient compte de l’exposition, de l’humidité du sol et de la météo, sans chercher à forcer sa croissance.', icon: Snowflake,
+  },
+  {
+    id: 'potassium', label: 'Préparer la chaleur', kicker: '06 / ANTICIPER LES PÉRIODES SENSIBLES',
     title: 'Préparer le gazon avant qu’il ne souffre.',
     description: 'Le potassium participe à l’équilibre hydrique et à la régulation des échanges d’eau de la plante. Une nutrition adaptée, préparée avant les fortes chaleurs, accompagne sa résistance aux stress.',
     steps: ['Anticiper la météo', 'Adapter les apports', 'Préserver un arrosage raisonné'],
@@ -105,7 +112,7 @@ function SoilScene({ mode, id }: { mode: Mode; id: string }) {
   return (
     <svg className={`${styles.scene} ${styles[mode]}`} viewBox="0 0 900 540" role="img" aria-labelledby={`${id}-scene-title ${id}-scene-description`}>
       <title id={`${id}-scene-title`}>{`${chapters.find(chapter => chapter.id === mode)?.label} : vue illustrative du gazon et de son sol`}</title>
-      <desc id={`${id}-scene-description`}>{water ? 'À gauche, l’eau circule dans quelques canaux. À droite, une réhumidification plus homogène atteint la zone racinaire.' : 'Coupe du sol avec les brins de gazon, les racines et les apports représentés par des points lumineux. Animation pédagogique, sans échelle ni résultat garanti.'}</desc>
+      <desc id={`${id}-scene-description`}>{water ? 'À gauche, l’eau circule dans quelques canaux. À droite, une réhumidification plus homogène atteint la zone racinaire.' : mode === 'winter' ? 'Une lumière basse atténuée et des cristaux symbolisent les jours courts et le froid. La circulation lumineuse dans les racines ralentit : le gazon conserve une activité adaptée à la saison. Illustration pédagogique, sans échelle.' : 'Coupe du sol avec les brins de gazon, les racines et les apports représentés par des points lumineux. Animation pédagogique, sans échelle ni résultat garanti.'}</desc>
       <defs>
         <linearGradient id={`${id}-earth`} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#756447" /><stop offset=".35" stopColor="#493d2c" /><stop offset="1" stopColor="#233528" />
@@ -122,6 +129,12 @@ function SoilScene({ mode, id }: { mode: Mode; id: string }) {
         <radialGradient id={`${id}-nutrient`}>
           <stop stopColor="#ffe9b3" /><stop offset=".6" stopColor="#e3c987" /><stop offset="1" stopColor="#c4a55d" />
         </radialGradient>
+        <linearGradient id={`${id}-winter-light`} x1="0" y1="0" x2="1" y2="1">
+          <stop stopColor="#d6e4d7" stopOpacity=".16" /><stop offset="1" stopColor="#a5c6d1" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id={`${id}-winter-sky`} x1="0" y1="0" x2="0" y2="1">
+          <stop stopColor="#adccd2" stopOpacity=".08" /><stop offset="1" stopColor="#adccd2" stopOpacity="0" />
+        </linearGradient>
         <pattern id={`${id}-soil-texture`} width="94" height="67" patternUnits="userSpaceOnUse">
           <ellipse cx="13" cy="12" rx="2.2" ry="1.3" fill="#cbb28b" opacity=".25" />
           <ellipse cx="52" cy="45" rx="3.2" ry="2" fill="#b39b76" opacity=".25" />
@@ -133,6 +146,15 @@ function SoilScene({ mode, id }: { mode: Mode; id: string }) {
       </defs>
 
       <ellipse cx="455" cy="235" rx="420" ry="240" fill={`url(#${id}-halo)`} />
+      {mode === 'winter' && <g>
+        <rect x="38" y="56" width="824" height="197" fill={`url(#${id}-winter-sky)`} />
+        <g className={styles.winterLight}>
+          <path d="M99 159 L699 196 L850 253 L84 194Z" fill={`url(#${id}-winter-light)`} />
+          <path d="M98 166 L768 243" stroke="#d7e0c4" strokeWidth=".8" strokeOpacity=".15" />
+          <circle cx="103" cy="177" r="20" fill="#dbd5b3" fillOpacity=".12" stroke="#dbd5b3" strokeWidth="1" strokeOpacity=".45" />
+          <path d="M73 194H140" stroke="#9ebbb7" strokeWidth="1" strokeOpacity=".35" />
+        </g>
+      </g>}
       <g className={styles.fieldLines} stroke="#d1ddb0" strokeWidth=".7" fill="none" opacity=".09">
         <ellipse cx="450" cy="258" rx="406" ry="93" /><ellipse cx="450" cy="258" rx="330" ry="65" /><ellipse cx="450" cy="258" rx="245" ry="41" />
       </g>
@@ -149,7 +171,7 @@ function SoilScene({ mode, id }: { mode: Mode; id: string }) {
             {[492, 547, 602, 657, 712, 767, 822].map(x => <path key={x} d={`M${x} 255 Q${x - 11} 288 ${x} 335 T${x + 3} 425 M${x} 307 Q${x - 20} 302 ${x - 28} 319 M${x} 355 Q${x + 20} 349 ${x + 29} 365`} />)}
           </g>
         </>}
-        <RootNetwork active={mode === 'roots'} color={water ? '#dfd1ac' : '#dcc79b'} />
+        <RootNetwork active={mode === 'roots' || mode === 'winter'} color={water ? '#dfd1ac' : mode === 'winter' ? '#b9c8b5' : '#dcc79b'} />
         {mode === 'granular' && <g>
           {[97, 181, 264, 350, 433, 516, 601, 685, 771, 819].map((x, index) => <g key={x} transform={`translate(${x} 261)`}>
             <circle r="7.5" fill={`url(#${id}-nutrient)`} />
@@ -166,6 +188,16 @@ function SoilScene({ mode, id }: { mode: Mode; id: string }) {
       </g>
       <path d="M38 254 Q150 244 260 254 T480 254 T690 254 T862 254" stroke="#9dab77" strokeWidth="3" fill="none" />
       <Grass id={id} sparse={mode === 'foliar'} />
+      {mode === 'winter' && <g fill="none" stroke="#b9d8df" strokeLinecap="round">
+        {[{ x: 741, y: 106, size: 21 }, { x: 647, y: 152, size: 8 }, { x: 811, y: 191, size: 7 }].map((crystal, index) => <g key={crystal.x} transform={`translate(${crystal.x} ${crystal.y})`}>
+          <g className={styles.frostCrystal} style={{ animationDelay: `${index * -2}s` }}>
+            {[0, 60, 120].map(angle => <g key={angle} transform={`rotate(${angle})`}>
+              <path d={`M0 -${crystal.size}V${crystal.size} M-${crystal.size * .27} -${crystal.size * .64}L0 -${crystal.size * .38}L${crystal.size * .27} -${crystal.size * .64} M-${crystal.size * .27} ${crystal.size * .64}L0 ${crystal.size * .38}L${crystal.size * .27} ${crystal.size * .64}`} strokeWidth={index === 0 ? 1.2 : .8} />
+            </g>)}
+          </g>
+        </g>)}
+        <path d="M64 235Q253 219 418 235T827 233" strokeWidth=".8" strokeOpacity=".18" />
+      </g>}
       {mode === 'foliar' && <>
         <g transform="translate(441 254)">
           <path d="M0 0 C-11 -43 -22 -95 -36 -139 C-5 -107 13 -46 8 0Z" fill="#a6a16c" opacity=".8" />
@@ -236,7 +268,7 @@ export default function NutritionMotion() {
             <p className={styles.eyebrow}>COMPRENDRE LE SUIVI AGRONOMIQUE</p>
             <h2 id={`${id}-heading`}>Sous la pelouse,<br /><em>tout se prépare.</em></h2>
           </div>
-          <p className={styles.intro}>Pas de produit appliqué au hasard. Chaque intervention s’inscrit dans un plan : nourrir, accompagner les racines, mieux gérer l’eau et anticiper les périodes sensibles.</p>
+          <p className={styles.intro}>Pas de produit appliqué au hasard. Chaque intervention s’inscrit dans un plan : nourrir, accompagner les racines, mieux gérer l’eau et préparer le gazon aux périodes sensibles, de l’hiver aux fortes chaleurs.</p>
         </div>
 
         <div className={styles.tabs} role="tablist" aria-label="Comprendre les apports au gazon">
@@ -258,10 +290,11 @@ export default function NutritionMotion() {
               </button>
             </div>
             {mode === 'water' && <div className={styles.comparisonLabels}><span>Sol hydrophobe</span><span>Réhumidification accompagnée</span></div>}
+            {mode === 'winter' && <div className={styles.seasonLabels}><span>Moins de lumière</span><span>Froid &amp; croissance ralentie</span></div>}
             <div key={mode} className={styles.sceneEntry}><SoilScene mode={mode} id={`${id}-${mode}`} /></div>
             <div className={styles.visualLegend}>
               <span><i className={styles.rootDot} />Zone racinaire</span>
-              <span><i className={mode === 'water' || mode === 'potassium' ? styles.waterDot : styles.nutrientDot} />{mode === 'water' || mode === 'potassium' ? 'Circulation de l’eau' : mode === 'roots' ? 'Activité illustrée' : 'Apports ciblés'}</span>
+              <span><i className={mode === 'water' || mode === 'potassium' || mode === 'winter' ? styles.waterDot : styles.nutrientDot} />{mode === 'water' || mode === 'potassium' ? 'Circulation de l’eau' : mode === 'winter' ? 'Rythme hivernal' : mode === 'roots' ? 'Activité illustrée' : 'Apports ciblés'}</span>
               <span className={styles.diagramLabel}>COUPE DU SOL · VUE SCHÉMATIQUE</span>
             </div>
           </div>

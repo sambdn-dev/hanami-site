@@ -12,6 +12,14 @@
 .brands a:last-child .logo { height: 65px; }
 .brandName { font-family: var(--font-space-mono), monospace; color: #405a47; font-size: 20px; font-weight: 500; text-align: center; line-height: 1.4; }
 .brands a:last-child .brandName { font-size: 15px; }
+.standards { display: grid; grid-template-columns: 1fr 1fr; gap: 45px; max-width: 940px; margin: 33px auto 31px; align-items: center; }
+.appreciation { margin: 0; padding: 9px 34px 9px 0; border-right: 1px solid #d7decc; }
+.appreciation > p { margin: 0; font-family: var(--font-fraunces), Georgia, serif; font-size: 23px; font-weight: 400; line-height: 1.45; letter-spacing: -.025em; color: #405e46; }
+.appreciation footer { margin-top: 17px; color: #839174; font-family: var(--font-space-mono), monospace; font-size: 8px; line-height: 1.6; letter-spacing: .08em; }
+.ambitionLabel { margin: 0 0 17px; color: #7a876e; font-family: var(--font-space-mono), monospace; font-size: 9px; line-height: 1.6; letter-spacing: .1em; }
+.ambition > p:last-child { margin: 0; font-family: var(--font-fraunces), Georgia, serif; font-size: 27px; font-weight: 430; line-height: 1.24; letter-spacing: -.035em; text-wrap: balance; }
+.ambition em { color: #809870; font-weight: 370; }
 .note { max-width: 750px; margin: 0 auto; font-size: 12px; line-height: 1.8; color: #859077; text-align: center; }
 @media (max-width: 650px) { .section { padding: 46px 0 49px; } .container { width: min(100% - 32px, 580px); } .copy > p:last-child { font-size: 13px; } .brands { grid-template-columns: repeat(2, 1fr); gap: 9px 15px; margin: 28px auto 20px; padding: 12px 0; } .brands a { min-height: 70px; padding-inline: 13px; } .logo { height: 45px; } .brands a:last-child .logo { height: 59px; } .note { font-size: 11px; } }
+@media (max-width: 650px) { .standards { grid-template-columns: 1fr; gap: 25px; margin: 27px auto 28px; max-width: 440px; text-align: center; } .appreciation { padding: 0 8px 26px; border-right: 0; border-bottom: 1px solid #d7decc; } .appreciation > p { font-size: 22px; } .ambition { padding-inline: 10px; } .ambitionLabel { margin-bottom: 14px; font-size: 8px; } .ambition > p:last-child { font-size: 27px; } }
 @media (prefers-reduced-motion: reduce) { .brands a { transition: none; } }

@@ -4,7 +4,6 @@ import { useState } from 'react'
 import Image from 'next/image'
 import { Leaf, Volume2, Zap } from 'lucide-react'
 import styles from './EquipmentSection.module.css'
-import EquipmentModelViewer from './EquipmentModelViewer'
 
 const mowerViews = [
   { image: 'mower-main.webp', label: 'Vue d’ensemble', alt: 'Tondeuse à batterie EGO LM2135E-SP de 52 cm, vue de trois quarts' },
@@ -40,7 +39,6 @@ export default function EquipmentSection() {
               {mowerViews.map((item, index) => <button key={item.image} type="button" aria-pressed={view === index} onClick={() => setView(index)}>{item.label}</button>)}
             </div>
             <p className={styles.bladeNote}>Double lame et lames entretenues pour une coupe régulière, sans déchirer les brins.</p>
-            <EquipmentModelViewer />
           </div>
 
           <div className={styles.side}>

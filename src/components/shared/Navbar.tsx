@@ -17,9 +17,9 @@ const links = [
 ]
 
 const localLinks = [
+  { href: '/interventions-locales#arrosage-automatique', label: 'Arrosage' },
   { href: '/interventions-locales', label: 'Interventions locales' },
   { href: '/renovation-express', label: 'Rénovation express' },
-  { href: '/interventions-locales#arrosage-automatique', label: 'Arrosage' },
   { href: '/coaching', label: 'Coaching à distance' },
   { href: '/pro', label: 'Hanami Pro' },
   { href: '/blog', label: 'Le journal' },

@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowDown, ArrowUpRight, CalendarDays, Check, CloudSun, Droplets, Leaf, MapPin, Ruler, Sprout, Target } from 'lucide-react'
 import styles from './LocalLanding.module.css'
+import ServiceDirectory from './ServiceDirectory'
 
 const plans = [
   { number: '01', name: 'L’essentiel', detail: 'Une nutrition de fond', description: 'Quelques interventions dans l’année pour apporter au gazon les nutriments dont il a besoin, au bon moment.', bullets: ['Fertilisation adaptée aux saisons', 'Doses ajustées à votre surface', 'Conseils de tonte et d’arrosage'] },
@@ -13,11 +14,12 @@ const plans = [
 export function LocalHero() {
   return (
     <section className={styles.hero} aria-labelledby="local-hero-title">
+      <div className={styles.container}><ServiceDirectory /></div>
       <div className={`${styles.container} ${styles.heroGrid}`}>
         <div className={styles.heroCopy}>
           <p className={styles.eyebrow}><MapPin size={14} aria-hidden="true" /> Le Vésinet & alentours · Particuliers</p>
           <h1 id="local-hero-title" className={styles.heroTitle}>Votre gazon,<br /><em>entre de<br className={styles.desktopBreak} /> bonnes mains.</em></h1>
-          <p className={styles.heroDescription}>Une pelouse à rénover ou à entretenir&nbsp;? J’interviens chez vous, avec une méthode précise et un programme pensé pour votre jardin.</p>
+          <p className={styles.heroDescription}><strong className={styles.heroPromise}>Un problème sur votre gazon&nbsp;? J’ai la solution.</strong>Une pelouse à rénover ou à entretenir&nbsp;? J’interviens chez vous, avec une méthode précise et un programme pensé pour votre jardin.</p>
           <div className={styles.heroActions}>
             <a href="#contact" className={styles.button}>Parlons de votre jardin <ArrowUpRight size={19} aria-hidden="true" /></a>
             <a href="#offres" className={styles.textLink}>Voir les interventions <ArrowDown size={17} aria-hidden="true" /></a>
@@ -58,7 +60,8 @@ export function LocalOffers() {
           <article className={styles.followCard}>
             <div className={styles.cardTop}><span>Interventions agronomiques</span><CalendarDays size={25} strokeWidth={1.4} aria-hidden="true" /></div>
             <h3>Le bon soin.<br /><em>Au bon moment.</em></h3>
-            <p>Nutrition, préparation aux chaleurs et corrections ciblées&nbsp;: un suivi régulier pour renforcer le gazon, favoriser sa densité et limiter la place laissée aux adventices.</p>
+            <p>Nutrition, préparation à l’hiver et aux chaleurs, corrections ciblées&nbsp;: un suivi régulier pour renforcer le gazon, favoriser sa densité et limiter la place laissée aux adventices.</p>
+            <p className={styles.seasonNote}><strong>En ce moment : préparer l’hiver.</strong> Le froid et le manque de lumière mettent aussi le gazon à l’épreuve. J’adapte la nutrition et les pratiques avant cette période, puis prépare les fortes chaleurs quand la saison revient.</p>
             <div className={styles.frequency}><span>Le rythme s’adapte</span><strong>2 semaines <span>à</span> 3 mois</strong><p>entre deux passages, selon le niveau d’entretien souhaité.</p></div>
             <a href="#programmes" className={styles.textLink}>Trouver votre programme <ArrowDown size={18} aria-hidden="true" /></a>
           </article>
@@ -81,7 +84,7 @@ export function LocalMethod() {
           <ol className={styles.steps}>
             <li><span>01</span><div><h3>Mesurer, zone par zone</h3><p>Je relève la surface du gazon au dixième de mètre carré près. Chaque zone reçoit une quantité calculée au gramme, pour une application homogène et limiter les différences de couleur.</p></div></li>
             <li><span>02</span><div><h3>Préparer les séquences</h3><p>Je sélectionne les produits selon l’état du gazon, la saison et les applications précédentes. Parmi environ 50 à 60 références d’engrais solides, chaque choix prépare aussi la prochaine intervention.</p></div></li>
-            <li><span>03</span><div><h3>Anticiper, puis ajuster</h3><p>Je prépare le gazon avant une période difficile, plutôt que d’attendre les dégâts. Si un problème est déjà présent, nous adaptons le programme pour le corriger.</p></div></li>
+            <li><span>03</span><div><h3>Anticiper, puis ajuster</h3><p>Froid, manque de lumière en hiver, fortes chaleurs en été : je prépare le gazon avant une période difficile. Si un problème est déjà présent, nous adaptons le programme pour le corriger.</p></div></li>
           </ol>
         </div>
         <div className={styles.precisionScene}>

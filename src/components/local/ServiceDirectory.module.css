@@ -1,0 +1,22 @@
+.directory { margin-bottom: 40px; color: #173f2c; }
+.label { margin-bottom: 13px; color: #587350; font-size: 10px; font-weight: 700; line-height: 1.7; letter-spacing: .1em; text-transform: uppercase; }
+.label span { font-weight: 400; }
+.services { display: grid; grid-template-columns: 1.65fr 1.4fr 1.1fr .85fr 1.15fr 1.1fr 1.2fr; border: 1px solid #173f2c2b; background: #edf0e6; }
+.service { display: flex; align-items: center; gap: 10px; min-width: 0; min-height: 78px; padding: 15px 12px; border-right: 1px solid #173f2c24; transition: background .2s; }
+.service:last-child { border-right: 0; }
+.service > span { min-width: 0; }
+.service strong { display: block; font-size: 11px; font-weight: 600; line-height: 1.5; }
+.service small { display: block; margin-top: 3px; color: #56714f; font-size: 8px; line-height: 1.5; }
+.icon,.arrow { flex-shrink: 0; }
+.icon { color: #617e56; }
+.arrow { margin-left: auto; width: 12px; }
+.service:hover { background: #dce5d1; }
+.featured { background: #173f49; color: #f3f8f4; }
+.featured :is(small,.icon) { color: #bdd8d6; }
+.featured:hover { background: #245761; }
+.service:focus-visible { outline: 2px solid #a34c35; outline-offset: -4px; }
+.dark { color: #173f2c; }
+.dark .label { color: #d7e3ce; }
+@media (max-width: 1100px) and (min-width: 768px) { .services { grid-template-columns: repeat(4,1fr); } .service { border-bottom: 1px solid #173f2c24; min-height: 69px; } .featured { grid-column: span 2; } .service:nth-child(3),.service:last-child { border-right: 0; } .service:nth-child(n+4) { border-bottom: 0; } }
+@media (max-width: 767px) { .directory { margin-bottom: 29px; } .label { font-size: 8px; margin-bottom: 10px; letter-spacing: .07em; } .services { grid-template-columns: 1fr 1fr; } .service { min-height: 55px; padding: 9px 11px; gap: 9px; border-bottom: 1px solid #173f2c24; } .featured { grid-column: 1/-1; min-height: 61px; border-right: 0; } .service:nth-child(odd) { border-right: 0; } .service:nth-last-child(-n+2) { border-bottom: 0; } .service strong { font-size: 10px; } .service small { font-size: 8px; } .icon { width: 16px; } .arrow { width: 11px; } }
+@media (prefers-reduced-motion: reduce) { .service { transition: none; } }

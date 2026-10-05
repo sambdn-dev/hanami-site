@@ -30,7 +30,7 @@ export default function EspaceClientPreview() {
   const [device, setDevice] = useState<Device>('web')
 
   return (
-    <section className="py-20 lg:py-28 bg-stone-50">
+    <section id="suivi-a-distance" className="scroll-mt-28 py-20 lg:py-28 bg-stone-50">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
 
         {/* En-tête + toggle Web / Mobile */}
