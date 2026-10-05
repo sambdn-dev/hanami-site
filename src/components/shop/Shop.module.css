@@ -4,7 +4,8 @@
 .header { max-width:1340px;margin:auto;padding:25px 40px;display:flex;align-items:center;gap:30px;border-bottom:1px solid var(--shop-line); }
 .header nav { display:flex;align-items:center;justify-content:center;flex:1;gap:30px;font-size:13px; }
 .header nav a,.selectionLink { display:inline-flex;align-items:center;gap:7px; }
-.header nav a:first-child { font-weight:650; }
+.header nav a { min-height:44px; }
+.header nav a[aria-current="page"] { font-weight:650;text-decoration:underline;text-underline-offset:7px; }
 .selectionLink { font-size:12px;min-height:44px; }
 .selectionLink strong { display:grid;place-items:center;background:#e8edde;border-radius:50%;width:25px;height:25px;font-size:11px; }
 .hero { max-width:1340px;margin:auto;padding:66px 40px 76px;display:grid;grid-template-columns:1.2fr 1fr;align-items:center;gap:60px; }
@@ -151,7 +152,7 @@
 .success h1 { font-size:57px; }.success>p:not(.eyebrow) { font-size:13px;line-height:1.9;color:#68765e; }.success>.primaryButton { margin-top:25px; }
 @media (max-width:1000px) { .hero { gap:30px;padding-top:45px; }.hero h1 { font-size:49px; }.heroCopy { font-size:14px; }.heroSeal { right:-12px;width:100px;height:100px;font-size:8px; }.heroSeal em { font-size:13px; }.promiseStrip { gap:30px;font-size:10px; }.productDetail { gap:35px; }.productInfo h1 { font-size:48px; }.productInfo>.eyebrow { margin-top:20px; }.selectionLayout { gap:25px; }.selectionSummary { padding:22px; }.adviceBand { gap:35px; }.header { gap:20px; }.header nav { gap:20px; } }
 @media (max-width:767px) {
- .draftBanner { font-size:8px;letter-spacing:1px;padding:10px 12px; }.header { padding:17px 20px;gap:12px; }.header>a:first-child img { width:95px;height:auto; }.header nav { display:none; }.selectionLink { margin-left:auto;font-size:10px;gap:6px; }.selectionLink strong { width:22px;height:22px; }
+ .draftBanner { font-size:8px;letter-spacing:1px;padding:10px 12px; }.header { padding:12px 20px;gap:12px; }.header>a:first-child img { width:80px;height:auto; }.header nav { display:flex;gap:12px;font-size:11px; }.header nav .servicesLink { display:none; }.selectionLink { margin-left:auto;font-size:10px;gap:6px; }.selectionLink>span { display:none; }.selectionLink strong { width:22px;height:22px; }
  .hero { display:flex;flex-direction:column;padding:35px 20px 37px;gap:31px;align-items:stretch; }.hero h1 { font-size:43px;letter-spacing:-1.5px;line-height:1.05; }.hero .eyebrow { margin-bottom:17px;font-size:9px; }.heroCopy { font-size:13px;margin-bottom:23px; }.hero .primaryButton { width:100%; }.heroNote { text-align:center;font-size:10px;margin-top:12px; }.heroArt { margin-right:8px; }.heroArt .botanical { aspect-ratio:1.45; }.heroArt .botanical svg { transform:translateY(10px) scale(.93); }.heroSeal { right:-8px;bottom:22px; }.promiseStrip { flex-direction:column;align-items:center;gap:15px;padding:22px 20px;font-size:11px; }
  .catalog { padding:41px 20px; }.sectionHeading { display:block;margin-bottom:25px; }.sectionHeading h2 { font-size:32px; }.sectionHeading>p { font-size:12px;line-height:1.8;margin-top:14px; }.sectionHeading>p br { display:none; }.productGrid { grid-template-columns:1fr;gap:25px; }.cardContent { padding:24px; }.brandLine { margin-bottom:24px; }.brandLine>span { font-size:7px; }.cardContent h3 { font-size:32px; }.catalogNote { font-size:10px;margin-top:20px; }
  .adviceBand { display:block;padding:38px 24px; }.adviceBand h2 { font-size:34px; }.adviceBand>div:last-child { margin-top:25px; }.adviceBand>div>p:not(.eyebrow) { font-size:12px;max-width:none; }.footer { padding:29px 24px;display:flex;flex-wrap:wrap;gap:10px 30px; }.footer>div { flex-basis:100%;margin-bottom:14px; }.footer>a { font-size:10px; }

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export default function ShopPage() {
   return <main>
     <section className={styles.hero}>
-      <div><p className={styles.eyebrow}>LA BOUTIQUE HANAMI</p><h1>Le bon gazon commence<br />par les <em>bonnes graines.</em></h1><p className={styles.heroCopy}>Une sélection professionnelle, choisie avec soin.<br />Et mes conseils pour en tirer le meilleur, chez vous.</p><a className={styles.primaryButton} href="#selection">Explorer la sélection <ArrowUpRight size={18} aria-hidden="true" /></a><p className={styles.heroNote}>Deux premières références · accompagnement personnel</p></div>
+      <div><p className={styles.eyebrow}>LA BOUTIQUE HANAMI</p><h1>Le bon gazon commence<br />par les <em>bonnes graines.</em></h1><p className={styles.heroCopy}>Une sélection professionnelle, choisie avec soin.<br />Et mes conseils pour en tirer le meilleur, chez vous.</p><a className={styles.primaryButton} href="#selection">Explorer la sélection <ArrowUpRight size={18} aria-hidden="true" /></a><p className={styles.heroNote}><Link href="/boutique/location">Besoin d’un outil ? Découvrir la location <ArrowUpRight size={15} aria-hidden="true" /></Link></p></div>
       <div className={styles.heroArt}><SeedIllustration variant="resilience" /><div className={styles.heroSeal}>LE CONSEIL<br /><em>avec le produit</em></div></div>
     </section>
     <div className={styles.promiseStrip}><span><Leaf size={19} aria-hidden="true" /> Semences professionnelles</span><span><MessageCircle size={19} aria-hidden="true" /> Un conseil adapté à votre jardin</span><span><PackageCheck size={19} aria-hidden="true" /> Livraison locale ou retrait</span></div>
