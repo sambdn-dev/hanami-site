@@ -8,6 +8,7 @@ import RenovationLanding from '@/components/local/RenovationLanding'
 import LocalProof from '@/components/local/LocalProof'
 import LocalContact from '@/components/local/LocalContact'
 import BrandStrip from '@/components/local/BrandStrip'
+import IrrigationSection from '@/components/local/IrrigationSection'
 import styles from '@/components/local/LocalSite.module.css'
 
 export const metadata: Metadata = {
@@ -18,5 +19,5 @@ export const metadata: Metadata = {
 }
 
 export default function RenovationExpressPage() {
-  return <div className={styles.page}><a href="#contenu" className={styles.skip}>Aller au contenu</a><SeasonalBanner /><Navbar variant="dark" localOffers /><main id="contenu" tabIndex={-1}><RenovationLanding /><BrandStrip /><LocalProof /><LocalContact express /></main><Footer localOffers /><WhatsAppButton /><HomeMobileCTA href="#contact" label="Parlons de votre rénovation" reassurance="Sans retourner le sol · Le Vésinet & alentours" /></div>
+  return <div className={styles.page}><a href="#contenu" className={styles.skip}>Aller au contenu</a><SeasonalBanner /><Navbar variant="dark" localOffers /><main id="contenu" tabIndex={-1}><RenovationLanding /><IrrigationSection /><BrandStrip /><LocalProof /><LocalContact express /></main><Footer localOffers /><WhatsAppButton /><HomeMobileCTA href="#contact" label="Parlons de votre rénovation" reassurance="Sans retourner le sol · Le Vésinet & alentours" /></div>
 }

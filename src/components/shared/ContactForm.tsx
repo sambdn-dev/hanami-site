@@ -111,13 +111,24 @@ export default function ContactForm({
   // Référence vers l'input file caché (déclenché par le clic sur la zone)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const { register, handleSubmit, reset, control, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, reset, control, setValue, formState: { errors } } = useForm<FormData>({
     defaultValues: {
       source: formSource,
       ...(formSource === 'hanami-pro-saas' ? { requestType: 'hanami-pro' } : {}),
       ...(!isPro && localServices ? { requestType: defaultLocalService } : {}),
     } as FormData,
   })
+
+  useEffect(() => {
+    if (isPro || !localServices) return
+    const selectService = (event: Event) => {
+      if ((event as CustomEvent).detail === 'Aiper IrriSense 2') {
+        setValue('requestType', 'Aiper IrriSense 2', { shouldDirty: true })
+      }
+    }
+    window.addEventListener('hanami:local-service-select', selectService)
+    return () => window.removeEventListener('hanami:local-service-select', selectService)
+  }, [isPro, localServices, setValue])
 
   // ── Gestion des photos ──────────────────────────────────────────────────
 
@@ -294,6 +305,7 @@ export default function ContactForm({
                       <option value="Interventions agronomiques">Interventions agronomiques régulières</option>
                       <option value="Rénovation express">Rénovation express, sans retourner le sol</option>
                       <option value="Arrosage">Arrosage automatique</option>
+                      <option value="Aiper IrriSense 2">Aiper IrriSense 2 · arrosage</option>
                       <option value="Gazon en rouleaux">Gazon en rouleaux</option>
                     </select>
                   </FormField>
