@@ -2,19 +2,16 @@
 
 import { useEffect, useId, useRef, useState, useSyncExternalStore } from 'react'
 import { Check, Droplets, Map, Pause, Play, RotateCcw, SlidersHorizontal } from 'lucide-react'
+import { IRRIGATION_SOURCE, IRRIGATION_ZONES, getZoneSweepLimits, sampleZoneSweep } from '@/lib/irrigation-demo'
 import styles from './IrrigationZoneMotion.module.css'
 
 const steps = [
-  { label: 'Délimiter', title: 'Votre gazon a ses contours.', description: 'On repère les surfaces à arroser et les espaces à préserver : terrasse, allée, massifs. Le jardin dicte le tracé.', icon: Map },
-  { label: 'Programmer', title: 'Chaque zone a ses besoins.', description: 'Le rythme d’arrosage se réfléchit selon l’exposition, le sol et le gazon. Les réglages se définissent lors de l’installation.', icon: SlidersHorizontal },
-  { label: 'Arroser', title: 'L’eau vise les bonnes surfaces.', description: 'Le balayage illustre un arrosage dirigé vers les zones de gazon dessinées. Le placement et les limites se vérifient sur le terrain.', icon: Droplets },
+  { label: 'Délimiter', title: 'Votre jardin a ses contours.', description: 'Pelouse et massifs peuvent avoir leurs zones dédiées. On préserve la maison, la terrasse et l’allée, puis on adapte le tracé au jardin.', icon: Map },
+  { label: 'Programmer', title: 'Chaque zone a ses besoins.', description: 'Pelouse ou massifs : les apports se règlent selon les végétaux, l’exposition et le sol. Les paramètres sont définis lors de l’installation.', icon: SlidersHorizontal },
+  { label: 'Arroser', title: 'Un jet qui suit les contours.', description: 'L’arroseur pivote entre son point de départ et sa butée. La portée évolue pour viser le contour de la zone sélectionnée.', icon: Droplets },
 ]
 
-const zonePaths = [
-  'M290 123 C354 110 404 102 468 126 L451 250 C405 261 350 255 286 255 L286 202 Q279 169 290 123Z',
-  'M468 126 C514 110 560 145 612 189 L606 294 C555 278 491 270 451 250Z',
-  'M286 255 C346 255 405 261 451 250 C491 270 555 278 606 294 L599 389 C549 421 438 414 368 399 C303 386 248 400 192 388 L194 326 C248 329 277 296 286 255Z',
-]
+const zonePaths = IRRIGATION_ZONES.map(zone => zone.path)
 
 const lawnPath = 'M290 123 C354 110 404 102 468 126 C514 110 560 145 612 189 L606 294 L599 389 C549 421 438 414 368 399 C303 386 248 400 192 388 L194 326 C248 329 277 296 286 255 L286 202 Q279 169 290 123Z'
 
@@ -38,19 +35,83 @@ function Shrub({ x, y, size = 1, pale = false }: { x: number; y: number; size?: 
   </g>
 }
 
-function GardenPlan({ id, step, zone }: { id: string; step: number; zone: number }) {
+function AnimatedJet({ id, zone, running }: { id: string; zone: number; running: boolean }) {
+  const jet = useRef<SVGGElement>(null)
+  const glow = useRef<SVGPathElement>(null)
+  const stream = useRef<SVGPathElement>(null)
+  const landing = useRef<SVGCircleElement>(null)
+  const splash = useRef<SVGEllipseElement>(null)
+  const nozzle = useRef<SVGGElement>(null)
+  const phase = useRef(0)
+  const frame = sampleZoneSweep(zone, 0)
+  const limits = getZoneSweepLimits(zone)
+
+  useEffect(() => {
+    let animation = 0
+    let lastTime: number | null = null
+    const draw = (progress: number) => {
+      const next = sampleZoneSweep(zone, progress)
+      const dx = next.target.x - IRRIGATION_SOURCE.x
+      const dy = next.target.y - IRRIGATION_SOURCE.y
+      const bend = Math.min(8, next.distance * .045)
+      const length = Math.max(1, next.distance)
+      const controlX = IRRIGATION_SOURCE.x + dx * .55 - dy / length * bend
+      const controlY = IRRIGATION_SOURCE.y + dy * .55 + dx / length * bend
+      const path = `M${IRRIGATION_SOURCE.x} ${IRRIGATION_SOURCE.y} Q${controlX} ${controlY} ${next.target.x} ${next.target.y}`
+      glow.current?.setAttribute('d', path)
+      stream.current?.setAttribute('d', path)
+      landing.current?.setAttribute('cx', String(next.target.x))
+      landing.current?.setAttribute('cy', String(next.target.y))
+      splash.current?.setAttribute('cx', String(next.target.x))
+      splash.current?.setAttribute('cy', String(next.target.y))
+      splash.current?.setAttribute('transform', `rotate(${next.angle} ${next.target.x} ${next.target.y})`)
+      nozzle.current?.setAttribute('transform', `translate(${IRRIGATION_SOURCE.x} ${IRRIGATION_SOURCE.y}) rotate(${next.angle})`)
+      jet.current?.setAttribute('opacity', next.visible ? '1' : '0')
+      jet.current?.setAttribute('data-angle', next.angle.toFixed(2))
+      jet.current?.setAttribute('data-distance', next.distance.toFixed(2))
+    }
+    const progress = () => phase.current < .45 ? phase.current / .45 : phase.current < .5 ? 1 : phase.current < .95 ? 1 - (phase.current - .5) / .45 : 0
+    draw(progress())
+    if (!running) return
+    const tick = (time: number) => {
+      if (lastTime !== null) phase.current = (phase.current + Math.min(time - lastTime, 64) / 10000) % 1
+      lastTime = time
+      draw(progress())
+      animation = requestAnimationFrame(tick)
+    }
+    animation = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(animation)
+  }, [zone, running])
+
+  return <g pointerEvents="none" aria-hidden="true">
+    <g className={styles.sweepLimits}>
+      {[{ point: limits.startTarget, label: 'DÉPART' }, { point: limits.endTarget, label: 'BUTÉE' }].map(({ point, label }, index) => <g key={label}>
+        <path d={`M${IRRIGATION_SOURCE.x} ${IRRIGATION_SOURCE.y} L${point.x} ${point.y}`} />
+        <circle cx={point.x} cy={point.y} r="4" />
+        <text x={point.x + (index === 0 ? 8 : -8)} y={point.y - 9} textAnchor={index === 0 ? 'start' : 'end'}>{label}</text>
+      </g>)}
+    </g>
+    <g ref={jet} data-irrigation-jet="true" data-zone={IRRIGATION_ZONES[zone].id}>
+      <path ref={glow} className={styles.jetGlow} d={`M${IRRIGATION_SOURCE.x} ${IRRIGATION_SOURCE.y} L${frame.target.x} ${frame.target.y}`} />
+      <path ref={stream} className={styles.jetStream} d={`M${IRRIGATION_SOURCE.x} ${IRRIGATION_SOURCE.y} L${frame.target.x} ${frame.target.y}`} />
+      <g clipPath={`url(#${id}-zone-${zone})`}><ellipse ref={splash} cx={frame.target.x} cy={frame.target.y} rx="13" ry="6" className={styles.jetSplash} /></g>
+      <circle ref={landing} cx={frame.target.x} cy={frame.target.y} r="3.2" className={styles.jetLanding} />
+    </g>
+    <g ref={nozzle} transform={`translate(${IRRIGATION_SOURCE.x} ${IRRIGATION_SOURCE.y}) rotate(${frame.angle})`}><path d="M10 0H20" stroke="#eefdfb" strokeWidth="3" strokeLinecap="round" /></g>
+  </g>
+}
+
+function GardenPlan({ id, step, zone, running, replay, onChooseZone }: { id: string; step: number; zone: number; running: boolean; replay: number; onChooseZone: (zone: number) => void }) {
   return (
-    <svg className={styles.plan} viewBox="0 0 720 510" role="img" aria-labelledby={`${id}-title ${id}-description`}>
+    <svg className={styles.plan} viewBox="0 0 720 510" role="group" aria-labelledby={`${id}-title`} aria-describedby={`${id}-description`}>
       <title id={`${id}-title`}>{`Plan fictif de jardin : ${steps[step].label.toLowerCase()} les zones d’arrosage`}</title>
-      <desc id={`${id}-description`}>Vue de dessus d’un jardin avec une maison, une terrasse, des massifs et une allée. Trois zones de pelouse courbes sont dessinées. Seules les zones de gazon apparaissent dans le balayage d’eau illustré.</desc>
+      <desc id={`${id}-description`}>Plan interactif : trois zones de pelouse et une zone de massifs. Cliquez sur une zone ou utilisez Entrée ou Espace pour voir le jet pivoter, changer de portée et revenir à sa butée. L’arroseur est placé à la jonction des zones de pelouse.</desc>
       <defs>
         <pattern id={`${id}-grid`} width="26" height="26" patternUnits="userSpaceOnUse"><path d="M26 0H0V26" fill="none" stroke="#477980" strokeOpacity=".07" strokeWidth=".6" /></pattern>
         <pattern id={`${id}-grass`} width="32" height="29" patternUnits="userSpaceOnUse"><path d="M5 10l2 -4 3 4 M24 24l2 -4 3 3" fill="none" stroke="#34684b" strokeWidth=".8" strokeOpacity=".19" /></pattern>
         <pattern id={`${id}-deck`} width="15" height="15" patternUnits="userSpaceOnUse"><path d="M0 0V15 M2 0V15" stroke="#92775d" strokeOpacity=".24" strokeWidth=".6" /></pattern>
         <linearGradient id={`${id}-roof`} x1="0" y1="0" x2="1" y2="1"><stop stopColor="#446772" /><stop offset="1" stopColor="#234954" /></linearGradient>
-        <radialGradient id={`${id}-spray`} cx="341" cy="283" r="325" gradientUnits="userSpaceOnUse"><stop stopColor="#d5f3f3" stopOpacity=".12" /><stop offset=".65" stopColor="#a4dedd" stopOpacity=".45" /><stop offset="1" stopColor="#9ed9df" stopOpacity=".05" /></radialGradient>
         <filter id={`${id}-shadow`} x="-25%" y="-25%" width="150%" height="160%"><feDropShadow dx="0" dy="7" stdDeviation="7" floodColor="#34565e" floodOpacity=".15" /></filter>
-        <clipPath id={`${id}-lawn`}><path d={lawnPath} /></clipPath>
         {zonePaths.map((path, index) => <clipPath key={index} id={`${id}-zone-${index}`}><path d={path} /></clipPath>)}
       </defs>
 
@@ -67,7 +128,7 @@ function GardenPlan({ id, step, zone }: { id: string; step: number; zone: number
 
         <path d={lawnPath} fill="#bfd0ac" />
         <path d={lawnPath} fill={`url(#${id}-grass)`} />
-        {zonePaths.map((path, index) => <path key={`fill-${index}`} d={path} className={`${styles.zoneFill} ${zone === index ? styles.activeZone : ''}`} fill={index === 0 ? '#b9cdad' : index === 1 ? '#aec6aa' : '#c0d0ae'} />)}
+        {zonePaths.map((path, index) => <path key={`fill-${index}`} d={path} className={`${styles.zoneFill} ${zone === index ? styles.activeZone : ''} ${index === 3 ? styles.bedFill : ''}`} fill={index === 3 ? '#bdac7f' : index === 0 ? '#b9cdad' : index === 1 ? '#aec6aa' : '#c0d0ae'} />)}
         <path d={lawnPath} fill={`url(#${id}-grass)`} />
 
         <g filter={`url(#${id}-shadow)`}>
@@ -92,41 +153,42 @@ function GardenPlan({ id, step, zone }: { id: string; step: number; zone: number
 
         <g className={styles.exclusions} fill="none" stroke="#be8775" strokeWidth="1.6" strokeDasharray="4 5">
           <rect x="71" y="185" width="202" height="81" rx="7" />
-          <path d="M292 73 C388 62 438 77 485 70 C550 59 608 88 651 130 L643 173 C575 146 564 109 502 111 C412 95 360 109 292 108Z" />
           <path d="M628 179 L650 178 L639 422 Q618 443 575 429 L570 414 Q606 414 614 391Z" />
         </g>
 
-        <g className={styles.zoneOutlines} fill="none" stroke="#3f8189" strokeWidth="2.2" strokeLinejoin="round">
+        <g key={replay} className={styles.zoneOutlines} fill="none" stroke="#3f8189" strokeWidth="2.2" strokeLinejoin="round">
           {zonePaths.map((path, index) => <path key={index} d={path} pathLength="100" className={`${styles.zoneOutline} ${zone === index ? styles.selectedOutline : ''}`} style={{ animationDelay: `${index * .6}s` }} />)}
         </g>
 
-        {step === 2 && <g clipPath={`url(#${id}-zone-${zone})`} className={styles.irrigation}>
-          <path d={zonePaths[zone]} fill="#acd8db" fillOpacity=".2" className={styles.waterWash} />
-          <g className={styles.spraySweep}>
-            <path d="M341 283 L409 -51 A342 342 0 0 1 628 97Z" fill={`url(#${id}-spray)`} />
-            {[0, 1, 2, 3, 4, 5, 6, 7, 8].map(index => {
-              const angle = (-77 + index * 6.5) * Math.PI / 180
-              return <path key={index} d={`M${341 + Math.cos(angle) * 34} ${283 + Math.sin(angle) * 34} L${341 + Math.cos(angle) * 310} ${283 + Math.sin(angle) * 310}`} stroke="#effeff" strokeOpacity=".35" strokeWidth=".85" strokeDasharray="1 11" strokeLinecap="round" />
-            })}
-          </g>
-          <g fill="#ebffff">{Array.from({ length: 70 }, (_, index) => <circle key={index} cx={199 + (index * 57) % 419} cy={124 + (index * 43) % 285} r={index % 4 === 0 ? 2 : 1.1} className={styles.waterDroplet} style={{ animationDelay: `${index * -.17}s` }} />)}</g>
-        </g>}
+        {step === 2 && <>
+          <g clipPath={`url(#${id}-zone-${zone})`} pointerEvents="none"><path d={zonePaths[zone]} fill="#acd8db" fillOpacity=".2" className={styles.waterWash} /></g>
+          <AnimatedJet key={`${zone}-${replay}`} id={id} zone={zone} running={running} />
+        </>}
 
-        <g className={styles.zoneMarkers}>
-          {[{ x: 367, y: 185 }, { x: 540, y: 212 }, { x: 455, y: 337 }].map((point, index) => <g key={index} transform={`translate(${point.x} ${point.y})`} opacity={zone === index ? 1 : .65}>
-            <circle r="16" fill={zone === index ? '#285f69' : '#f5f8ed'} stroke={zone === index ? '#e7f0e4' : '#597e70'} strokeWidth="1" />
-            <text textAnchor="middle" dominantBaseline="central" fill={zone === index ? '#f0f9f3' : '#456559'} fontSize="11" fontFamily="monospace">{`0${index + 1}`}</text>
-          </g>)}
-        </g>
-
-        <path d="M274 237 C287 259 313 233 327 252 Q338 263 341 282" stroke="#628583" strokeWidth="3" fill="none" strokeLinecap="round" />
+        <path d="M274 237 C322 242 365 280 413 260 Q433 250 451 250" stroke="#628583" strokeWidth="3" fill="none" strokeLinecap="round" pointerEvents="none" />
         <circle cx="273" cy="236" r="4" fill="#cedfd6" stroke="#648985" strokeWidth="1.5" />
-        <g transform="translate(341 283)">
+        <g transform={`translate(${IRRIGATION_SOURCE.x} ${IRRIGATION_SOURCE.y})`} pointerEvents="none" data-irrigation-source="true">
           <ellipse cy="6" rx="15" ry="9" fill="#173e4944" />
           <circle r="13" fill="#234954" stroke="#e4ece5" strokeWidth="1.5" />
           <circle r="7" fill="#467380" />
           <path d="M-3 -4H3V4H-3Z" fill="#dbe5dc" />
           {step === 2 && <circle r="20" fill="none" stroke="#609fa4" strokeWidth="1" className={styles.devicePulse} />}
+          <text x="19" y="-15" className={styles.deviceLabel}>ARROSEUR</text>
+        </g>
+
+        <g className={styles.zoneMarkers}>
+          {IRRIGATION_ZONES.map((item, index) => <g key={item.id} className={styles.zoneTarget} role="button" tabIndex={0} aria-label={`Arroser ${item.kind === 'bed' ? 'les massifs' : `la ${item.label.toLowerCase()}`}`} aria-pressed={zone === index} data-irrigation-zone={item.id} onClick={() => onChooseZone(index)} onKeyDown={event => {
+            if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); onChooseZone(index) }
+          }}>
+            <path d={item.path} fill="transparent" className={styles.zoneClickSurface} />
+            <g transform={`translate(${item.marker.x} ${item.marker.y})`} opacity={zone === index ? 1 : .85}>
+              <circle r="28" fill="transparent" />
+              {item.kind === 'bed'
+                ? <rect x="-34" y="-14" width="68" height="28" rx="14" fill={zone === index ? '#6b784f' : '#f5f8ed'} stroke="#6b784f" />
+                : <circle r="16" fill={zone === index ? '#285f69' : '#f5f8ed'} stroke={zone === index ? '#e7f0e4' : '#597e70'} strokeWidth="1" />}
+              <text textAnchor="middle" dominantBaseline="central" fill={zone === index ? '#f0f9f3' : '#456559'} fontSize={item.kind === 'bed' ? '9' : '11'} fontFamily="monospace">{item.kind === 'bed' ? 'MASSIFS' : `0${index + 1}`}</text>
+            </g>
+          </g>)}
         </g>
 
         <g className={styles.planLabels} fill="#5d7372" fontFamily="sans-serif" fontSize="9" letterSpacing="1.5">
@@ -150,6 +212,7 @@ export default function IrrigationZoneMotion() {
   const [paused, setPaused] = useState(false)
   const [visible, setVisible] = useState(false)
   const [replay, setReplay] = useState(0)
+  const [autoAdvance, setAutoAdvance] = useState(true)
   const container = useRef<HTMLDivElement>(null)
   const buttons = useRef<(HTMLButtonElement | null)[]>([])
   const id = useId().replace(/:/g, '')
@@ -168,41 +231,52 @@ export default function IrrigationZoneMotion() {
   function chooseStep(index: number, focus = false) {
     const next = (index + steps.length) % steps.length
     setStep(next)
+    setAutoAdvance(false)
     setReplay(previous => previous + 1)
     if (focus) buttons.current[next]?.focus()
   }
 
+  function chooseZone(index: number) {
+    setZone(index)
+    setStep(2)
+    setAutoAdvance(false)
+    setReplay(previous => previous + 1)
+  }
+
   return (
-    <div ref={container} className={`${styles.card} ${running ? styles.running : styles.still} ${styles[`step${step}`]}`}>
+    <div ref={container} className={`${styles.card} ${!running ? styles.still : ''} ${styles[`step${step}`]}`}>
       <div className={styles.topline}>
         <span className={styles.eyebrow}><span /> LE JARDIN, ZONE PAR ZONE</span>
         <div className={styles.controls}>
           <button type="button" onClick={() => setPaused(!paused)} aria-pressed={paused} aria-label={paused ? 'Reprendre la démonstration des zones' : 'Mettre la démonstration des zones en pause'} disabled={reducedMotion}>
             {paused || reducedMotion ? <Play size={13} aria-hidden="true" /> : <Pause size={13} aria-hidden="true" />}
           </button>
-          <button type="button" onClick={() => { setStep(0); setZone(0); setPaused(false); setReplay(previous => previous + 1) }} aria-label="Rejouer la démonstration depuis la délimitation"><RotateCcw size={13} aria-hidden="true" /></button>
+          <button type="button" onClick={() => { setStep(0); setZone(0); setPaused(false); setAutoAdvance(true); setReplay(previous => previous + 1) }} aria-label="Rejouer la démonstration depuis la délimitation"><RotateCcw size={13} aria-hidden="true" /></button>
         </div>
       </div>
 
       <figure className={styles.figure}>
-        <div key={`${step}-${replay}`} className={styles.planEntry}><GardenPlan id={`${id}-${step}`} step={step} zone={zone} /></div>
+        <div className={styles.planEntry}><GardenPlan id={`${id}-plan`} step={step} zone={zone} replay={replay} running={running} onChooseZone={chooseZone} /></div>
         <div className={styles.legend}>
           <span><i className={styles.lawnSwatch} />Pelouse à arroser</span>
+          <span><i className={styles.bedSwatch} />Massifs</span>
           <span><i className={styles.excludedSwatch} />Espaces exclus</span>
         </div>
-        <figcaption>Illustration pédagogique · zones fictives</figcaption>
+        <figcaption>Cliquez sur une zone pour l’explorer · Plan pédagogique, sans échelle.</figcaption>
       </figure>
 
       <div className={styles.zonePicker} role="group" aria-label="Choisir une zone de démonstration">
         <span>Explorer le plan</span>
-        {[0, 1, 2].map(index => <button key={index} type="button" aria-pressed={zone === index} className={zone === index ? styles.selectedZone : ''} onClick={() => setZone(index)}>{zone === index && <Check size={11} aria-hidden="true" />}Zone 0{index + 1}</button>)}
+        {IRRIGATION_ZONES.map((item, index) => <button key={item.id} type="button" aria-pressed={zone === index} className={zone === index ? styles.selectedZone : ''} onClick={() => chooseZone(index)}>{zone === index && <Check size={11} aria-hidden="true" />}{item.label}</button>)}
       </div>
+
+      <div className={styles.zoneDetail} role="status" aria-live="polite"><strong>{IRRIGATION_ZONES[zone].kind === 'bed' ? 'Massifs · un programme dédié aux végétaux' : `${IRRIGATION_ZONES[zone].label} · une portée adaptée au contour`}</strong><span>Départ défini · distance variable · retour à la butée</span></div>
 
       <div className={styles.steps} role="tablist" aria-label="Les étapes d’un arrosage ciblé">
         {steps.map((item, index) => <button key={item.label} ref={node => { buttons.current[index] = node }} type="button" role="tab" tabIndex={index === step ? 0 : -1} id={`${id}-step-${index}`} aria-controls={`${id}-explanation`} aria-selected={index === step} className={index === step ? styles.activeStep : ''} onClick={() => chooseStep(index)} onKeyDown={event => {
           if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); chooseStep(index + (event.key === 'ArrowRight' ? 1 : -1), true) }
           if (event.key === 'Home' || event.key === 'End') { event.preventDefault(); chooseStep(event.key === 'Home' ? 0 : steps.length - 1, true) }
-        }}><span className={styles.stepNumber}>0{index + 1}</span><span>{item.label}</span><span key={`${step}-${replay}`} className={styles.progress} onAnimationEnd={() => { if (index === step && running) setStep(previous => (previous + 1) % steps.length) }} /></button>)}
+        }}><span className={styles.stepNumber}>0{index + 1}</span><span>{item.label}</span><span key={`${step}-${replay}`} className={`${styles.progress} ${!autoAdvance ? styles.manualProgress : ''}`} onAnimationEnd={() => { if (index === step && running && autoAdvance) setStep(previous => (previous + 1) % steps.length) }} /></button>)}
       </div>
 
       <div id={`${id}-explanation`} role="tabpanel" aria-labelledby={`${id}-step-${step}`} className={styles.explanation} tabIndex={0}>

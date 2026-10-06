@@ -15,7 +15,7 @@
 .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-space-mono), monospace; font-size: 8px; line-height: 1.4; letter-spacing: .1em; color: #456d74; }
 .eyebrow > span { width: 5px; height: 5px; border-radius: 50%; background: #67a1a6; }
 .controls { display: flex; gap: 6px; }
-.controls button { display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 1px solid #a8c1c3; border-radius: 50%; color: #396b75; background: #f5f8f655; cursor: pointer; transition: color .2s, background .2s; }
+.controls button { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 1px solid #a8c1c3; border-radius: 50%; color: #396b75; background: #f5f8f655; cursor: pointer; transition: color .2s, background .2s; }
 .controls button:hover { background: #dbe8e6; color: #234f5b; }
 .controls button:disabled { opacity: .4; cursor: default; }
 .card button:focus-visible { outline: 2px solid #3b858e; outline-offset: 3px; }
@@ -24,6 +24,12 @@
 .plan { display: block; width: 100%; height: auto; }
 .zoneFill { transition: fill .45s, fill-opacity .45s; fill-opacity: .25; }
 .activeZone { fill: #8db9b2; fill-opacity: .38; }
+.bedFill.activeZone { fill: #c5b17b; fill-opacity: .65; }
+.zoneTarget { cursor: pointer; outline: none; }
+.zoneClickSurface { stroke: transparent; stroke-width: 1; transition: fill .2s; }
+.zoneTarget:hover .zoneClickSurface { fill: #6ba4a91a; }
+.zoneTarget:focus-visible .zoneClickSurface { fill: #6ba4a91a; stroke: #234f5b; stroke-width: 3; }
+.deviceLabel { fill: #315d64; font: 8px var(--font-space-mono), monospace; letter-spacing: .8px; }
 .zoneOutline { stroke-dasharray: 100; stroke-dashoffset: 0; opacity: .48; }
 .selectedOutline { stroke: #256d7c; opacity: 1; stroke-width: 2.7; }
 .step0 .zoneOutline { animation: drawContour 3.4s cubic-bezier(.28,.45,.36,1) both; }
@@ -32,21 +38,31 @@
 .step1 .activeZone { animation: zoneBreathe 3.5s ease-in-out infinite; }
 .step1 .selectedOutline { stroke-dasharray: 2 2; animation: perimeterFlow 5s linear infinite; }
 .step2 .selectedOutline { stroke: #357f8a; opacity: .8; }
-.spraySweep { transform-origin: 341px 283px; animation: wateringSweep 8s linear infinite; }
-.waterDroplet { animation: dropletGlisten 2.8s ease-in-out infinite; }
+.sweepLimits { stroke: #547f85; fill: #e8f4ed; opacity: .85; }
+.sweepLimits path { stroke-width: 1; stroke-dasharray: 3 6; fill: none; }
+.sweepLimits circle { stroke-width: 1.2; }
+.sweepLimits text { stroke: none; fill: #315d64; font: 8px var(--font-space-mono), monospace; letter-spacing: .6px; paint-order: stroke; }
+.jetGlow { fill: none; stroke: #4a9aaa; stroke-width: 8; opacity: .28; stroke-linecap: round; }
+.jetStream { fill: none; stroke: #effffc; stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 6 9; animation: jetTravel .7s linear infinite; }
+.jetLanding { fill: #f3fffc; stroke: #498c9a; stroke-width: 1.3; }
+.jetSplash { fill: #c0e9e8; stroke: #e5fffb; stroke-width: 1.3; opacity: .75; }
 .waterWash { animation: moistureBreathe 4s ease-in-out infinite; }
 .devicePulse { transform-box: fill-box; transform-origin: center; animation: sourcePulse 2.5s ease-out infinite; }
-.legend { display: flex; justify-content: center; align-items: center; gap: 24px; padding: 0 18px; color: #57777b; font-size: 9px; line-height: 1.5; }
+.legend { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px 20px; padding: 0 18px; color: #57777b; font-size: 9px; line-height: 1.5; }
 .legend > span { display: inline-flex; align-items: center; gap: 7px; }
 .legend i { display: block; width: 12px; height: 8px; border-radius: 2px; }
 .lawnSwatch { background: #b4c9ac; border: 1px solid #508a87; }
+.bedSwatch { background: #d1c59f; border: 1px solid #7a8a5a; }
 .excludedSwatch { border: 1px dashed #be8775; background: #ede2d9; }
 .figure figcaption { margin: 10px 20px 0; text-align: center; color: #6c8587; font-size: 9px; line-height: 1.5; }
 .zonePicker { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px; padding: 18px 18px 23px; }
 .zonePicker > span { margin-right: 5px; color: #678186; font-size: 9px; }
-.zonePicker button { display: inline-flex; align-items: center; justify-content: center; gap: 4px; min-height: 35px; padding: 7px 11px; border: 1px solid #bdd1cf; border-radius: 2px; color: #56767a; background: #ffffff44; font-family: var(--font-space-mono), monospace; font-size: 8px; cursor: pointer; transition: background .2s, border-color .2s; }
+.zonePicker button { display: inline-flex; align-items: center; justify-content: center; gap: 4px; min-height: 44px; padding: 7px 12px; border: 1px solid #bdd1cf; border-radius: 2px; color: #56767a; background: #ffffff44; font-family: var(--font-space-mono), monospace; font-size: 9px; cursor: pointer; transition: background .2s, border-color .2s; }
 .zonePicker button:hover { border-color: #669599; }
 .zonePicker .selectedZone { color: #295e66; background: #dceae5; border-color: #6e9d99; }
+.zoneDetail { display: grid; gap: 6px; padding: 0 18px 21px; text-align: center; color: #456d74; }
+.zoneDetail strong { font-size: 11px; font-weight: 600; line-height: 1.5; }
+.zoneDetail > span { font-size: 9px; line-height: 1.6; color: #617e83; }
 .steps { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid #c8d8d7; border-bottom: 1px solid #c8d8d7; background: #e2edeb; }
 .steps button { position: relative; display: flex; justify-content: center; align-items: center; gap: 8px; overflow: hidden; min-width: 0; min-height: 55px; padding: 12px 10px; border: 0; border-right: 1px solid #c8d8d7; background: transparent; color: #71888a; font-size: 11px; cursor: pointer; transition: background .3s, color .3s; }
 .steps button:last-child { border-right: 0; }
@@ -56,6 +72,8 @@
 .activeStep .stepNumber { color: #b8d7d2; }
 .progress { position: absolute; height: 2px; left: 0; right: 0; bottom: 0; background: #92c9c5; transform: scaleX(0); transform-origin: left; }
 .activeStep .progress { animation: stepProgress 5.6s linear both; }
+.step2 .activeStep .progress { animation-duration: 14s; }
+.activeStep .manualProgress { animation: none; transform: scaleX(1); }
 .explanation { display: flex; gap: 16px; min-height: 125px; padding: 25px 26px 27px; background: #f6f9f6; }
 .explanationIcon { display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; border: 1px solid #bad1cd; border-radius: 50%; color: #527f7f; background: #eaf1eb; }
 .explanationTitle { margin: 0 0 7px; color: #295764; font-family: var(--font-fraunces), Georgia, serif; font-size: 22px; font-weight: 440; line-height: 1.15; letter-spacing: -.025em; }
@@ -70,8 +88,7 @@
 @keyframes revealExclusions { 0% { opacity: .2; } 30%, 60% { opacity: .9; } 100% { opacity: .5; } }
 @keyframes zoneBreathe { 0%, 100% { fill-opacity: .25; } 50% { fill-opacity: .6; } }
 @keyframes perimeterFlow { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -16; } }
-@keyframes wateringSweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-@keyframes dropletGlisten { 0%, 100% { opacity: 0; } 35% { opacity: .8; } 65% { opacity: .3; } }
+@keyframes jetTravel { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -15; } }
 @keyframes moistureBreathe { 0%, 100% { opacity: .25; } 55% { opacity: .85; } }
 @keyframes sourcePulse { 0% { scale: .65; opacity: .8; } 100% { scale: 1.5; opacity: 0; } }
 @keyframes stepProgress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
@@ -82,11 +99,13 @@
   .eyebrow { font-size: 7px; letter-spacing: .05em; }
   .controls button { width: 44px; height: 44px; }
   .planEntry { width: 100%; }
-  .legend { gap: 18px; font-size: 9px; }
+  .legend { gap: 9px 12px; font-size: 9px; }
   .figure figcaption { margin-top: 9px; font-size: 8px; }
   .zonePicker { gap: 5px; padding: 15px 12px 18px; }
   .zonePicker > span { width: 100%; margin: 0 0 3px; text-align: center; font-size: 8px; }
   .zonePicker button { min-height: 44px; font-size: 9px; padding-inline: 11px; }
+  .zoneDetail { padding-bottom: 18px; }
+  .zoneDetail strong { font-size: 10px; }
   .steps button { gap: 5px; min-height: 54px; padding-inline: 5px; font-size: 10px; }
   .stepNumber { font-size: 7px; }
   .explanation { gap: 12px; min-height: 142px; padding: 22px 17px 24px; }
@@ -96,10 +115,13 @@
   .explanationCopy { font-size: 11px; line-height: 1.75; }
 }
 
+@media (max-width: 360px) {
+  .zonePicker { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 280px; margin-inline: auto; }
+  .zonePicker > span { grid-column: 1 / -1; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .card *, .card *::before, .card *::after { animation: none !important; transition: none !important; }
   .zoneOutline { stroke-dashoffset: 0; }
-  .waterDroplet { opacity: .6; }
-  .spraySweep { transform: rotate(110deg); }
   .activeStep .progress { transform: scaleX(1); }
 }

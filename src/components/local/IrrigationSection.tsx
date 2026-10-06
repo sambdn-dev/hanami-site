@@ -5,7 +5,7 @@ import IrrigationQuoteButton from './IrrigationQuoteButton'
 import styles from './IrrigationSection.module.css'
 
 const benefits = [
-  { icon: MapPinned, title: 'Votre jardin, zone par zone.', description: 'La pelouse principale, un passage étroit, une zone plus ombragée : les surfaces sont cartographiées et disposent de programmes individuels.' },
+  { icon: MapPinned, title: 'Votre jardin, zone par zone.', description: 'La pelouse principale, les massifs, un passage étroit ou une zone plus ombragée : les surfaces sont cartographiées et les programmes adaptés aux besoins de chaque zone.' },
   { icon: Smartphone, title: 'Un programme. Moins de contraintes.', description: 'Les horaires et les apports d’eau se règlent dans l’application Aiper. Une fois le programme établi, l’arrosage suit les créneaux définis et vous gardez la main.' },
   { icon: CloudRain, title: 'La météo entre dans le programme.', description: 'Le capteur de pluie intégré et les informations météo permettent d’ajuster ou de suspendre les cycles. Le suivi de consommation aide à adapter les apports au jardin.' },
 ]
@@ -42,11 +42,11 @@ export default function IrrigationSection() {
         ))}</div>
         <div className={styles.motionHeading}>
           <div><p className={styles.eyebrow}>LES ZONES, SIMPLEMENT</p><h3>Le bon contour.<br /><em>Le bon programme.</em></h3></div>
-          <p>Délimiter la pelouse, tenir compte des allées et de la terrasse, puis adapter les apports. Explorez le principe en trois étapes.</p>
+          <p>Délimiter la pelouse et les massifs, tenir compte des allées et de la terrasse, puis adapter les apports à chaque zone. Explorez le principe en trois étapes.</p>
         </div>
         <IrrigationZoneMotion />
         <div className={styles.installation}>
-          <div><p className={styles.eyebrow}>L’ACCOMPAGNEMENT HANAMI</p><h3>On prépare tout.<br /><em>Vous profitez du jardin.</em></h3><p>Je vérifie l’arrivée d’eau, l’emplacement et les raccordements. Nous définissons les zones et un programme adapté au gazon, puis je vous montre comment le faire évoluer.</p></div>
+          <div><p className={styles.eyebrow}>L’ACCOMPAGNEMENT HANAMI</p><h3>On prépare tout.<br /><em>Vous profitez du jardin.</em></h3><p>Je vérifie l’arrivée d’eau, l’emplacement et les raccordements. Nous définissons les zones et des programmes adaptés au gazon et aux massifs, puis je vous montre comment les faire évoluer.</p></div>
           <div className={styles.installationDetail}><span>01 / ÉTUDE ET DIMENSIONNEMENT</span><span>02 / INSTALLATION ET CARTOGRAPHIE</span><span>03 / RÉGLAGES ET PRISE EN MAIN</span><IrrigationQuoteButton className={styles.quoteButton}>Étudier mon arrosage</IrrigationQuoteButton></div>
         </div>
         <div className={styles.conditions}><p>*Données constructeur. La couverture réelle dépend notamment de la pression, du débit, de l’implantation et des obstacles. Le système nécessite une arrivée d’eau et une alimentation électrique adaptée en extérieur. La notice prévoit notamment au moins 2 bar et 25 L/min, vérifiés avant le devis. Le Wi-Fi 2,4 GHz permet le pilotage à distance. Les économies d’eau dépendent des réglages et des conditions du jardin.</p><a href="https://aiper.com/fr/aiper-irrisense2" target="_blank" rel="noopener noreferrer">Caractéristiques Aiper ↗</a></div>

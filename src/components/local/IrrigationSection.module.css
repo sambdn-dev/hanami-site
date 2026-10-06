@@ -1,4 +1,4 @@
-.section { --irrigation-ink: #173f49; --irrigation-muted: #4c6870; --irrigation-accent: #a34c35; padding: 96px 0 44px; background: #eaf2f2; color: var(--irrigation-ink); scroll-margin-top: 110px; position: relative; overflow: clip; }
+.section { --irrigation-ink: #173f49; --irrigation-muted: #4c6870; --irrigation-accent: #225967; padding: 96px 0 44px; background: #eaf2f2; color: var(--irrigation-ink); scroll-margin-top: 110px; position: relative; overflow: clip; }
 .container { width: min(100% - 48px,1240px); margin-inline: auto; }
 .hero { display: grid; grid-template-columns: 1fr 1fr; gap: 65px; align-items: center; }
 .copy { padding: 20px 0; min-width: 0; }
@@ -8,8 +8,8 @@
 .intro { max-width: 490px; font-size: 15px; line-height: 1.9; color: var(--irrigation-muted); }
 .tags { display: flex; flex-wrap: wrap; gap: 7px; margin: 25px 0 30px; }
 .tags span { border: 1px solid #173f492a; padding: 7px 9px; font-size: 10px; color: #42626b; }
-.quoteButton { display: inline-flex; justify-content: space-between; align-items: center; gap: 25px; min-height: 54px; padding: 17px 23px; background: var(--irrigation-accent); color: #fff9f3; font-size: 13px; font-weight: 700; line-height: 1.5; transition: background .2s; }
-.quoteButton:hover { background: #873e2b; }
+.quoteButton { display: inline-flex; justify-content: space-between; align-items: center; gap: 25px; min-height: 54px; padding: 17px 23px; border: 1px solid var(--irrigation-accent); background: var(--irrigation-accent); color: #f5fbf8; font-size: 13px; font-weight: 700; line-height: 1.5; transition: background .2s,border-color .2s; }
+.quoteButton:hover { background: #194753; border-color: #194753; }
 .quoteButton svg { flex-shrink: 0; }
 .quoteButton:focus-visible { outline: 2px solid #173f49; outline-offset: 5px; }
 .quoteNote { margin-top: 14px; font-size: 10px; line-height: 1.7; color: #526d74; }
@@ -44,7 +44,9 @@
 .installation p:not(.eyebrow) { margin-top: 20px; max-width: 480px; color: #ccdddd; font-size: 13px; line-height: 1.9; }
 .installationDetail { display: grid; gap: 0; }
 .installationDetail > span { padding: 17px 0; border-bottom: 1px solid #d0e3e32b; color: #d0e3e3; font-size: 9px; letter-spacing: .08em; line-height: 1.6; }
-.installationDetail .quoteButton { margin-top: 24px; }
+.installationDetail .quoteButton { margin-top: 24px; background: #bfd9d4; border-color: #d4e9e2; color: var(--irrigation-ink); }
+.installationDetail .quoteButton:hover { background: #d3e6df; border-color: #d4e9e2; }
+.installationDetail .quoteButton:focus-visible { outline-color: #cbe4dd; }
 .conditions { display: flex; align-items: start; justify-content: space-between; gap: 35px; margin-top: 25px; color: #526d74; }
 .conditions p { max-width: 920px; font-size: 10px; line-height: 1.85; }
 .conditions a { flex-shrink: 0; padding: 4px 0; font-size: 10px; line-height: 1.7; border-bottom: 1px solid #526d7470; }
