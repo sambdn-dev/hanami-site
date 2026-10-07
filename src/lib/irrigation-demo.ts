@@ -6,9 +6,7 @@ export const IRRIGATION_MAX_RADIUS = 286;
 export const IRRIGATION_MAX_METRES = 13;
 
 export const IRRIGATION_ZONES = [
-  { id: 'zone-01', label: 'Zone 01', kind: 'lawn', path: 'M290 123 C354 110 404 102 468 126 L451 250 C405 261 350 255 286 255 L286 202 Q279 169 290 123Z', marker: { x: 367, y: 185 } },
-  { id: 'zone-02', label: 'Zone 02', kind: 'lawn', path: 'M468 126 C514 110 560 145 612 189 L606 294 C555 278 491 270 451 250Z', marker: { x: 540, y: 212 } },
-  { id: 'zone-03', label: 'Zone 03', kind: 'lawn', path: 'M286 255 C346 255 405 261 451 250 C491 270 555 278 606 294 L599 389 C549 421 438 414 368 399 C303 386 248 400 192 388 L194 326 C248 329 277 296 286 255Z', marker: { x: 455, y: 337 } },
+  { id: 'pelouse', label: 'Pelouse', kind: 'lawn', path: 'M290 123 C354 110 404 102 468 126 C514 110 560 145 612 189 L606 294 L599 389 C549 421 438 414 368 399 C303 386 248 400 192 388 L194 326 C248 329 277 296 286 255 L286 202 Q279 169 290 123Z', marker: { x: 515, y: 345 } },
   { id: 'massifs', label: 'Massifs', kind: 'bed', path: 'M292 73 C388 62 438 77 485 70 C550 59 608 88 651 130 L643 173 C575 146 564 109 502 111 C412 95 360 109 292 108Z', marker: { x: 510, y: 91 } },
 ] as const;
 
@@ -32,19 +30,15 @@ function quadratic(a: IrrigationPoint, b: IrrigationPoint, c: IrrigationPoint): 
   });
 }
 
-// Dense samples of the exact four SVG paths above, including curved borders.
+// Dense samples of the lawn perimeter and the separate flower bed.
 // This educational plan has no scale and is not a device-performance simulator.
 const polygons: readonly IrrigationPoint[][] = [
-  [p(290, 123), ...cubic(p(290, 123), p(354, 110), p(404, 102), p(468, 126)), p(451, 250),
-    ...cubic(p(451, 250), p(405, 261), p(350, 255), p(286, 255)), p(286, 202),
-    ...quadratic(p(286, 202), p(279, 169), p(290, 123))],
-  [p(468, 126), ...cubic(p(468, 126), p(514, 110), p(560, 145), p(612, 189)), p(606, 294),
-    ...cubic(p(606, 294), p(555, 278), p(491, 270), p(451, 250))],
-  [p(286, 255), ...cubic(p(286, 255), p(346, 255), p(405, 261), p(451, 250)),
-    ...cubic(p(451, 250), p(491, 270), p(555, 278), p(606, 294)), p(599, 389),
+  [p(290, 123), ...cubic(p(290, 123), p(354, 110), p(404, 102), p(468, 126)),
+    ...cubic(p(468, 126), p(514, 110), p(560, 145), p(612, 189)), p(606, 294), p(599, 389),
     ...cubic(p(599, 389), p(549, 421), p(438, 414), p(368, 399)),
     ...cubic(p(368, 399), p(303, 386), p(248, 400), p(192, 388)), p(194, 326),
-    ...cubic(p(194, 326), p(248, 329), p(277, 296), p(286, 255))],
+    ...cubic(p(194, 326), p(248, 329), p(277, 296), p(286, 255)), p(286, 202),
+    ...quadratic(p(286, 202), p(279, 169), p(290, 123))],
   [p(292, 73), ...cubic(p(292, 73), p(388, 62), p(438, 77), p(485, 70)),
     ...cubic(p(485, 70), p(550, 59), p(608, 88), p(651, 130)), p(643, 173),
     ...cubic(p(643, 173), p(575, 146), p(564, 109), p(502, 111)),

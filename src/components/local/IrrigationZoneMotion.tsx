@@ -1,19 +1,20 @@
 'use client'
 
-import { useEffect, useId, useRef, useState, useSyncExternalStore } from 'react'
+import { useEffect, useId, useMemo, useRef, useState, useSyncExternalStore } from 'react'
 import { Check, Droplets, Map, Pause, Play, RotateCcw, SlidersHorizontal } from 'lucide-react'
-import { IRRIGATION_SOURCE, IRRIGATION_ZONES, IRRIGATION_MAX_RADIUS, IRRIGATION_MAX_METRES, getZoneSweepLimits, sampleZoneSweep } from '@/lib/irrigation-demo'
+import { IRRIGATION_SOURCE, IRRIGATION_ZONES, sampleZoneSweep } from '@/lib/irrigation-demo'
 import styles from './IrrigationZoneMotion.module.css'
+import IrrigationJet from './IrrigationJet'
 
 const steps = [
   { label: 'Délimiter', title: 'Votre jardin a ses contours.', description: 'Pelouse et massifs peuvent avoir leurs zones dédiées. On préserve la maison, la terrasse et l’allée, puis on adapte le tracé au jardin.', icon: Map },
   { label: 'Programmer', title: 'Chaque zone a ses besoins.', description: 'Pelouse ou massifs : les apports se règlent selon les végétaux, l’exposition et le sol. Les paramètres sont définis lors de l’installation.', icon: SlidersHorizontal },
-  { label: 'Arroser', title: 'Un jet qui suit les contours.', description: 'L’arroseur pivote entre son point de départ et sa butée. La portée évolue pour viser le contour de la zone sélectionnée.', icon: Droplets },
+  { label: 'Arroser', title: 'Un jet qui suit les contours.', description: 'Le jet tourne lentement autour de l’arroseur. Sa portée augmente ou se réduit pour suivre le contour de la pelouse ; dans les massifs, il reste dans le secteur dédié.', icon: Droplets },
 ]
 
 const zonePaths = IRRIGATION_ZONES.map(zone => zone.path)
 
-const lawnPath = 'M290 123 C354 110 404 102 468 126 C514 110 560 145 612 189 L606 294 L599 389 C549 421 438 414 368 399 C303 386 248 400 192 388 L194 326 C248 329 277 296 286 255 L286 202 Q279 169 290 123Z'
+const lawnPath = IRRIGATION_ZONES[0].path
 
 function subscribeToMotion(callback: () => void) {
   const media = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -35,116 +36,11 @@ function Shrub({ x, y, size = 1, pale = false }: { x: number; y: number; size?: 
   </g>
 }
 
-function AnimatedJet({ id, zone, running }: { id: string; zone: number; running: boolean }) {
-  const jet = useRef<SVGGElement>(null)
-  const glow = useRef<SVGPathElement>(null)
-  const stream = useRef<SVGPathElement>(null)
-  const landing = useRef<SVGCircleElement>(null)
-  const splash = useRef<SVGEllipseElement>(null)
-  const nozzle = useRef<SVGGElement>(null)
-  const drops = useRef<(SVGEllipseElement | null)[]>([])
-  const ripples = useRef<(SVGEllipseElement | null)[]>([])
-  const distanceLabel = useRef<SVGTextElement>(null)
-  const distanceBar = useRef<SVGRectElement>(null)
-  const phase = useRef(0)
-  const frame = sampleZoneSweep(zone, 0)
-  const limits = getZoneSweepLimits(zone)
-
-  useEffect(() => {
-    let animation = 0
-    let lastTime: number | null = null
-    const sweepProgress = (value: number) => value < .45 ? value / .45 : value < .5 ? 1 : value < .95 ? 1 - (value - .5) / .45 : 0
-    const draw = () => {
-      const next = sampleZoneSweep(zone, sweepProgress(phase.current))
-      const dx = next.target.x - IRRIGATION_SOURCE.x
-      const dy = next.target.y - IRRIGATION_SOURCE.y
-      const controlX = IRRIGATION_SOURCE.x + dx * .5
-      const controlY = IRRIGATION_SOURCE.y + dy * .5 - Math.min(55, next.distance * .3)
-      const path = `M${IRRIGATION_SOURCE.x} ${IRRIGATION_SOURCE.y} Q${controlX} ${controlY} ${next.target.x} ${next.target.y}`
-      glow.current?.setAttribute('d', path)
-      stream.current?.setAttribute('d', path)
-      landing.current?.setAttribute('cx', String(next.target.x))
-      landing.current?.setAttribute('cy', String(next.target.y))
-      splash.current?.setAttribute('cx', String(next.target.x))
-      splash.current?.setAttribute('cy', String(next.target.y))
-      splash.current?.setAttribute('transform', `rotate(${next.angle} ${next.target.x} ${next.target.y})`)
-      nozzle.current?.setAttribute('transform', `translate(${IRRIGATION_SOURCE.x} ${IRRIGATION_SOURCE.y}) rotate(${next.angle})`)
-      jet.current?.setAttribute('opacity', next.visible ? '1' : '0')
-      jet.current?.setAttribute('data-angle', next.angle.toFixed(2))
-      jet.current?.setAttribute('data-distance', next.distance.toFixed(2))
-      jet.current?.setAttribute('data-target-x', next.target.x.toFixed(2))
-      jet.current?.setAttribute('data-target-y', next.target.y.toFixed(2))
-      const metres = next.distance / IRRIGATION_MAX_RADIUS * IRRIGATION_MAX_METRES
-      if (distanceLabel.current) distanceLabel.current.textContent = `Portée illustrée : ${metres.toFixed(1).replace('.', ',')} m · maximum 13 m`
-      distanceBar.current?.setAttribute('width', String(next.distance / IRRIGATION_MAX_RADIUS * 180))
-      // Water keeps its direction at emission while the nozzle continues turning.
-      drops.current.forEach((drop, index) => {
-        if (!drop) return
-        const flight = (phase.current * 10 / 1.1 + index / 22) % 1
-        const emission = (phase.current - flight * .11 + 1) % 1
-        const aim = sampleZoneSweep(zone, sweepProgress(emission))
-        const x = IRRIGATION_SOURCE.x + (aim.target.x - IRRIGATION_SOURCE.x) * flight
-        const y = IRRIGATION_SOURCE.y + (aim.target.y - IRRIGATION_SOURCE.y) * flight - Math.sin(flight * Math.PI) * Math.min(28, aim.distance * .15)
-        drop.setAttribute('cx', String(x))
-        drop.setAttribute('cy', String(y))
-        drop.setAttribute('ry', String(2 + flight * 1.5))
-        drop.setAttribute('opacity', aim.visible ? String(Math.min(1, flight * 8, (1 - flight) * 10)) : '0')
-      })
-      ripples.current.forEach((ripple, index) => {
-        if (!ripple) return
-        const age = (phase.current * 10 / .8 + index / 6) % 1
-        const aim = sampleZoneSweep(zone, sweepProgress((phase.current - .11 - age * .08 + 1) % 1))
-        ripple.setAttribute('cx', String(aim.target.x))
-        ripple.setAttribute('cy', String(aim.target.y))
-        ripple.setAttribute('rx', String(2 + age * 12))
-        ripple.setAttribute('ry', String(1 + age * 5))
-        ripple.setAttribute('opacity', aim.visible ? String((1 - age) * .8) : '0')
-      })
-    }
-    draw()
-    if (!running) return
-    const tick = (time: number) => {
-      if (lastTime !== null) phase.current = (phase.current + Math.min(time - lastTime, 64) / 10000) % 1
-      lastTime = time
-      draw()
-      animation = requestAnimationFrame(tick)
-    }
-    animation = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(animation)
-  }, [zone, running])
-
-  return <g pointerEvents="none" aria-hidden="true">
-    <g className={styles.sweepLimits}>
-      {[{ point: limits.startTarget, label: 'DÉPART' }, { point: limits.endTarget, label: 'BUTÉE' }].map(({ point, label }, index) => <g key={label}>
-        <path d={`M${IRRIGATION_SOURCE.x} ${IRRIGATION_SOURCE.y} L${point.x} ${point.y}`} />
-        <circle cx={point.x} cy={point.y} r="4" />
-        <text x={point.x + (index === 0 ? 8 : -8)} y={point.y - 9} textAnchor={index === 0 ? 'start' : 'end'}>{label}</text>
-      </g>)}
-    </g>
-    <g ref={jet} data-irrigation-jet="true" data-zone={IRRIGATION_ZONES[zone].id}>
-      <path ref={glow} className={styles.jetGlow} d={`M${IRRIGATION_SOURCE.x} ${IRRIGATION_SOURCE.y} L${frame.target.x} ${frame.target.y}`} />
-      <path ref={stream} className={styles.jetStream} d={`M${IRRIGATION_SOURCE.x} ${IRRIGATION_SOURCE.y} L${frame.target.x} ${frame.target.y}`} />
-      <g clipPath={`url(#${id}-zone-${zone})`}>
-        <ellipse ref={splash} cx={frame.target.x} cy={frame.target.y} rx="13" ry="6" className={styles.jetSplash} />
-        {Array.from({ length: 6 }, (_, index) => <ellipse key={index} ref={node => { ripples.current[index] = node }} className={styles.groundRipple} />)}
-        <circle ref={landing} cx={frame.target.x} cy={frame.target.y} r="3.2" className={styles.jetLanding} />
-      </g>
-    </g>
-    <g data-irrigation-drops="true">{Array.from({ length: 22 }, (_, index) => <ellipse key={index} ref={node => { drops.current[index] = node }} rx="1.8" ry="3" className={styles.airDrop} />)}</g>
-    <g ref={nozzle} transform={`translate(${IRRIGATION_SOURCE.x} ${IRRIGATION_SOURCE.y}) rotate(${frame.angle})`}><path d="M10 0H20" stroke="#eefdfb" strokeWidth="3" strokeLinecap="round" /></g>
-    <g className={styles.rangeReadout}>
-      <text ref={distanceLabel} x="360" y="493" textAnchor="middle">Portée illustrée · maximum 13 m</text>
-      <rect x="270" y="505" width="180" height="3" rx="1.5" fill="#c3d8d4" />
-      <rect ref={distanceBar} x="270" y="505" width="0" height="3" rx="1.5" fill="#327c89" />
-    </g>
-  </g>
-}
-
-function GardenPlan({ id, step, zone, running, replay, onChooseZone }: { id: string; step: number; zone: number; running: boolean; replay: number; onChooseZone: (zone: number) => void }) {
+function GardenPlan({ id, step, zone, running, replay, onChooseZone, readout }: { id: string; step: number; zone: number; running: boolean; replay: number; onChooseZone: (zone: number) => void; readout: Parameters<typeof IrrigationJet>[0]['readout'] }) {
   return (
-    <svg className={styles.plan} viewBox="0 0 720 525" role="group" aria-labelledby={`${id}-title`} aria-describedby={`${id}-description`}>
+    <svg className={styles.plan} viewBox="0 0 720 480" role="group" aria-labelledby={`${id}-title`} aria-describedby={`${id}-description`}>
       <title id={`${id}-title`}>{`Plan fictif de jardin : ${steps[step].label.toLowerCase()} les zones d’arrosage`}</title>
-      <desc id={`${id}-description`}>Plan interactif : trois zones de pelouse et une zone de massifs. Cliquez sur une zone ou utilisez Entrée ou Espace pour voir le jet pivoter, changer de portée et revenir à sa butée. L’arroseur est placé au milieu de la pelouse.</desc>
+      <desc id={`${id}-description`}>Plan interactif : une seule zone de pelouse et une zone de massifs. Cliquez sur une zone ou utilisez Entrée ou Espace pour voir le jet pivoter, changer de portée au fil du contour. L’arroseur est placé au milieu de la pelouse.</desc>
       <defs>
         <pattern id={`${id}-grid`} width="26" height="26" patternUnits="userSpaceOnUse"><path d="M26 0H0V26" fill="none" stroke="#477980" strokeOpacity=".07" strokeWidth=".6" /></pattern>
         <pattern id={`${id}-grass`} width="32" height="29" patternUnits="userSpaceOnUse"><path d="M5 10l2 -4 3 4 M24 24l2 -4 3 3" fill="none" stroke="#34684b" strokeWidth=".8" strokeOpacity=".19" /></pattern>
@@ -167,7 +63,7 @@ function GardenPlan({ id, step, zone, running, replay, onChooseZone }: { id: str
 
         <path d={lawnPath} fill="#bfd0ac" />
         <path d={lawnPath} fill={`url(#${id}-grass)`} />
-        {zonePaths.map((path, index) => <path key={`fill-${index}`} d={path} className={`${styles.zoneFill} ${zone === index ? styles.activeZone : ''} ${index === 3 ? styles.bedFill : ''}`} fill={index === 3 ? '#bdac7f' : index === 0 ? '#b9cdad' : index === 1 ? '#aec6aa' : '#c0d0ae'} />)}
+        {zonePaths.map((path, index) => <path key={`fill-${index}`} d={path} className={`${styles.zoneFill} ${zone === index ? styles.activeZone : ''} ${IRRIGATION_ZONES[index].kind === 'bed' ? styles.bedFill : ''}`} fill={IRRIGATION_ZONES[index].kind === 'bed' ? '#bdac7f' : '#b9cdad'} />)}
         <path d={lawnPath} fill={`url(#${id}-grass)`} />
 
         <g filter={`url(#${id}-shadow)`}>
@@ -201,7 +97,7 @@ function GardenPlan({ id, step, zone, running, replay, onChooseZone }: { id: str
 
         {step === 2 && <>
           <g clipPath={`url(#${id}-zone-${zone})`} pointerEvents="none"><path d={zonePaths[zone]} fill="#acd8db" fillOpacity=".2" className={styles.waterWash} /></g>
-          <AnimatedJet key={`${zone}-${replay}`} id={id} zone={zone} running={running} />
+          <IrrigationJet key={`${zone}-${replay}`} id={id} zone={zone} running={running} readout={readout} />
         </>}
 
         <path d="M274 237 C322 242 365 280 413 260 Q433 270 430 270" stroke="#628583" strokeWidth="3" fill="none" strokeLinecap="round" pointerEvents="none" />
@@ -224,8 +120,8 @@ function GardenPlan({ id, step, zone, running, replay, onChooseZone }: { id: str
               <circle r="28" fill="transparent" />
               {item.kind === 'bed'
                 ? <rect x="-34" y="-14" width="68" height="28" rx="14" fill={zone === index ? '#6b784f' : '#f5f8ed'} stroke="#6b784f" />
-                : <circle r="16" fill={zone === index ? '#285f69' : '#f5f8ed'} stroke={zone === index ? '#e7f0e4' : '#597e70'} strokeWidth="1" />}
-              <text textAnchor="middle" dominantBaseline="central" fill={zone === index ? '#f0f9f3' : '#456559'} fontSize={item.kind === 'bed' ? '9' : '11'} fontFamily="monospace">{item.kind === 'bed' ? 'MASSIFS' : `0${index + 1}`}</text>
+                : <rect x="-36" y="-14" width="72" height="28" rx="14" fill={zone === index ? '#285f69' : '#f5f8ed'} stroke={zone === index ? '#e7f0e4' : '#597e70'} />}
+              <text textAnchor="middle" dominantBaseline="central" fill={zone === index ? '#f0f9f3' : '#456559'} fontSize="9" fontFamily="monospace">{item.kind === 'bed' ? 'MASSIFS' : 'PELOUSE'}</text>
             </g>
           </g>)}
         </g>
@@ -246,13 +142,16 @@ function GardenPlan({ id, step, zone, running, replay, onChooseZone }: { id: str
 }
 
 export default function IrrigationZoneMotion() {
-  const [step, setStep] = useState(0)
+  const [step, setStep] = useState(2)
   const [zone, setZone] = useState(0)
   const [paused, setPaused] = useState(false)
   const [visible, setVisible] = useState(false)
   const [replay, setReplay] = useState(0)
-  const [autoAdvance, setAutoAdvance] = useState(true)
+  const [autoAdvance, setAutoAdvance] = useState(false)
   const container = useRef<HTMLDivElement>(null)
+  const rangeValue = useRef<HTMLOutputElement>(null)
+  const rangeBar = useRef<HTMLSpanElement>(null)
+  const readout = useMemo(() => ({ value: rangeValue, bar: rangeBar }), [])
   const buttons = useRef<(HTMLButtonElement | null)[]>([])
   const id = useId().replace(/:/g, '')
   const reducedMotion = useSyncExternalStore(subscribeToMotion, motionSnapshot, () => false)
@@ -295,7 +194,11 @@ export default function IrrigationZoneMotion() {
       </div>
 
       <figure className={styles.figure}>
-        <div className={styles.planEntry}><GardenPlan id={`${id}-plan`} step={step} zone={zone} replay={replay} running={running} onChooseZone={chooseZone} /></div>
+        <div className={styles.planEntry}><GardenPlan id={`${id}-plan`} step={step} zone={zone} replay={replay} running={running} onChooseZone={chooseZone} readout={readout} /></div>
+        <div className={styles.liveRange}>
+          <div><span className={styles.rangeEyebrow}>Portée du jet en direct</span><strong><output ref={rangeValue} aria-label="Portée illustrée en mètres" aria-live="off">{(sampleZoneSweep(zone, 4 / 36).distance / 22).toFixed(1).replace('.', ',')}</output><span>m</span></strong></div>
+          <div className={styles.rangeScale}><span>La distance suit le contour</span><div className={styles.rangeTrack}><span ref={rangeBar} /></div><small>0 m <span>13 m max.*</span></small></div>
+        </div>
         <div className={styles.legend}>
           <span><i className={styles.lawnSwatch} />Pelouse à arroser</span>
           <span><i className={styles.bedSwatch} />Massifs</span>
@@ -309,7 +212,7 @@ export default function IrrigationZoneMotion() {
         {IRRIGATION_ZONES.map((item, index) => <button key={item.id} type="button" aria-pressed={zone === index} className={zone === index ? styles.selectedZone : ''} onClick={() => chooseZone(index)}>{zone === index && <Check size={11} aria-hidden="true" />}{item.label}</button>)}
       </div>
 
-      <div className={styles.zoneDetail} role="status" aria-live="polite"><strong>{IRRIGATION_ZONES[zone].kind === 'bed' ? 'Massifs · un programme dédié aux végétaux' : `${IRRIGATION_ZONES[zone].label} · une portée adaptée au contour`}</strong><span>Départ défini · portée variable, jusqu’à 13 m* · retour à la butée</span></div>
+      <div className={styles.zoneDetail} role="status" aria-live="polite"><strong>{IRRIGATION_ZONES[zone].kind === 'bed' ? 'Massifs · un programme dédié aux végétaux' : `${IRRIGATION_ZONES[zone].label} · une portée adaptée au contour`}</strong><span>{IRRIGATION_ZONES[zone].kind === 'lawn' ? 'Une pelouse, un seul contour · rotation lente à 360°' : 'Un arrosage dédié · départ et butée limités au massif'}</span></div>
 
       <div className={styles.steps} role="tablist" aria-label="Les étapes d’un arrosage ciblé">
         {steps.map((item, index) => <button key={item.label} ref={node => { buttons.current[index] = node }} type="button" role="tab" tabIndex={index === step ? 0 : -1} id={`${id}-step-${index}`} aria-controls={`${id}-explanation`} aria-selected={index === step} className={index === step ? styles.activeStep : ''} onClick={() => chooseStep(index)} onKeyDown={event => {

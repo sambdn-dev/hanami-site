@@ -60,10 +60,10 @@ function borderDistance(point: IrrigationPoint, polygon: IrrigationPoint[]): num
 
 const polygons = IRRIGATION_ZONES.map(zone => flattenSvg(zone.path))
 
-test('the sprinkler is inside the lawn with four independently selectable zones', () => {
-  assert.equal(polygons.slice(0, 3).some(polygon => inside(IRRIGATION_SOURCE, polygon)), true)
-  assert.equal(IRRIGATION_ZONES.length, 4)
-  assert.deepEqual(IRRIGATION_ZONES.map(zone => zone.kind), ['lawn', 'lawn', 'lawn', 'bed'])
+test('the sprinkler is inside the lawn with one undivided lawn and a separate flower bed', () => {
+  assert.equal(inside(IRRIGATION_SOURCE, polygons[0]), true)
+  assert.equal(IRRIGATION_ZONES.length, 2)
+  assert.deepEqual(IRRIGATION_ZONES.map(zone => zone.kind), ['lawn', 'bed'])
   IRRIGATION_ZONES.forEach((zone, index) => assert.equal(inside(zone.marker, polygons[index]), true, zone.id))
 })
 
@@ -129,7 +129,7 @@ test('range follows the curved zone boundary and remains consistent with source 
 
 test('invalid zones stay invisible and progress is safely bounded', () => {
   assert.equal(sampleZoneSweep(-1, .5).visible, false)
-  assert.equal(sampleZoneSweep(4, .5).visible, false)
+  assert.equal(sampleZoneSweep(2, .5).visible, false)
   assert.deepEqual(sampleZoneSweep(0, -1), sampleZoneSweep(0, 0))
   assert.deepEqual(sampleZoneSweep(0, 2), sampleZoneSweep(0, 1))
   assert.deepEqual(sampleZoneSweep(0, NaN), sampleZoneSweep(0, 0))
