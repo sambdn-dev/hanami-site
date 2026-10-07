@@ -16,22 +16,33 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useSyncExternalStore } from 'react'
 import { Monitor, Smartphone } from 'lucide-react'
 import { useFadeIn } from '@/hooks/useFadeIn'
 import { SHOP_ENABLED } from '@/lib/site-features'
 import AppScreen from './AppScreen'
+import styles from './Coaching.module.css'
 
 type Device = 'web' | 'mobile'
 
+function subscribeToViewport(callback: () => void) {
+  const media = window.matchMedia('(max-width: 767px)')
+  media.addEventListener('change', callback)
+  return () => media.removeEventListener('change', callback)
+}
+
+function mobileViewport() {
+  return window.matchMedia('(max-width: 767px)').matches
+}
+
 export default function EspaceClientPreview() {
   const headRef = useFadeIn()
-  // Défaut Web partout ; le bouton Mobile reste disponible (les captures
-  // desktop restent lisibles : sur petit écran on les remplace via le toggle).
-  const [device, setDevice] = useState<Device>('web')
+  const [device, setDevice] = useState<Device | null>(null)
+  const isMobile = useSyncExternalStore(subscribeToViewport, mobileViewport, () => false)
+  const displayDevice = device ?? (isMobile ? 'mobile' : 'web')
 
   return (
-    <section id="suivi-a-distance" className="scroll-mt-28 py-20 lg:py-28 bg-stone-50">
+    <section id="suivi-a-distance" className={styles.clientPreview}>
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
 
         {/* En-tête + toggle Web / Mobile */}
@@ -52,17 +63,17 @@ export default function EspaceClientPreview() {
               tablist : pas de panneaux tabpanel associés ni de navigation
               flèches, le pattern "toggle button" est le bon ici */}
           <div
-            className="inline-flex shrink-0 p-1 bg-stone-100 border border-stone-200 rounded-full"
+            className={styles.devicePicker}
             role="group"
             aria-label="Format d'affichage de l'espace client"
           >
-            <ToggleBtn active={device === 'web'} onClick={() => setDevice('web')} icon={<Monitor className="w-4 h-4" />} label="Web" />
-            <ToggleBtn active={device === 'mobile'} onClick={() => setDevice('mobile')} icon={<Smartphone className="w-4 h-4" />} label="Mobile" />
+            <ToggleBtn active={displayDevice === 'web'} onClick={() => setDevice('web')} icon={<Monitor className="w-4 h-4" />} label="Web" />
+            <ToggleBtn active={displayDevice === 'mobile'} onClick={() => setDevice('mobile')} icon={<Smartphone className="w-4 h-4" />} label="Mobile" />
           </div>
         </div>
 
         {/* ── Affichage WEB (cadres navigateur, layout asymétrique) ── */}
-        {device === 'web' && (
+        {displayDevice === 'web' && (
           <div>
             {/* Tableau de bord */}
             <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.7fr] gap-10 lg:gap-14 items-center mb-20 lg:mb-28">
@@ -177,7 +188,7 @@ export default function EspaceClientPreview() {
         )}
 
         {/* ── Affichage MOBILE (cadres téléphone) ── */}
-        {device === 'mobile' && (
+        {displayDevice === 'mobile' && (
           <div className={`grid grid-cols-1 sm:grid-cols-2 ${SHOP_ENABLED ? 'lg:grid-cols-3' : ''} gap-12 lg:gap-x-10 max-w-4xl mx-auto`}>
             <PhoneBlock
               src="/landing/screens/dashboard-mobile.webp"
@@ -219,7 +230,7 @@ export default function EspaceClientPreview() {
 
         {/* Note honnête : aperçu de l'interface en cours de finalisation */}
         <p className="font-[family-name:var(--font-space-mono)] text-[11px] text-stone-400 mt-16 text-center">
-          Aperçu de l&apos;espace client inclus dans votre coaching.
+          Présentation illustrative de l’espace client · Interface en cours de finalisation.
         </p>
       </div>
     </section>
@@ -234,9 +245,7 @@ function ToggleBtn({ active, onClick, icon, label }: {
       type="button"
       aria-pressed={active}
       onClick={onClick}
-      className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${
-        active ? 'bg-white text-hanami-900 shadow-sm' : 'text-stone-500 hover:text-stone-700'
-      }`}
+      className={styles.deviceButton}
     >
       {icon}
       {label}

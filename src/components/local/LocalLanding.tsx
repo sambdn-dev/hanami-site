@@ -19,6 +19,11 @@ export function LocalHero() {
           <p className={styles.eyebrow}><MapPin size={14} aria-hidden="true" /> Le Vésinet & alentours · Particuliers</p>
           <h1 id="local-hero-title" className={styles.heroTitle}>Votre gazon,<br /><em>entre de<br className={styles.desktopBreak} /> bonnes mains.</em></h1>
           <p className={styles.heroDescription}><strong className={styles.heroPromise}>Un problème sur votre gazon&nbsp;? J’ai la solution.</strong>Une pelouse à rénover ou à entretenir&nbsp;? J’interviens chez vous, avec une méthode précise et un programme pensé pour votre jardin.</p>
+          <ul className={styles.heroExpertise} aria-label="La précision Hanami">
+            <li><Ruler size={16} aria-hidden="true" /><span>Surface mesurée au <strong>0,1 m²</strong></span></li>
+            <li><Target size={16} aria-hidden="true" /><span>Produits professionnels, <strong>dosés au gramme</strong></span></li>
+            <li><CloudSun size={16} aria-hidden="true" /><span>Programme adapté aux <strong>saisons et à la météo</strong></span></li>
+          </ul>
           <div className={styles.heroActions}>
             <a href="#contact" className={styles.button}>Parlons de votre jardin <ArrowUpRight size={19} aria-hidden="true" /></a>
             <a href="#offres" className={styles.textLink}>Voir les interventions <ArrowDown size={17} aria-hidden="true" /></a>

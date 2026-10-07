@@ -28,6 +28,7 @@ import CoachingContent from '@/components/coaching/CoachingContent'
 import EspaceClientPreview from '@/components/coaching/EspaceClientPreview'
 import Testimonials from '@/components/home/Testimonials'
 import FAQ from '@/components/home/FAQ'
+import styles from '@/components/coaching/Coaching.module.css'
 
 export const metadata: Metadata = {
   title: 'Coaching gazon annuel — 29 €/mois, protocole daté et suivi expert',
@@ -70,29 +71,24 @@ export default function CoachingPage() {
       <SeasonalBanner />
       <Navbar variant="light" localOffers />
 
-      <main className="flex-1">
+      <main className={styles.page}>
         {/* 1-4. Hero, prix, inclus, comment ça marche */}
         <CoachingContent />
 
         {/* 5. Aperçu de l'espace client — rend le coaching tangible */}
         <EspaceClientPreview />
 
-        {/* 6. Témoignages — tous clients coaching renouvelés */}
-        <Testimonials />
-
-        {/* 6. FAQ — questions propres au fonctionnement du coaching,
-            synchrones avec le JSON-LD FAQPage injecté plus haut */}
-        <FAQ items={COACHING_FAQS} />
-
-        {/* 7. Réassurance puis formulaire (fin du tunnel) — source "coaching"
-            pour distinguer les leads essai coaching dans l'email Resend */}
-        <GuaranteeBlock />
-        <ContactForm
-          variant="particulier"
-          source="coaching"
-          title="Commencez votre mois d'essai offert"
-          subtitle="Réponse sous 24h."
-        />
+        <div className={styles.support}>
+          <Testimonials />
+          <FAQ items={COACHING_FAQS} />
+          <GuaranteeBlock />
+          <ContactForm
+            variant="particulier"
+            source="coaching"
+            title="Commencez votre mois d'essai offert"
+            subtitle="Réponse sous 24h."
+          />
+        </div>
       </main>
 
       <Footer localOffers />
