@@ -36,7 +36,8 @@
 .tools .description { color: #c0ceb7; }
 .accessoryPhotos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 19px; }
 .accessoryPhotos figure { overflow: hidden; margin: 0; padding: 8px 8px 12px; background: #eef0e5; color: #45613d; }
-.accessoryPhotos img { width: 100%; height: 112px; object-fit: contain; }
+.accessoryHead { position: relative; height: 132px; overflow: hidden; }
+.accessoryHead img { position: absolute; width: 300%; max-width: none; height: auto; left: -61%; bottom: -18%; }
 .accessoryPhotos figcaption { text-align: center; font-size: 10px; line-height: 1.5; }
 .illustrationNote { margin: 10px 0 0; color: #a8ba99; font-size: 10px; line-height: 1.5; }
 .toolNote { margin: 16px 0 0; padding-top: 15px; border-top: 1px solid #68846666; color: #a8ba99; font-size: 12px; line-height: 1.65; }

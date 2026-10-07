@@ -4,6 +4,11 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Conserver les accents de couleur des titres, avec une écriture droite. */
+:is(h1, h2, h3, h4, h5, h6), :is(h1, h2, h3, h4, h5, h6) * {
+  font-style: normal !important;
+}
+
 /* ─── Design tokens ─────────────────────────────────────────── */
 :root {
   /* Identité Hanami 2026-2027 : références maîtresses pour la refonte du site.

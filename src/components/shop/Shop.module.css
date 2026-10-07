@@ -1,5 +1,5 @@
-.shop { background:#f8f6ef;color:#153d2c;min-height:100vh;--shop-ink:#153d2c;--shop-line:#d5dcd0;--shop-accent:#a44e36; }
-.shop :where(a,button,input,select,textarea):focus-visible { outline:3px solid #a44e36;outline-offset:4px; }
+.shop { background:#f8f6ef;color:#153d2c;min-height:100vh;--shop-ink:#153d2c;--shop-line:#d5dcd0;--shop-accent:#225967; }
+.shop :where(a,button,input,select,textarea):focus-visible { outline:3px solid #225967;outline-offset:4px; }
 .draftBanner { background:#173d2b;color:#f8f6ef;text-align:center;padding:10px 20px;font-size:9px;letter-spacing:1.7px;font-weight:650; }
 .header { max-width:1340px;margin:auto;padding:25px 40px;display:flex;align-items:center;gap:30px;border-bottom:1px solid var(--shop-line); }
 .header nav { display:flex;align-items:center;justify-content:center;flex:1;gap:30px;font-size:13px; }
@@ -133,7 +133,7 @@
 .requestPanel fieldset { padding:0;margin:0;border:0; }
 .formGrid { display:grid;grid-template-columns:1fr 1fr;gap:17px 15px; }
 .formGrid label { font-size:11px;font-weight:600;display:block;min-width:0; }
-.formGrid label>span { color:#a44e36; }
+.formGrid label>span { color:#225967; }
 .fullField { grid-column:1/-1; }
 .formGrid input,.formGrid select,.formGrid textarea { width:100%;display:block;margin-top:8px;border:1px solid #bdc9b3;background:#fffdf6;font:400 12px var(--font-dm-sans),sans-serif;padding:13px 14px;min-height:47px;color:#153d2c;border-radius:2px; }
 .formGrid .fieldHint { display:block;font-size:10px;font-weight:400;line-height:1.8;color:#68765e;margin-top:7px; }

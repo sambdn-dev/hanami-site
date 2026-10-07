@@ -1,6 +1,9 @@
 export type IrrigationPoint = { x: number; y: number };
 
-export const IRRIGATION_SOURCE: IrrigationPoint = { x: 451, y: 250 };
+export const IRRIGATION_SOURCE: IrrigationPoint = { x: 430, y: 270 };
+// Visual reference only: the plan is illustrative, not a surveyed garden.
+export const IRRIGATION_MAX_RADIUS = 286;
+export const IRRIGATION_MAX_METRES = 13;
 
 export const IRRIGATION_ZONES = [
   { id: 'zone-01', label: 'Zone 01', kind: 'lawn', path: 'M290 123 C354 110 404 102 468 126 L451 250 C405 261 350 255 286 255 L286 202 Q279 169 290 123Z', marker: { x: 367, y: 185 } },
@@ -100,7 +103,7 @@ function hitAtAngle(polygon: readonly IrrigationPoint[], angle: number) {
     // units short of it along a grazing ray. Narrow tangents are not watered.
     const maximumInset = exit - entry - 3;
     for (let inset = 3; inset <= maximumInset; inset += .75) {
-      const distance = exit - inset;
+      const distance = Math.min(exit - inset, IRRIGATION_MAX_RADIUS);
       const target = pointOnRay(direction, distance);
       if (borderDistance(target, polygon) >= 2.8) return { angle, distance, target, visible: true };
     }
@@ -111,6 +114,9 @@ function hitAtAngle(polygon: readonly IrrigationPoint[], angle: number) {
 export type IrrigationSweepLimits = { startAngle: number; endAngle: number; startTarget: IrrigationPoint; endTarget: IrrigationPoint };
 
 function createLimits(polygon: readonly IrrigationPoint[]): IrrigationSweepLimits {
+  if (isInside(IRRIGATION_SOURCE, polygon)) {
+    return { startAngle: 0, endAngle: 360, startTarget: hitAtAngle(polygon, 0).target, endTarget: hitAtAngle(polygon, 360).target };
+  }
   const angles = polygon.filter(point => Math.hypot(point.x - IRRIGATION_SOURCE.x, point.y - IRRIGATION_SOURCE.y) > .01)
     .map(point => (Math.atan2(point.y - IRRIGATION_SOURCE.y, point.x - IRRIGATION_SOURCE.x) * 180 / Math.PI + 360) % 360)
     .sort((a, b) => a - b);

@@ -53,7 +53,7 @@
 .legend i { display: block; width: 12px; height: 8px; border-radius: 2px; }
 .lawnSwatch { background: #b4c9ac; border: 1px solid #508a87; }
 .bedSwatch { background: #d1c59f; border: 1px solid #7a8a5a; }
-.excludedSwatch { border: 1px dashed #be8775; background: #ede2d9; }
+.excludedSwatch { border: 1px dashed #7b989a; background: #e0e9e7; }
 .figure figcaption { margin: 10px 20px 0; text-align: center; color: #6c8587; font-size: 9px; line-height: 1.5; }
 .zonePicker { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px; padding: 18px 18px 23px; }
 .zonePicker > span { margin-right: 5px; color: #678186; font-size: 9px; }
@@ -125,3 +125,7 @@
   .zoneOutline { stroke-dashoffset: 0; }
   .activeStep .progress { transform: scaleX(1); }
 }
+
+.airDrop { fill: #effffc; stroke: #459bab; stroke-width: .7; }
+.groundRipple { fill: none; stroke: #edfefb; stroke-width: 1.5; }
+.rangeReadout { fill: #315d64; font: 11px var(--font-dm-sans), sans-serif; }

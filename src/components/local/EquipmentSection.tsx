@@ -54,8 +54,8 @@ export default function EquipmentSection() {
               <h3>Chaque détail compte.</h3>
               <p className={styles.description}>Bloc multi-outils, réciprocateur, coupe-bordure et dresse-bordure : des outils adaptés pour dessiner les contours et travailler au plus près du jardin.</p>
               <div className={styles.accessoryPhotos}>
-                <figure><Image src="/images/equipment/edger-main.webp" width={800} height={566} sizes="(max-width: 760px) 40vw, 16vw" alt="Illustration constructeur du dresse-bordure EGO EA0800" /><figcaption>Dresse-bordure</figcaption></figure>
-                <figure><Image src="/images/equipment/rotocut-main.webp" width={800} height={566} sizes="(max-width: 760px) 40vw, 16vw" alt="Illustration constructeur de l’accessoire de coupe EGO RTA2300" /><figcaption>Coupe de précision</figcaption></figure>
+                <figure><div className={styles.accessoryHead}><Image src="/images/equipment/edger-main.webp" width={800} height={566} sizes="(max-width: 760px) 90vw, 40vw" alt="Détail de la tête du dresse-bordure EGO EA0800, photographie constructeur" /></div><figcaption>Dresse-bordure</figcaption></figure>
+                <figure><div className={styles.accessoryHead}><Image src="/images/equipment/rotocut-main.webp" width={800} height={566} sizes="(max-width: 760px) 90vw, 40vw" alt="Détail de la tête de coupe EGO RTA2300, photographie constructeur" /></div><figcaption>Coupe de précision</figcaption></figure>
               </div>
               <p className={styles.illustrationNote}>Illustrations de la gamme EGO. Références des accessoires à confirmer.</p>
               <p className={styles.toolNote}>La pulvérisation complète le matériel pour les applications foliaires et les interventions agronomiques.</p>

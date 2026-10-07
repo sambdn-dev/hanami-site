@@ -60,8 +60,8 @@ function borderDistance(point: IrrigationPoint, polygon: IrrigationPoint[]): num
 
 const polygons = IRRIGATION_ZONES.map(zone => flattenSvg(zone.path))
 
-test('the demo keeps its real plan source and four independently selectable zones', () => {
-  assert.deepEqual(IRRIGATION_SOURCE, { x: 451, y: 250 })
+test('the sprinkler is inside the lawn with four independently selectable zones', () => {
+  assert.equal(polygons.slice(0, 3).some(polygon => inside(IRRIGATION_SOURCE, polygon)), true)
   assert.equal(IRRIGATION_ZONES.length, 4)
   assert.deepEqual(IRRIGATION_ZONES.map(zone => zone.kind), ['lawn', 'lawn', 'lawn', 'bed'])
   IRRIGATION_ZONES.forEach((zone, index) => assert.equal(inside(zone.marker, polygons[index]), true, zone.id))
@@ -93,11 +93,12 @@ test('no impact lands on the house, terrace or paved side path', () => {
   }
 })
 
-test('a sweep has two genuine limits, never a full rotation, with continuous increasing angles', () => {
+test('a sweep respects its limits, including a full rotation when the source is inside a zone', () => {
   for (let zone = 0; zone < IRRIGATION_ZONES.length; zone++) {
     const limits = getZoneSweepLimits(zone)
     assert.ok(limits.endAngle > limits.startAngle)
-    assert.ok(limits.endAngle - limits.startAngle < 180)
+    assert.ok(limits.endAngle - limits.startAngle <= 360)
+    if (!inside(IRRIGATION_SOURCE, polygons[zone])) assert.ok(limits.endAngle - limits.startAngle < 180)
     assert.deepEqual(sampleZoneSweep(zone, 0).target, limits.startTarget)
     assert.deepEqual(sampleZoneSweep(zone, 1).target, limits.endTarget)
     let previous = limits.startAngle
