@@ -56,7 +56,7 @@ export function LocalOffers() {
         <div className={styles.offerGrid}>
           <article className={styles.renovationCard}>
             <div className={styles.cardTop}><span>Rénovation express</span><Sprout size={25} strokeWidth={1.4} aria-hidden="true" /></div>
-            <h3>Changer le gazon.<br /><em>Préserver le sol.</em></h3>
+            <h3>Rénover le gazon.<br /><em>Préserver le sol.</em></h3>
             <p>On part de l’existant, sans retourner la terre, pour redonner sa place à un gazon dense et adapté à votre jardin.</p>
             <div className={styles.renovationFacts}><div><strong>200 m²</strong><span>surface simple de référence</span></div><div><strong>½ à 1 jour</strong><span>intervention indicative*</span></div></div>
             <Link href="/renovation-express" className={styles.lightButton}>Découvrir la rénovation express <ArrowUpRight size={18} aria-hidden="true" /></Link>
