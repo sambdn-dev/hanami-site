@@ -11,7 +11,7 @@ const photos = [
   { src: '/images/location/landzie-overseeder.webp', label: 'L’outil complet', alt: 'Photo officielle du Landzie Overseeding Tool complet' },
 ]
 function Loading() {
-  return <div className={styles.loading} role="status"><Box size={26} aria-hidden="true" /><span>Préparation des disques en 3D…</span></div>
+  return <div className={styles.loading} role="status"><Box size={26} aria-hidden="true" /><span>Préparation de la vue 3D…</span></div>
 }
 const Tool3D = dynamic(() => import('./LandzieTool3D'), { ssr: false, loading: Loading })
 
@@ -48,9 +48,9 @@ export default function OverseedingExplorer() {
         <div className={styles.thumbnails} role="group" aria-label="Choisir une photographie officielle">
           {photos.map((item, index) => <button key={item.src} type="button" aria-pressed={view === 'photo' && photo === index} onClick={() => { setPhoto(index); setView('photo') }}><span><Image src={item.src} alt="" fill sizes="64px" /></span><span>{item.label}</span></button>)}
         </div>
-        <button type="button" className={styles.viewButton} onClick={() => setView(view === '3d' ? 'photo' : '3d')} aria-pressed={view === '3d'} disabled={threeUnavailable}><Box size={16} aria-hidden="true" />{threeUnavailable ? 'Vue 3D indisponible' : view === '3d' ? 'Voir les photos' : 'Voir les disques en 3D'}</button>
+        <button type="button" className={styles.viewButton} onClick={() => setView(view === '3d' ? 'photo' : '3d')} aria-pressed={view === '3d'} disabled={threeUnavailable}><Box size={16} aria-hidden="true" />{threeUnavailable ? 'Vue 3D indisponible' : view === '3d' ? 'Voir les photos' : 'Voir l’outil en 3D'}</button>
       </div>
-      <p className={styles.visualNote} role={threeUnavailable ? 'status' : undefined}>{threeUnavailable ? 'Cet appareil ne permet pas la vue 3D. Les photographies officielles restent disponibles.' : view === 'photo' ? 'Photographies officielles Landzie · représentation du produit fabricant' : 'Détail illustratif du rouleau à disques · proportions indicatives'}</p>
+      <p className={styles.visualNote} role={threeUnavailable ? 'status' : undefined}>{threeUnavailable ? 'Cet appareil ne permet pas la vue 3D. Les photographies officielles restent disponibles.' : view === 'photo' ? 'Photographies officielles Landzie · représentation du produit fabricant' : 'Reconstitution 3D illustrative à partir des photos · proportions indicatives'}</p>
     </div>
     <div className={styles.annotations}>
       <p className={styles.eyebrow}>Les disques étoilés, au plus près</p>

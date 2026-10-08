@@ -46,7 +46,7 @@ export default function LandzieTool3D({ onUnavailable }: LandzieTool3DProps) {
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     const canvas = renderer.domElement;
     canvas.className = styles.canvas;
-    canvas.setAttribute("aria-label", "Vue 3D illustrative des disques étoilés du Landzie Overseeding Tool. Utilisez les flèches pour le faire tourner.");
+    canvas.setAttribute("aria-label", "Vue 3D illustrative du Landzie Overseeding Tool, cadrée sur les disques étoilés. Utilisez les flèches pour le faire tourner.");
     canvas.setAttribute("role", "img");
     canvas.tabIndex = 0;
     stage.appendChild(canvas);
@@ -78,7 +78,7 @@ export default function LandzieTool3D({ onUnavailable }: LandzieTool3DProps) {
     rimLight.position.set(4, 5, -4);
     scene.add(rimLight);
 
-    const model = createLandzieTool();
+    const model = createLandzieTool(() => schedule());
     scene.add(model.tool);
     const ground = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.ShadowMaterial({ opacity: .1 }));
     ground.rotation.x = -Math.PI / 2;
@@ -98,7 +98,7 @@ export default function LandzieTool3D({ onUnavailable }: LandzieTool3DProps) {
     let pitch = 0;
     let zoom = 1;
     let needsRender = true;
-    const cameraDirection = new THREE.Vector3(1.15, .42, 1.35).normalize();
+    const cameraDirection = new THREE.Vector3(.38, .24, .91).normalize();
 
     const render = (time: number) => {
       frame = 0;
@@ -110,9 +110,9 @@ export default function LandzieTool3D({ onUnavailable }: LandzieTool3DProps) {
       model.tool.rotation.y = yaw + (autoMotion ? Math.sin(rotationPhase) * .14 : 0);
       model.tool.rotation.x = pitch;
       const ratio = stage.clientWidth / Math.max(stage.clientHeight, 1);
-      const distance = 3.4 * zoom / Math.min(Math.max(ratio, .75), 1.4);
-      camera.position.copy(cameraDirection).multiplyScalar(distance).add(new THREE.Vector3(0, .36, 0));
-      camera.lookAt(0, .36, 0);
+      const distance = 8.5 * zoom / Math.max(ratio, .7);
+      camera.position.copy(cameraDirection).multiplyScalar(distance).add(new THREE.Vector3(.15, .6, 0));
+      camera.lookAt(.15, .6, 0);
       camera.updateMatrixWorld();
       model.tool.updateMatrixWorld();
       renderer.render(scene, camera);
@@ -223,6 +223,7 @@ export default function LandzieTool3D({ onUnavailable }: LandzieTool3DProps) {
     return () => {
       disposed = true;
       stop();
+      model.disposeBranding();
       actionsRef.current = null;
       resizeObserver.disconnect();
       intersection.disconnect();

@@ -19,7 +19,7 @@ La pièce jointe transmise dans la discussion montre un autre angle de la tête.
 
 ## Ce qui est illustratif
 
-La vue WebGL est une reconstruction visuelle réalisée à partir des photos, avec des proportions indicatives. Ce n’est pas un modèle CAD fabricant. Après la demande de simplification, elle présente uniquement un détail du rouleau à disques étoilés minces et de son axe vert foncé (`#003f20`). Le châssis et le manche sont supprimés du modèle, ainsi que leurs sélecteurs et annotations. La rotation et le zoom permettent d’examiner les pointes.
+La vue WebGL est une reconstruction visuelle réalisée à partir des photos, avec des proportions indicatives. Ce n’est pas un modèle CAD fabricant. Après la dernière correction du propriétaire, la géométrie complète de la première version est rétablie : rouleau à disques étoilés minces, cadre arrondi, visserie, manche et poignée. Le vert reste foncé (`#003f20`). Le cadrage initial vise les disques avec un rapprochement modéré (distance de référence 8,5 au lieu de 9). Les sélecteurs de châssis et de manche restent supprimés ; la 3D est affichée par défaut et conserve rotation et zoom.
 
 Le schéma animé montre la préparation de micro-poches, l’ajout des graines puis leur installation entre les zones de gazon sain. Les étapes sont accélérées et sans échelle ; la légende précise que la levée prend plusieurs jours et dépend des conditions.
 
@@ -45,6 +45,10 @@ Cette livraison prépare un aperçu de développement. Elle ne modifie pas `main
 
 ## Logo et simplification demandée
 
-Le vrai logo Landzie est affiché à partir de la photographie officielle locale, avec un cadrage CSS redressé sur la marque imprimée sur le produit. Aucun logo typographique inventé ni image générée n’est utilisé. La version autonome trouvée dans une notice (`https://manuals.plus/wp-content/uploads/2022/03/LANDZIE-logo.png`) n’a pas pu être téléchargée ; le fichier local reste la source fiable. Les disques restent métalliques, comme sur la photo ; seul leur axe est vert foncé. Le modèle illustre un tronçon du rouleau et non son nombre total de disques.
+Le vrai logo Landzie est affiché à partir de la photographie officielle locale, avec un cadrage CSS redressé sur la marque imprimée sur le produit. Aucun logo typographique inventé ni image générée n’est utilisé. La version autonome trouvée dans une notice (`https://manuals.plus/wp-content/uploads/2022/03/LANDZIE-logo.png`) n’a pas pu être téléchargée ; le fichier local reste la source fiable. Les disques restent métalliques, comme sur la photo ; le châssis, le manche et l’axe reprennent le vert foncé. Le rouleau complet de la géométrie initiale est rétabli. Le même logo photographié est également appliqué en texture transparente sur le cadre, avec son symbole et ses rayons : aucun remplacement par une police générique. Son chargement provoque un rafraîchissement unique même si la rotation est en pause ou le mouvement réduit activé.
 
 La validation de cette simplification est consignée dans `/workspace/hanami-review/landzie-discs/` : affichage 3D sans clic, logo et images chargés, contrôles clavier/tactiles, repli WebGL et absence de débordement à 1440, 390 et 320 px.
+
+## Rétablissement du modèle initial
+
+Le propriétaire préfère la fidélité de la première géométrie au tronçon isolé. La géométrie du commit `651ccde` est reprise, avec un zoom initial modéré sur la tête, la couleur foncée et le logo réel. La vue reste une reconstruction illustrative, pas un fichier CAD certifié. Validation et captures de cette correction : `/workspace/hanami-review/landzie-restored/`.
