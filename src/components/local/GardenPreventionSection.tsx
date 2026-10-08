@@ -1,5 +1,6 @@
 import { ArrowUpRight } from 'lucide-react'
 import styles from './GardenPreventionSection.module.css'
+import GardenPreventionVisual from './GardenPreventionVisual'
 
 const actions = [
   {
@@ -24,6 +25,7 @@ export default function GardenPreventionSection() {
         <h2 id="garden-prevention-title">Retrouver le plaisir<br /><em>d’être au jardin.</em></h2>
         <p className={styles.intro}>Les moustiques tigres se reposent dans des endroits ombragés, frais et humides. Un entretien régulier du jardin fait partie de la prévention, en associant la gestion de la végétation, de l’arrosage et des petites eaux stagnantes.</p>
       </div>
+      <GardenPreventionVisual />
       <div className={styles.actions}>{actions.map((action, index) => <article key={action.title}>
         <span className={styles.number}>0{index + 1}</span>
         <h3>{action.title}</h3>
