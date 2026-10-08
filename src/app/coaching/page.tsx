@@ -12,7 +12,7 @@
  * 4. Comment ça marche
  */
 
-import type { Metadata } from 'next'
+import { pageMetadata } from '@/lib/seo'
 
 import { localBusinessSchema, serviceSchemas, faqPageSchema } from '@/lib/structured-data'
 import { COACHING_FAQS } from '@/lib/coaching-faq-data'
@@ -30,16 +30,12 @@ import Testimonials from '@/components/home/Testimonials'
 import FAQ from '@/components/home/FAQ'
 import styles from '@/components/coaching/Coaching.module.css'
 
-export const metadata: Metadata = {
-  title: 'Coaching gazon annuel — 29 €/mois, protocole daté et suivi expert',
+export const metadata = pageMetadata({
+  title: 'Coaching gazon à distance — 29 €/mois | Hanami',
   description:
     'Un expert gazon dans votre poche toute l\'année : plan 3D, protocole 12 mois daté au jour près, produits professionnels, suivi illimité. 1er mois d\'essai offert.',
-  openGraph: {
-    title: 'Coaching gazon Hanami — 29 €/mois',
-    description:
-      'Plan 3D, protocole 12 mois daté, suivi illimité. Moins cher qu\'un sac d\'engrais en jardinerie. 1er mois d\'essai offert.',
-  },
-}
+  path: '/coaching',
+})
 
 export default function CoachingPage() {
   const coachingSchema = serviceSchemas().find(s =>

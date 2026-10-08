@@ -4,7 +4,7 @@
  * Server Component. Lit les articles au build depuis `content/blog/*.mdx`
  * via `getAllArticles()` (déjà triés par date décroissante).
  */
-import type { Metadata } from 'next'
+import { pageMetadata } from '@/lib/seo'
 import Link from 'next/link'
 
 import SeasonalBanner from '@/components/shared/SeasonalBanner'
@@ -15,16 +15,12 @@ import ArticleCard from '@/components/blog/ArticleCard'
 import { getAllArticles } from '@/lib/blog'
 
 // Titre sans la marque : le template '%s | Hanami' du layout l'ajoute déjà
-export const metadata: Metadata = {
-  title: 'Journal — Techniques et conseils agronomiques',
+export const metadata = pageMetadata({
+  title: 'Conseils gazon, entretien & arrosage | Journal Hanami',
   description:
-    'Techniques de saison, cas clients réels, mythes jardinerie démontés. Le journal agronomique de Hanami : du contenu utile, pas du remplissage.',
-  openGraph: {
-    title: 'Journal Hanami — Techniques agronomiques',
-    description:
-      'Techniques de saison, cas clients, mythes démontés. Le savoir-faire d\'un agronome pour votre gazon.',
-  },
-}
+    'Conseils Hanami pour entretenir votre pelouse : nutrition, regarnissage, préparation des saisons et arrosage automatique intelligent.',
+  path: '/blog',
+})
 
 export default function BlogIndexPage() {
   const articles = getAllArticles()

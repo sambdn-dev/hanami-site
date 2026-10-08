@@ -5,6 +5,7 @@ import CookieBanner from '@/components/shared/CookieBanner'
 import AnalyticsProvider from '@/components/shared/AnalyticsProvider'
 import ScrollReveal from '@/components/shared/ScrollReveal'
 import { organizationSchema } from '@/lib/structured-data'
+import { SITE_URL } from '@/lib/seo'
 import { cn } from "@/lib/utils";
 
 const fraunces = Fraunces({
@@ -28,13 +29,13 @@ const spaceMono = Space_Mono({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://hanami-gazon.fr'),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Hanami — Coach gazon dans votre poche',
+    default: 'Hanami — Expertise gazon, entretien et arrosage au Vésinet',
     template: '%s | Hanami',
   },
   description:
-    'Diagnostic personnalisé, protocole daté, produits professionnels. Des résultats visibles pour votre gazon — partout en France.',
+    'Entretien agronomique, rénovation du gazon et arrosage intelligent au Vésinet et alentours. Coaching gazon à distance partout en France.',
   // Canonical auto-référent par route : './' est résolu contre le pathname
   // de chaque page via metadataBase (voir "URL Composition" dans la doc
   // generate-metadata de Next) — chaque page pointe vers sa propre URL.
@@ -52,12 +53,11 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     type: 'website',
-    url: 'https://hanami-gazon.fr',
     locale: 'fr_FR',
     siteName: 'Hanami',
-    title: 'Hanami — Coach gazon dans votre poche',
+    title: 'Hanami — Expertise gazon',
     description:
-      'Diagnostic personnalisé, protocole daté, produits professionnels. Des résultats visibles pour votre gazon.',
+      'Entretien agronomique, rénovation, arrosage intelligent et coaching gazon.',
     // L'image est générée par src/app/opengraph-image.tsx (PNG 1200×630
     // à partir du logo maître raster). On la référence explicitement ici
     // pour documenter la structure — Next.js l'injecte automatiquement.
@@ -72,14 +72,12 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Hanami — Coach gazon dans votre poche',
-    description:
-      'Diagnostic personnalisé, protocole daté, produits professionnels.',
     images: ['/opengraph-image'],
   },
   robots: {
     index: true,
     follow: true,
+    googleBot: { index: true, follow: true, 'max-image-preview': 'large' },
   },
 }
 

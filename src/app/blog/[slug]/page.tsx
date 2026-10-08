@@ -31,6 +31,7 @@ import { getAllSlugs, getArticleBySlug, formatArticleDate } from '@/lib/blog'
 import { mdxComponents } from '@/components/blog/MdxComponents'
 import TableOfContents from '@/components/blog/TableOfContents'
 import ShareButton from '@/components/blog/ShareButton'
+import { SITE_URL } from '@/lib/seo'
 
 export function generateStaticParams() {
   return getAllSlugs().map(slug => ({ slug }))
@@ -47,7 +48,9 @@ export async function generateMetadata(
   return {
     title: article.title,
     description: article.excerpt,
+    alternates: { canonical: `/blog/${slug}` },
     openGraph: {
+      url: `/blog/${slug}`,
       title: article.title,
       description: article.excerpt,
       type: 'article',
@@ -75,7 +78,7 @@ export default async function ArticlePage(
   // pour `image` et `publisher.logo` (les chemins relatifs sont ignorés).
   // `speakable` pointe vers le bloc "L'essentiel" (#article-essentiel) :
   // c'est la réponse condensée que les moteurs IA extraient en priorité.
-  const BASE_URL = 'https://hanami-gazon.fr'
+  const BASE_URL = SITE_URL
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',

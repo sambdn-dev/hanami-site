@@ -13,8 +13,9 @@
 import { SERVICES } from '@/lib/chantier/services'
 import { PRICING_DISPLAY } from '@/lib/chantier/pricing'
 import type { FaqEntry } from '@/lib/faq-data'
+import { SITE_URL } from '@/lib/seo'
 
-const BASE_URL = 'https://hanami-gazon.fr'
+const BASE_URL = SITE_URL
 const PHONE = '+33 6 67 27 76 14'
 
 // Logo carré brins d'herbe (src/app/icon.svg, servi à /icon.svg).
@@ -68,7 +69,7 @@ export function localBusinessSchema() {
     '@context': 'https://schema.org',
     '@type': 'ProfessionalService',
     '@id': `${BASE_URL}/#localbusiness`,
-    name: 'Hanami — Coach gazon agronomique',
+    name: 'Hanami — Expertise et entretien du gazon',
     url: BASE_URL,
     image: LOGO_URL,
     telephone: PHONE,

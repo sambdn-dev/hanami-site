@@ -1,11 +1,12 @@
-import type { Metadata } from 'next'
+import { pageMetadata } from '@/lib/seo'
 import LocalSitePage from '@/components/local/LocalSitePage'
 
-export const metadata: Metadata = {
-  title: { absolute: 'Interventions locales — Nutrition & rénovation du gazon | Hanami' },
-  description: 'Au Vésinet et alentours : interventions agronomiques, nutrition de fond, suivi premium et rénovation express. Programmes sur forfait ou abonnement, adaptés à votre jardin.',
-  alternates: { canonical: '/interventions-locales' },
-  openGraph: { title: 'Hanami — Les interventions locales pour votre gazon', description: 'Je réalise les interventions. Vous profitez de votre jardin.' },
-}
+// This entry point serves the same LocalSitePage as /: consolidate indexing.
+export const metadata = pageMetadata({
+  title: 'Entretien gazon & arrosage automatique au Vésinet | Hanami',
+  description: 'Au Vésinet et alentours, Hanami entretient et rénove votre gazon : nutrition sur mesure, rénovation sans retourner le sol et installation d’arrosage intelligent.',
+  path: '/interventions-locales',
+  canonicalPath: '/',
+})
 
 export default function LocalInterventionsPage() { return <LocalSitePage /> }

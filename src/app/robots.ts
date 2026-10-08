@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
+import { SITE_URL } from '@/lib/seo'
 
-const BASE_URL = 'https://hanami-gazon.fr'
+const BASE_URL = SITE_URL
 
 /**
  * Crawlers des moteurs IA (GEO — Generative Engine Optimization).

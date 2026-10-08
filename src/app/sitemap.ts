@@ -1,7 +1,8 @@
 import type { MetadataRoute } from 'next'
 import { getAllArticles } from '@/lib/blog'
+import { SITE_URL } from '@/lib/seo'
 
-const BASE_URL = 'https://hanami-gazon.fr'
+const BASE_URL = SITE_URL
 
 /**
  * sitemap.ts — Sitemap XML généré à /sitemap.xml
@@ -20,7 +21,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // articles portent leur vraie date. /mentions-legales est volontairement
   // absente : la page est en noindex, la lister serait contradictoire.
   const staticRoutes: MetadataRoute.Sitemap = [
-    { url: `${BASE_URL}/interventions-locales`, changeFrequency: 'monthly', priority: 0.95 },
+    // /interventions-locales duplicates / and declares / as canonical.
     { url: `${BASE_URL}/renovation-express`, changeFrequency: 'monthly', priority: 0.9 },
     {
       url: `${BASE_URL}/`,
