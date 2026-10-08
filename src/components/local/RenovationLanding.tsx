@@ -2,6 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowUpRight, CalendarDays, Check, Droplets, Layers3, MapPin, Sprout, Timer, Worm } from 'lucide-react'
 import styles from './RenovationLanding.module.css'
+import OverseedingSection from './OverseedingSection'
 
 const soilReasons = [
   { icon: Layers3, number: '01', title: 'Préserver la structure', text: 'Le sol possède une organisation naturelle. Éviter de le retourner limite le bouleversement de ses horizons et permet de travailler à partir de ce qui est déjà en place.' },
@@ -47,9 +48,11 @@ export default function RenovationLanding() {
         <div className={`${styles.container} ${styles.timingNote}`}><CalendarDays size={20} aria-hidden="true" /><p><strong>Le bon calendrier fait partie de la méthode.</strong> La période d’intervention tient compte des températures, de l’humidité et de votre capacité à arroser pendant la levée.</p></div>
       </section>
 
+      <OverseedingSection />
+
       <section className={styles.irrigationSection} aria-labelledby="irrigation-title">
         <div className={`${styles.container} ${styles.irrigationGrid}`}>
-          <div><p className={styles.eyebrow}><Droplets size={15} aria-hidden="true" /> 03 / L’arrosage, bien pensé</p><h2 id="irrigation-title" className={styles.title}>L’eau où il faut.<br /><em>Quand il faut.</em></h2><p>Je peux installer un arrosage automatique adapté à votre jardin&nbsp;: enterré et discret, ou en surface, raccordé à un tuyau et une alimentation en eau.</p><ul><li><Check size={17} aria-hidden="true" /><span><strong>Enterré</strong> · Les équipements se font discrets hors arrosage.</span></li><li><Check size={17} aria-hidden="true" /><span><strong>En surface</strong> · Une solution à dimensionner selon votre terrain et votre arrivée d’eau.</span></li></ul><a href="#contact" className={styles.textLink}>Étudier mon arrosage <ArrowUpRight size={17} aria-hidden="true" /></a></div>
+          <div><p className={styles.eyebrow}><Droplets size={15} aria-hidden="true" /> 04 / L’arrosage, bien pensé</p><h2 id="irrigation-title" className={styles.title}>L’eau où il faut.<br /><em>Quand il faut.</em></h2><p>Je peux installer un arrosage automatique adapté à votre jardin&nbsp;: enterré et discret, ou en surface, raccordé à un tuyau et une alimentation en eau.</p><ul><li><Check size={17} aria-hidden="true" /><span><strong>Enterré</strong> · Les équipements se font discrets hors arrosage.</span></li><li><Check size={17} aria-hidden="true" /><span><strong>En surface</strong> · Une solution à dimensionner selon votre terrain et votre arrivée d’eau.</span></li></ul><a href="#contact" className={styles.textLink}>Étudier mon arrosage <ArrowUpRight size={17} aria-hidden="true" /></a></div>
           <div className={styles.coverageCard}><div className={styles.coverageHead}><span>Autre configuration · exemple de portée</span><Droplets size={18} aria-hidden="true" /></div><div className={styles.coverageDiagram} aria-hidden="true"><div className={styles.coverageCircle}><span className={styles.radiusLine} /><span className={styles.radiusLabel}>13 m de rayon</span><i /></div></div><div className={styles.coverageNumber}><strong>≈ 531 <span>m²</span></strong><p>surface théorique d’un cercle de 13 m de rayon</p></div><p className={styles.coverageNote}>π × 13² ≈ 531 m². La couverture utile dépend de la pression, du débit, du vent, des obstacles et du recouvrement nécessaire. Elle est vérifiée lors du dimensionnement.</p></div>
         </div>
       </section>
