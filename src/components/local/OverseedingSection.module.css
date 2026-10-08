@@ -11,11 +11,11 @@
 .explorer { display: grid; grid-template-columns: 1.45fr .85fr; gap: 48px; align-items: center; }
 .gallery { min-width: 0; border: 1px solid #15392822; background: #fff; }
 .galleryHeader { display: flex; justify-content: space-between; align-items: center; gap: 20px; min-height: 53px; padding: 16px 23px; border-bottom: 1px solid #15392818; color: #5d7852; font-size: 10px; }
+.brandLogo { position: relative; display: block; overflow: hidden; width: 150px; height: 46px; flex-shrink: 0; background: #00613f; }
+.brandPhoto { position: absolute; width: 910px; height: 910px; max-width: none; left: -447.6px; top: -394.45px; transform: rotate(15deg); transform-origin: 522.6px 424.45px; }
 .stage { position: relative; min-width: 0; }
 .photoSurface { position: relative; width: min(100%,520px); aspect-ratio: 1; margin-inline: auto; }
 .mainPhoto { object-fit: contain; }
-.pin { position: absolute; display: grid; place-items: center; min-width: 44px; min-height: 44px; border-radius: 50%; background: #f8f6eff2; border: 1px solid #5b7b53; box-shadow: 0 2px 10px #15392822; color: #315734; font-family: var(--font-space-mono),monospace; font-size: 10px; transform: translate(-50%,-50%); transition: background .2s,color .2s; }
-.activePin { background: #17412b; color: #f8f6ef; box-shadow: 0 0 0 5px #17412b16; }
 .galleryFooter { display: flex; justify-content: space-between; gap: 14px; align-items: center; flex-wrap: wrap; padding: 18px 20px; border-top: 1px solid #15392818; background: #fcfbf7; }
 .thumbnails { display: flex; gap: 10px; }
 .thumbnails > button { display: grid; gap: 7px; width: 96px; min-height: 82px; color: #56714c; font-size: 9px; text-align: center; padding: 4px; border: 1px solid #15392820; background: #fff; }
@@ -29,11 +29,6 @@
 .loading { display: flex; min-height: 460px; align-items: center; justify-content: center; gap: 13px; color: #5d7852; background: #f3f5ed; font-size: 12px; }
 .annotations { min-width: 0; padding-block: 22px; }
 .annotations > .eyebrow { margin-bottom: 23px; }
-.partButtons { display: grid; border-top: 1px solid #15392825; }
-.partButtons > button { display: grid; grid-template-columns: 28px 1fr 16px; align-items: center; gap: 14px; min-height: 69px; padding: 15px 16px; border-bottom: 1px solid #15392825; font-size: 12px; text-align: left; background: transparent; color: #325837; transition: background .2s; }
-.partButtons > button:hover { background: #e8edde; }
-.partButtons > button[aria-pressed=true] { background: #17412b; color: #f8f6ef; }
-.partNumber { font-family: var(--font-space-mono),monospace; font-size: 10px; opacity: .75; }
 .annotation { min-height: 229px; padding-top: 30px; }
 .annotation > span { display: block; color: #6e8860; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 15px; }
 .annotation h3 { font-family: var(--font-fraunces),serif; font-size: 32px; font-weight: 430; line-height: 1.13; letter-spacing: -.037em; max-width: 330px; }
@@ -106,7 +101,6 @@
   .loading { min-height: 360px; }
   .annotations { padding-block: 0; }
   .annotations > .eyebrow { margin-bottom: 17px; }
-  .partButtons > button { min-height: 61px; padding-inline: 13px; }
   .annotation { padding-top: 24px; min-height: 178px; }
   .annotation h3 { max-width: 100%; font-size: 29px; }
   .annotation p { margin-top: 15px; font-size: 12px; }

@@ -4,38 +4,26 @@ import { useEffect, useRef, useState } from "react";
 import { Minus, Pause, Play, Plus, RotateCcw } from "lucide-react";
 import * as THREE from "three";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
-import { createLandzieTool, type LandziePart } from "@/lib/landzie-tool-model";
+import { createLandzieTool } from "@/lib/landzie-tool-model";
 import styles from "./LandzieTool3D.module.css";
 
 export type LandzieTool3DProps = {
-  selectedPart?: LandziePart;
-  onSelectPart?: (part: LandziePart) => void;
   onUnavailable?: () => void;
 };
 
 type ViewerActions = {
   zoom: (direction: number) => void;
   reset: () => void;
-  select: (part: LandziePart) => void;
   pause: (paused: boolean) => void;
 };
 
-const PARTS: { part: LandziePart; number: string; label: string }[] = [
-  { part: "spikes", number: "01", label: "Les disques étoilés" },
-  { part: "frame", number: "02", label: "Le châssis arrondi" },
-  { part: "handle", number: "03", label: "Le manche et sa poignée" },
-];
-
-export default function LandzieTool3D({ selectedPart, onSelectPart, onUnavailable }: LandzieTool3DProps) {
+export default function LandzieTool3D({ onUnavailable }: LandzieTool3DProps) {
   const stageRef = useRef<HTMLDivElement>(null);
-  const hotspotRefs = useRef<Partial<Record<LandziePart, HTMLButtonElement>>>({});
   const actionsRef = useRef<ViewerActions | null>(null);
   const callbacksRef = useRef({ onUnavailable });
   const [unavailable, setUnavailable] = useState(false);
   const [paused, setPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
-  const [internalPart, setInternalPart] = useState<LandziePart>("spikes");
-  const activePart = selectedPart ?? internalPart;
 
   useEffect(() => { callbacksRef.current = { onUnavailable }; }, [onUnavailable]);
 
@@ -53,12 +41,12 @@ export default function LandzieTool3D({ selectedPart, onSelectPart, onUnavailabl
     renderer.setClearColor(0xf1f2e9, 0);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.17;
+    renderer.toneMappingExposure = .95;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     const canvas = renderer.domElement;
     canvas.className = styles.canvas;
-    canvas.setAttribute("aria-label", "Vue 3D illustrative du Landzie Overseeding Tool. Utilisez les flèches pour le faire tourner.");
+    canvas.setAttribute("aria-label", "Vue 3D illustrative des disques étoilés du Landzie Overseeding Tool. Utilisez les flèches pour le faire tourner.");
     canvas.setAttribute("role", "img");
     canvas.tabIndex = 0;
     stage.appendChild(canvas);
@@ -69,12 +57,12 @@ export default function LandzieTool3D({ selectedPart, onSelectPart, onUnavailabl
     const pmrem = new THREE.PMREMGenerator(renderer);
     const environmentTarget = pmrem.fromScene(environment, .045);
     scene.environment = environmentTarget.texture;
-    scene.environmentIntensity = .85;
+    scene.environmentIntensity = .65;
     environment.dispose();
     pmrem.dispose();
 
-    scene.add(new THREE.HemisphereLight("#fffaf0", "#8e9c84", 2.2));
-    const keyLight = new THREE.DirectionalLight("#ffffff", 3.7);
+    scene.add(new THREE.HemisphereLight("#fffaf0", "#8e9c84", 1.6));
+    const keyLight = new THREE.DirectionalLight("#ffffff", 2.7);
     keyLight.position.set(-3, 8, 5);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.set(1024, 1024);
@@ -109,14 +97,8 @@ export default function LandzieTool3D({ selectedPart, onSelectPart, onUnavailabl
     let yaw = -.18;
     let pitch = 0;
     let zoom = 1;
-    let focus: LandziePart = "spikes";
-    let targetY = .68;
-    let targetDistance = 9;
-    let desiredY = .68;
-    let desiredDistance = 9;
     let needsRender = true;
-    const projection = new THREE.Vector3();
-    const cameraDirection = new THREE.Vector3(.38, .24, .91).normalize();
+    const cameraDirection = new THREE.Vector3(1.15, .42, 1.35).normalize();
 
     const render = (time: number) => {
       frame = 0;
@@ -125,55 +107,26 @@ export default function LandzieTool3D({ selectedPart, onSelectPart, onUnavailabl
       previousTime = time;
       const autoMotion = !locallyPaused && !motionReduced && !dragging;
       if (autoMotion) rotationPhase += delta * .14;
-      const easing = motionReduced ? 1 : 1 - Math.exp(-delta * 7);
-      targetY = THREE.MathUtils.lerp(targetY, desiredY, easing || 1);
-      targetDistance = THREE.MathUtils.lerp(targetDistance, desiredDistance, easing || 1);
       model.tool.rotation.y = yaw + (autoMotion ? Math.sin(rotationPhase) * .14 : 0);
       model.tool.rotation.x = pitch;
       const ratio = stage.clientWidth / Math.max(stage.clientHeight, 1);
-      // Inspect the head at a consistent width; the whole-tool view instead fits its height.
-      const framingRatio = focus === "handle" ? Math.min(Math.max(ratio, .7), 1.05) : Math.max(ratio, .7);
-      const distance = targetDistance * zoom / framingRatio;
-      const targetX = focus === "handle" ? 0 : .35;
-      camera.position.copy(cameraDirection).multiplyScalar(distance).add(new THREE.Vector3(targetX, targetY, 0));
-      camera.lookAt(targetX, targetY, 0);
+      const distance = 3.4 * zoom / Math.min(Math.max(ratio, .75), 1.4);
+      camera.position.copy(cameraDirection).multiplyScalar(distance).add(new THREE.Vector3(0, .36, 0));
+      camera.lookAt(0, .36, 0);
       camera.updateMatrixWorld();
       model.tool.updateMatrixWorld();
       renderer.render(scene, camera);
-      PARTS.forEach(({ part }) => {
-        const button = hotspotRefs.current[part];
-        if (!button) return;
-        projection.copy(model.anchors[part]);
-        model.tool.localToWorld(projection);
-        projection.project(camera);
-        const x = (projection.x + 1) / 2 * stage.clientWidth;
-        const y = (1 - projection.y) / 2 * stage.clientHeight;
-        const visible = projection.z < 1 && x > 24 && x < stage.clientWidth - 24 && y > 40 && y < stage.clientHeight - 24;
-        button.style.visibility = visible ? "visible" : "hidden";
-        button.style.left = `${x}px`;
-        button.style.top = `${y}px`;
-      });
       needsRender = false;
-      const settling = Math.abs(targetY - desiredY) > .001 || Math.abs(targetDistance - desiredDistance) > .001;
-      if (autoMotion || settling) frame = requestAnimationFrame(render);
+      if (autoMotion) frame = requestAnimationFrame(render);
     };
     const schedule = () => {
       needsRender = true;
       if (!frame && inView && !document.hidden && !disposed) frame = requestAnimationFrame(render);
     };
     const stop = () => { cancelAnimationFrame(frame); frame = 0; previousTime = 0; };
-    const select = (part: LandziePart) => {
-      focus = part;
-      desiredY = part === "handle" ? 5.15 : part === "frame" ? .8 : .68;
-      desiredDistance = part === "handle" ? 19 : part === "frame" ? 9.2 : 9;
-      zoom = 1;
-      model.highlight(part);
-      schedule();
-    };
     actionsRef.current = {
       zoom: direction => { zoom = THREE.MathUtils.clamp(zoom + direction * .13, .64, 1.55); schedule(); },
-      reset: () => { yaw = -.18; pitch = 0; rotationPhase = 0; select(focus); },
-      select,
+      reset: () => { yaw = -.18; pitch = 0; rotationPhase = 0; zoom = 1; schedule(); },
       pause: value => {
         // Preserve the current angle when switching from auto rotation to a still view.
         if (value && !locallyPaused && !motionReduced) yaw += Math.sin(rotationPhase) * .14;
@@ -306,7 +259,6 @@ export default function LandzieTool3D({ selectedPart, onSelectPart, onUnavailabl
     };
   }, []);
 
-  useEffect(() => { actionsRef.current?.select(activePart); }, [activePart]);
   useEffect(() => { actionsRef.current?.pause(paused); }, [paused]);
 
   if (unavailable) return <div className={styles.viewer}><p className={styles.fallback} role="status">La vue 3D n’est pas disponible sur cet appareil. Les photographies de l’outil restent visibles dans cette section.</p></div>;
@@ -314,16 +266,13 @@ export default function LandzieTool3D({ selectedPart, onSelectPart, onUnavailabl
   return (
     <div className={styles.viewer}>
       <div className={styles.stage} ref={stageRef}>
-        <span className={styles.badge}>Landzie · vue illustrative</span>
-        {PARTS.map(({ part, number, label }) => (
-          <button key={part} type="button" className={styles.hotspot} style={{ visibility: "hidden" }} ref={element => { if (element) hotspotRefs.current[part] = element; else delete hotspotRefs.current[part]; }} aria-label={`Explorer : ${label}`} aria-pressed={activePart === part} onClick={() => { setInternalPart(part); onSelectPart?.(part); }}><span>{number}</span></button>
-        ))}
+        <span className={styles.badge}>Détail des disques · vue illustrative</span>
       </div>
       <div className={styles.controls}>
         <p className={styles.hint}>Glissez pour tourner.<br />Ou utilisez les flèches du clavier.</p>
         <div className={styles.buttons} role="group" aria-label="Contrôles de la vue 3D">
-          <button type="button" aria-label="Rapprocher l’outil" onClick={() => actionsRef.current?.zoom(-1)}><Plus size={16} aria-hidden="true" /></button>
-          <button type="button" aria-label="Éloigner l’outil" onClick={() => actionsRef.current?.zoom(1)}><Minus size={16} aria-hidden="true" /></button>
+          <button type="button" aria-label="Rapprocher les disques" onClick={() => actionsRef.current?.zoom(-1)}><Plus size={16} aria-hidden="true" /></button>
+          <button type="button" aria-label="Éloigner les disques" onClick={() => actionsRef.current?.zoom(1)}><Minus size={16} aria-hidden="true" /></button>
           <button type="button" aria-label="Réinitialiser la vue" onClick={() => actionsRef.current?.reset()}><RotateCcw size={15} aria-hidden="true" /></button>
           <button type="button" aria-label={paused ? "Reprendre la rotation douce" : "Mettre la rotation en pause"} aria-pressed={paused} disabled={reducedMotion} onClick={() => setPaused(value => !value)}>{paused || reducedMotion ? <Play size={15} aria-hidden="true" /> : <Pause size={15} aria-hidden="true" />}</button>
         </div>

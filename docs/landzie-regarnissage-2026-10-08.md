@@ -19,7 +19,7 @@ La pièce jointe transmise dans la discussion montre un autre angle de la tête.
 
 ## Ce qui est illustratif
 
-La vue WebGL est une reconstruction visuelle réalisée à partir des photos, avec des proportions indicatives. Ce n’est pas un modèle CAD fabricant. Elle présente les disques étoilés minces, le cadre vert arrondi, la visserie, le manche et la poignée. Les annotations, la rotation, le zoom et la sélection du manche permettent d’explorer les pièces.
+La vue WebGL est une reconstruction visuelle réalisée à partir des photos, avec des proportions indicatives. Ce n’est pas un modèle CAD fabricant. Après la demande de simplification, elle présente uniquement un détail du rouleau à disques étoilés minces et de son axe vert foncé (`#003f20`). Le châssis et le manche sont supprimés du modèle, ainsi que leurs sélecteurs et annotations. La rotation et le zoom permettent d’examiner les pointes.
 
 Le schéma animé montre la préparation de micro-poches, l’ajout des graines puis leur installation entre les zones de gazon sain. Les étapes sont accélérées et sans échelle ; la légende précise que la levée prend plusieurs jours et dépend des conditions.
 
@@ -34,11 +34,17 @@ Pour documenter les essais, il reste à consigner le nombre de zones, le lot et 
 - Build Next.js de production : compilation, TypeScript et génération des 47 pages réussis.
 - ESLint ciblé sur les composants et le modèle.
 - Rendu navigateur à 1440, 768, 390 et 320 px : pas de débordement horizontal, images chargées, titres sans italique et commandes tactiles d’au moins 44 px.
-- Choix des deux photos, trois annotations, trois étapes du semis, lecture automatique, pause, reprise et respect du mouvement réduit vérifiés.
-- Vue 3D chargée seulement à la demande, rotation manuelle et clavier, zoom, réinitialisation et cadrage du manche vérifiés. Le rendu s’arrête hors écran et la scène libère ses ressources à la fermeture.
-- Repli vers les photographies prévu lorsque WebGL est indisponible ; les photographies restent l’affichage initial.
+- Choix des deux photos, suppression des sélecteurs de pièces, trois étapes du semis, lecture automatique, pause, reprise et respect du mouvement réduit vérifiés.
+- Vue 3D affichée par défaut dès que la section approche de l’écran, rotation manuelle et clavier, zoom et réinitialisation vérifiés. Le rendu s’arrête hors écran et la scène libère ses ressources à la fermeture.
+- Repli vers les photographies prévu lorsque WebGL est indisponible ; les photographies restent accessibles sous la vue 3D et deviennent le repli automatique si WebGL est indisponible.
 - Le bouton de contact rejoint le formulaire existant, sans soumission d’essai ni message externe.
 
 Les captures et les relevés détaillés se trouvent dans `/workspace/hanami-review/landzie-animation/` et `/workspace/hanami-review/overseeding/model/`.
 
 Cette livraison prépare un aperçu de développement. Elle ne modifie pas `main`, Hanami Pro, Hanami Studio, l’état désactivé de la boutique ou les connexions de l’espace client.
+
+## Logo et simplification demandée
+
+Le vrai logo Landzie est affiché à partir de la photographie officielle locale, avec un cadrage CSS redressé sur la marque imprimée sur le produit. Aucun logo typographique inventé ni image générée n’est utilisé. La version autonome trouvée dans une notice (`https://manuals.plus/wp-content/uploads/2022/03/LANDZIE-logo.png`) n’a pas pu être téléchargée ; le fichier local reste la source fiable. Les disques restent métalliques, comme sur la photo ; seul leur axe est vert foncé. Le modèle illustre un tronçon du rouleau et non son nombre total de disques.
+
+La validation de cette simplification est consignée dans `/workspace/hanami-review/landzie-discs/` : affichage 3D sans clic, logo et images chargés, contrôles clavier/tactiles, repli WebGL et absence de débordement à 1440, 390 et 320 px.
