@@ -17,7 +17,7 @@ export default function OverseedingSection() {
         <div className={styles.methodCopy}>
           <p className={styles.eyebrow}><Crosshair size={15} aria-hidden="true" /> Cibler, plutôt que tout reprendre</p>
           <h3>Regarnir les zones faibles.<br /><span>Préserver le gazon sain.</span></h3>
-          <p>Les pointes rotatives ouvrent la croûte superficielle et créent des micro-poches. J’y apporte ensuite le <strong>mélange Hanami spécial regarnissage</strong>, choisi pour le terrain, la saison et l’usage du jardin.</p>
+          <p>Les pointes rotatives ouvrent la croûte superficielle et créent des micro-poches. J’y apporte ensuite un <strong>mélange Hanami adapté</strong> au terrain, à la saison et à l’usage du jardin.</p>
           <p>Ce travail localisé favorise le contact entre la graine et la terre. Il évite un ratissage agressif de toute la pelouse : les zones en bonne santé sont conservées. Une scarification reste possible si l’état du gazon la justifie.</p>
           <a className={styles.cta} href="#contact">Étudier les zones à regarnir <ArrowUpRight size={17} aria-hidden="true" /></a>
         </div>
