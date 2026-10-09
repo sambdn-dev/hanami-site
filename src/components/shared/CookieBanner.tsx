@@ -1,7 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState, useSyncExternalStore } from 'react'
 import { Cookie } from 'lucide-react'
+import {
+  ANALYTICS_CONSENT_EVENT,
+  COOKIE_PREFS_STORAGE_KEY,
+  subscribeAnalyticsConsent,
+} from '@/lib/analytics'
 
 interface CookiePrefs {
   functional: true
@@ -11,22 +16,30 @@ interface CookiePrefs {
 
 type BannerState = 'hidden' | 'banner' | 'preferences'
 
-const STORAGE_KEY = 'hanami-cookies-prefs'
+function hasStoredPreferences(): boolean {
+  try {
+    return window.localStorage.getItem(COOKIE_PREFS_STORAGE_KEY) !== null
+  } catch {
+    return false
+  }
+}
+
+// Le choix enregistré n'est accessible qu'après l'hydratation du navigateur.
+const getServerPreferences = () => true
 
 export default function CookieBanner() {
-  const [state, setState] = useState<BannerState>('hidden')
+  const [state, setState] = useState<BannerState>('banner')
   const [analytics, setAnalytics] = useState(true)
   const [marketing, setMarketing] = useState(false)
-
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY)
-    if (!stored) {
-      setState('banner')
-    }
-  }, [])
+  const hasPreferences = useSyncExternalStore(
+    subscribeAnalyticsConsent,
+    hasStoredPreferences,
+    getServerPreferences,
+  )
 
   const save = (prefs: CookiePrefs) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs))
+    localStorage.setItem(COOKIE_PREFS_STORAGE_KEY, JSON.stringify(prefs))
+    window.dispatchEvent(new Event(ANALYTICS_CONSENT_EVENT))
     setState('hidden')
   }
 
@@ -34,7 +47,7 @@ export default function CookieBanner() {
   const declineAll = () => save({ functional: true, analytics: false, marketing: false })
   const savePrefs = () => save({ functional: true, analytics, marketing })
 
-  if (state === 'hidden') return null
+  if (hasPreferences || state === 'hidden') return null
 
   return (
     <>

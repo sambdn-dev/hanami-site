@@ -23,13 +23,28 @@ export type HanamiEvent =
 
 type EventProps = Record<string, string | number | boolean | null | undefined>
 
-const STORAGE_KEY = 'hanami-cookies-prefs'
+export const COOKIE_PREFS_STORAGE_KEY = 'hanami-cookies-prefs'
+export const ANALYTICS_CONSENT_EVENT = 'hanami:analytics-consent-change'
+
+/** Observe les préférences, dans cet onglet comme dans les autres. */
+export function subscribeAnalyticsConsent(onChange: () => void): () => void {
+  const onStorage = (event: StorageEvent) => {
+    if (event.key === COOKIE_PREFS_STORAGE_KEY || event.key === null) onChange()
+  }
+
+  window.addEventListener(ANALYTICS_CONSENT_EVENT, onChange)
+  window.addEventListener('storage', onStorage)
+  return () => {
+    window.removeEventListener(ANALYTICS_CONSENT_EVENT, onChange)
+    window.removeEventListener('storage', onStorage)
+  }
+}
 
 /** Lit le consentement analytics posé par CookieBanner. Défaut : false. */
 export function hasAnalyticsConsent(): boolean {
   if (typeof window === 'undefined') return false
   try {
-    const stored = localStorage.getItem(STORAGE_KEY)
+    const stored = localStorage.getItem(COOKIE_PREFS_STORAGE_KEY)
     if (!stored) return false
     const prefs: unknown = JSON.parse(stored)
     return (
