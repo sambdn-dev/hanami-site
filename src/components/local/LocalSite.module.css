@@ -5,7 +5,7 @@
 .skip:focus { transform: none; }
 .eyebrow { color: #628059; font-size: 10px; line-height: 1.6; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; }
 .proof { padding: 96px 0; background: #e9eee2; }
-.proof > .container { display: grid; grid-template-columns: .8fr 1.2fr; align-items: center; gap: 70px; }
+.proofStory { display: grid; grid-template-columns: .8fr 1.2fr; align-items: center; gap: 70px; }
 .proof h2,.faq h2,.directContact h2 { margin: 20px 0; font-family: var(--font-fraunces),serif; font-size: clamp(35px,4.1vw,57px); line-height: 1.09; letter-spacing: -.04em; font-weight: 430; }
 .proof h2 em,.faq h2 em,.directContact h2 em { color: #708b64; font-weight: 350; }
 .proofCopy > p:not(.eyebrow) { max-width: 370px; color: #526757; font-size: 15px; line-height: 1.8; }
@@ -15,6 +15,27 @@
 .proofCopy > a { display: inline-flex; gap: 15px; align-items: center; min-height: 44px; border-bottom: 1px solid currentColor; font-size: 13px; font-weight: 700; }
 .proofImage { min-width: 0; }
 .proofImage figcaption { margin-top: 14px; color: #536a58; font-size: 10px; line-height: 1.7; }
+.showcases { scroll-margin-top: 120px; margin-top: 70px; padding-top: 52px; border-top: 1px solid #15392826; }
+.showcaseHeading { display: grid; grid-template-columns: 1fr 1fr; align-items: end; gap: 40px; margin-bottom: 30px; }
+.showcaseHeading h3 { margin-top: 15px; font-family: var(--font-fraunces),serif; font-size: clamp(32px,3.6vw,46px); font-weight: 430; line-height: 1.12; letter-spacing: -.04em; }
+.showcaseHeading > p { max-width: 430px; color: #526757; font-size: 14px; line-height: 1.8; }
+.showcaseGrid { display: grid; grid-template-columns: repeat(auto-fit,minmax(min(100%,280px),1fr)); gap: 18px; }
+.showcaseSingle { grid-template-columns: minmax(0,1fr); }
+.showcaseSingle .showcaseCard { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); column-gap: 35px; }
+.showcaseSingle .showcaseCardTop { grid-column: 1 / -1; }
+.showcaseSingle .showcaseKind,.showcaseSingle h4 { grid-column: 1; }
+.showcaseSingle address { grid-column: 2; grid-row: 2 / 4; margin-block: 0; }
+.showcaseSingle a { grid-column: 1 / -1; margin-top: 24px; }
+.showcaseCard { display: flex; flex-direction: column; min-width: 0; padding: 25px; border: 1px solid #15392826; background: #f8f6ef; }
+.showcaseCardTop { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 24px; color: #51754e; }
+.showcaseCardTop span { font-size: 10px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
+.showcaseKind { margin-bottom: 9px; color: #657562; font-size: 11px; line-height: 1.5; }
+.showcaseCard h4 { font-family: var(--font-fraunces),serif; font-size: 23px; line-height: 1.25; font-weight: 430; letter-spacing: -.025em; }
+.showcaseCard address { margin-block: 18px 25px; color: #526757; font-size: 14px; line-height: 1.8; font-style: normal; overflow-wrap: anywhere; }
+.showcaseCard a { display: inline-flex; justify-content: space-between; align-items: center; gap: 15px; min-height: 44px; margin-top: auto; padding-block: 10px; border-top: 1px solid #15392826; font-size: 12px; font-weight: 700; }
+.showcaseCard a:hover { color: #51754e; }
+.showcaseStreetNote { display: flex; align-items: start; gap: 10px; margin-top: 20px; color: #526757; font-size: 11px; line-height: 1.7; }
+.showcaseStreetNote svg { flex-shrink: 0; margin-top: 1px; }
 .faq { padding: 90px 0; }
 .questions { max-width: 880px; margin-top: 38px; }
 .questions details { border-top: 1px solid #15392829; }
@@ -36,5 +57,6 @@
 .contactWrap :global(#contact h2) { color: var(--brand-forest); font-size: clamp(30px,3.5vw,45px); letter-spacing: -.04em; }
 .contactWrap :global(#contact input),.contactWrap :global(#contact textarea),.contactWrap :global(#contact select) { border-radius: 2px; background: #f8f6ef; border-color: #15392830; }
 .contactWrap :global(#contact button[type="submit"]) { background: var(--brand-forest); border-radius: 2px; }
-@media (max-width: 767px) { .container { width: calc(100% - 40px); } .proof,.faq { padding: 65px 0; } .proof > .container { grid-template-columns: 1fr; gap: 35px; } .directContact { display: grid; gap: 20px; padding-top: 60px; } .directContact > div:last-child { width: 100%; } .questions summary { font-size: 14px; } }
+@media (max-width: 767px) { .container { width: calc(100% - 40px); } .proof,.faq { padding: 65px 0; } .proofStory { grid-template-columns: 1fr; gap: 35px; } .showcases { margin-top: 42px; padding-top: 35px; } .showcaseHeading { grid-template-columns: 1fr; gap: 18px; margin-bottom: 24px; } .showcaseGrid { grid-template-columns: 1fr; gap: 12px; } .showcaseCard { padding: 21px; } .showcaseCardTop { margin-bottom: 18px; } .showcaseCard address { margin-block: 14px 17px; } .directContact { display: grid; gap: 20px; padding-top: 60px; } .directContact > div:last-child { width: 100%; } .questions summary { font-size: 14px; } }
 @media (prefers-reduced-motion: reduce) { .questions summary > span { transition: none; } }
+@media (max-width: 767px) { .showcaseSingle .showcaseCard { display: flex; } .showcaseSingle address { margin-block: 14px 17px; } .showcaseSingle a { margin-top: auto; } }

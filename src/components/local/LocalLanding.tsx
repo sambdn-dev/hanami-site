@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { ArrowDown, ArrowUpRight, CalendarDays, Check, CloudSun, Droplets, Leaf, MapPin, Ruler, ShoppingBag, Sprout, Target } from 'lucide-react'
 import styles from './LocalLanding.module.css'
 import { SHOP_ENABLED } from '@/lib/site-features'
+import { SHOWCASE_GARDENS } from '@/lib/showcase-gardens'
 
 const plans = [
   { number: '01', name: 'L’essentiel', detail: 'Une nutrition de fond', description: 'Quelques interventions dans l’année pour apporter au gazon les nutriments dont il a besoin, au bon moment.', bullets: ['Fertilisation adaptée aux saisons', 'Doses ajustées à votre surface', 'Conseils de tonte et d’arrosage'] },
@@ -29,6 +30,7 @@ export function LocalHero() {
             <a href="#offres" className={styles.textLink}>Voir les interventions <ArrowDown size={17} aria-hidden="true" /></a>
           </div>
           <p className={styles.heroNote}>Interventions sur forfait ou abonnement.<br />Le bon rythme, du passage ponctuel au suivi premium.</p>
+          <a href="#vitrines" className={styles.heroShowcases}><MapPin size={15} aria-hidden="true" />{SHOWCASE_GARDENS.length > 1 ? `Voir les ${SHOWCASE_GARDENS.length} vitrines depuis la rue` : 'Voir la vitrine Hanami depuis la rue'} <ArrowDown size={15} aria-hidden="true" /></a>
           {SHOP_ENABLED && <Link href="/boutique" className={styles.shopAnnouncement}><ShoppingBag size={20} strokeWidth={1.5} aria-hidden="true" /><span><strong>La boutique Hanami prend racine.</strong><small>Produits professionnels & conseils · Découvrir la sélection</small></span><ArrowUpRight size={16} aria-hidden="true" /></Link>}
         </div>
         <figure className={styles.heroFigure}>
