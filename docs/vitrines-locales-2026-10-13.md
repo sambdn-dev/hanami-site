@@ -17,9 +17,10 @@ Le nombre affiché et la grille suivent les adresses réellement renseignées.
   adresse pour facturation et livraison. Le nom documentaire est Susan De Graaf.
   Le rapprochement avec la pelouse rénovée repose sur l’identification du client
   par le propriétaire Hanami et sur la réalisation existante « Susan » du site.
-- La troisième vitrine, désignée « chez les Oufrés » : **adresse à confirmer**.
-  Les appels Qonto sont restés bloqués ; aucune adresse ni identité n’est inventée
-  et aucune carte provisoire n’est présentée au visiteur.
+- Chez les Auffret : **92 avenue Georges Clemenceau, 78110 Le Vésinet**.
+  Nom et adresse communiqués directement par le propriétaire Hanami le
+  16 octobre 2026. La troisième vitrine est désormais renseignée sans nouvel
+  appel Qonto.
 
 Le site indique que les jardins s’observent depuis la rue, en restant sur l’espace
 public. Aucun téléphone, email, montant ou document client n’est publié.

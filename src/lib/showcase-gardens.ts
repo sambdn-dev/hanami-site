@@ -25,6 +25,14 @@ export const SHOWCASE_GARDENS: readonly ShowcaseGarden[] = [
     postalCode: '78110',
     city: 'Le Vésinet',
   },
+  {
+    id: 'auffret',
+    name: 'Chez les Auffret',
+    kind: 'Une réalisation chez un client',
+    street: '92 avenue Georges Clemenceau',
+    postalCode: '78110',
+    city: 'Le Vésinet',
+  },
 ]
 
 export function showcaseDirectionsUrl(garden: ShowcaseGarden): string {
