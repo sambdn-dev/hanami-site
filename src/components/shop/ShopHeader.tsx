@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import BoutiqueLink from '@/components/shared/BoutiqueLink'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { ShoppingBag, ArrowUpRight } from 'lucide-react'
@@ -12,8 +13,8 @@ export default function ShopHeader() {
     <div className={styles.draftBanner}>HANAMI · PRODUITS ET LOCATION</div>
     <header className={styles.header}>
       <Link href="/" aria-label="Hanami — retour à l’accueil"><Image src="/brand/2026/logo-principal-vert.png" width={112} height={40} alt="Hanami Expert Gazon" /></Link>
-      <nav aria-label="Navigation boutique"><a href="/boutique" aria-current={!pathname.startsWith('/boutique/location') ? 'page' : undefined}>Produits</a><Link href="/boutique/location" aria-current={pathname.startsWith('/boutique/location') ? 'page' : undefined}>Location</Link><Link href="/interventions-locales" className={styles.servicesLink}>Nos interventions <ArrowUpRight size={14} aria-hidden="true" /></Link></nav>
-      <a href="/boutique?panier=1" aria-label="Ouvrir le panier produits" className={styles.selectionLink}><ShoppingBag size={18} aria-hidden="true" /><span>Panier</span></a>
+      <nav aria-label="Navigation boutique"><BoutiqueLink href="/boutique" aria-current={!pathname.startsWith('/boutique/location') ? 'page' : undefined}>Produits</BoutiqueLink><Link href="/boutique/location" aria-current={pathname.startsWith('/boutique/location') ? 'page' : undefined}>Location</Link><Link href="/interventions-locales" className={styles.servicesLink}>Nos interventions <ArrowUpRight size={14} aria-hidden="true" /></Link></nav>
+      <BoutiqueLink href="/boutique?panier=1" aria-label="Ouvrir le panier produits" className={styles.selectionLink}><ShoppingBag size={18} aria-hidden="true" /><span>Panier</span></BoutiqueLink>
     </header>
   </>
 }

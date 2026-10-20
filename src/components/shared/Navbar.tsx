@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import BoutiqueLink from '@/components/shared/BoutiqueLink'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useEffect, useId, useRef, useState } from 'react'
@@ -80,7 +81,7 @@ function LocalDesktopNavigation({ pathname }: { pathname: string }) {
         const active = link.href.endsWith('#offres')
           ? pathname === '/' || pathname === '/interventions-locales'
           : pathname === link.href
-        return link.href === '/boutique' ? <a key={link.href} href={link.href} onClick={() => setMoreOpen(false)}>{link.label}</a> : <Link key={link.href} href={link.href} onClick={() => setMoreOpen(false)} aria-current={active ? 'page' : undefined} className={active ? styles.active : ''}>{link.label}</Link>
+        return link.href === '/boutique' ? <BoutiqueLink key={link.href} href={link.href} onClick={() => setMoreOpen(false)}>{link.label}</BoutiqueLink> : <Link key={link.href} href={link.href} onClick={() => setMoreOpen(false)} aria-current={active ? 'page' : undefined} className={active ? styles.active : ''}>{link.label}</Link>
       })}
       <div
         className={styles.more}
@@ -195,7 +196,7 @@ export default function Navbar({ variant = 'light', localOffers = false }: { var
           {localOffers ? <LocalDesktopNavigation key={pathname} pathname={pathname} /> : <div className={styles.desktopLinks}>
             {displayLinks.map((link) => {
               const active = pathname === link.href || (link.href === '/pro' && isPro) || (localOffers && pathname === '/' && link.href === '/interventions-locales')
-              return link.href === '/boutique' ? <a key={link.href} href={link.href}>{link.label}</a> : <Link key={link.href} href={link.href} aria-current={active ? 'page' : undefined} className={active ? styles.active : ''}>{link.label}</Link>
+              return link.href === '/boutique' ? <BoutiqueLink key={link.href} href={link.href}>{link.label}</BoutiqueLink> : <Link key={link.href} href={link.href} aria-current={active ? 'page' : undefined} className={active ? styles.active : ''}>{link.label}</Link>
             })}
           </div>}
           <Link href={ctaHref} className={styles.desktopCta}>{ctaText} <ArrowUpRight size={16} aria-hidden="true" /></Link>
@@ -208,7 +209,7 @@ export default function Navbar({ variant = 'light', localOffers = false }: { var
         <div className={styles.mobileTop}><Image src="/brand/2026/logo-principal-vert.png" alt="Hanami Expert Gazon" width={100} height={36} /><button ref={closeRef} type="button" onClick={() => setMenuOpen(false)} aria-label="Fermer le menu"><X size={25} aria-hidden="true" /></button></div>
         <div className={`${styles.mobileLinks} ${localOffers ? styles.localMobileLinks : ''}`}>
           {localOffers && <p className={styles.mobileGroupLabel}>Nos offres pour votre gazon</p>}
-          {displayLinks.map((link, index) => link.href === '/boutique' ? <a key={link.href} href={link.href} onClick={() => setMenuOpen(false)}><span>{String(index + 1).padStart(2, '0')}</span>{link.label}<ArrowUpRight size={19} aria-hidden="true" /></a> : <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}><span>{String(index + 1).padStart(2, '0')}</span>{link.label}<ArrowUpRight size={19} aria-hidden="true" /></Link>)}
+          {displayLinks.map((link, index) => link.href === '/boutique' ? <BoutiqueLink key={link.href} href={link.href} onClick={() => setMenuOpen(false)}><span>{String(index + 1).padStart(2, '0')}</span>{link.label}<ArrowUpRight size={19} aria-hidden="true" /></BoutiqueLink> : <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}><span>{String(index + 1).padStart(2, '0')}</span>{link.label}<ArrowUpRight size={19} aria-hidden="true" /></Link>)}
           {!localOffers && <Link href="/pro/studio" onClick={() => setMenuOpen(false)}><span>{String(displayLinks.length + 1).padStart(2, '0')}</span>Hanami Studio <strong>PRO</strong><ArrowUpRight size={19} aria-hidden="true" /></Link>}
         </div>
         {localOffers && <div className={styles.mobileSecondary}>
