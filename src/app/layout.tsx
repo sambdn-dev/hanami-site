@@ -8,9 +8,9 @@ import { organizationSchema } from '@/lib/structured-data'
 import { SITE_URL } from '@/lib/seo'
 import { cn } from "@/lib/utils";
 
-// Local fonts shared with the boutique and the Hanami Admin identity.
-const manrope = localFont({ src: '../fonts/manrope.woff2', variable: '--font-fraunces', weight: '200 800', display: 'swap' })
-const inter = localFont({ src: '../fonts/inter-latin.woff2', variable: '--font-dm-sans', weight: '100 900', display: 'swap' })
+// Same typography roles as the Hanami Admin and boutique: Inter headings, Manrope body.
+const inter = localFont({ src: '../fonts/inter-latin.woff2', variable: '--font-fraunces', weight: '100 900', display: 'swap' })
+const manrope = localFont({ src: '../fonts/manrope.woff2', variable: '--font-dm-sans', weight: '200 800', display: 'swap' })
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

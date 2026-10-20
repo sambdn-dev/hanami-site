@@ -1,7 +1,7 @@
 .quantity-popover { position: fixed; inset: auto; width: min(288px,calc(100vw - 32px)); margin: 0; padding: 18px; border: 1px solid var(--color-line); border-radius: var(--radius-card); background: var(--color-paper); color: var(--color-ink); box-shadow: var(--shadow-lg); font-family: var(--font-body,Inter,sans-serif); }
 .quantity-popover::backdrop { background: transparent; }
 .quantity-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
-.quantity-heading strong { display: block; font-family: Manrope,Inter,sans-serif; font-size: 16px; line-height: 1.35; }
+.quantity-heading strong { display: block; font-family: var(--font-heading); font-size: 16px; line-height: 1.35; }
 .quantity-heading small { display: block; margin-top: 4px; color: var(--color-muted); font-size: 12px; }
 .quantity-close { display: grid; flex-shrink: 0; place-items: center; width: 32px; height: 32px; margin: -6px -6px 0 0; border-radius: var(--radius-button); }
 .quantity-close:hover { background: var(--color-sage-soft); }

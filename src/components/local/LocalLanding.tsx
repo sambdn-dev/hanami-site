@@ -32,7 +32,7 @@ export function LocalHero() {
           </div>
           <p className={styles.heroNote}>Interventions sur forfait ou abonnement.<br />Le bon rythme, du passage ponctuel au suivi premium.</p>
           <a href="#vitrines" className={styles.heroShowcases}><MapPin size={15} aria-hidden="true" />{SHOWCASE_GARDENS.length > 1 ? `Voir les ${SHOWCASE_GARDENS.length} vitrines depuis la rue` : 'Voir la vitrine Hanami depuis la rue'} <ArrowDown size={15} aria-hidden="true" /></a>
-          {SHOP_ENABLED && <BoutiqueLink href="/boutique" className={styles.shopAnnouncement}><ShoppingBag size={20} strokeWidth={1.5} aria-hidden="true" /><span><strong>La boutique Hanami prend racine.</strong><small>Produits professionnels & conseils · Découvrir la sélection</small></span><ArrowUpRight size={16} aria-hidden="true" /></BoutiqueLink>}
+          {SHOP_ENABLED && <BoutiqueLink href="/boutique" className={styles.shopAnnouncement}><ShoppingBag size={20} strokeWidth={1.5} aria-hidden="true" /><span><strong>Découvrez la boutique Hanami.</strong><small>Produits professionnels & conseils · Découvrir la sélection</small></span><ArrowUpRight size={16} aria-hidden="true" /></BoutiqueLink>}
         </div>
         <figure className={styles.heroFigure}>
           <div className={styles.heroPhoto}>
