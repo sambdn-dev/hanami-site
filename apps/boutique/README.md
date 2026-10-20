@@ -24,9 +24,10 @@ The quantity selector opens on the add-to-cart icon. It requires confirmation,
 displays the selected total and respects the remaining cart limit of 99 units.
 
 The compact store header keeps its logo, search and basket on a single row at
-mobile and desktop sizes. The original wordmark carries the Hanami Store label;
-past the scroll threshold it crossfades to the original H-and-leaf symbol without
-moving the controls. Reduced motion disables the transition.
+mobile and desktop sizes. The original wordmark carries the Store label;
+between 40 and 168 pixels of scroll it progressively crossfades to the original
+H-and-leaf symbol without moving the controls. A passive listener batches updates
+with requestAnimationFrame; reduced motion removes the small scale/translation.
 
 `/pistes-mobile/index.html` compares three visual reward concepts on the same
 basket (same products, quantities and total). These images do not activate any

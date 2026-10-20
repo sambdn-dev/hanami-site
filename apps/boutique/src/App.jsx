@@ -73,7 +73,7 @@ export function App() {
   const [query, setQuery] = useState('');
   const [searchQuery, setSearchQuery] = useState(() => (new URLSearchParams(window.location.search).get('q') || '').slice(0,180));
   const [category, setCategory] = useState('Tous');
-  const [compactBrand, setCompactBrand] = useState(() => window.scrollY > 96);
+  const headerRef = useRef(null);
   const [quick, setQuick] = useState(null);
   const [toast, setToast] = useState('');
   const closeTimer = useRef(null);
@@ -84,11 +84,17 @@ export function App() {
   const filtered = searchProducts(catalogue, query, category);
   const count = totalQuantity(basket);
   useEffect(() => {
-    // Hysteresis keeps the mark stable when scrolling around the threshold.
-    const updateBrand = () => setCompactBrand(current => window.scrollY > (current ? 64 : 96));
+    // Follow the scroll continuously without re-rendering the shop on every frame.
+    let frame = 0;
+    const updateBrand = () => {
+      frame = 0;
+      const progress = Math.min(1, Math.max(0, (window.scrollY - 40) / 128));
+      headerRef.current?.style.setProperty('--brand-progress', progress.toFixed(4));
+    };
+    const onScroll = () => { if (!frame) frame = requestAnimationFrame(updateBrand); };
     updateBrand();
-    window.addEventListener('scroll', updateBrand, { passive: true });
-    return () => window.removeEventListener('scroll', updateBrand);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => { window.removeEventListener('scroll', onScroll); cancelAnimationFrame(frame); };
   }, []);
   useEffect(() => { saveBasket(browserStorage(), basket); }, [basket]);
   useEffect(() => () => { clearTimeout(closeTimer.current); clearTimeout(toastTimer.current); }, []);
@@ -129,9 +135,9 @@ export function App() {
   return <>
     <a className="skip-link" href="#selection">Aller aux produits</a>
     <div className="announcement"><span>LA SÉLECTION D’AUTOMNE</span><span className="preview-note">Prix TTC · hors livraison</span></div>
-    <header className={`header store-header${compactBrand ? ' is-scrolled' : ''}`}>
-      <a href="/" className="brand" aria-label="Hanami Store — accueil Hanami">
-        <span className="brand-wordmark" aria-hidden="true"><img src={assetURL('/assets/logo-secondaire-vert.png')} alt="" width="952" height="272" /><span>Hanami Store</span></span>
+    <header ref={headerRef} className="header store-header">
+      <a href="/" className="brand" aria-label="Hanami — accueil du site">
+        <span className="brand-wordmark" aria-hidden="true"><img src={assetURL('/assets/logo-secondaire-vert.png')} alt="" width="952" height="272" /><span>Store</span></span>
         <img className="brand-symbol" src={assetURL('/assets/icone-h-vert.png')} alt="" aria-hidden="true" width="202" height="255" />
       </a>
       <nav aria-label="Navigation principale"><button onClick={() => selectCategory('Tous')} className={category === 'Tous' ? 'selected' : ''}>Boutique</button><button onClick={() => selectCategory('Semences')} className={category === 'Semences' ? 'selected' : ''}>Semences</button><button onClick={() => selectCategory('Engrais')} className={category === 'Engrais' ? 'selected' : ''}>Engrais</button></nav>
