@@ -3,6 +3,20 @@ import { Minus, Plus, ShoppingCart, X } from '@phosphor-icons/react';
 import { formatPrice, getVariant } from './variants.js';
 import './quantity.css';
 
+function panelPosition(trigger, panel) {
+  const rect = trigger.getBoundingClientRect();
+  const viewport = window.visualViewport;
+  const topBound = (viewport?.offsetTop || 0) + 16;
+  const bottomBound = (viewport ? viewport.offsetTop + viewport.height : window.innerHeight) - 16;
+  const width = Math.min(288, window.innerWidth - 32);
+  const height = panel?.offsetHeight || 224;
+  const below = rect.bottom + height + 8 <= bottomBound;
+  return {
+    left: Math.max(16, Math.min(rect.right - width, window.innerWidth - width - 16)),
+    top: Math.max(topBound, Math.min(below ? rect.bottom + 8 : rect.top - height - 8, bottomBound - height)),
+  };
+}
+
 export function AddToCart({ product, onAdd, disabled, maxQuantity = 99, compact = false, onOpen }) {
   const id = useId();
   const trigger = useRef(null);
@@ -22,12 +36,17 @@ export function AddToCart({ product, onAdd, disabled, maxQuantity = 99, compact 
 
   useEffect(() => {
     if (!open) return;
-    const dismiss = () => panel.current?.hidePopover();
-    window.addEventListener('resize', dismiss);
-    window.addEventListener('scroll', dismiss, true);
+    const reposition = () => setPosition(panelPosition(trigger.current, panel.current));
+    reposition();
+    window.addEventListener('resize', reposition);
+    window.addEventListener('scroll', reposition, true);
+    window.visualViewport?.addEventListener('resize', reposition);
+    window.visualViewport?.addEventListener('scroll', reposition);
     return () => {
-      window.removeEventListener('resize', dismiss);
-      window.removeEventListener('scroll', dismiss, true);
+      window.removeEventListener('resize', reposition);
+      window.removeEventListener('scroll', reposition, true);
+      window.visualViewport?.removeEventListener('resize', reposition);
+      window.visualViewport?.removeEventListener('scroll', reposition);
     };
   }, [open]);
 
@@ -35,17 +54,10 @@ export function AddToCart({ product, onAdd, disabled, maxQuantity = 99, compact 
     if (open) { close(true); return; }
     onOpen?.();
     setRawQuantity('1');
-    const rect = trigger.current.getBoundingClientRect();
-    const width = Math.min(288, window.innerWidth - 32);
-    const height = 224;
-    const below = window.innerHeight - rect.bottom >= height + 12;
-    setPosition({
-      left: Math.max(16, Math.min(rect.right - width, window.innerWidth - width - 16)),
-      top: below ? rect.bottom + 8 : Math.max(16, rect.top - height - 8),
-    });
+    setPosition(panelPosition(trigger.current, panel.current));
     panel.current.showPopover();
-    input.current?.focus({ preventScroll: true });
-    input.current?.select();
+    // Keep the mobile keyboard closed until the customer taps the numeric field.
+    panel.current.focus({ preventScroll: true });
   }
 
   function submit(event) {
@@ -60,7 +72,7 @@ export function AddToCart({ product, onAdd, disabled, maxQuantity = 99, compact 
       aria-label={`Ajouter ${product.name} au panier`} aria-haspopup="dialog" aria-expanded={open} aria-controls={id}>
       <ShoppingCart size={compact ? 18 : 20} />{compact && <span>Ajouter</span>}
     </button>
-    <div ref={panel} id={id} popover="auto" role="dialog" aria-modal="false"
+    <div ref={panel} id={id} popover="auto" role="dialog" aria-modal="false" tabIndex={-1}
       aria-label={`Choisir la quantité de ${product.name}`} className="quantity-popover"
       style={{ left: position.left, top: position.top }}
       onToggle={event => setOpen(event.newState === 'open')}>
@@ -72,7 +84,7 @@ export function AddToCart({ product, onAdd, disabled, maxQuantity = 99, compact 
           <div className="quantity-stepper">
             <button type="button" aria-label="Diminuer la quantité" disabled={!valid || quantity <= 1} onClick={() => setRawQuantity(String(quantity - 1))}><Minus size={17} /></button>
             <input ref={input} id={`${id}-value`} type="number" inputMode="numeric" min="1" max={maxQuantity} step="1"
-              value={rawQuantity} onChange={event => setRawQuantity(event.target.value)} aria-invalid={!valid} />
+              value={rawQuantity} onFocus={event => event.currentTarget.select()} onChange={event => setRawQuantity(event.target.value)} aria-invalid={!valid} />
             <button type="button" aria-label="Augmenter la quantité" disabled={!valid || quantity >= maxQuantity} onClick={() => setRawQuantity(String(quantity + 1))}><Plus size={17} /></button>
           </div>
         </div>
