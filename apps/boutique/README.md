@@ -22,3 +22,13 @@ UI proposals are visual explorations and are not activated by this integration.
 
 The quantity selector opens on the add-to-cart icon. It requires confirmation,
 displays the selected total and respects the remaining cart limit of 99 units.
+
+The compact store header keeps its logo, search and basket on a single row at
+mobile and desktop sizes. The original wordmark carries the Hanami Store label;
+past the scroll threshold it crossfades to the original H-and-leaf symbol without
+moving the controls. Reduced motion disables the transition.
+
+`/pistes-mobile/index.html` compares three visual reward concepts on the same
+basket (same products, quantities and total). These images do not activate any
+discount. This branch remains a development preview; do not deploy it to the
+live Hanami domain without separate authorization.

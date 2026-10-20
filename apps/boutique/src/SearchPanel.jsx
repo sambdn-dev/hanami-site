@@ -39,7 +39,7 @@ function Highlight({ text, query }) {
   return <>{fragments}{text.slice(cursor)}</>;
 }
 
-export function SearchPanel({ query, onQueryChange, products, onSelect, onClose, onOpen, open, autoFocus = false, className = '', label, renderPackshot }) {
+export function SearchPanel({ query, onQueryChange, products, onSelect, onClose, onOpen, open, autoFocus = false, className = '', label, placeholder = 'Un produit, un besoin…', renderPackshot }) {
   const id = useId();
   const root = useRef(null), input = useRef(null);
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -98,7 +98,7 @@ export function SearchPanel({ query, onQueryChange, products, onSelect, onClose,
     <form role="search" aria-label={label} onSubmit={event => { event.preventDefault(); if (expanded && results.length) choose(selected || results[0]); }}>
       <label className="search-field">
         <MagnifyingGlass size={23} weight="light" />
-        <input ref={input} type="search" role="combobox" aria-label={label} aria-autocomplete="list" aria-haspopup="listbox" aria-expanded={expanded} aria-controls={expanded ? `${id}-results` : undefined} aria-activedescendant={selected ? `${id}-${selected.id}` : undefined} placeholder="Un produit, un besoin…" value={query} maxLength={180} autoComplete="off" spellCheck={false} onFocus={onOpen} onClick={onOpen} onKeyDown={keys} onChange={event => { onQueryChange(event.target.value); onOpen(); }} />
+        <input ref={input} type="search" role="combobox" aria-label={label} aria-autocomplete="list" aria-haspopup="listbox" aria-expanded={expanded} aria-controls={expanded ? `${id}-results` : undefined} aria-activedescendant={selected ? `${id}-${selected.id}` : undefined} placeholder={placeholder} value={query} maxLength={180} autoComplete="off" spellCheck={false} onFocus={onOpen} onClick={onOpen} onKeyDown={keys} onChange={event => { onQueryChange(event.target.value); onOpen(); }} />
         {hasQuery && <button type="button" className="search-clear" aria-label="Effacer la recherche" onClick={() => { onQueryChange(''); setActiveIndex(-1); onOpen(); input.current?.focus(); }}><span className="search-clear-disc"><X size={17} /></span></button>}
       </label>
     </form>

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#113f31">
+  <title>Hanami Store — Comparer les trois paniers</title>
+  <style>
+    @font-face{font-family:Inter;src:url('inter-latin.woff2');font-weight:100 900;font-display:swap}
+    @font-face{font-family:Manrope;src:url('manrope.woff2');font-weight:200 800;font-display:swap}
+    *{box-sizing:border-box}body{margin:0;background:#f8f7f2;color:#113f31;font:15px/1.6 Manrope,sans-serif}header{max-width:1320px;margin:auto;padding:24px 24px 16px}header img{display:block;width:100px;height:auto}header small{display:block;margin:2px 0 22px 12px;font-size:10px;font-weight:650}h1{font:700 clamp(24px,4vw,32px)/1.2 Inter,sans-serif;letter-spacing:-.035em;margin:0 0 12px}header p{max-width:670px;margin:8px 0;color:#52665b}.simulation{font-size:12px}
+    nav{position:sticky;top:0;z-index:2;display:flex;justify-content:center;gap:10px;padding:12px 16px;background:#f8f7f2f5;border-block:1px solid #e3e8e0}nav a{display:grid;place-items:center;min-width:52px;min-height:44px;border:1px solid #d5ded1;border-radius:12px;color:inherit;text-decoration:none;font-weight:700}nav a[aria-current=true],nav a:hover{background:#113f31;color:white}a:focus-visible{outline:3px solid #113f31;outline-offset:3px}
+    main{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;max-width:1320px;margin:auto;padding:24px 24px 40px}article{min-width:0;scroll-margin-top:88px}h2{margin:0 0 12px;font:700 17px/1.3 Inter,sans-serif}.mockup{display:block;width:100%;height:auto;border:1px solid #e3e8e0;border-radius:12px}article>a{display:inline-flex;align-items:center;min-height:44px;margin-top:4px;color:#113f31;font-size:13px}footer{max-width:800px;margin:auto;padding:12px 24px 36px;text-align:center;color:#52665b;font-size:13px}footer a{display:inline-block;min-height:44px;padding:12px;color:#113f31}
+    @media(max-width:700px){header{padding:24px 20px 16px}main{display:block;padding:20px 12px 28px;scroll-margin-top:69px}article+article{margin-top:28px}html.enhanced article:not(.selected){display:none}html.enhanced article+article{margin-top:0}.mockup{border-radius:10px}h2{margin-left:4px}}
+  </style>
+</head>
+<body>
+  <header><img src="logo-secondaire-vert.png" alt="Hanami"><small>Hanami Store</small><h1>Un même panier.<br>Trois présentations.</h1><p>Mêmes produits, mêmes quantités et même total : <strong>100,67 € TTC</strong>. Comparez uniquement la place et la présentation des récompenses.</p><p class="simulation">Maquettes visuelles générées avec Image Gen. Paliers et avantages en simulation, aucune remise activée.</p></header>
+  <nav aria-label="Choisir une proposition"><a href="#proposition-1" aria-current="true">1</a><a href="#proposition-2">2</a><a href="#proposition-3">3</a></nav>
+  <main>
+    <article id="proposition-1" class="selected"><h2>Proposition 1</h2><img class="mockup" src="proposition-1.png" width="853" height="1844" alt="Panier de deux produits, avec une progression horizontale discrète sous les articles"><a href="proposition-1.png">Ouvrir l’image en grand ↗</a></article>
+    <article id="proposition-2"><h2>Proposition 2</h2><img class="mockup" src="proposition-2.png" width="853" height="1844" alt="Le même panier, avec les avantages mis en avant au-dessus des articles" loading="lazy"><a href="proposition-2.png">Ouvrir l’image en grand ↗</a></article>
+    <article id="proposition-3"><h2>Proposition 3</h2><img class="mockup" src="proposition-3.png" width="853" height="1844" alt="Le même panier, avec les paliers présentés sur une progression verticale" loading="lazy"><a href="proposition-3.png">Ouvrir l’image en grand ↗</a></article>
+  </main>
+  <footer>Répondez 1, 2 ou 3 dans le chat, ou indiquez les éléments à combiner.<br><a href="https://hanami-site-git-codex-boutique-in-c1a052-sams-projects-67e025cc.vercel.app/boutique">Voir la boutique de développement ↗</a><br><a href="brief.txt">Brief des maquettes</a></footer>
+  <script>
+    document.documentElement.classList.add('enhanced');
+    const choices = [...document.querySelectorAll('nav a')];
+    function select(id) {
+      const current = document.getElementById(id) ? id : 'proposition-1';
+      document.querySelectorAll('article').forEach(article => article.classList.toggle('selected', article.id === current));
+      choices.forEach(link => link.setAttribute('aria-current', String(link.hash === '#' + current)));
+    }
+    choices.forEach(link => link.addEventListener('click', event => {
+      event.preventDefault();
+      history.replaceState(null, '', link.hash);
+      select(link.hash.slice(1));
+      if (matchMedia('(max-width:700px)').matches) document.querySelector('main').scrollIntoView({block:'start'});
+    }));
+    addEventListener('hashchange', () => select(location.hash.slice(1)));
+    select(location.hash.slice(1));
+  </script>
+</body>
+</html>

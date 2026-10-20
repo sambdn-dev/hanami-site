@@ -1,0 +1,22 @@
+Use case: ui-mockup. Create realistic, production-quality responsive web UI design, one complete focused mobile CART screen for Hanami's professional lawn-care shop, not a garden-centre or plant nursery.
+Target dimensions: 390 x 844 CSS pixels, natural portrait ratio, readable 14–16px body type. App content only: NO phone body, bezel, rounded-device mask, notch, clock, OS status bar, home indicator, browser chrome or device shadow.
+References attached: actual Hanami cart screenshot for current visual language, official transparent Hanami wordmark asset, actual Barenbrug yellow manufacturer sack and actual SOBAC Bactériosol kraft/orange manufacturer sack. Reuse their identity and real packshots; NEVER invent packaging, sachets, logos or product imagery.
+HARD invariants across this comparison: same CART SCREEN, same basket state, same products, same totals, same data, same core controls. This is a visual comparison of reward presentation on the SAME screen, not different stages of a user journey. No diagnostic wizard, recommendation page, homepage, product detail, marketing hero or other screen.
+Typography: Inter for headings, Manrope for body/UI. Palette: forest #113F31, warm ivory #F8F7F2, white, pale sage, restrained amber. Calm premium professional, clean and highly legible, no gradients or nursery emojis.
+Header: single compact line, small original Hanami wordmark at left with small “Hanami Store” caption beneath, understated slim search field in middle, cart icon and small quantity badge at right. Under header: “Votre panier” and “2 articles”.
+EXACT SAME two compact product rows with authentic manufacturer thumbnail (both are original 15 kg photos, caption small “Visuel fabricant · format reconditionné”), name, format, quantity stepper – 1 +, line price:
+RES+ RPR — 5 kg reconditionné — 65,80 €
+Bactériosol Universel — 5 kg reconditionné — 34,87 €
+One small trash icon per row, generous spacing but compact enough to fit this 844px screen.
+Exact shared reward content: “Vos avantages Hanami”; milestones “75 €”, “150 €”, “250 €”; current basket amount “100,67 €”; first milestone reached; “Encore 49,33 € pour le prochain palier”. Hypothetical benefit labels: 3 €, 7 €, 12 € (not percentages), show no reward deducted from total. Label visibly but calmly “Simulation · paliers à valider”. No free shipping, fabricated gifts, urgency, countdowns or confetti.
+Shared footer summary: “Sous-total HT” 91,52 €, “TVA 10 %” 9,15 €, “Total TTC” 100,67 €. Small “Hors livraison · calculée au paiement”. One clear forest-green CTA “Passer au paiement”, secondary “Continuer mes achats”. This is a design mock only, no actual discount active.
+Use whitespace, grouping, alignment, hierarchy first, light row dividers second. Avoid nested cards or card per list item, noisy badges, extraneous features. Keep all specified content readable and naturally within viewport. Today anchor 20 October 2026 but do not show dates.
+
+
+Three independently generated directions, in final display order:
+1. Ligne progressive — restrained horizontal three-point progress track below the product rows. Milestones 75 / 150 / 250 €, hypothetical benefits 3 / 7 / 12 €, first point checked, current amount and 49,33 € remaining. No reward card.
+2. Avantage en évidence — single muted sage band above the same two product rows. Lead with first milestone reached, large 49,33 € remaining, three-segment horizontal track. Same totals and CTA.
+3. Parcours des paliers — compact vertical three-step rail below the same two product rows, first checked, second amber highlighted, third muted. Same thresholds, hypothetical benefits, totals and CTA.
+
+Generated with the built-in Image Gen tool. Original files are copied unaltered into this gallery. No reward rule or discount has been activated. The image content is a visual concept; the functional storefront uses Shopify catalogue data.
+

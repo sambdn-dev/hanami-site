@@ -1,0 +1,70 @@
+/* A stable row: changing the brand mark never moves the search or basket. */
+.header.store-header {
+  display: grid;
+  grid-template-columns: 122px auto minmax(0,1fr) auto;
+  align-items: center;
+  gap: 24px;
+  min-height: 76px;
+  padding: 10px 4%;
+  background: rgb(248 247 242 / .97);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+.store-header .brand {
+  position: relative;
+  display: flex;
+  align-items: center;
+  grid-column: 1;
+  grid-row: 1;
+  width: 122px;
+  height: 48px;
+}
+.store-header .brand-wordmark { display: grid; justify-items: center; width: 100%; gap: 3px; transition: opacity .16s ease; }
+.store-header .brand-wordmark img { display: block; width: 112px; height: 32px; object-fit: contain; }
+.store-header .brand-wordmark > span { color: var(--color-forest); font: 600 10px/1 var(--font-body); letter-spacing: .06em; }
+.store-header .brand-symbol { position: absolute; left: 0; top: 5px; width: 30px; height: 38px; object-fit: contain; opacity: 0; transition: opacity .16s ease; }
+.store-header.is-scrolled .brand-wordmark { opacity: 0; }
+.store-header.is-scrolled .brand-symbol { opacity: 1; }
+.store-header nav { grid-column: 2; grid-row: 1; margin: 0; }
+.store-header nav button { padding-inline: 12px; font-size: 13px; }
+.store-header .header-tools { display: contents; }
+.store-header .header-search { grid-column: 3; grid-row: 1; justify-self: center; width: 100%; max-width: 640px; }
+.store-header .search-field { min-height: 46px; gap: 10px; padding-inline: 16px; border-color: var(--color-line); border-radius: 999px; background: var(--color-surface); transition: border-color .15s ease; }
+.store-header .search-field > svg { flex: 0 0 20px; width: 20px; height: 20px; }
+.store-header .search-field input { padding-block: 11px; }
+.store-header .search-field:focus-within { outline-width: 2px; outline-offset: 2px; }
+.store-header .cart-launch { grid-column: 4; grid-row: 1; gap: 8px; min-width: 112px; min-height: 46px; padding: 8px 12px; border-color: transparent; background: transparent; color: var(--color-forest); }
+.store-header .cart-launch:hover { border-color: transparent; }
+.store-header .cart-count { min-width: 20px; height: 20px; font-size: 10px; }
+main .selection { scroll-margin-top: 96px; }
+
+@media (max-width: 1100px) {
+  .header.store-header { grid-template-columns: 122px minmax(0,1fr) 112px; gap: 20px; }
+  .store-header nav { display: none; }
+  .store-header .header-search { grid-column: 2; }
+  .store-header .cart-launch { grid-column: 3; }
+}
+@media (max-width: 700px) {
+  .header.store-header { grid-template-columns: 88px minmax(0,1fr) 44px; gap: 10px; min-height: 68px; padding: 10px 16px; }
+  .store-header .brand { width: 88px; }
+  .store-header .brand-wordmark { gap: 4px; }
+  .store-header .brand-wordmark img { width: 86px; height: 25px; }
+  .store-header .brand-wordmark > span { font-size: 9px; letter-spacing: .025em; }
+  .store-header .brand-symbol { left: 2px; }
+  .store-header .header-search { position: static; }
+  .store-header .search-field { min-height: 44px; padding-inline: 12px; gap: 8px; }
+  .store-header .search-field > svg { flex-basis: 18px; width: 18px; height: 18px; }
+  .store-header .search-field input { padding-block: 10px; }
+  .store-header .search-clear { margin-right: -10px; }
+  .store-header .search-popover { top: calc(100% + 8px); left: 12px; right: 12px; }
+  .store-header .cart-launch { position: relative; width: 44px; min-width: 44px; min-height: 44px; padding: 10px; }
+  .store-header .cart-label { display: none; }
+  .store-header .cart-count { position: absolute; top: 0; right: -1px; min-width: 17px; height: 17px; border: 2px solid var(--color-paper); font-size: 9px; }
+  main .selection { scroll-margin-top: 88px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .store-header .brand-wordmark,.store-header .brand-symbol { transition: none; }
+}
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .header.store-header { background: var(--color-paper); backdrop-filter: none; -webkit-backdrop-filter: none; }
+}

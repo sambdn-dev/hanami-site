@@ -73,6 +73,7 @@ export function App() {
   const [query, setQuery] = useState('');
   const [searchQuery, setSearchQuery] = useState(() => (new URLSearchParams(window.location.search).get('q') || '').slice(0,180));
   const [category, setCategory] = useState('Tous');
+  const [compactBrand, setCompactBrand] = useState(() => window.scrollY > 96);
   const [quick, setQuick] = useState(null);
   const [toast, setToast] = useState('');
   const closeTimer = useRef(null);
@@ -82,6 +83,13 @@ export function App() {
   const triggerRef = useRef(null);
   const filtered = searchProducts(catalogue, query, category);
   const count = totalQuantity(basket);
+  useEffect(() => {
+    // Hysteresis keeps the mark stable when scrolling around the threshold.
+    const updateBrand = () => setCompactBrand(current => window.scrollY > (current ? 64 : 96));
+    updateBrand();
+    window.addEventListener('scroll', updateBrand, { passive: true });
+    return () => window.removeEventListener('scroll', updateBrand);
+  }, []);
   useEffect(() => { saveBasket(browserStorage(), basket); }, [basket]);
   useEffect(() => () => { clearTimeout(closeTimer.current); clearTimeout(toastTimer.current); }, []);
   useEffect(() => {
@@ -121,10 +129,13 @@ export function App() {
   return <>
     <a className="skip-link" href="#selection">Aller aux produits</a>
     <div className="announcement"><span>LA SÉLECTION D’AUTOMNE</span><span className="preview-note">Prix TTC · hors livraison</span></div>
-    <header className="header">
-      <a href="/" className="brand" aria-label="Hanami, accueil du site"><img src={assetURL('/assets/logo-principal-vert.png')} alt="Hanami — Expert gazon" /></a>
+    <header className={`header store-header${compactBrand ? ' is-scrolled' : ''}`}>
+      <a href="/" className="brand" aria-label="Hanami Store — accueil Hanami">
+        <span className="brand-wordmark" aria-hidden="true"><img src={assetURL('/assets/logo-secondaire-vert.png')} alt="" width="952" height="272" /><span>Hanami Store</span></span>
+        <img className="brand-symbol" src={assetURL('/assets/icone-h-vert.png')} alt="" aria-hidden="true" width="202" height="255" />
+      </a>
       <nav aria-label="Navigation principale"><button onClick={() => selectCategory('Tous')} className={category === 'Tous' ? 'selected' : ''}>Boutique</button><button onClick={() => selectCategory('Semences')} className={category === 'Semences' ? 'selected' : ''}>Semences</button><button onClick={() => selectCategory('Engrais')} className={category === 'Engrais' ? 'selected' : ''}>Engrais</button></nav>
-      <div className="header-tools"><SearchPanel className="header-search" label="Rechercher un produit ou un besoin" open={activeSearch === 'header'} autoFocus={initialSearch} onOpen={() => { setQuick(null); setActiveSearch('header'); }} onClose={() => setActiveSearch(null)} query={searchQuery} onQueryChange={setSearchQuery} products={catalogue} onSelect={openDetail} renderPackshot={p => <Packshot product={p} />} /><button data-cart-launch className="cart-launch" onClick={() => { setQuick(null); setActiveSearch(null); setCartOpen(true); }} aria-label={`Ouvrir le panier, ${count} article${count > 1 ? 's' : ''}`}><ShoppingCart size={21} /><span>Panier</span><span className="cart-count">{count}</span></button></div>
+      <div className="header-tools"><SearchPanel className="header-search" label="Rechercher un produit ou un besoin" placeholder="Rechercher…" open={activeSearch === 'header'} autoFocus={initialSearch} onOpen={() => { setQuick(null); setActiveSearch('header'); }} onClose={() => setActiveSearch(null)} query={searchQuery} onQueryChange={setSearchQuery} products={catalogue} onSelect={openDetail} renderPackshot={p => <Packshot product={p} />} /><button data-cart-launch className="cart-launch" onClick={() => { setQuick(null); setActiveSearch(null); setCartOpen(true); }} aria-label={`Ouvrir le panier, ${count} article${count > 1 ? 's' : ''}`}><ShoppingCart size={21} /><span className="cart-label">Panier</span><span className="cart-count">{count}</span></button></div>
     </header>
     <main>
       <section className="hero" aria-labelledby="hero-title">
