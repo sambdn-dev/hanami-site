@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { Fraunces, DM_Sans, Space_Mono } from 'next/font/google'
 import './globals.css'
-import CookieBanner from '@/components/shared/CookieBanner'
+import AxeptioProvider from '@/components/shared/AxeptioProvider'
 import AnalyticsProvider from '@/components/shared/AnalyticsProvider'
 import ScrollReveal from '@/components/shared/ScrollReveal'
 import { organizationSchema } from '@/lib/structured-data'
@@ -102,7 +102,7 @@ export default function RootLayout({
         <div className="grain-overlay" aria-hidden="true" />
         {children}
         <ScrollReveal />
-        <CookieBanner />
+        <AxeptioProvider />
         <AnalyticsProvider />
       </body>
     </html>

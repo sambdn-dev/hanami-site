@@ -1,20 +1,16 @@
 'use client'
 
+import { useSyncExternalStore } from 'react'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import { hasAnalyticsConsent } from '@/lib/analytics'
+import { getConsent, getServerConsent, subscribeConsent, hasAnalyticsConsent, hasPerformanceConsent } from '@/lib/consent'
 
-/**
- * Monte Vercel Analytics + Speed Insights, gardés par le consentement
- * CookieBanner. beforeSend est appelé à chaque événement (pageview inclus),
- * donc relit le localStorage : un changement de préférence s'applique
- * immédiatement, sans event bus.
- */
 export default function AnalyticsProvider() {
+  const consent = useSyncExternalStore(subscribeConsent, getConsent, getServerConsent)
   return (
     <>
-      <Analytics beforeSend={(event) => (hasAnalyticsConsent() ? event : null)} />
-      <SpeedInsights />
+      {consent.analytics && <Analytics beforeSend={event => hasAnalyticsConsent() ? event : null} />}
+      {consent.performance && <SpeedInsights beforeSend={event => hasPerformanceConsent() ? event : null} />}
     </>
   )
 }

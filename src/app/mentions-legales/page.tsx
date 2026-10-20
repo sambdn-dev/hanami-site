@@ -25,7 +25,7 @@ export default function MentionsLegalesPage() {
               Mentions légales
             </h1>
             <p className="text-stone-500 text-sm">
-              Conformément à la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique (LCEN).
+              Conformément à la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l’économie numérique (LCEN).
             </p>
           </div>
 
@@ -123,10 +123,10 @@ export default function MentionsLegalesPage() {
                 4. Propriété intellectuelle
               </h2>
               <p className="text-sm text-stone-700 leading-relaxed">
-                L'ensemble des contenus présents sur le site hanami-gazon.fr (textes, photographies, visuels, logos, calculatrice de dosages, protocoles) sont la propriété exclusive de TROTT SASU, sauf mention contraire expresse.
+                L’ensemble des contenus présents sur le site hanami-gazon.fr (textes, photographies, visuels, logos, calculatrice de dosages, protocoles) sont la propriété exclusive de TROTT SASU, sauf mention contraire expresse.
               </p>
               <p className="text-sm text-stone-700 leading-relaxed mt-3">
-                Toute reproduction, représentation, modification, publication ou transmission, totale ou partielle, de ces contenus, par quelque procédé que ce soit, est strictement interdite sans l'autorisation écrite préalable de TROTT SASU.
+                Toute reproduction, représentation, modification, publication ou transmission, totale ou partielle, de ces contenus, par quelque procédé que ce soit, est strictement interdite sans l’autorisation écrite préalable de TROTT SASU.
               </p>
             </section>
 
@@ -145,11 +145,11 @@ export default function MentionsLegalesPage() {
                 Conformément au Règlement Général sur la Protection des Données (RGPD — Règlement UE 2016/679), vous disposez des droits suivants :
               </p>
               <ul className="mt-2 space-y-1 text-sm text-stone-700 list-disc list-inside pl-2">
-                <li>Droit d'accès à vos données</li>
+                <li>Droit d’accès à vos données</li>
                 <li>Droit de rectification</li>
-                <li>Droit à l'effacement (« droit à l'oubli »)</li>
+                <li>Droit à l’effacement (« droit à l’oubli »)</li>
                 <li>Droit à la limitation du traitement</li>
-                <li>Droit d'opposition</li>
+                <li>Droit d’opposition</li>
               </ul>
               <p className="text-sm text-stone-700 leading-relaxed mt-3">
                 Pour exercer ces droits, contactez-nous via WhatsApp au{' '}
@@ -171,10 +171,10 @@ export default function MentionsLegalesPage() {
                 6. Cookies
               </h2>
               <p className="text-sm text-stone-700 leading-relaxed">
-                Le site utilise des cookies pour mémoriser vos préférences de navigation et améliorer votre expérience. Ces cookies ne collectent aucune donnée personnelle identifiable.
+                Axeptio mémorise vos choix de consentement. Vercel Analytics mesure la fréquentation et les interactions avec le site ; Vercel Speed Insights mesure les performances des pages. Ces deux services fonctionnent sans cookies et sont chargés uniquement après votre accord pour la finalité correspondante.
               </p>
               <p className="text-sm text-stone-700 leading-relaxed mt-3">
-                Vous pouvez accepter ou refuser les cookies via la bannière affichée lors de votre première visite. Le refus des cookies n'affecte pas l'accès aux contenus du site.
+                Vous pouvez accepter, refuser ou personnaliser vos choix dans le bandeau Axeptio, puis les modifier via « Préférences de cookies » dans le pied de page. Le refus ne bloque pas l’accès au site. Google Analytics et Google Ads ne sont pas encore intégrés.
               </p>
             </section>
 
@@ -184,13 +184,13 @@ export default function MentionsLegalesPage() {
                 7. Responsabilité
               </h2>
               <p className="text-sm text-stone-700 leading-relaxed">
-                TROTT SASU s'efforce de maintenir les informations publiées sur ce site à jour et exactes. Toutefois, les dosages et protocoles agronomiques présentés sont fournis à titre indicatif et ne sauraient se substituer à un diagnostic personnalisé. TROTT SASU ne saurait être tenu responsable de tout préjudice résultant de l'utilisation des informations disponibles sur ce site sans accompagnement professionnel.
+                TROTT SASU s’efforce de maintenir les informations publiées sur ce site à jour et exactes. Toutefois, les dosages et protocoles agronomiques présentés sont fournis à titre indicatif et ne sauraient se substituer à un diagnostic personnalisé. TROTT SASU ne saurait être tenu responsable de tout préjudice résultant de l’utilisation des informations disponibles sur ce site sans accompagnement professionnel.
               </p>
             </section>
 
             {/* Date */}
             <p className="text-xs text-stone-400 pt-4 border-t border-stone-200">
-              Dernière mise à jour : avril 2026
+              Dernière mise à jour : octobre 2026
             </p>
 
           </div>

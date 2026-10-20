@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import CookiePreferencesButton from './CookiePreferencesButton'
 import Image from 'next/image'
 import { ArrowUpRight } from 'lucide-react'
 import NewsletterCapture from '@/components/shared/NewsletterCapture'
@@ -19,7 +20,7 @@ export default function Footer({ localOffers = false }: { localOffers?: boolean 
           <div><h3>PROFESSIONNELS</h3><Link href="/pro">Hanami Pro</Link><Link href="/pro/studio">Hanami Studio · Pro</Link><Link href="/calculatrice">Dosage Intelligent</Link><a href="https://wa.me/33667277614" target="_blank" rel="noopener noreferrer">Assistance gazon</a></div>
           <div className={styles.footerNewsletter}><h3>LE BON CONSEIL, AU BON MOMENT</h3><p>Un email utile de temps en temps, au rythme du jardin.</p><NewsletterCapture variant="footer" /></div>
         </div>
-        <div className={styles.footerBottom}><span>© {new Date().getFullYear()} Hanami · TROTT SASU · SIREN 891 868 143</span><Link href="/mentions-legales">Mentions légales</Link><span>Fait pour les jardins vivants.</span></div>
+        <div className={styles.footerBottom}><span>© {new Date().getFullYear()} Hanami · TROTT SASU · SIREN 891 868 143</span><Link href="/mentions-legales">Mentions légales</Link><CookiePreferencesButton /><span>Fait pour les jardins vivants.</span></div>
       </div>
     </footer>
   )
