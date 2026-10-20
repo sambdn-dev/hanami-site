@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowDown, ArrowUpRight, CalendarDays, Camera, Clock3, FolderOpen, MessageSquareText, ShieldCheck, Smartphone, UsersRound } from 'lucide-react'
+import { ArrowUpRight, CalendarDays, Camera, Clock3, FolderOpen, MessageSquareText, ShieldCheck, Smartphone, UsersRound } from 'lucide-react'
 import GrassField from '@/components/shared/GrassField'
 import ProProductNav from './ProProductNav'
 import ProCapture from './ProCapture'
@@ -13,28 +13,14 @@ const proScreens = captures.screens
 export default function ProLanding() {
   return (
     <>
-      <section className={styles.proHero} aria-labelledby="pro-title">
+      <section id="expertise-gazon" className={styles.proHero} aria-labelledby="pro-title">
         <div className={styles.container}>
           <ProProductNav active="pro" />
-          <div className={styles.proHeroGrid}>
-            <div className={styles.proHeroCopy}>
-              <p className={styles.kicker}><span /> HANAMI PRO / POUR LES PAYSAGISTES</p>
-              <h1 id="pro-title">Des chantiers maîtrisés.<br /><em>Des clients rassurés.</em></h1>
-              <p>Une expertise gazon pour préparer vos interventions et guider vos équipes. Un outil métier en développement pour réunir contrats, tournées et suivi client. Vous gardez la main sur votre activité.</p>
-              <div className={styles.proHeroActions}><a href="#expertise-gazon" className={styles.goldButton}>Être accompagné sur un chantier <ArrowDown size={18} aria-hidden="true" /></a><a href="#demo" className={styles.lightLink}>Découvrir le logiciel <ArrowDown size={17} aria-hidden="true" /></a></div>
-              <span className={styles.developmentNote}>Échange technique disponible dès aujourd’hui · Logiciel en développement, captures du prototype</span>
-            </div>
-            <div className={styles.heroCaptureWrap}>
-              <span className={styles.heroCaptureEyebrow}>LA JOURNÉE EN UN REGARD / VUE DIRIGEANT</span>
-              <ProCapture src={proScreens['briefing-dirigeant'].src} alt="Capture réelle du prototype Hanami Pro : briefing du dirigeant, équipes en tournée et alertes du jour" caption="Briefing du matin · Prototype Hanami Pro" width={proScreens['briefing-dirigeant'].width} height={proScreens['briefing-dirigeant'].height} className={styles.heroCapture} sizes="(max-width: 767px) 100vw, 52vw" priority />
-            </div>
-          </div>
+          <ProExpertise />
           <div className={styles.heroMicro}><span>MOINS D’ALLERS-RETOURS</span><span>PLUS DE TEMPS SUR LE TERRAIN</span><span>UN EXPERT GAZON À PORTÉE DE MAIN</span></div>
         </div>
         <GrassField tone="dark" className={styles.proGrass} />
       </section>
-
-      <ProExpertise />
 
       <section id="demo" className={styles.proDemo} aria-labelledby="pro-demo-title">
         <div className={styles.container}>

@@ -55,6 +55,7 @@ interface BeforeAfterSliderProps {
    * restent en lazy loading natif.
    */
   priority?: boolean
+  className?: string
 }
 
 export default function BeforeAfterSlider({
@@ -68,6 +69,7 @@ export default function BeforeAfterSlider({
   afterTransform,
   afterTransformOrigin = 'center 40%',
   priority = false,
+  className = '',
 }: BeforeAfterSliderProps) {
   // Position du curseur en pourcentage (0 = tout à gauche, 100 = tout à droite)
   const [position, setPosition] = useState(initialPosition)
@@ -199,7 +201,7 @@ export default function BeforeAfterSlider({
   return (
     <div
       ref={containerRef}
-      className="relative w-full aspect-[4/3] overflow-hidden rounded-2xl shadow-lg select-none cursor-ew-resize"
+      className={`relative w-full aspect-[4/3] overflow-hidden rounded-2xl shadow-lg select-none cursor-ew-resize ${className}`}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}

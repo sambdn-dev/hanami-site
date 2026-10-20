@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowDown, ArrowUpRight, CalendarDays, Check, CloudSun, Droplets, Leaf, MapPin, Ruler, ShoppingBag, Sprout, Target } from 'lucide-react'
 import styles from './LocalLanding.module.css'
 import { SHOP_ENABLED } from '@/lib/site-features'
 import { SHOWCASE_GARDENS } from '@/lib/showcase-gardens'
+import BeforeAfterSlider from '@/components/shared/BeforeAfterSlider'
 
 const plans = [
   { number: '01', name: 'L’essentiel', detail: 'Une nutrition de fond', description: 'Quelques interventions dans l’année pour apporter au gazon les nutriments dont il a besoin, au bon moment.', bullets: ['Fertilisation adaptée aux saisons', 'Doses ajustées à votre surface', 'Conseils de tonte et d’arrosage'] },
@@ -35,11 +35,9 @@ export function LocalHero() {
         </div>
         <figure className={styles.heroFigure}>
           <div className={styles.heroPhoto}>
-            <Image src="/images/apres-susan.jpg" alt="Pelouse rénovée par Hanami dans un jardin du Vésinet" fill preload sizes="(min-width: 1024px) 49vw, 100vw" />
-            <span className={styles.photoLabel}><span /> Un jardin réel, au Vésinet</span>
-            <figcaption className={styles.photoCaption}><span>La précision se voit.<small>Jardin de Susan · Photographie d’une réalisation Hanami</small></span><Sprout size={32} strokeWidth={1.2} aria-hidden="true" /></figcaption>
+            <BeforeAfterSlider className={styles.heroComparison} beforeSrc="/images/avant-susan.jpg" afterSrc="/images/apres-susan.jpg" beforeAlt="Jardin de Susan avant la rénovation Hanami" afterAlt="Jardin de Susan après la rénovation Hanami" beforeObjectPosition="center 43%" afterObjectPosition="center 88%" afterTransform="scale(1.08)" afterTransformOrigin="center 15%" priority />
           </div>
-          <div className={styles.heroStamp}><Ruler size={19} strokeWidth={1.5} aria-hidden="true" /><span>Une surface mesurée.<br /><strong>Un soin sur mesure.</strong></span></div>
+          <figcaption className={styles.comparisonCaption}><span>Le jardin de Susan · Réalisation Hanami au Vésinet</span><strong>Glissez pour comparer l’avant et l’après</strong></figcaption>
         </figure>
       </div>
       <div className={`${styles.container} ${styles.heroBottom}`}><span>Nutrition · Prévention · Rénovation</span><span>Le jardin commence par le sol.</span></div>

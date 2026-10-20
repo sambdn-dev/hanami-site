@@ -1,4 +1,4 @@
-import { ArrowUpRight, Check, Ruler } from 'lucide-react'
+import { ArrowDown, ArrowUpRight, Check, Ruler } from 'lucide-react'
 import styles from './ProExpertise.module.css'
 
 const deliverables = [
@@ -9,16 +9,15 @@ const deliverables = [
 
 export default function ProExpertise() {
   return (
-    <section id="expertise-gazon" className={styles.section} aria-labelledby="expertise-title">
       <div className={styles.container}>
         <div className={styles.copy}>
-          <p className={styles.eyebrow}>01 / L’expertise gazon</p>
-          <h2 id="expertise-title">Vos équipes sur le terrain.<br /><span>Un expert à leurs côtés.</span></h2>
+          <p className={styles.eyebrow}>Hanami Pro / Pour les paysagistes</p>
+          <h1 id="pro-title">L’expertise agronomique.<br /><span>Pour vos chantiers gazon.</span></h1>
           <p>Création, entretien ou rénovation : vous gardez la relation client. Hanami vous accompagne dans les décisions techniques, avant l’intervention et quand le terrain demande un ajustement.</p>
+          <div className={styles.actions}><a href="#contact" className={styles.button}>Parlons de votre chantier <ArrowUpRight size={17} aria-hidden="true" /></a><a href="#demo" className={styles.softwareLink}>Découvrir le logiciel <ArrowDown size={16} aria-hidden="true" /></a></div>
           <ul className={styles.deliverables}>
             {deliverables.map(([title, detail]) => <li key={title}><Check size={17} aria-hidden="true" /><div><h3>{title}</h3><p>{detail}</p></div></li>)}
           </ul>
-          <a href="#contact" className={styles.button}>Parlons de votre chantier <ArrowUpRight size={17} aria-hidden="true" /></a>
           <p className={styles.contactNote}>Un besoin ponctuel ou un suivi régulier à définir ensemble. <a href="https://wa.me/33667277614" target="_blank" rel="noopener noreferrer">Échanger sur WhatsApp</a></p>
         </div>
 
@@ -37,6 +36,5 @@ export default function ProExpertise() {
           <figcaption>Données fictives pour illustrer le livrable. Le programme réel, les produits et les doses sont définis pour chaque chantier.</figcaption>
         </figure>
       </div>
-    </section>
   )
 }
