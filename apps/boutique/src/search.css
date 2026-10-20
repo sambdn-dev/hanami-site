@@ -2,7 +2,7 @@
 .search-box { position: relative; min-width: 0; z-index: 15; }
 .header-search { width: clamp(280px,28vw,440px); }
 .catalogue-search-box { width: min(100%,390px); }
-.search-field { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 14px; border: 1px solid var(--color-control-border); border-radius: var(--radius-card); background: var(--color-surface); color: var(--color-muted); }
+.search-field { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 14px; border: 1px solid var(--color-control-border); border-radius: 12px; background: var(--color-surface); color: var(--color-muted); }
 .search-field:focus-within { outline: 2px solid var(--color-forest); outline-offset: 1px; border-color: transparent; color: var(--color-forest); }
 .search-field input { width: 100%; min-width: 0; padding: 14px 0; border: 0; outline: 0; background: transparent; color: var(--color-ink); font: 500 16px/1.4 var(--font-body); }
 .search-field input:focus-visible { outline: 0; }
