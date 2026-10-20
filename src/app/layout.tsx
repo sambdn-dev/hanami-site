@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Fraunces, DM_Sans, Space_Mono } from 'next/font/google'
+import localFont from 'next/font/local'
 import './globals.css'
 import CookieBanner from '@/components/shared/CookieBanner'
 import AnalyticsProvider from '@/components/shared/AnalyticsProvider'
@@ -8,25 +8,9 @@ import { organizationSchema } from '@/lib/structured-data'
 import { SITE_URL } from '@/lib/seo'
 import { cn } from "@/lib/utils";
 
-const fraunces = Fraunces({
-  subsets: ['latin'],
-  variable: '--font-fraunces',
-  display: 'swap',
-  axes: ['opsz'],
-})
-
-const dmSans = DM_Sans({
-  subsets: ['latin'],
-  variable: '--font-dm-sans',
-  display: 'swap',
-})
-
-const spaceMono = Space_Mono({
-  subsets: ['latin'],
-  variable: '--font-space-mono',
-  weight: ['400', '700'],
-  display: 'swap',
-})
+// Local fonts shared with the boutique and the Hanami Admin identity.
+const manrope = localFont({ src: '../fonts/manrope.woff2', variable: '--font-fraunces', weight: '200 800', display: 'swap' })
+const inter = localFont({ src: '../fonts/inter-latin.woff2', variable: '--font-dm-sans', weight: '100 900', display: 'swap' })
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -89,7 +73,7 @@ export default function RootLayout({
   return (
     <html
       lang="fr"
-      className={cn(fraunces.variable, dmSans.variable, spaceMono.variable, "font-sans")}
+      className={cn(manrope.variable, inter.variable, "font-sans")}
     >
       <body className="min-h-screen flex flex-col font-[family-name:var(--font-dm-sans)]">
         {/* JSON-LD Organization — identité de marque sur tout le site */}

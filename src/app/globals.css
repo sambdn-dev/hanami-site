@@ -11,6 +11,7 @@
 
 /* ─── Design tokens ─────────────────────────────────────────── */
 :root {
+  --font-space-mono: var(--font-dm-sans);
   /* Identité Hanami 2026-2027 : références maîtresses pour la refonte du site.
      Les anciens tokens ci-dessous restent en place le temps de migrer
      les pages sans casser les parcours existants. */
@@ -89,7 +90,7 @@
   --font-dm-sans:  var(--font-dm-sans);
   --font-mono:     var(--font-space-mono);
   /* shadcn/ui s'attend à --font-sans et --font-heading — on les branche
-     sur nos polices existantes : DM Sans pour le corps, Fraunces pour les titres. */
+     sur Inter pour le corps et Manrope pour les titres. */
   --font-heading: var(--font-fraunces);
   --font-sans: var(--font-dm-sans);
   --color-sidebar-ring: var(--sidebar-ring);

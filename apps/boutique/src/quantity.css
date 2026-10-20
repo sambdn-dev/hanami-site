@@ -1,0 +1,18 @@
+.quantity-popover { position: fixed; inset: auto; width: min(288px,calc(100vw - 32px)); margin: 0; padding: 18px; border: 1px solid var(--color-line); border-radius: var(--radius-card); background: var(--color-paper); color: var(--color-ink); box-shadow: var(--shadow-lg); font-family: var(--font-body,Inter,sans-serif); }
+.quantity-popover::backdrop { background: transparent; }
+.quantity-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.quantity-heading strong { display: block; font-family: Manrope,Inter,sans-serif; font-size: 16px; line-height: 1.35; }
+.quantity-heading small { display: block; margin-top: 4px; color: var(--color-muted); font-size: 12px; }
+.quantity-close { display: grid; flex-shrink: 0; place-items: center; width: 32px; height: 32px; margin: -6px -6px 0 0; border-radius: var(--radius-button); }
+.quantity-close:hover { background: var(--color-sage-soft); }
+.quantity-selection { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 18px 0; }
+.quantity-selection label { font-size: 14px; }
+.quantity-stepper { display: flex; align-items: center; height: 44px; border: 1px solid var(--color-line); border-radius: var(--radius-button); background: var(--color-surface); }
+.quantity-stepper button { display: grid; place-items: center; width: 40px; height: 42px; color: var(--color-forest); }
+.quantity-stepper input { width: 44px; height: 40px; padding: 0; border: 0; background: transparent; color: var(--color-ink); text-align: center; font: inherit; font-size: 15px; appearance: textfield; -moz-appearance: textfield; }
+.quantity-stepper input::-webkit-inner-spin-button,.quantity-stepper input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+.quantity-stepper button:disabled { opacity: .35; cursor: not-allowed; }
+.quantity-confirm { width: 100%; min-height: 44px; justify-content: space-between; gap: 12px; padding: 12px; font-size: 13px; }
+.quantity-confirm strong { white-space: nowrap; font-size: 13px; }
+.quantity-confirm:disabled { opacity: .45; cursor: not-allowed; }
+.quantity-error { margin-top: 8px; color: var(--color-muted); font-size: 12px; }

@@ -1,0 +1,7 @@
+.packshot-placeholder { min-height: 120px; display: grid; place-items: center; font: 12px/1.4 var(--font-body); color: var(--color-muted); }
+button.small-add:disabled, .quick-buy button:disabled, .detail-buy button:disabled { opacity: .45; cursor: not-allowed; }
+.basket-checkout-error { padding: 12px 14px; margin-bottom: 14px; border: 1px solid #d3bca5; border-radius: 10px; background: #f8f1e8; color: var(--color-ink); font-size: 13px; line-height: 1.5; }
+.basket-checkout-error p { margin: 0 0 6px; }
+.basket-checkout-error .text-button { min-height: 40px; font-size: 13px; }
+main .selection { scroll-margin-top: 116px; }
+@media(max-width:1050px) { main .selection { scroll-margin-top: 172px; } }

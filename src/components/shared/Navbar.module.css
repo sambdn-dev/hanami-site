@@ -54,5 +54,5 @@
 .localMobileLinks ~ .mobileBottom > a:last-child { display: flex; align-items: center; min-height: 44px; }
 @media (min-width: 768px) { .navInner { width: min(100% - 48px,1560px); } }
 @media (max-width: 767px) { .logo img { width: 92px; } }
-@media (min-width: 1100px) { .desktopLinks, .desktopCta { display: flex; } .menuButton { display: none; } }
+@media (min-width: 1280px) { .desktopLinks, .desktopCta { display: flex; } .menuButton { display: none; } }
 @media (prefers-reduced-motion: reduce) { .nav, .backdrop, .mobileMenu, .desktopCta, .moreButton svg { transition: none; } }

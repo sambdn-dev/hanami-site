@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   distDir: process.env.HANAMI_DEV_DIST_DIR || '.next',
   devIndicators: process.env.HANAMI_DEV_DIST_DIR ? false : undefined,
   turbopack: { root: process.cwd() },
+  async rewrites() {
+    return [{ source: '/boutique', destination: '/boutique/index.html' }];
+  },
   // Autorise l'accès depuis le réseau local (iPhone via IP) en dev.
   // Sans ça, Next.js 16 bloque les bundles JS React → page non hydratée
   // (textes opacity:0, boutons sans handlers).
