@@ -1,3 +1,4 @@
+import { SUSAN_COMPARISON_CROPS } from '@/lib/susan-comparison'
 import BeforeAfterSlider from '@/components/shared/BeforeAfterSlider'
 import { ArrowUpRight, Eye, MapPin } from 'lucide-react'
 import { SHOWCASE_GARDENS, showcaseDirectionsUrl } from '@/lib/showcase-gardens'
@@ -16,7 +17,7 @@ export default function LocalProof() {
             <a href="#contact">Parlons de votre pelouse <ArrowUpRight size={17} aria-hidden="true" /></a>
           </div>
           <figure className={styles.proofImage}>
-            <BeforeAfterSlider beforeSrc="/images/avant-susan.jpg" afterSrc="/images/apres-susan.jpg" beforeAlt="Jardin de Susan avant la rénovation Hanami" afterAlt="Jardin de Susan après la rénovation Hanami" beforeObjectPosition="center 43%" afterObjectPosition="center 88%" afterTransform="scale(1.08)" afterTransformOrigin="center 15%" />
+            <BeforeAfterSlider beforeSrc="/images/avant-susan.jpg" afterSrc="/images/apres-susan.jpg" beforeAlt="Jardin de Susan avant la rénovation Hanami" afterAlt="Jardin de Susan après la rénovation Hanami" {...SUSAN_COMPARISON_CROPS} />
             <figcaption>Photographies du chantier · Glissez pour comparer · Chaque jardin évolue à son rythme.</figcaption>
           </figure>
         </div>

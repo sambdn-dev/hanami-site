@@ -1,3 +1,4 @@
+import { SUSAN_COMPARISON_CROPS } from '@/lib/susan-comparison'
 import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { ArrowDown, ArrowUpRight, CalendarDays, Check, CloudSun, Droplets, Leaf, MapPin, Ruler, ShoppingBag, Sprout, Target } from 'lucide-react'
@@ -35,7 +36,7 @@ export function LocalHero() {
         </div>
         <figure className={styles.heroFigure}>
           <div className={styles.heroPhoto}>
-            <BeforeAfterSlider className={styles.heroComparison} beforeSrc="/images/avant-susan.jpg" afterSrc="/images/apres-susan.jpg" beforeAlt="Jardin de Susan avant la rénovation Hanami" afterAlt="Jardin de Susan après la rénovation Hanami" beforeObjectPosition="center 43%" afterObjectPosition="center 88%" afterTransform="scale(1.08)" afterTransformOrigin="center 15%" priority />
+            <BeforeAfterSlider className={styles.heroComparison} beforeSrc="/images/avant-susan.jpg" afterSrc="/images/apres-susan.jpg" beforeAlt="Jardin de Susan avant la rénovation Hanami" afterAlt="Jardin de Susan après la rénovation Hanami" {...SUSAN_COMPARISON_CROPS} priority />
           </div>
           <figcaption className={styles.comparisonCaption}><span>Le jardin de Susan · Réalisation Hanami au Vésinet</span><strong>Glissez pour comparer l’avant et l’après</strong></figcaption>
         </figure>

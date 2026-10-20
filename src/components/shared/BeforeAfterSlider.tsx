@@ -27,7 +27,31 @@
 'use client'
 
 import Image from 'next/image'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
+
+interface PhotoCrop {
+  x: number
+  y: number
+  width: number
+  height: number
+  sourceWidth: number
+  sourceHeight: number
+}
+
+// Both crops describe the same view in source-photo coordinates. Container
+// units preserve their registration when the comparison changes aspect ratio.
+function cropStyle(crop: PhotoCrop): CSSProperties {
+  const cover = (pixels: number) =>
+    `max(${pixels / crop.width * 100}cqw, ${pixels / crop.height * 100}cqh)`
+  return {
+    width: cover(crop.sourceWidth),
+    height: cover(crop.sourceHeight),
+    left: `calc(50% - ${cover(crop.x + crop.width / 2)})`,
+    top: `calc(50% - ${cover(crop.y + crop.height / 2)})`,
+    maxWidth: 'none',
+    objectFit: 'fill',
+  }
+}
 
 interface BeforeAfterSliderProps {
   beforeSrc: string
@@ -35,6 +59,9 @@ interface BeforeAfterSliderProps {
   beforeAlt?: string
   afterAlt?: string
   initialPosition?: number
+  /** Matching source-photo crops, without altering the original photographs. */
+  beforeCrop?: PhotoCrop
+  afterCrop?: PhotoCrop
   beforeObjectPosition?: string
   afterObjectPosition?: string
   /**
@@ -64,6 +91,8 @@ export default function BeforeAfterSlider({
   beforeAlt = 'Avant',
   afterAlt = 'Après',
   initialPosition = 50,
+  beforeCrop,
+  afterCrop,
   beforeObjectPosition = 'center 50%',
   afterObjectPosition = 'center 50%',
   afterTransform,
@@ -205,7 +234,7 @@ export default function BeforeAfterSlider({
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
-      style={{ WebkitUserSelect: 'none', userSelect: 'none' }}
+      style={{ WebkitUserSelect: 'none', userSelect: 'none', ...(beforeCrop || afterCrop ? { containerType: 'size' } : {}) }}
       /* role="group" (pas "img") : un rôle image rendrait la poignée
          role="slider" invisible aux technologies d'assistance */
       role="group"
@@ -229,6 +258,7 @@ export default function BeforeAfterSlider({
         className="object-cover pointer-events-none"
         style={{
           objectPosition: afterObjectPosition,
+          ...(afterCrop && cropStyle(afterCrop)),
           ...(afterTransform && {
             transform: afterTransform,
             transformOrigin: afterTransformOrigin,
@@ -260,7 +290,7 @@ export default function BeforeAfterSlider({
           alt={beforeAlt}
           fill
           className="object-cover"
-          style={{ objectPosition: beforeObjectPosition }}
+          style={{ objectPosition: beforeObjectPosition, ...(beforeCrop && cropStyle(beforeCrop)) }}
           sizes="(max-width: 768px) 100vw, 50vw"
           priority={priority}
         />
