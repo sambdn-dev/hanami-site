@@ -61,196 +61,185 @@ function reducedMotionSnapshot() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
 }
 
-const grassPositions = [78, 123, 174, 231, 277, 324, 383, 441, 498, 554, 612, 660, 716, 767, 821]
+const crowns = [117, 249, 384, 519, 654, 786]
+const story: Record<Mode, string[]> = {
+  granular: ['Apport en surface', 'Libération progressive', 'Disponibilité racinaire'],
+  foliar: ['Pulvérisation fine', 'Contact avec la feuille', 'Nutrition complémentaire'],
+  roots: ['Un sol à comprendre', 'Un réseau à accompagner', 'Une réponse à observer'],
+  water: ['Une surface qui résiste', 'Une infiltration répartie', 'La zone racinaire atteinte'],
+  winter: ['La lumière diminue', 'Le métabolisme ralentit', 'Les réserves se préservent'],
+  potassium: ['Anticiper la chaleur', 'Accompagner les échanges', 'Raisonner les apports d’eau'],
+}
 
-function Grass({ id, sparse = false }: { id: string; sparse?: boolean }) {
-  const positions = sparse ? [277, 383, 441, 498, 612] : grassPositions
-  return (
-    <g>
-      {positions.map((x, index) => (
-        <g key={x} transform={`translate(${x} 254)`}>
-          <g className={styles.blade} style={{ animationDelay: `${index * -.29}s` }}>
-            <path d={`M0 0 C-17 -32 -${22 + (index % 3) * 9} -78 -${24 + (index % 3) * 8} -${107 + (index % 4) * 12} C-2 -80 6 -37 4 0Z`} fill={`url(#${id}-blade)`} />
-            <path d={`M4 0 C7 -46 ${18 + (index % 3) * 5} -100 ${25 + (index % 3) * 7} -${144 + (index % 4) * 10} C19 -90 17 -40 8 0Z`} fill={`url(#${id}-blade)`} />
-            <path d="M3 0 C-1 -36 -7 -67 -14 -88" stroke="#c2dd9d" strokeWidth=".9" opacity=".4" fill="none" />
-            <path d="M7 -1 C11 -45 14 -71 20 -101" stroke="#d9e8a5" strokeWidth=".8" opacity=".45" fill="none" />
+function Grass({ id, winter = false }: { id: string; winter?: boolean }) {
+  return <g>
+    {[0, 1, 2].map(layer => <g key={layer} opacity={.48 + layer * .25}>
+      {Array.from({ length: 32 }, (_, i) => {
+        // Quantize trigonometry so server and browser serialize identical SVG paths.
+        const x = Number((78 + i * 23.4 + Math.sin(i * 2.7) * 7).toFixed(2))
+        const y = 248 + layer * 10
+        const height = 45 + ((i * 37 + layer * 19) % 73)
+        const lean = Number((Math.sin(i * 2.1 + layer) * 29).toFixed(2))
+        return <g key={i} transform={`translate(${x} ${y})`}>
+          <g className={styles.turfTuft} style={{ animationDelay: `${-i * .37 - layer}s` }}>
+            <path d={`M-2 0 C${lean * .25 - 5} ${-height * .35} ${lean - 8} ${-height * .8} ${lean} ${-height} C${lean + 2} ${-height * .64} 4 ${-height * .2} 3 0Z`} fill={`url(#${id}-${winter ? 'winter-blade' : layer === 2 ? 'leaf' : 'back-leaf'})`} />
+            {layer === 2 && <path d={`M0 -2 Q${lean * .45} ${-height * .5} ${lean} ${-height + 7}`} fill="none" stroke="#d3e8a5" strokeWidth=".55" opacity=".5" />}
           </g>
         </g>
-      ))}
-    </g>
-  )
+      })}
+    </g>)}
+    {crowns.map((x, index) => <g key={x} transform={`translate(${x} 270)`}>
+      <g className={styles.turfTuft} style={{ animationDelay: `${-index * 1.3}s` }}>
+        {[-1, 0, 1].map((direction, i) => {
+          const h = 87 + ((index * 23 + i * 17) % 65)
+          const tip = direction * (22 + index % 3 * 9) + (index % 2 ? 9 : -8)
+          return <g key={i}>
+            <path d={`M${i * 2 - 4} 0 C${tip * .3} ${-h * .3} ${tip * .7 - 7} ${-h * .75} ${tip} ${-h} C${tip + 3} ${-h * .6} 7 ${-h * .23} ${i * 2 + 1} 0Z`} fill={`url(#${id}-${winter ? 'winter-blade' : 'leaf'})`} />
+            <path d={`M0 0 Q${tip * .3} ${-h * .55} ${tip} ${-h + 9}`} stroke="#e0edb7" strokeWidth=".6" opacity=".52" fill="none" />
+          </g>
+        })}
+      </g>
+      <ellipse cy="1" rx="8" ry="2.5" fill="#547344" />
+    </g>)}
+  </g>
 }
 
-function RootNetwork({ active = false, color = '#dcc79b' }: { active?: boolean; color?: string }) {
-  return (
-    <g fill="none" stroke={color} strokeLinecap="round" strokeLinejoin="round">
-      {[145, 285, 445, 605, 760].map((x, index) => (
-        <g key={x} transform={`translate(${x} 254)`} className={active ? styles.growingRoot : undefined} style={{ animationDelay: `${index * -.7}s` }}>
-          <path d="M0 0 C-7 28 10 39 4 69 S-9 118 -4 169 M2 30 C-16 45 -36 49 -39 79 S-34 111 -57 138 M4 57 C29 75 37 92 34 122 S55 156 58 183 M-3 101 C-25 120 -30 133 -30 160 M34 114 C54 119 68 130 76 154" strokeWidth="2" opacity=".74" />
-          <path d="M-38 69 L-57 85 M-36 104 L-20 118 M-47 129 L-73 148 M-1 140 L12 162 M-29 144 L-44 172 M48 151 L32 176 M65 140 L88 156 M34 106 L50 102 M2 73 L-10 84" strokeWidth="1" opacity=".44" />
-          {active && <path d="M0 0 C-7 28 10 39 4 69 S-9 118 -4 169 M2 30 C-16 45 -36 49 -39 79 S-34 111 -57 138 M4 57 C29 75 37 92 34 122 S55 156 58 183" className={styles.rootPulse} stroke="#d5e897" strokeWidth="3" pathLength="100" />}
+function RootNetwork({ id, mode }: { id: string; mode: Mode }) {
+  return <g fill="none" strokeLinecap="round">
+    {crowns.map((x, index) => <g key={x} transform={`translate(${x} 270)`}>
+      {[-1, 0, 1].map((direction, branch) => {
+        const length = 131 + (index * 29 + branch * 17) % 63
+        const drift = direction * (23 + index % 3 * 12)
+        const path = `M0 0 C${drift * .3} 34 ${drift - 5} 64 ${drift} 92 S${drift + direction * 17} ${length - 20} ${drift + direction * 9} ${length}`
+        const uptakePath = `M${drift + direction * 9} ${length} C${drift + direction * 17} ${length - 20} ${drift + 5} 120 ${drift} 92 C${drift - 5} 64 ${drift * .3} 34 0 0`
+        return <g key={direction}>
+          <path d={path} stroke={`url(#${id}-root)`} strokeWidth={branch === 1 ? 1.8 : 1.1} />
+          {[0, 1, 2, 3].map(n => {
+            const y = 42 + n * 28, rootX = drift * Math.min(1, y / 92), side = n % 2 ? -1 : 1
+            return <g key={n} stroke="#c8bd96" opacity={.45 - n * .055}>
+              <path d={`M${rootX} ${y} Q${rootX + side * 13} ${y + 7} ${rootX + side * 23} ${y + 28} M${rootX + side * 10} ${y + 12} l${side * 9} 4 M${rootX + side * 17} ${y + 20} l${side * 8} 2`} strokeWidth=".65" />
+            </g>
+          })}
+          {branch === 1 && (mode === 'granular' || mode === 'roots' || mode === 'water') && <path d={uptakePath} className={styles.rootFlow} pathLength="100" stroke={mode === 'water' ? '#a7dcd0' : '#dbd4a7'} strokeWidth="2" style={{ animationDelay: `${index * -.48}s` }} />}
         </g>
-      ))}
-    </g>
-  )
-}
-
-function FallingDrops({ count = 11, foliar = false }: { count?: number; foliar?: boolean }) {
-  return (
-    <g fill="#b7e5e7">
-      {Array.from({ length: count }, (_, index) => (
-        <g key={index} transform={`translate(${foliar ? 250 + index * 37 : 86 + index * 71} ${foliar ? 90 : 163})`}>
-          <path className={foliar ? styles.foliarDrop : styles.rainDrop} style={{ animationDelay: `${index * -.37}s` }} d="M0 -8 C-1 -4 -4 -1 -4 2 A4 4 0 0 0 4 2 C4 -1 1 -4 0 -8Z" />
-        </g>
-      ))}
-    </g>
-  )
+      })}
+    </g>)}
+  </g>
 }
 
 function SoilScene({ mode, id }: { mode: Mode; id: string }) {
   const water = mode === 'water'
-  return (
-    <svg className={`${styles.scene} ${styles[mode]}`} viewBox="0 0 900 540" role="img" aria-labelledby={`${id}-scene-title ${id}-scene-description`}>
-      <title id={`${id}-scene-title`}>{`${chapters.find(chapter => chapter.id === mode)?.label} : vue illustrative du gazon et de son sol`}</title>
-      <desc id={`${id}-scene-description`}>{water ? 'À gauche, l’eau circule dans quelques canaux. À droite, une réhumidification plus homogène atteint la zone racinaire.' : mode === 'winter' ? 'Une lumière basse atténuée et des cristaux symbolisent les jours courts et le froid. La circulation lumineuse dans les racines ralentit : le gazon conserve une activité adaptée à la saison. Illustration pédagogique, sans échelle.' : 'Coupe du sol avec les brins de gazon, les racines et les apports représentés par des points lumineux. Animation pédagogique, sans échelle ni résultat garanti.'}</desc>
-      <defs>
-        <linearGradient id={`${id}-earth`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#756447" /><stop offset=".35" stopColor="#493d2c" /><stop offset="1" stopColor="#233528" />
-        </linearGradient>
-        <linearGradient id={`${id}-blade`} x1="0" y1="1" x2=".65" y2="0">
-          <stop stopColor="#2e6741" /><stop offset=".45" stopColor="#8eaa67" /><stop offset="1" stopColor="#c7da95" />
-        </linearGradient>
-        <linearGradient id={`${id}-wet`} x1="0" y1="0" x2="0" y2="1">
-          <stop stopColor="#b4e4dc" stopOpacity=".48" /><stop offset=".7" stopColor="#84cdc7" stopOpacity=".27" /><stop offset="1" stopColor="#84cdc7" stopOpacity="0" />
-        </linearGradient>
-        <radialGradient id={`${id}-halo`}>
-          <stop stopColor="#bdce88" stopOpacity=".18" /><stop offset="1" stopColor="#bdce88" stopOpacity="0" />
-        </radialGradient>
-        <radialGradient id={`${id}-nutrient`}>
-          <stop stopColor="#ffe9b3" /><stop offset=".6" stopColor="#e3c987" /><stop offset="1" stopColor="#c4a55d" />
-        </radialGradient>
-        <linearGradient id={`${id}-winter-light`} x1="0" y1="0" x2="1" y2="1">
-          <stop stopColor="#d6e4d7" stopOpacity=".16" /><stop offset="1" stopColor="#a5c6d1" stopOpacity="0" />
-        </linearGradient>
-        <linearGradient id={`${id}-winter-sky`} x1="0" y1="0" x2="0" y2="1">
-          <stop stopColor="#adccd2" stopOpacity=".08" /><stop offset="1" stopColor="#adccd2" stopOpacity="0" />
-        </linearGradient>
-        <pattern id={`${id}-soil-texture`} width="94" height="67" patternUnits="userSpaceOnUse">
-          <ellipse cx="13" cy="12" rx="2.2" ry="1.3" fill="#cbb28b" opacity=".25" />
-          <ellipse cx="52" cy="45" rx="3.2" ry="2" fill="#b39b76" opacity=".25" />
-          <circle cx="80" cy="20" r="1.2" fill="#e4d0a3" opacity=".3" />
-          <path d="M20 46l5 2M62 9l3 -2M80 60l5 1" stroke="#b9a383" strokeWidth="1.1" opacity=".25" />
-        </pattern>
-        <clipPath id={`${id}-soil-clip`}><path d="M38 254 Q150 244 260 254 T480 254 T690 254 T862 254 V508 H38Z" /></clipPath>
-        <filter id={`${id}-glow`} x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="3" /></filter>
-      </defs>
+  const soilOutline = 'M64 270 Q183 266 313 271 T565 270 T812 270 V493 Q650 489 521 494 T270 492 T64 493Z'
+  return <svg className={`${styles.scene} ${styles[mode]}`} viewBox="0 0 900 570" role="img" aria-labelledby={`${id}-title ${id}-description`}>
+    <title id={`${id}-title`}>{`${chapters.find(c => c.id === mode)?.label} : coupe illustrée du gazon`}</title>
+    <desc id={`${id}-description`}>{`Touffes de gazon reliées à leur réseau de racines, sur une coupe du sol en profondeur. ${water ? 'À gauche, quelques passages préférentiels ; à droite, une réhumidification plus homogène.' : story[mode].join(', ') + '.'} Illustration pédagogique, sans échelle ni résultat garanti.`}</desc>
+    <defs>
+      <linearGradient id={`${id}-earth`} x2=".2" y2="1"><stop stopColor="#514b35" /><stop offset=".26" stopColor="#3c3b2c" /><stop offset="1" stopColor="#202d24" /></linearGradient>
+      <linearGradient id={`${id}-side`} x2="1" y2=".2"><stop stopColor="#28372b" /><stop offset="1" stopColor="#111f19" /></linearGradient>
+      <linearGradient id={`${id}-leaf`} x1="0" y1="1" x2=".8" y2="0"><stop stopColor="#234e34" /><stop offset=".42" stopColor="#608848" /><stop offset=".8" stopColor="#a9c875" /><stop offset="1" stopColor="#dae7a5" /></linearGradient>
+      <linearGradient id={`${id}-back-leaf`} x1="0" y1="1" x2="0" y2="0"><stop stopColor="#284735" /><stop offset="1" stopColor="#769257" /></linearGradient>
+      <linearGradient id={`${id}-winter-blade`} x1="0" y1="1" x2=".7" y2="0"><stop stopColor="#315443" /><stop offset=".6" stopColor="#78937a" /><stop offset="1" stopColor="#b9c8a0" /></linearGradient>
+      <linearGradient id={`${id}-root`} x2=".15" y2="1"><stop stopColor="#e0d4ac" /><stop offset=".45" stopColor="#bfb58f" stopOpacity=".78" /><stop offset="1" stopColor="#8b9477" stopOpacity=".2" /></linearGradient>
+      <radialGradient id={`${id}-light`}><stop stopColor={mode === 'winter' ? '#a7cbd0' : '#c6d99b'} stopOpacity=".13" /><stop offset="1" stopColor="#8faf81" stopOpacity="0" /></radialGradient>
+      <radialGradient id={`${id}-wet`}><stop stopColor="#8accc2" stopOpacity=".32" /><stop offset="1" stopColor="#77c8be" stopOpacity="0" /></radialGradient>
+      <radialGradient id={`${id}-mineral`} cx=".35" cy=".3"><stop stopColor="#f2e2af" /><stop offset=".5" stopColor="#c8b374" /><stop offset="1" stopColor="#827550" /></radialGradient>
+      <linearGradient id={`${id}-heat`} x1="1" x2="0" y2="1"><stop stopColor="#dfd5a2" stopOpacity=".13" /><stop offset="1" stopColor="#dfd5a2" stopOpacity="0" /></linearGradient>
+      <clipPath id={`${id}-soil`}><path d={soilOutline} /></clipPath>
+      <clipPath id={`${id}-canopy`}><rect x="64" y="86" width="748" height="181" /></clipPath>
+    </defs>
 
-      <ellipse cx="455" cy="235" rx="420" ry="240" fill={`url(#${id}-halo)`} />
-      {mode === 'winter' && <g>
-        <rect x="38" y="56" width="824" height="197" fill={`url(#${id}-winter-sky)`} />
-        <g className={styles.winterLight}>
-          <path d="M99 159 L699 196 L850 253 L84 194Z" fill={`url(#${id}-winter-light)`} />
-          <path d="M98 166 L768 243" stroke="#d7e0c4" strokeWidth=".8" strokeOpacity=".15" />
-          <circle cx="103" cy="177" r="20" fill="#dbd5b3" fillOpacity=".12" stroke="#dbd5b3" strokeWidth="1" strokeOpacity=".45" />
-          <path d="M73 194H140" stroke="#9ebbb7" strokeWidth="1" strokeOpacity=".35" />
-        </g>
-      </g>}
-      <g className={styles.fieldLines} stroke="#d1ddb0" strokeWidth=".7" fill="none" opacity=".09">
-        <ellipse cx="450" cy="258" rx="406" ry="93" /><ellipse cx="450" cy="258" rx="330" ry="65" /><ellipse cx="450" cy="258" rx="245" ry="41" />
-      </g>
-      <path d="M38 254 Q150 244 260 254 T480 254 T690 254 T862 254 V508 H38Z" fill={`url(#${id}-earth)`} />
-      <g clipPath={`url(#${id}-soil-clip)`}>
-        <rect x="38" y="244" width="824" height="264" fill={`url(#${id}-soil-texture)`} />
-        <path d="M38 283 Q160 276 290 288 T570 286 T862 281" stroke="#d3c39c" opacity=".16" fill="none" />
-        {water && <>
-          <rect x="459" y="254" width="403" height="207" fill={`url(#${id}-wet)`} className={styles.wetZone} />
-          <g className={styles.waterPaths} fill="none" stroke="#a1dbdc" strokeWidth="4" strokeLinecap="round">
-            <path d="M131 251 C115 290 136 344 113 427" /><path d="M257 251 C274 304 247 344 269 474" /><path d="M386 251 C370 297 396 326 375 389" />
-          </g>
-          <g className={styles.distributedWater} fill="none" stroke="#a1dbdc" strokeWidth="2" strokeLinecap="round">
-            {[492, 547, 602, 657, 712, 767, 822].map(x => <path key={x} d={`M${x} 255 Q${x - 11} 288 ${x} 335 T${x + 3} 425 M${x} 307 Q${x - 20} 302 ${x - 28} 319 M${x} 355 Q${x + 20} 349 ${x + 29} 365`} />)}
-          </g>
-        </>}
-        <RootNetwork active={mode === 'roots' || mode === 'winter'} color={water ? '#dfd1ac' : mode === 'winter' ? '#b9c8b5' : '#dcc79b'} />
-        {mode === 'granular' && <g>
-          {[97, 181, 264, 350, 433, 516, 601, 685, 771, 819].map((x, index) => <g key={x} transform={`translate(${x} 261)`}>
-            <circle r="7.5" fill={`url(#${id}-nutrient)`} />
-            <circle r="13" fill="none" stroke="#e8d69c" strokeWidth="1" className={styles.granuleHalo} style={{ animationDelay: `${index * -.53}s` }} />
-            {[0, 1, 2].map(particle => <circle key={particle} r="2.6" cx={(particle - 1) * 9} cy="7" fill="#e3d899" className={styles.nutrientParticle} style={{ animationDelay: `${index * -.53 - particle * 1.5}s` }} />)}
-          </g>)}
-        </g>}
-        {mode === 'roots' && <g fill="#c8dd92">
-          {Array.from({ length: 23 }, (_, index) => <circle key={index} cx={89 + (index * 83) % 723} cy={283 + (index * 37) % 165} r={index % 3 === 0 ? 3 : 1.8} className={styles.microbe} style={{ animationDelay: `${index * -.32}s` }} />)}
-        </g>}
-        {mode === 'potassium' && <g fill="none" strokeLinecap="round">
-          {[145, 285, 445, 605, 760].map((x, index) => <path key={x} d={`M${x - 3} 403 Q${x + 15} 355 ${x + 3} 314 T${x} 255`} stroke="#a0d7dd" strokeWidth="3" className={styles.upwardWater} style={{ animationDelay: `${index * -.6}s` }} pathLength="100" />)}
-        </g>}
-      </g>
-      <path d="M38 254 Q150 244 260 254 T480 254 T690 254 T862 254" stroke="#9dab77" strokeWidth="3" fill="none" />
-      <Grass id={id} sparse={mode === 'foliar'} />
-      {mode === 'winter' && <g fill="none" stroke="#b9d8df" strokeLinecap="round">
-        {[{ x: 741, y: 106, size: 21 }, { x: 647, y: 152, size: 8 }, { x: 811, y: 191, size: 7 }].map((crystal, index) => <g key={crystal.x} transform={`translate(${crystal.x} ${crystal.y})`}>
-          <g className={styles.frostCrystal} style={{ animationDelay: `${index * -2}s` }}>
-            {[0, 60, 120].map(angle => <g key={angle} transform={`rotate(${angle})`}>
-              <path d={`M0 -${crystal.size}V${crystal.size} M-${crystal.size * .27} -${crystal.size * .64}L0 -${crystal.size * .38}L${crystal.size * .27} -${crystal.size * .64} M-${crystal.size * .27} ${crystal.size * .64}L0 ${crystal.size * .38}L${crystal.size * .27} ${crystal.size * .64}`} strokeWidth={index === 0 ? 1.2 : .8} />
-            </g>)}
-          </g>
-        </g>)}
-        <path d="M64 235Q253 219 418 235T827 233" strokeWidth=".8" strokeOpacity=".18" />
-      </g>}
-      {mode === 'foliar' && <>
-        <g transform="translate(441 254)">
-          <path d="M0 0 C-11 -43 -22 -95 -36 -139 C-5 -107 13 -46 8 0Z" fill="#a6a16c" opacity=".8" />
-          <g className={styles.leafStrength}>
-            <path d="M0 0 C-12 -45 -10 -123 -7 -186 C12 -121 17 -55 8 0Z" fill={`url(#${id}-blade)`} />
-            <path d="M4 -3 C3 -58 0 -105 -4 -150" stroke="#e7ebbc" strokeWidth="1" opacity=".45" fill="none" />
-          </g>
-        </g>
-        <FallingDrops count={11} foliar />
-        <g fill="#e1e9b0">{[320, 384, 447, 512, 578].map((x, index) => <circle key={x} cx={x} cy={170 + index % 2 * 20} r="3" className={styles.leafSpark} style={{ animationDelay: `${index * -.7}s` }} />)}</g>
-      </>}
+    <ellipse cx="453" cy="510" rx="360" ry="13" fill="#07160f" opacity=".42" />
+    <ellipse cx="442" cy="228" rx="399" ry="244" fill={`url(#${id}-light)`} />
+    <g stroke="#c8d5af" opacity=".14" strokeWidth=".65" fill="none">
+      <path d="M46 267V495 M41 267H51 M41 380H51 M41 495H51 M65 526H812 M65 522V530 M812 522V530" />
+      {[301, 327, 353, 406, 432, 458].map(y => <path key={y} d={`M43 ${y}h5`} />)}
+    </g>
+    <path d="M64 270L98 237H846L812 270Z" fill="#324f36" />
+    <path d="M812 270L846 237V460L812 493Z" fill={`url(#${id}-side)`} />
+    <path d={soilOutline} fill={`url(#${id}-earth)`} />
+    <g clipPath={`url(#${id}-soil)`}>
+      <path d="M64 270H812V296Q664 286 527 299T263 293T64 298Z" fill="#696047" opacity=".3" />
+      <path d="M64 357Q210 343 370 361T644 355T812 365" stroke="#a39369" strokeWidth=".7" strokeOpacity=".12" fill="none" />
+      <path d="M64 432Q252 415 434 438T812 428" stroke="#9a9776" strokeWidth=".7" strokeOpacity=".1" fill="none" />
+      {Array.from({ length: 125 }, (_, i) => {
+        const x = 70 + (i * 137.37) % 735, y = 277 + (i * 71.53) % 210
+        return <ellipse key={i} cx={x} cy={y} rx={.9 + i % 4 * .55} ry={.65 + i % 3 * .35} fill={i % 3 ? '#c5b797' : '#111e17'} opacity={i % 3 ? .12 : .4} transform={`rotate(${i * 31} ${x} ${y})`} />
+      })}
       {water && <>
-        <path d="M57 251 Q76 243 98 251 T157 251 M183 251 Q215 242 238 251 T307 251 M328 251 Q355 243 379 251 T432 251" fill="none" stroke="#b1e0df" strokeWidth="4" className={styles.pooledWater} />
-        <FallingDrops />
-        <path d="M450 105 V484" stroke="#d6e0b7" strokeWidth="1" strokeDasharray="3 7" opacity=".45" />
-      </>}
-      {mode === 'potassium' && <>
-        <g transform="translate(735 103)" className={styles.sun}>
-          <circle r="24" stroke="#ecd49a" strokeWidth="1" fill="#ecd49a" fillOpacity=".1" />
-          {[0, 45, 90, 135, 180, 225, 270, 315].map(angle => <path key={angle} d="M0 -34 V-43" transform={`rotate(${angle})`} stroke="#ecd49a" strokeWidth="1.5" />)}
+        <g className={styles.wetFront}>
+          <ellipse cx="637" cy="346" rx="183" ry="101" fill={`url(#${id}-wet)`} />
+          <ellipse cx="650" cy="398" rx="157" ry="84" fill={`url(#${id}-wet)`} />
         </g>
-        <g transform="translate(443 177)">
-          <circle r="21" fill="#dacc93" fillOpacity=".12" stroke="#dacc93" strokeOpacity=".6" />
-          <text textAnchor="middle" dominantBaseline="central" fill="#e7ddb2" fontSize="19" fontFamily="serif">K</text>
-        </g>
-        <path d="M448 241 Q427 197 441 153" className={styles.upwardWater} stroke="#b7e3df" strokeWidth="2.5" fill="none" pathLength="100" />
+        {[151, 284, 389].map(x => <path key={x} d={`M${x} 267Q${x - 18} 319 ${x} 366T${x - 8} 476`} stroke="#8dbcb8" strokeWidth="3" fill="none" className={styles.waterChannel} />)}
+        {[490, 548, 606, 664, 722, 780].map(x => <path key={x} d={`M${x} 270Q${x - 9} 306 ${x} 344T${x + 4} 436 M${x} 311q-20 11 -29 27 M${x} 355q23 10 31 32`} stroke="#a4d7ca" strokeWidth="1.5" fill="none" className={styles.waterSpread} />)}
       </>}
-      <g stroke="#ebead5" strokeWidth=".75" opacity=".3">
-        <path d="M18 254 H28 M23 249 V259 M872 254 H882 M877 249 V259" />
-        <path d="M38 524 H862" /><path d="M38 521 V527 M862 521 V527" />
-      </g>
-    </svg>
-  )
+      <RootNetwork id={id} mode={mode} />
+      {mode === 'granular' && crowns.map((x, i) => <g key={x}>
+        <ellipse cx={x + 24} cy="301" rx="49" ry="32" fill={`url(#${id}-wet)`} className={styles.nutrientCloud} style={{ animationDelay: `${i * -.3}s` }} />
+        {[0, 1, 2].map(n => <circle key={n} cx={x + 24 + (n - 1) * 8} cy={276 + n * 7} r={1.7} fill="#e2d59d" className={styles.nutrientTravel} style={{ animationDelay: `${-i * .35 - n * .45}s` }} />)}
+      </g>)}
+      {mode === 'roots' && crowns.map((x, i) => <ellipse key={x} cx={x} cy={345 + i % 2 * 26} rx="47" ry="86" fill={`url(#${id}-wet)`} className={styles.nutrientCloud} style={{ animationDelay: `${i * -.4}s` }} />)}
+      {mode === 'winter' && crowns.map((x, i) => <g key={x} className={styles.winterReserve} style={{ animationDelay: `${i * -.6}s` }}>
+        {[0, 1, 2].map(n => <circle key={n} cx={x + n * 8 - 8} cy={292 + n % 2 * 12} r="2" fill="#d8c693" />)}
+      </g>)}
+      {mode === 'potassium' && crowns.map((x, i) => <path key={x} d={`M${x + 8} 426Q${x - 10} 368 ${x} 307V270`} pathLength="100" className={styles.waterRise} fill="none" stroke="#abd9cb" strokeWidth="2.1" style={{ animationDelay: `${-i * .5}s` }} />)}
+    </g>
+    <path d="M64 270Q183 266 313 271T565 270T812 270" fill="none" stroke="#9ba777" strokeWidth="2" />
+    <Grass id={id} winter={mode === 'winter'} />
+    {mode === 'granular' && crowns.map((x, i) => <g key={x} className={styles.granule} style={{ animationDelay: `${i * -.35}s` }}>
+      <ellipse cx={x + 24} cy="269" rx="7.5" ry="2.3" fill="#102318" opacity=".7" />
+      <circle cx={x + 24} cy="265" r="4.4" fill={`url(#${id}-mineral)`} />
+    </g>)}
+    {mode === 'foliar' && <g clipPath={`url(#${id}-canopy)`}>
+      <path d="M206 94Q458 85 709 108" stroke="#c1d9b0" strokeWidth="1" strokeDasharray="2 8" opacity=".32" fill="none" />
+      {Array.from({ length: 21 }, (_, i) => <g key={i} transform={`translate(${196 + i * 26} ${112 + i % 3 * 8})`}><path d="M0 -4C-2 -1 -3 1 -2 3Q0 5 2 3C3 1 2 -1 0 -4Z" fill="#c9e5da" className={styles.foliarMist} style={{ animationDelay: `${-i * .12}s` }} /></g>)}
+      <path d="M380 267Q380 202 363 135 M518 267Q534 200 541 122 M652 266Q635 209 622 151" fill="none" stroke="#d7e9b4" strokeWidth="2" className={styles.leafResponse} />
+    </g>}
+    {water && <g fill="none" stroke="#b0d8d0">
+      <path d="M83 270Q110 262 137 270T203 270 M230 269Q255 264 280 270T347 270" strokeWidth="3" opacity=".65" />
+      <path d="M442 98V491" strokeWidth=".65" strokeDasharray="3 6" opacity=".25" />
+    </g>}
+    {mode === 'winter' && <g className={styles.winterHaze}>
+      <path d="M87 119L688 173L826 252H292Z" fill={`url(#${id}-heat)`} />
+      <path d="M84 269Q260 263 431 270T812 269" fill="none" stroke="#cfdfdb" strokeWidth="2" opacity=".52" />
+      {[141, 270, 394, 530, 678, 790].map((x, i) => <circle key={x} cx={x} cy={166 + i % 3 * 28} r="1.6" fill="#d4e3df" opacity=".5" />)}
+    </g>}
+    {mode === 'potassium' && <>
+      <path d="M617 74L842 80V262L325 250Z" fill={`url(#${id}-heat)`} className={styles.heatShimmer} />
+      <path d="M520 268Q525 226 539 166" pathLength="100" stroke="#b4e1d0" strokeWidth="1.5" fill="none" className={styles.waterRise} />
+    </>}
+    <g className={styles.sceneCallouts} fill="#bfcfb3" fontFamily="var(--font-dm-sans), sans-serif" fontSize="12" letterSpacing=".3">
+      <path d="M589 114H683L705 94" fill="none" stroke="#bfcfb3" strokeWidth=".7" opacity=".55" />
+      <circle cx="589" cy="114" r="2" fill="#cfdda9" />
+      <text x="714" y="94">{mode === 'potassium' ? 'Échanges hydriques' : mode === 'winter' ? 'Lumière réduite' : mode === 'foliar' ? 'Surface foliaire' : 'Un gazon vivant'}</text>
+      <path d={mode === 'winter' ? 'M654 298L729 417L754 441' : 'M629 417H729L754 441'} fill="none" stroke="#bfcfb3" strokeWidth=".7" opacity=".5" />
+      <circle cx={mode === 'winter' ? 654 : 629} cy={mode === 'winter' ? 298 : 417} r="2" fill="#c8bc96" />
+      <text x="600" y="461">{water ? 'Réhumidification répartie' : mode === 'winter' ? 'Réserves au collet' : 'Un réseau racinaire à préserver'}</text>
+    </g>
+  </svg>
 }
 
 export default function NutritionMotion() {
   const [mode, setMode] = useState<Mode>('granular')
   const [paused, setPaused] = useState(false)
   const [visible, setVisible] = useState(false)
+  const [pageActive, setPageActive] = useState(true)
   const section = useRef<HTMLElement>(null)
   const tabs = useRef<(HTMLButtonElement | null)[]>([])
   const id = useId().replace(/:/g, '')
   const reducedMotion = useSyncExternalStore(subscribeToMotionPreference, reducedMotionSnapshot, () => false)
   const chapter = chapters.find(item => item.id === mode)!
   const Icon = chapter.icon
-  const running = visible && !paused && !reducedMotion
+  const running = visible && pageActive && !paused && !reducedMotion
 
   useEffect(() => {
     const target = section.current
     if (!target) return
     const observer = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting), { threshold: .15 })
     observer.observe(target)
-    return () => observer.disconnect()
+    const updateVisibility = () => setPageActive(!document.hidden)
+    document.addEventListener('visibilitychange', updateVisibility)
+    return () => { observer.disconnect(); document.removeEventListener('visibilitychange', updateVisibility) }
   }, [])
 
   function selectTab(index: number) {
@@ -280,7 +269,7 @@ export default function NutritionMotion() {
           ))}
         </div>
 
-        <div id={`${id}-panel`} role="tabpanel" aria-labelledby={`${id}-tab-${mode}`} tabIndex={0} className={`${styles.panel} ${running ? styles.running : styles.still}`}>
+        <div id={`${id}-panel`} role="tabpanel" aria-labelledby={`${id}-tab-${mode}`} tabIndex={0} className={`${styles.panel} ${running ? '' : styles.still}`}>
           <div className={styles.visual}>
             <div className={styles.visualTop}>
               <span className={styles.liveLabel}><span />{reducedMotion ? 'ILLUSTRATION FIXE' : 'LE GAZON, DE PLUS PRÈS'}</span>
@@ -292,6 +281,10 @@ export default function NutritionMotion() {
             {mode === 'water' && <div className={styles.comparisonLabels}><span>Sol hydrophobe</span><span>Réhumidification accompagnée</span></div>}
             {mode === 'winter' && <div className={styles.seasonLabels}><span>Moins de lumière</span><span>Froid &amp; croissance ralentie</span></div>}
             <div key={mode} className={styles.sceneEntry}><SoilScene mode={mode} id={`${id}-${mode}`} /></div>
+            <div className={styles.sceneStory} aria-label="Les trois temps de l’illustration">
+              {story[mode].map((label, index) => <span key={`${mode}-${label}`} className={styles.storyBeat} style={{ animationDelay: `${index * 4}s` }}><i aria-hidden="true" />{label}</span>)}
+            </div>
+            <div key={`progress-${mode}`} className={styles.storyProgress} aria-hidden="true"><i /></div>
             <div className={styles.visualLegend}>
               <span><i className={styles.rootDot} />Zone racinaire</span>
               <span><i className={mode === 'water' || mode === 'potassium' || mode === 'winter' ? styles.waterDot : styles.nutrientDot} />{mode === 'water' || mode === 'potassium' ? 'Circulation de l’eau' : mode === 'winter' ? 'Rythme hivernal' : mode === 'roots' ? 'Activité illustrée' : 'Apports ciblés'}</span>

@@ -18,15 +18,15 @@
 .selectedTab:hover { color: #f8f6ef; }
 .tab:focus-visible, .playback:focus-visible { outline: 2px solid #95ac67; outline-offset: 3px; }
 .panel:focus-visible { outline: 2px solid #95ac67; outline-offset: 5px; }
-.panel { display: grid; grid-template-columns: 1.48fr 1fr; overflow: hidden; min-width: 0; background: #172f24; color: #f4f2e7; }
-.visual { position: relative; display: flex; flex-direction: column; min-width: 0; justify-content: center; padding: 0 0 23px; border-right: 1px solid #dce5c31a; background: radial-gradient(ellipse at 40% 25%, #35523a33, transparent 70%); }
+.panel { display: grid; grid-template-columns: 1.48fr 1fr; overflow: hidden; min-width: 0; background: #132a20; color: #f4f2e7; }
+.visual { position: relative; display: flex; flex-direction: column; min-width: 0; justify-content: center; padding: 0 0 23px; border-right: 1px solid #dce5c31a; background: radial-gradient(ellipse at 48% 32%, #547d4938 0%, #253f2d1a 43%, transparent 72%), linear-gradient(155deg, #1a3528 0%, #10271d 76%); }
 .visualTop { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 26px 28px 6px; }
 .liveLabel { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-space-mono), monospace; font-size: 8px; line-height: 1.5; letter-spacing: .1em; color: #bfccab; }
 .liveLabel > span { display: block; width: 4px; height: 4px; border-radius: 50%; background: #bacc8c; box-shadow: 0 0 12px #bacc8c44; }
 .playback { display: inline-flex; gap: 6px; align-items: center; justify-content: center; flex-shrink: 0; min-height: 34px; padding: 7px 10px; border: 1px solid #dce5c333; background: #172f2477; color: #dce5c3; font-size: 10px; cursor: pointer; transition: border-color .2s; }
 .playback:hover { border-color: #dce5c380; }
 .playback:disabled { opacity: .6; cursor: default; }
-.sceneEntry { position: relative; flex: 1; display: flex; align-items: center; animation: enterScene .65s ease-out both; }
+.sceneEntry { position: relative; flex: 1; display: flex; align-items: center; animation: enterScene .8s cubic-bezier(.2,.65,.3,1) both; }
 .scene { display: block; width: 100%; height: auto; overflow: visible; }
 .granular, .foliar, .roots, .water, .winter, .potassium { isolation: isolate; }
 .visualLegend { display: flex; align-items: center; justify-content: center; gap: 23px; padding: 11px 20px 0; color: #b3c0a9; font-size: 9px; line-height: 1.5; }
@@ -51,52 +51,53 @@
 .detail { margin: 0; padding-top: 18px; border-top: 1px solid #dce5c322; font-size: 10px; line-height: 1.8; color: #a5b5a0; }
 .disclaimer { max-width: 750px; margin: 15px 0 0; color: #788270; font-size: 10px; line-height: 1.75; }
 
-.blade { transform-origin: 4px 0; animation: bladeSway 6s ease-in-out infinite; }
-.fieldLines { animation: fieldBreathe 8s ease-in-out infinite; transform-origin: center; }
-.granuleHalo { animation: haloRelease 4.8s ease-out infinite; transform-box: fill-box; transform-origin: center; }
-.nutrientParticle { animation: nutrientRelease 4.8s cubic-bezier(.18,.35,.49,1) infinite; }
-.rootPulse { stroke-dasharray: 12 88; animation: rootFlow 5s linear infinite; }
-.growingRoot { animation: rootGlow 6s ease-in-out infinite; }
-.microbe { animation: microbePulse 4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-.leafStrength { transform-origin: 4px 0; animation: strengthenLeaf 7s ease-in-out infinite; }
-.foliarDrop { animation: foliarFall 3s linear infinite; }
-.leafSpark { animation: leafAbsorb 4s ease-in-out infinite; }
-.rainDrop { animation: rainfall 2.8s linear infinite; }
-.waterPaths { stroke-dasharray: 12 19; animation: channelFlow 3s linear infinite; }
-.distributedWater { stroke-dasharray: 6 13; animation: distributedFlow 3s linear infinite; }
-.wetZone { animation: wettingPulse 5s ease-in-out infinite; }
-.pooledWater { animation: poolPulse 4s ease-in-out infinite; }
-.upwardWater { stroke-dasharray: 16 84; animation: upwardFlow 4s linear infinite; }
-.sun { animation: sunlight 7s ease-in-out infinite; }
-.winterLight { animation: winterDaylight 10s ease-in-out infinite; }
-.frostCrystal { animation: frostBreathe 9s ease-in-out infinite; }
-.winter .blade { animation-duration: 13s; }
-.winter .rootPulse { animation-duration: 17s; stroke: #afccd0; stroke-width: 2; opacity: .55; }
-.winter .growingRoot { animation-duration: 12s; }
-.still *, .still *::before, .still *::after { animation-play-state: paused !important; }
-.still .sceneEntry, .still .explanation { animation: none; }
+/* A twelve-second sequence gives each chapter room to establish an action,
+   distribute it through the scene, then hold the illustrated response. */
+.turfTuft { transform-box: fill-box; transform-origin: center bottom; animation: turfBreeze 12s ease-in-out infinite; }
+.rootFlow { fill: none; stroke-dasharray: 15 85; stroke-dashoffset: 100; opacity: .45; animation: rootUptake 12s cubic-bezier(.4,0,.2,1) infinite; }
+.nutrientCloud { transform-box: fill-box; transform-origin: center; opacity: .45; animation: soilExchange 12s ease-in-out infinite; }
+.granule { transform-box: fill-box; transform-origin: center; animation: granularRelease 12s ease-in-out infinite; }
+.nutrientTravel { opacity: .45; animation: soilDiffusion 12s cubic-bezier(.2,.4,.3,1) infinite; }
+.foliarMist { opacity: .65; animation: foliarApplication 12s cubic-bezier(.35,0,.55,1) infinite; }
+.leafResponse { opacity: .35; animation: leafUptake 12s ease-in-out infinite; }
+.waterChannel { fill: none; stroke-dasharray: 9 25; opacity: .6; animation: preferentialFlow 12s linear infinite; }
+.waterSpread { fill: none; stroke-dasharray: 6 19; opacity: .55; animation: distributedFlow 12s ease-in-out infinite; }
+.wetFront { transform-box: fill-box; transform-origin: center top; opacity: .5; animation: wettingFront 12s cubic-bezier(.25,.5,.3,1) infinite; }
+.waterRise { fill: none; stroke-dasharray: 15 85; stroke-dashoffset: 100; opacity: .6; animation: rootUptake 12s cubic-bezier(.4,0,.2,1) infinite; }
+.winterReserve { opacity: .7; animation: seasonalReserve 12s ease-in-out infinite; }
+.winterHaze { opacity: .45; animation: winterAtmosphere 12s ease-in-out infinite; }
+.heatShimmer { opacity: .35; animation: warmAir 12s ease-in-out infinite; }
+.winter .turfTuft { animation-duration: 14s; }
+.sceneCallouts { fill: #d9e2c9; font-family: var(--font-space-mono), monospace; font-size: 10px; font-weight: 400; letter-spacing: .025em; }
+.sceneCallouts path, .sceneCallouts line { fill: none; stroke: #d9e2c9; stroke-width: .8; stroke-opacity: .45; }
+.sceneCallouts circle { stroke: #d9e2c9; stroke-opacity: .55; }
+.sceneStory { position: relative; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; margin: 2px 29px 0; padding: 16px 0 12px; border-top: 1px solid #c6d7b820; }
+.storyBeat { display: flex; align-items: center; gap: 7px; color: #d7dfcc; font-size: 10px; line-height: 1.55; opacity: .7; animation: storyEmphasis 12s linear infinite; }
+.storyBeat > i { display: block; flex-shrink: 0; width: 4px; height: 4px; border-radius: 50%; background: #c3d99e; box-shadow: 0 0 0 3px #c3d99e0c; }
+.storyProgress { position: relative; margin: 0 29px; height: 1px; overflow: hidden; background: #c6d7b811; }
+.storyProgress > i { display: block; width: 100%; height: 1px; background: linear-gradient(90deg,#799b63,#c8dcaa); transform-origin: left center; animation: chapterProgress 12s linear infinite; }
 
-@keyframes enterScene { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+/* Pause and off-screen states freeze the actual timeline, including the
+   entrance and story, so resuming never restarts a scene. */
+.still *, .still *::before, .still *::after { animation-play-state: paused !important; }
+
+@keyframes enterScene { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes enterCopy { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes bladeSway { 0%, 100% { rotate: -1.1deg; } 50% { rotate: 1.5deg; } }
-@keyframes fieldBreathe { 0%, 100% { opacity: .07; } 50% { opacity: .14; } }
-@keyframes haloRelease { 0% { scale: .4; opacity: .7; } 80%, 100% { scale: 2.4; opacity: 0; } }
-@keyframes nutrientRelease { 0% { transform: translateY(0); opacity: 0; } 12% { opacity: .85; } 80% { opacity: .3; } 100% { transform: translateY(115px); opacity: 0; } }
-@keyframes rootFlow { from { stroke-dashoffset: 110; } to { stroke-dashoffset: 10; } }
-@keyframes rootGlow { 0%, 100% { opacity: .6; } 50% { opacity: 1; } }
-@keyframes microbePulse { 0%, 100% { scale: .75; opacity: .2; } 50% { scale: 1.3; opacity: .8; } }
-@keyframes strengthenLeaf { 0%, 100% { opacity: .3; scale: .8 .86; } 45%, 70% { opacity: 1; scale: 1.08 1; } }
-@keyframes foliarFall { 0% { transform: translate(0, -26px); opacity: 0; } 15% { opacity: .85; } 70% { opacity: .5; } 100% { transform: translate(-15px, 95px); opacity: 0; } }
-@keyframes leafAbsorb { 0%, 100% { opacity: 0; } 35% { opacity: .9; } 80% { opacity: .1; } }
-@keyframes rainfall { 0% { transform: translateY(-30px); opacity: 0; } 20% { opacity: .9; } 85% { opacity: .85; } 100% { transform: translateY(80px); opacity: 0; } }
-@keyframes channelFlow { from { stroke-dashoffset: 62; } to { stroke-dashoffset: 0; } }
-@keyframes distributedFlow { from { stroke-dashoffset: 38; } to { stroke-dashoffset: 0; } }
-@keyframes wettingPulse { 0%, 100% { opacity: .45; } 50% { opacity: 1; } }
-@keyframes poolPulse { 0%, 100% { opacity: .35; } 50% { opacity: .85; } }
-@keyframes upwardFlow { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
-@keyframes sunlight { 0%, 100% { opacity: .6; } 50% { opacity: 1; } }
-@keyframes winterDaylight { 0%, 100% { opacity: .35; } 45%, 60% { opacity: .85; } }
-@keyframes frostBreathe { 0%, 100% { opacity: .4; } 50% { opacity: .85; } }
+@keyframes turfBreeze { 0%,100% { transform: rotate(-.55deg); } 48% { transform: rotate(.8deg); } 72% { transform: rotate(.2deg); } }
+@keyframes granularRelease { 0%,100% { opacity: .98; transform: scale(1); } 45%,70% { opacity: .76; transform: scale(.96); } }
+@keyframes soilDiffusion { 0%,9% { transform: translate(0,0); opacity: 0; } 16% { opacity: .82; } 49% { transform: translate(4px,85px); opacity: .5; } 68% { transform: translate(8px,120px); opacity: 0; } 69%,100% { transform: translate(0,0); opacity: 0; } }
+@keyframes soilExchange { 0%,100% { opacity: .18; transform: scale(.94); } 42%,66% { opacity: .62; transform: scale(1.035); } }
+@keyframes rootUptake { 0%,27% { opacity: 0; stroke-dashoffset: 100; } 38% { opacity: .75; } 75% { opacity: .7; stroke-dashoffset: 0; } 87%,100% { opacity: 0; stroke-dashoffset: 0; } }
+@keyframes foliarApplication { 0%,4% { opacity: 0; transform: translate(5px,-8px); } 10% { opacity: .8; } 31% { opacity: .55; transform: translate(-14px,90px); } 36%,100% { opacity: 0; transform: translate(-16px,98px); } }
+@keyframes leafUptake { 0%,27%,100% { opacity: .08; } 49%,73% { opacity: .6; } 87% { opacity: .25; } }
+@keyframes preferentialFlow { 0% { stroke-dashoffset: 102; opacity: .45; } 22%,74% { opacity: .7; } 100% { stroke-dashoffset: 0; opacity: .45; } }
+@keyframes distributedFlow { 0%,12% { stroke-dashoffset: 75; opacity: .12; } 37%,77% { opacity: .65; } 85%,100% { stroke-dashoffset: 0; opacity: .2; } }
+@keyframes wettingFront { 0%,10% { transform: scaleY(.18); opacity: .18; } 52%,78% { transform: scaleY(1); opacity: .65; } 95%,100% { transform: scaleY(.18); opacity: .18; } }
+@keyframes seasonalReserve { 0%,100% { opacity: .5; } 42%,70% { opacity: .9; } }
+@keyframes winterAtmosphere { 0%,100% { opacity: .26; } 48%,66% { opacity: .55; } }
+@keyframes warmAir { 0%,100% { opacity: .22; transform: translateY(2px); } 50% { opacity: .44; transform: translateY(-4px); } }
+@keyframes storyEmphasis { 0%,27% { opacity: 1; } 33.333%,94% { opacity: .7; } 100% { opacity: 1; } }
+@keyframes chapterProgress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 
 @media (min-width: 1450px) { .scene { margin-top: -10px; } }
 @media (max-width: 1050px) {
@@ -109,6 +110,9 @@
   .visualLegend .diagramLabel { width: 100%; justify-content: center; margin: 0; }
   .tab { padding-inline: 12px; font-size: 11px; }
   .comparisonLabels { top: 90px; font-size: 9px; }
+  .sceneStory { gap: 10px; margin-inline: 20px; }
+  .storyProgress { margin-inline: 20px; }
+  .storyBeat { font-size: 9px; }
   .seasonLabels { top: 85px; font-size: 9px; }
 }
 
@@ -127,7 +131,12 @@
   .liveLabel { font-size: 7px; letter-spacing: .06em; }
   .playback { min-height: 36px; font-size: 9px; }
   .sceneEntry { margin-top: 4px; }
-  .scene { min-height: 210px; }
+  .scene { min-height: 220px; }
+  .sceneCallouts { display: none; }
+  .sceneStory { gap: 10px; margin: 0 17px; padding-block: 13px 9px; }
+  .storyProgress { margin-inline: 17px; }
+  .storyBeat { align-items: flex-start; font-size: 9px; line-height: 1.5; }
+  .storyBeat > i { margin-top: 4px; width: 3px; height: 3px; }
   .visualLegend { padding-top: 7px; gap: 14px; font-size: 9px; }
   .visualLegend .diagramLabel { display: none; }
   .comparisonLabels { top: 67px; font-size: 9px; left: 5%; right: 5%; gap: 12px; }
@@ -146,11 +155,21 @@
 
 @media (prefers-reduced-motion: reduce) {
   .panel *, .panel *::before, .panel *::after { animation: none !important; transition: none !important; }
-  .leafStrength { opacity: 1; }
-  .nutrientParticle { opacity: .5; transform: translateY(45px); }
-  .rainDrop { opacity: .75; transform: translateY(25px); }
-  .foliarDrop { opacity: .7; transform: translateY(22px); }
-  .rootPulse { stroke-dasharray: none; opacity: .5; }
-  .upwardWater { stroke-dasharray: 12 10; opacity: .8; }
+  .turfTuft, .granule, .nutrientCloud, .heatShimmer { transform: none; }
+  .granule { opacity: 1; }
+  .nutrientCloud { opacity: .45; }
+  .nutrientTravel { opacity: .65; transform: translateY(65px); }
+  .foliarMist { opacity: .7; transform: translate(-7px,38px); }
+  .leafResponse { opacity: .65; }
+  .rootFlow, .waterRise { stroke-dasharray: 10 12; stroke-dashoffset: 0; opacity: .7; }
+  .waterChannel, .waterSpread { stroke-dashoffset: 0; opacity: .65; }
+  .wetFront { opacity: .65; transform: scaleY(1); }
+  .winterReserve { opacity: .8; }
+  .winterHaze, .heatShimmer { opacity: .4; }
+  .storyBeat { opacity: 1; }
+  .storyProgress > i { transform: scaleX(1); opacity: .5; }
   .tab { transition: none; }
 }
+
+/* A newly selected chapter must remain readable while paused. */
+.still .sceneEntry, .still .explanation { animation: none; }
