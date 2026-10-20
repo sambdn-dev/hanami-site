@@ -160,16 +160,20 @@
 @media (max-width: 767px) {
   .container { width: min(100% - 40px, 600px); }
   .hero { padding-top: 142px; }
-  .heroGrid { grid-template-columns: 1fr; gap: 27px; }
+  .heroGrid { grid-template-columns: 1fr; gap: 16px; }
+  .heroCopy { display: contents; }
+  .heroCopy > * { order: 3; }
+  .heroCopy .eyebrow { order: 0; }
+  .heroCopy .heroTitle { order: 1; }
   .heroCopy { padding-bottom: 0; }
-  .heroCopy .eyebrow { margin-bottom: 24px; font-size: 9px; letter-spacing: .12em; }
+  .heroCopy .eyebrow { margin-bottom: 0; font-size: 9px; letter-spacing: .12em; }
   .heroTitle { font-size: clamp(48px,12.5vw,72px); }
   .desktopBreak { display: none; }
-  .heroDescription { margin-top: 23px; font-size: 14px; line-height: 1.8; }
+  .heroDescription { margin-top: 0; font-size: 14px; line-height: 1.8; }
   .heroActions { gap: 12px 18px; margin-top: 23px; }
   .button { width: 100%; min-height: 55px; }
   .heroNote { margin-top: 18px; font-size: 10px; }
-  .heroFigure { margin-top: 4px; padding: 6px; }
+  .heroFigure { order: 2; margin-top: 0; padding: 6px; }
   .heroPhoto { height: 350px; }
   .photoLabel { top: 15px; left: 15px; font-size: 8px; }
   .photoCaption { left: 17px; right: 17px; bottom: 19px; }
