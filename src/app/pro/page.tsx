@@ -8,10 +8,10 @@ import MobileStickyCTA from '@/components/home/MobileStickyCTA'
 import ProLanding from '@/components/pro/ProLanding'
 
 export const metadata: Metadata = {
-  title: { absolute: 'Hanami Pro — Organisation et expertise gazon pour paysagistes' },
-  description: 'Hanami Pro : vision d’un outil métier pour paysagistes, réunissant planning, contrats d’entretien, équipes, dossiers clients et assistance gazon directe.',
+  title: { absolute: 'Hanami Pro — Expertise gazon et organisation pour paysagistes' },
+  description: 'Accompagnement technique gazon pour paysagistes : semences, produits, doses et suivi des interventions. Découvrez aussi le prototype du logiciel métier Hanami Pro.',
   alternates: { canonical: '/pro' },
-  openGraph: { title: 'Hanami Pro — L’activité paysagiste, au même endroit', description: 'Planning, équipes, clients et expertise gazon dans une même vision.' },
+  openGraph: { title: 'Hanami Pro — Des chantiers maîtrisés, des clients rassurés', description: 'Expertise gazon, préparation des interventions et prototype d’un outil métier pour paysagistes.' },
 }
 
 export default function ProPage() {
@@ -22,12 +22,12 @@ export default function ProPage() {
       <main className="flex-1">
         <ProLanding />
         <ContactForm variant="pro" source="hanami-pro" photosEnabled={false}
-          title="Voyons ce que Hanami Pro peut simplifier chez vous."
-          subtitle="Présentez-nous votre équipe, vos contrats et votre façon d’organiser les tournées. Nous vous recontacterons pour une démonstration du prototype et un échange sur vos besoins." />
+          title="Parlons de vos chantiers et de votre organisation."
+          subtitle="Décrivez votre besoin gazon, votre équipe ou vos contrats. Nous vous recontacterons pour un échange technique ou une démonstration du prototype, selon votre besoin." />
       </main>
       <Footer />
       <WhatsAppButton />
-      <MobileStickyCTA href="/pro#contact" label="Demander une démo" reassurance="Prototype · Démo accompagnée" />
+      <MobileStickyCTA href="/pro#contact" label="Parlons de votre chantier" reassurance="Expertise gazon · Logiciel en développement" />
     </>
   )
 }

@@ -1,0 +1,42 @@
+.section { scroll-margin-top: 115px; padding: 96px 0; background: #f8f6ef; color: #153928; }
+.container { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); align-items: center; gap: 65px; width: min(100% - 48px,1280px); margin-inline: auto; }
+.copy { min-width: 0; }
+.eyebrow { margin-bottom: 22px; color: #597b51; font-family: var(--font-space-mono),monospace; font-size: 10px; letter-spacing: .09em; text-transform: uppercase; }
+.copy h2 { font-family: var(--font-fraunces),serif; font-size: clamp(35px,4vw,56px); font-weight: 430; line-height: 1.1; letter-spacing: -.045em; }
+.copy h2 span { color: #6b875e; }
+.copy > p:not(.eyebrow) { max-width: 490px; margin-top: 23px; color: #526757; font-size: 15px; line-height: 1.8; }
+.deliverables { display: grid; gap: 22px; margin-block: 32px; }
+.deliverables li { display: flex; align-items: start; gap: 12px; }
+.deliverables svg { flex-shrink: 0; margin-top: 3px; color: #607d51; }
+.deliverables h3 { font-size: 14px; font-weight: 650; }
+.deliverables p { max-width: 440px; margin-top: 6px; color: #526757; font-size: 13px; line-height: 1.75; }
+.button { display: inline-flex; justify-content: space-between; align-items: center; gap: 24px; min-height: 55px; padding: 15px 19px; background: #173e2a; color: #f8f6ef; font-size: 13px; font-weight: 700; }
+.button:hover { background: #2c6240; }
+.copy > .contactNote { font-size: 11px !important; line-height: 1.8; }
+.contactNote a { display: inline-flex; align-items: center; min-height: 44px; text-decoration: underline; text-underline-offset: 4px; }
+.document { min-width: 0; padding: 30px; border: 1px solid #b8c8b0; background: #fffef9; box-shadow: 10px 12px 0 #dfe7d6; }
+.documentHeader { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; padding-bottom: 22px; border-bottom: 1px solid #15392826; font-family: var(--font-space-mono),monospace; font-size: 8px; line-height: 1.7; letter-spacing: .04em; }
+.exampleBadge { padding: 5px 8px; background: #e6ecdf; color: #355a38; }
+.documentIntro { margin-block: 26px; }
+.documentIntro > p { margin-bottom: 10px; color: #61765e; font-size: 11px; }
+.documentIntro h3 { font-family: var(--font-fraunces),serif; font-size: clamp(27px,2.7vw,36px); font-weight: 430; line-height: 1.17; letter-spacing: -.035em; }
+.siteFacts { display: flex; align-items: center; gap: 9px; margin-top: 18px; color: #526757; font-size: 10px; line-height: 1.8; }
+.siteFacts svg { flex-shrink: 0; }
+.protocolSteps { list-style: none; }
+.protocolSteps li { display: grid; grid-template-columns: 25px minmax(0,1fr); gap: 13px; padding: 20px 0; border-top: 1px solid #15392826; }
+.stepNumber { padding-top: 2px; color: #6b865e; font-family: var(--font-space-mono),monospace; font-size: 10px; }
+.protocolSteps h4 { font-size: 13px; font-weight: 650; }
+.protocolSteps p { margin-top: 8px; color: #526757; font-size: 12px; line-height: 1.8; }
+.calculation { display: grid; gap: 8px; margin-top: 16px; padding: 14px; background: #eaf0e3; }
+.calculation > span { color: #61765e; font-size: 9px; }
+.calculation strong { font-size: clamp(13px,1.4vw,17px); font-weight: 500; }
+.calculation b { font-weight: 750; }
+.protocolSteps .doseNote { font-size: 10px; line-height: 1.7; }
+.document figcaption { padding-top: 16px; border-top: 1px solid #15392826; color: #61765e; font-size: 10px; line-height: 1.8; }
+.section :is(a,button):focus-visible { outline: 2px solid #9d7a32; outline-offset: 5px; }
+@media (max-width: 767px) {
+  .section { padding: 65px 0; }
+  .container { grid-template-columns: minmax(0,1fr); gap: 35px; width: calc(100% - 40px); }
+  .document { margin-right: 6px; padding: 22px 18px; box-shadow: 6px 8px 0 #dfe7d6; }
+  .button { width: 100%; }
+}
