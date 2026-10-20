@@ -38,7 +38,7 @@ export function LocalHero() {
           <div className={styles.heroPhoto}>
             <BeforeAfterSlider className={styles.heroComparison} beforeSrc="/images/avant-susan.jpg" afterSrc="/images/apres-susan.jpg" beforeAlt="Jardin de Susan avant la rénovation Hanami" afterAlt="Jardin de Susan après la rénovation Hanami" {...SUSAN_COMPARISON_CROPS} priority />
           </div>
-          <figcaption className={styles.comparisonCaption}><span>Le jardin de Susan · Réalisation Hanami au Vésinet</span><strong>Glissez pour comparer l’avant et l’après</strong></figcaption>
+          <figcaption className={styles.comparisonCaption}><span>Le jardin de Susan · Réalisation Hanami au Vésinet</span><strong>Glissez pour comparer l’avant et l’après</strong><span className={styles.photoAuthenticity}>Photos garanties sans IA</span></figcaption>
         </figure>
       </div>
       <div className={`${styles.container} ${styles.heroBottom}`}><span>Nutrition · Prévention · Rénovation</span><span>Le jardin commence par le sol.</span></div>

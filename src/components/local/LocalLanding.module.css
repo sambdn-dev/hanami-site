@@ -38,6 +38,7 @@
 .heroPhoto { position: relative; height: 570px; overflow: hidden; background: #719360; }
 .heroComparison { height: 100%; aspect-ratio: auto; border-radius: 0; box-shadow: none; }
 .comparisonCaption { display: grid; gap: 5px; padding: 15px 10px 8px; color: #526657; font-size: 11px; line-height: 1.7; }
+.photoAuthenticity { width: fit-content; margin-top: 3px; padding: 3px 8px; border: 1px solid #244d3430; color: #244d34; font-size: 10px; font-weight: 600; letter-spacing: .02em; }
 .comparisonCaption strong { color: #244d34; font-size: 10px; font-weight: 600; }
 .photoLabel { position: absolute; z-index: 1; top: 21px; left: 21px; display: flex; gap: 8px; align-items: center; padding: 8px 11px; color: #173f29; background: #f8f6efec; font-size: 9px; font-weight: 700; letter-spacing: .06em; }
 .photoLabel > span { width: 5px; height: 5px; border-radius: 50%; background: #55764c; }

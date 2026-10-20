@@ -18,7 +18,7 @@ export default function LocalProof() {
           </div>
           <figure className={styles.proofImage}>
             <BeforeAfterSlider beforeSrc="/images/avant-susan.jpg" afterSrc="/images/apres-susan.jpg" beforeAlt="Jardin de Susan avant la rénovation Hanami" afterAlt="Jardin de Susan après la rénovation Hanami" {...SUSAN_COMPARISON_CROPS} />
-            <figcaption>Photographies du chantier · Glissez pour comparer · Chaque jardin évolue à son rythme.</figcaption>
+            <figcaption>Photos garanties sans IA · Glissez pour comparer · Chaque jardin évolue à son rythme.</figcaption>
           </figure>
         </div>
         <div id="vitrines" className={styles.showcases} aria-labelledby="showcase-title">
