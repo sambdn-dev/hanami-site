@@ -18,9 +18,9 @@ const links = [
 ]
 
 const localLinks = [
-  { href: '/interventions-locales#offres', label: 'Interventions agronomiques' },
+  { href: '/interventions-locales#offres', label: 'Interventions locales' },
+  { href: '/coaching', label: 'Coaching à distance' },
   { href: '/interventions-locales#arrosage-automatique', label: 'Arrosage intelligent' },
-  { href: '/coaching', label: 'Coaching' },
   ...(SHOP_ENABLED ? [{ href: '/boutique', label: 'Boutique' }] : []),
 ]
 
@@ -79,7 +79,7 @@ function LocalDesktopNavigation({ pathname }: { pathname: string }) {
         const active = link.href.endsWith('#offres')
           ? pathname === '/' || pathname === '/interventions-locales'
           : pathname === link.href
-        return <Link key={link.href} href={link.href} onClick={() => setMoreOpen(false)} aria-current={active ? 'page' : undefined} className={active ? styles.active : ''}>{link.label}</Link>
+        return <Link key={link.href} href={link.href} onClick={() => setMoreOpen(false)} aria-current={active ? 'page' : undefined} className={`${active ? styles.active : ''} ${link.href === '/coaching' ? styles.coachingLink : ''}`}>{link.label}{link.href === '/coaching' && <span className={styles.coachingBadge}>2 mois offerts</span>}</Link>
       })}
       <div
         className={styles.more}
@@ -143,8 +143,9 @@ export default function Navbar({ variant = 'light', localOffers = false }: { var
 
   const isPro = pathname === '/pro' || pathname.startsWith('/pro/')
   const isStudio = pathname === '/pro/studio'
+  const isCoaching = pathname === '/coaching'
   const ctaHref = isStudio ? '/pro/studio#contact' : isPro ? '/pro#contact' : localOffers ? '#contact' : '/coaching'
-  const ctaText = isStudio ? 'Parler de Studio' : isPro ? 'Parler de Hanami Pro' : localOffers ? 'Parlons de votre jardin' : 'Découvrir le coaching'
+  const ctaText = isStudio ? 'Parler de Studio' : isPro ? 'Parler de Hanami Pro' : isCoaching ? 'Demander mes 2 mois offerts' : localOffers ? 'Parlons de votre jardin' : 'Découvrir le coaching'
   const displayLinks = localOffers ? localLinks : links
   const dark = variant === 'dark'
 
@@ -198,6 +199,7 @@ export default function Navbar({ variant = 'light', localOffers = false }: { var
             })}
           </div>}
           <Link href={ctaHref} className={styles.desktopCta}>{ctaText} <ArrowUpRight size={16} aria-hidden="true" /></Link>
+          {localOffers && <Link href={isCoaching ? '#contact' : '/coaching'} className={styles.mobileCoachingLink}><strong>{isCoaching ? 'Découvrir mon offre' : 'Coaching à distance'}</strong><span>2 mois offerts</span></Link>}
           <button ref={openerRef} type="button" className={styles.menuButton} onClick={() => setMenuOpen(true)} aria-label="Ouvrir le menu" aria-controls="mobile-menu" aria-expanded={menuOpen}><Menu size={25} aria-hidden="true" /></button>
         </div>
       </nav>
@@ -207,7 +209,7 @@ export default function Navbar({ variant = 'light', localOffers = false }: { var
         <div className={styles.mobileTop}><Image src="/brand/2026/logo-principal-vert.png" alt="Hanami Expert Gazon" width={100} height={36} /><button ref={closeRef} type="button" onClick={() => setMenuOpen(false)} aria-label="Fermer le menu"><X size={25} aria-hidden="true" /></button></div>
         <div className={`${styles.mobileLinks} ${localOffers ? styles.localMobileLinks : ''}`}>
           {localOffers && <p className={styles.mobileGroupLabel}>Nos offres pour votre gazon</p>}
-          {displayLinks.map((link, index) => <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}><span>{String(index + 1).padStart(2, '0')}</span>{link.label}<ArrowUpRight size={19} aria-hidden="true" /></Link>)}
+          {displayLinks.map((link, index) => <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}><span>{String(index + 1).padStart(2, '0')}</span>{link.label}{link.href === '/coaching' && <strong>2 mois offerts</strong>}<ArrowUpRight size={19} aria-hidden="true" /></Link>)}
           {!localOffers && <Link href="/pro/studio" onClick={() => setMenuOpen(false)}><span>{String(displayLinks.length + 1).padStart(2, '0')}</span>Hanami Studio <strong>PRO</strong><ArrowUpRight size={19} aria-hidden="true" /></Link>}
         </div>
         {localOffers && <div className={styles.mobileSecondary}>

@@ -13,7 +13,7 @@ const plans = [
   { number: '03', name: 'L’exigence premium', detail: 'Le détail fait le jardin', description: 'Des passages rapprochés et une attention continue pour ceux qui souhaitent un gazon particulièrement soigné.', bullets: ['Suivi agronomique plus soutenu', 'Séquences de nutrition préparées', 'Finitions et entretien selon le devis'] },
 ] as const
 
-export function LocalHero() {
+export function LocalHero({ promoteCoaching = false }: { promoteCoaching?: boolean }) {
   return (
     <section className={styles.hero} aria-labelledby="local-hero-title">
       <div className={`${styles.container} ${styles.heroGrid}`}>
@@ -28,7 +28,7 @@ export function LocalHero() {
           </ul>
           <div className={styles.heroActions}>
             <a href="#contact" className={styles.button}>Parlons de votre jardin <ArrowUpRight size={19} aria-hidden="true" /></a>
-            <a href="#offres" className={styles.textLink}>Voir les interventions <ArrowDown size={17} aria-hidden="true" /></a>
+            {promoteCoaching ? <Link href="/coaching" className={styles.textLink}>Découvrir le coaching à distance <ArrowUpRight size={17} aria-hidden="true" /></Link> : <a href="#offres" className={styles.textLink}>Voir les interventions <ArrowDown size={17} aria-hidden="true" /></a>}
           </div>
           <p className={styles.heroNote}>Interventions sur forfait ou abonnement.<br />Le bon rythme, du passage ponctuel au suivi premium.</p>
           <a href="#vitrines" className={styles.heroShowcases}><MapPin size={15} aria-hidden="true" />{SHOWCASE_GARDENS.length > 1 ? `Voir les ${SHOWCASE_GARDENS.length} vitrines depuis la rue` : 'Voir la vitrine Hanami depuis la rue'} <ArrowDown size={15} aria-hidden="true" /></a>
