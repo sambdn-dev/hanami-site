@@ -246,7 +246,7 @@ export default function ContactForm({
   }
 
   const title    = titleProp ?? (isPro ? 'Parlons de votre activité' : 'Discutons de votre gazon')
-  const subtitle = subtitleProp ?? (isPro ? 'Réponse sous 24h. Premier échange offert.' : 'Réponse sous 24h. 1er mois d\'essai offert.')
+  const subtitle = subtitleProp ?? (isPro ? 'Réponse sous 24h. Premier échange offert.' : 'Réponse sous 24h. 2 mois de coaching offerts.')
 
   return (
     <section id="contact" className="scroll-mt-28 py-20 lg:py-28 bg-stone-50">

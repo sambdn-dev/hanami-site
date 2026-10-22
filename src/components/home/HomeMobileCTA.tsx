@@ -26,7 +26,7 @@ interface HomeMobileCTAProps {
 export default function HomeMobileCTA({
   href = '/coaching',
   label = 'Découvrir le coaching',
-  reassurance = `1ᵉʳ mois offert · Puis ${PRICING_DISPLAY.coachingMois} €/mois · Sans engagement`,
+  reassurance = `2 mois offerts · Puis à partir de ${PRICING_DISPLAY.coachingMois} €/mois · Sans engagement`,
 }: HomeMobileCTAProps) {
   const [visible, setVisible] = useState(false)
   const barRef = useRef<HTMLDivElement>(null)

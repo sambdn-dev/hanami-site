@@ -70,7 +70,7 @@ export function HomeServices() {
               </ul>
             </div>
             <div className={styles.offerBottom}>
-              <div><p className={styles.price}><strong>{PRICING_DISPLAY.coachingMois} €</strong><span>/ mois TTC</span></p><p className={styles.offerNote}>1ᵉʳ mois offert · Sans engagement</p></div>
+              <div><p className={styles.price}><span>À partir de</span><strong>{PRICING_DISPLAY.coachingMois} €</strong><span>/ mois TTC</span></p><p className={styles.offerNote}>2 mois offerts · Sans engagement</p></div>
               <Link className={styles.buttonLight} href="/coaching">Découvrir le coaching <ArrowUpRight size={19} aria-hidden="true" /></Link>
             </div>
             <p className={styles.productNote}>Produits proposés séparément selon les besoins de votre pelouse.</p>

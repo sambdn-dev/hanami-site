@@ -16,10 +16,10 @@ export interface FaqEntry {
 export const FAQS: FaqEntry[] = [
   {
     question: 'Combien ça coûte ?',
-    answer: `Le premier mois de coaching est offert — vous jugez sur pièces. Ensuite, ${PRICING_DISPLAY.coachingMois}€/mois sans engagement (ou ${PRICING_DISPLAY.coachingAnnuel}€/an, soit 2 mois offerts) — moins cher qu'un sac d'engrais en jardinerie. Les rénovations vont de 6 à 25€/m² TTC selon l'état du terrain, estimation précise en 2 minutes avec la simulation gratuite.`,
+    answer: `Pour votre première rénovation, deux mois de coaching à distance sont offerts, en formule mensuelle comme annuelle. Ils commencent à l’envoi du premier protocole et s’écoulent en continu, même si vous reportez les actions. Vous réalisez les gestes et les produits sont proposés séparément. Ensuite, à partir de ${PRICING_DISPLAY.coachingMois} €/mois TTC sans engagement ou à partir de ${PRICING_DISPLAY.coachingAnnuel} €/an TTC. Votre date de démarrage est confirmée ensemble selon les disponibilités. Les rénovations vont de 6 à 25 €/m² TTC selon l'état du terrain, estimation précise en 2 minutes avec la simulation gratuite.`,
   },
   {
-    question: `${PRICING_DISPLAY.coachingMois}€/mois, c'est rentable ?`,
+    question: `À partir de ${PRICING_DISPLAY.coachingMois} €/mois, c'est rentable ?`,
     answer: 'Une rénovation ratée coûte 500 à 1 500€ en semences, engrais et temps perdu. Le coaching vous évite ces erreurs et vous fait économiser sur les produits en vous donnant les bons dosages. Le suivi illimité toute l\'année est inclus — c\'est rentabilisé dès le premier achat évité.',
   },
   {
@@ -40,7 +40,7 @@ export const FAQS: FaqEntry[] = [
   },
   {
     question: 'Et si ça ne marche pas ?',
-    answer: 'On ajuste votre protocole sans surcoût — le suivi est continu toute l\'année, on ne vous laisse pas avec un PDF et bonne chance. Et comme le premier mois est offert et l\'abonnement sans engagement, vous ne payez que si les résultats vous convainquent.',
+    answer: 'On ajuste votre protocole sans surcoût : le suivi est continu toute l’année. Vos deux premiers mois de coaching sont offerts pour découvrir l’accompagnement. Vous pouvez ensuite choisir la formule mensuelle sans engagement ou la formule annuelle.',
   },
   {
     question: 'Pourquoi pas un paysagiste classique ?',

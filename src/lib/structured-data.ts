@@ -119,7 +119,7 @@ export function serviceSchemas() {
       '@type': 'Offer',
       priceSpecification: {
         '@type': 'UnitPriceSpecification',
-        price: PRICING_DISPLAY.coachingMois,
+        minPrice: PRICING_DISPLAY.coachingMois,
         priceCurrency: 'EUR',
         unitText: 'mois',
       },

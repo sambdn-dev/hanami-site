@@ -8,7 +8,7 @@
  *                                            commande, livraison, ouverture des
  *                                            sacs, remplissage spreader, épandage)
  *  - Reconstruction               : 15–25 €/m² TTC (fourchette complexité variable)
- *  - Coaching                     : 29 €/mois TTC (forfait fixe)
+ *  - Coaching                     : à partir de 29 €/mois TTC
  *
  *  + Forfait déplacement 100 € TTC pour zone étendue (Express + Reconstruction).
  *
@@ -29,6 +29,7 @@ const PRIX_EXPRESS_TERREAU_M2 = 10
 const PRIX_RECO_MIN_M2 = 15
 const PRIX_RECO_MAX_M2 = 25
 const PRIX_COACHING_MOIS = 29
+const PRIX_COACHING_ANNUEL = 299
 
 /**
  * Tarifs d'affichage — SOURCE UNIQUE pour toute copy marketing (cartes
@@ -41,8 +42,8 @@ export const PRICING_DISPLAY = {
   recoMinM2: PRIX_RECO_MIN_M2,
   recoMaxM2: PRIX_RECO_MAX_M2,
   coachingMois: PRIX_COACHING_MOIS,
-  /** Option annuelle : 10 × le mensuel (2 mois offerts) — validé par Sami */
-  coachingAnnuel: PRIX_COACHING_MOIS * 10,
+  /** Tarif annuel validé par Sami ; les deux mois de démarrage sont offerts dans les deux formules. */
+  coachingAnnuel: PRIX_COACHING_ANNUEL,
 } as const
 
 /**

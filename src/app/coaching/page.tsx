@@ -3,7 +3,7 @@
  *
  * Destination des campagnes coaching (le doc marketing référence
  * hanami-gazon.fr/coaching dans toutes les créas). Offre unique claire :
- * coaching annuel 29 €/mois, 1er mois d'essai offert.
+ * Deux mois offerts au démarrage, en formule mensuelle ou annuelle.
  *
  * Ordre de scroll (pattern "Pricing-Focused Landing", offre unique) :
  * 1. Hero + carte protocole    5. FAQ (objections coaching)
@@ -13,6 +13,7 @@
  */
 
 import { pageMetadata } from '@/lib/seo'
+import { PRICING_DISPLAY } from '@/lib/chantier/pricing'
 
 import { localBusinessSchema, serviceSchemas, faqPageSchema } from '@/lib/structured-data'
 import { COACHING_FAQS } from '@/lib/coaching-faq-data'
@@ -31,9 +32,9 @@ import FAQ from '@/components/home/FAQ'
 import styles from '@/components/coaching/Coaching.module.css'
 
 export const metadata = pageMetadata({
-  title: 'Coaching gazon à distance — 29 €/mois | Hanami',
+  title: `Coaching gazon à distance — À partir de ${PRICING_DISPLAY.coachingMois} €/mois | Hanami`,
   description:
-    'Un expert gazon dans votre poche toute l\'année : plan 3D, protocole 12 mois daté au jour près, produits professionnels, suivi illimité. 1er mois d\'essai offert.',
+    'Votre première rénovation de gazon accompagnée gratuitement : 2 mois de coaching offerts dès l’envoi du premier protocole. Mensuel ou annuel, partout en France.',
   path: '/coaching',
 })
 
@@ -81,8 +82,8 @@ export default function CoachingPage() {
           <ContactForm
             variant="particulier"
             source="coaching"
-            title="Commencez votre mois d'essai offert"
-            subtitle="Réponse sous 24h."
+            title="Demandez vos 2 mois de coaching offerts"
+            subtitle="Pour votre première rénovation : 2 mois de coaching offerts dès l’envoi du premier protocole, en mensuel comme en annuel. Réponse sous 24 h pour confirmer votre démarrage selon les disponibilités."
           />
         </div>
       </main>

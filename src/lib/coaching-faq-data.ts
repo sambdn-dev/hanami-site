@@ -26,7 +26,19 @@ export const COACHING_FAQS: FaqEntry[] = [
   },
   {
     question: 'Le coaching Hanami est-il sans engagement ?',
-    answer: `Oui. Le premier mois d'essai est offert : vous jugez sur pièces avant de payer quoi que ce soit. Ensuite, l'abonnement est de ${PRICING_DISPLAY.coachingMois}€/mois TTC sans engagement, ou ${PRICING_DISPLAY.coachingAnnuel}€/an (soit 2 mois offerts). Le démarrage est immédiat.`,
+    answer: `La formule mensuelle est sans engagement. Vos deux premiers mois de coaching sont offerts pour découvrir votre protocole et le suivi Hanami. Ensuite, vous choisissez une formule à partir de ${PRICING_DISPLAY.coachingMois} €/mois TTC sans engagement ou à partir de ${PRICING_DISPLAY.coachingAnnuel} €/an TTC en formule annuelle. Les deux mois de démarrage sont offerts dans les deux cas. Le tarif est confirmé avant souscription selon l’accompagnement retenu.`,
+  },
+  {
+    question: 'Comment profiter des deux mois offerts ?',
+    answer: 'Pour votre première rénovation, Hanami offre deux mois de coaching à distance : un protocole personnalisé et des conseils pour passer à l’action et observer les premiers résultats. Vous réalisez vous-même les gestes ; les produits sont proposés séparément. L’offre est réservée aux nouveaux abonnés, en formule mensuelle comme annuelle. Envoyez votre demande : Hanami vous répond sous 24 h et confirme avec vous la date de démarrage selon les disponibilités.',
+  },
+  {
+    question: 'Quand commencent les deux mois offerts ?',
+    answer: 'Les deux mois offerts commencent à l’envoi du premier protocole personnalisé. Ils s’écoulent en continu à partir de cette date, même si vous tardez à réaliser les actions ou les reportez. Ils ne sont pas décomptés en fonction des interventions effectuées.',
+  },
+  {
+    question: 'Peut-on rénover son gazon à n’importe quelle saison ?',
+    answer: 'Non. Le semis et le regarnissage demandent des conditions adaptées, notamment une température du sol et une humidité favorables. Le protocole tient compte de la saison, de la météo et de votre terrain. Si une rénovation n’est pas adaptée au moment du démarrage, il prépare la prochaine fenêtre favorable. La période de deux mois offerts continue de s’écouler dès l’envoi du premier protocole.',
   },
   {
     question: 'Le coaching gazon fonctionne-t-il partout ?',

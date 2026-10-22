@@ -22,7 +22,7 @@ const steps = [
 
 function TrialButton({ location, light = false }: { location: string; light?: boolean }) {
   return <a href="#contact" className={light ? styles.lightButton : styles.button} onClick={() => track('cta_click', { location, page: window.location.pathname })}>
-    Commencer mon mois offert<ArrowUpRight size={18} aria-hidden="true" />
+    Demander mes 2 mois offerts<ArrowUpRight size={18} aria-hidden="true" />
   </a>
 }
 
@@ -32,21 +32,25 @@ export default function CoachingContent() {
       <div className={`${styles.container} ${styles.heroGrid}`}>
         <div className={styles.heroCopy} data-reveal>
           <p className={styles.eyebrow}>Coaching gazon · Partout en France</p>
+          <a href="#coaching-offre" className={styles.annualHighlight} onClick={() => track('cta_click', { location: 'coaching_hero_offer', page: window.location.pathname })}>
+            <span><strong>2 mois offerts pour votre première rénovation</strong><span>Le coaching est offert pour vous lancer, en mensuel comme en annuel.</span></span>
+            <ArrowUpRight size={22} aria-hidden="true" />
+          </a>
           <h1 id="coaching-title">Vous prenez soin du gazon.<br /><em>Je vous guide toute l’année.</em></h1>
           <p className={styles.intro}>{SERVICES.coaching.accroche}</p>
-          <p className={styles.heroOffer}><strong>{PRICING_DISPLAY.coachingMois}&nbsp;€</strong><span>/ mois TTC</span><span>Premier mois offert</span></p>
+          <p className={styles.heroOffer}><strong>0&nbsp;€</strong><span>pendant 2 mois</span><span>Puis à partir de {PRICING_DISPLAY.coachingMois}&nbsp;€ / mois TTC ou de {PRICING_DISPLAY.coachingAnnuel}&nbsp;€ / an TTC</span></p>
           <div className={styles.actions}>
             <TrialButton location="coaching_hero" />
             <a className={styles.textLink} href="https://wa.me/33667277614" target="_blank" rel="noopener noreferrer" onClick={() => track('whatsapp_click', { source: 'coaching_hero', page: window.location.pathname })}><MessageCircle size={17} aria-hidden="true" />Échanger sur WhatsApp</a>
           </div>
-          <p className={styles.heroNote}>Premier mois offert · Sans engagement · Réponse sous 24 h</p>
+          <p className={styles.heroNote}>Formule mensuelle sans engagement · Réponse sous 24 h</p>
         </div>
         <figure className={styles.protocol} data-reveal>
           <div className={styles.protocolHeader}><span>Votre saison, accompagnée</span><CalendarDays size={19} strokeWidth={1.4} aria-hidden="true" /></div>
           <div className={styles.protocolIntro}><p>Un cap pour chaque étape.</p><span>Exemple de calendrier personnalisé</span></div>
           <ol className={styles.protocolList}>{SAMPLE_PROTOCOL.map(item => <li key={item.date}><span>{item.date}</span><p>{item.action}</p></li>)}</ol>
           <figcaption>Exemple illustratif. Les dates, les produits et les doses sont définis pour votre gazon, selon le sol et la météo.</figcaption>
-          <div className={styles.protocolFooter}><span>Le coaching Hanami</span><p><strong>{PRICING_DISPLAY.coachingMois}&nbsp;€</strong><span>/ mois TTC</span></p></div>
+          <div className={styles.protocolFooter}><span>Après vos 2 mois offerts</span><p><span>À partir de</span><strong>{PRICING_DISPLAY.coachingMois}&nbsp;€</strong><span>/ mois TTC</span></p></div>
         </figure>
       </div>
       <div className={`${styles.container} ${styles.heroBottom}`}><span>Vous faites. Hanami vous accompagne.</span><a href="#coaching-tarif">Découvrir l’offre<ArrowUpRight size={14} aria-hidden="true" /></a></div>
@@ -57,12 +61,23 @@ export default function CoachingContent() {
         <div data-reveal>
           <p className={styles.eyebrow}>Une offre, un suivi toute l’année</p>
           <h2 id="coaching-price-title">Votre jardin.<br /><em>Un accompagnement continu.</em></h2>
-          <p className={styles.trialNote}><Check size={16} aria-hidden="true" />Premier mois d’essai offert</p>
+          <div id="coaching-offre" className={styles.annualOffer} aria-labelledby="coaching-offer-title">
+            <p className={styles.annualLabel}>Votre première rénovation, accompagnée gratuitement</p>
+            <h3 id="coaching-offer-title">2 mois pour agir.<br />Et observer les premiers résultats.</h3>
+            <p className={styles.annualPromise}>Vous réalisez la rénovation de votre gazon. Hanami prépare votre protocole et vous guide gratuitement pendant deux mois, pour vous aider à passer à l’action.</p>
+            <p className={styles.annualSaving}>Offre de coaching à distance pour les nouveaux abonnés, en formule mensuelle comme annuelle. Les produits sont proposés séparément.</p>
+            <TrialButton location="coaching_offer" />
+            <p className={styles.offerTiming}>Les deux mois offerts commencent à l’envoi du premier protocole et s’écoulent en continu, même si vous reportez les actions.</p>
+          </div>
+          <p className={styles.trialNote}><Check size={16} aria-hidden="true" />Après vos 2 mois offerts, au choix :</p>
+          <p className={styles.priceFrom}>À partir de</p>
           <p className={styles.price} data-coaching-price><span className={styles.amount}>{PRICING_DISPLAY.coachingMois}&nbsp;€</span><span className={styles.priceUnit}>/ mois <span>TTC</span></span></p>
-          <p className={styles.priceTerms}>Après votre mois d’essai, sans engagement.<br />Ou {PRICING_DISPLAY.coachingAnnuel}&nbsp;€ / an TTC, soit deux mois offerts.</p>
+          <p className={styles.priceTerms}>Formule mensuelle sans engagement.<br />Ou à partir de {PRICING_DISPLAY.coachingAnnuel}&nbsp;€ / an TTC en formule annuelle.<br />Tarif confirmé avant souscription selon l’accompagnement retenu.</p>
           <p className={styles.pricePromise}>Le bon produit. La bonne dose. Le bon moment.</p>
           <p className={styles.priceDescription}>Un plan adapté à votre gazon et des conseils pour éviter les achats inutiles. Vous avancez à votre rythme, avec Hanami à vos côtés.</p>
           <TrialButton location="coaching_price" light />
+          <p className={styles.capacityNote}>Pour préserver la qualité du suivi, votre date de démarrage est confirmée ensemble selon les disponibilités.</p>
+          <p className={styles.capacityNote}>Les gestes sont adaptés à la saison, à la météo et à votre terrain. Si la période ne se prête pas à une rénovation, le protocole prépare la prochaine fenêtre favorable ; la période offerte continue de s’écouler.</p>
         </div>
         <div className={styles.includedPanel} data-reveal>
           <p className={styles.panelLabel}>Inclus dans votre coaching</p>

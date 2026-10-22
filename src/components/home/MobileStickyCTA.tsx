@@ -25,7 +25,7 @@ interface MobileStickyCTAProps {
 export default function MobileStickyCTA({
   href = '/coaching',
   label = 'Découvrir le coaching →',
-  reassurance = `1ᵉʳ mois offert · Puis ${PRICING_DISPLAY.coachingMois} €/mois · Sans engagement`,
+  reassurance = `2 mois offerts · Puis à partir de ${PRICING_DISPLAY.coachingMois} €/mois · Sans engagement`,
 }: MobileStickyCTAProps) {
   const [visible, setVisible] = useState(false)
 
