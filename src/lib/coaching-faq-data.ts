@@ -30,7 +30,23 @@ export const COACHING_FAQS: FaqEntry[] = [
   },
   {
     question: 'Comment profiter des deux mois offerts ?',
-    answer: 'Pour votre première rénovation, Hanami offre deux mois de coaching à distance : un protocole personnalisé et des conseils pour passer à l’action et observer les premiers résultats. Vous réalisez vous-même les gestes ; les produits sont proposés séparément. L’offre est réservée aux nouveaux abonnés, en formule mensuelle comme annuelle. Envoyez votre demande : Hanami vous répond sous 24 h et confirme avec vous la date de démarrage selon les disponibilités.',
+    answer: 'Dans le cadre de son offre de lancement temporaire, Hanami vous offre deux mois de coaching pour guider votre première rénovation de A à Z : diagnostic, protocole personnalisé, choix des produits, doses, méthode, calendrier et ajustements. Vous réalisez les travaux ; les produits et le matériel restent à votre charge. L’offre est réservée aux nouveaux abonnés, en mensuel comme en annuel. Envoyez votre demande : Hanami vous répond sous 24 h et confirme avec vous la date de démarrage selon les disponibilités.',
+  },
+  {
+    question: 'Pourquoi offrir deux mois plutôt qu’un seul ?',
+    answer: 'Un mois permet déjà de se lancer. Hanami en offre deux pour vous laisser le temps d’appliquer les premières étapes du protocole, d’observer la reprise du gazon et d’ajuster les gestes avec davantage de recul. L’objectif est de vous accompagner sur une vraie séquence de rénovation. La pousse et les résultats dépendent de la saison, de la météo, du sol et de la réalisation des actions ; un résultat définitif identique en deux mois ne peut pas être garanti pour tous les jardins.',
+  },
+  {
+    question: 'La rénovation et les produits sont-ils entièrement gratuits ?',
+    answer: 'L’offre porte sur deux mois de coaching à distance pour guider votre première rénovation : le diagnostic, le protocole et les conseils sont offerts. Vous réalisez les travaux et achetez les produits et le matériel nécessaires. Ce n’est pas une intervention gratuite réalisée à domicile.',
+  },
+  {
+    question: 'Quel budget représente une rénovation réalisée par Hanami ?',
+    answer: `À titre indicatif, pour une rénovation express de 350 à 500 m² à partir de ${PRICING_DISPLAY.expressMinM2} €/m² TTC, le budget représente ${(PRICING_DISPLAY.expressMinM2 * 350).toLocaleString('fr-FR')} à ${(PRICING_DISPLAY.expressMinM2 * 500).toLocaleString('fr-FR')} € TTC. Le devis dépend du terrain et de la prestation. Il s’agit d’un exemple Hanami, pas d’un tarif moyen de la profession. L’offre de coaching est une autre façon d’avancer : vous réalisez les travaux vous-même, avec un accompagnement offert pendant deux mois.`,
+  },
+  {
+    question: 'Cette offre est-elle permanente ?',
+    answer: 'Non. Il s’agit d’une offre de lancement temporaire, réservée aux nouveaux abonnés. Elle n’a pas vocation à rester permanente. Les démarrages sont confirmés avec Hanami selon les disponibilités pour préserver la qualité du suivi.',
   },
   {
     question: 'Quand commencent les deux mois offerts ?',

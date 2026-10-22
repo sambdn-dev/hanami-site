@@ -32,7 +32,7 @@ const PAGES: { path: string; label: string; description: string }[] = [
   {
     path: '/coaching',
     label: 'Coaching gazon annuel',
-    description: `Offre coaching détaillée : à partir de ${PRICING_DISPLAY.coachingMois} €/mois TTC, plan 3D, protocole 12 mois daté au jour près, suivi illimité, 2 mois de coaching à distance offerts pour accompagner la première rénovation, en mensuel comme en annuel. Les deux mois s’écoulent en continu dès l’envoi du premier protocole, même si les actions sont reportées. Les produits sont proposés séparément.`,
+    description: `Offre coaching détaillée : à partir de ${PRICING_DISPLAY.coachingMois} €/mois TTC, plan 3D, protocole 12 mois daté au jour près, suivi illimité, Offre de lancement temporaire : première rénovation guidée offerte, soit 2 mois de coaching à distance pour les nouveaux abonnés, en mensuel comme en annuel. Le protocole précise quoi faire, avec quels produits, comment et quand. Les résultats dépendent des conditions du jardin et de la saison. Les deux mois s’écoulent en continu dès l’envoi du premier protocole, même si les actions sont reportées. Les produits sont proposés séparément.`,
   },
   {
     path: '/pro',
@@ -84,7 +84,7 @@ function buildLlmsTxt(): string {
   sections.push(
     '## Faits clés',
     '',
-    `- Offre principale : coaching gazon 100 % en ligne à partir de ${PRICING_DISPLAY.coachingMois} €/mois TTC, sans engagement, 2 mois de coaching à distance offerts pour accompagner la première rénovation, en mensuel comme en annuel. Les deux mois s’écoulent en continu dès l’envoi du premier protocole, même si les actions sont reportées. Les produits sont proposés séparément. Option annuelle : à partir de ${PRICING_DISPLAY.coachingAnnuel} €/an. Le démarrage est confirmé selon les disponibilités. Disponible partout en France, en Belgique et en Suisse.`,
+    `- Offre principale : coaching gazon 100 % en ligne à partir de ${PRICING_DISPLAY.coachingMois} €/mois TTC, sans engagement, Offre de lancement temporaire : première rénovation guidée offerte, soit 2 mois de coaching à distance pour les nouveaux abonnés, en mensuel comme en annuel. Le protocole précise quoi faire, avec quels produits, comment et quand. Les résultats dépendent des conditions du jardin et de la saison. Les deux mois s’écoulent en continu dès l’envoi du premier protocole, même si les actions sont reportées. Les produits sont proposés séparément. Option annuelle : à partir de ${PRICING_DISPLAY.coachingAnnuel} €/an. Le démarrage est confirmé selon les disponibilités. Disponible partout en France, en Belgique et en Suisse.`,
     `- Interventions terrain : rénovation et regarnissage de pelouse de ${PRICING_DISPLAY.expressMinM2} à ${PRICING_DISPLAY.recoMaxM2} €/m² TTC selon l'état du terrain, en Île-de-France (Le Vésinet et alentours).`,
     '- Méthode : diagnostic de sol, protocole 12 mois daté au jour près, produits professionnels dosés au m² (références réservées aux professionnels du sport et du paysage).',
     '- Société : TROTT SASU, SIREN 891 868 143.',

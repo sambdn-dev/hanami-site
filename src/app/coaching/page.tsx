@@ -34,7 +34,7 @@ import styles from '@/components/coaching/Coaching.module.css'
 export const metadata = pageMetadata({
   title: `Coaching gazon à distance — À partir de ${PRICING_DISPLAY.coachingMois} €/mois | Hanami`,
   description:
-    'Votre première rénovation de gazon accompagnée gratuitement : 2 mois de coaching offerts dès l’envoi du premier protocole. Mensuel ou annuel, partout en France.',
+    'Offre de lancement : votre première rénovation guidée offerte. 2 mois de coaching pour savoir quoi faire, avec quels produits, comment et quand. Partout en France.',
   path: '/coaching',
 })
 
@@ -82,8 +82,8 @@ export default function CoachingPage() {
           <ContactForm
             variant="particulier"
             source="coaching"
-            title="Demandez vos 2 mois de coaching offerts"
-            subtitle="Pour votre première rénovation : 2 mois de coaching offerts dès l’envoi du premier protocole, en mensuel comme en annuel. Réponse sous 24 h pour confirmer votre démarrage selon les disponibilités."
+            title="Profitez de votre première rénovation guidée offerte"
+            subtitle="Offre de lancement temporaire : 2 mois de coaching dès l’envoi du premier protocole. Vous réalisez les travaux, les produits restent à votre charge. Réponse sous 24 h pour confirmer votre démarrage selon les disponibilités."
           />
         </div>
       </main>
