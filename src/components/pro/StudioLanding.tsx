@@ -1,6 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowDown, ArrowUpRight, Camera, Cuboid, MessageSquareText, Sparkles } from 'lucide-react'
+import { ArrowDown, ArrowUpRight, Camera, Cuboid, MessageSquareText, ImageIcon } from 'lucide-react'
 import ProProductNav from './ProProductNav'
 import StudioShowcase from './StudioShowcase'
 import styles from './ProEditorial.module.css'
@@ -8,7 +8,7 @@ import styles from './ProEditorial.module.css'
 const stages = [
   { number: '01', icon: Camera, title: 'Vos photos', text: 'Le paysagiste importe les vues du jardin existant. La réalité du lieu devient le point de départ.' },
   { number: '02', icon: MessageSquareText, title: 'Vos consignes', text: 'Ambiance, usages, matériaux, plantations : quelques instructions décrivent le projet souhaité.' },
-  { number: '03', icon: Sparkles, title: 'Une image à valider', text: 'Une proposition photoréaliste aide le client à se projeter avant d’engager la modélisation.' },
+  { number: '03', icon: ImageIcon, title: 'Une image à valider', text: 'Une proposition photoréaliste aide le client à se projeter avant d’engager la modélisation.' },
   { number: '04', icon: Cuboid, title: 'Puis la 3D', text: 'Une fois la direction validée, le projet peut passer au rendu en volume et aux détails.' },
 ] as const
 
@@ -26,7 +26,7 @@ export default function StudioLanding() {
               <div className={styles.proHeroActions}><a href="#parcours" className={styles.darkButton}>Voir le parcours <ArrowDown size={18} aria-hidden="true" /></a><a href="#contact" className={styles.studioTextLink}>Parler de Studio <ArrowUpRight size={18} aria-hidden="true" /></a></div>
               <span className={styles.studioDevelopmentNote}>Vision de produit · Visuels conceptuels, non générés en direct</span>
             </div>
-            <figure className={styles.studioHeroImage}><Image src="/images/studio/jardin-geometrique-jour-v3.jpg" alt="Jardin contemporain fictif avec grande pelouse rectangulaire, dalles à droite sur gravier foncé et bouleaux" fill loading="eager" sizes="(max-width: 767px) 100vw, 50vw" /><div className={styles.studioImageBadge}><Sparkles size={17} aria-hidden="true" /><span>PROPOSITION VISUELLE</span></div><figcaption>Jardin fictif · Trois études, chacune de jour et de nuit</figcaption></figure>
+            <figure className={styles.studioHeroImage}><Image src="/images/studio/jardin-geometrique-jour-v3.jpg" alt="Jardin contemporain fictif avec grande pelouse rectangulaire, dalles à droite sur gravier foncé et bouleaux" fill loading="eager" sizes="(max-width: 767px) 100vw, 50vw" /><div className={styles.studioImageBadge}><ImageIcon size={17} aria-hidden="true" /><span>PROPOSITION VISUELLE</span></div><figcaption>Jardin fictif · Trois études, chacune de jour et de nuit</figcaption></figure>
           </div>
           <div className={styles.studioHeroBottom}><span>PHOTO RÉELLE</span><span>→</span><span>IMAGE PHOTORÉALISTE</span><span>→</span><span>VALIDATION</span><span>→</span><span>3D</span></div>
         </div>

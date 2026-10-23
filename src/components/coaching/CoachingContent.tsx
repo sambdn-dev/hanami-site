@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowUpRight, CalendarDays, Camera, Check, MessageCircle } from 'lucide-react'
+import { ArrowUpRight, CalendarDays, Check, MessageCircle } from 'lucide-react'
 import { track } from '@/lib/analytics'
 import { PRICING_DISPLAY } from '@/lib/chantier/pricing'
 import { SERVICES } from '@/lib/chantier/services'
@@ -15,9 +15,9 @@ const SAMPLE_PROTOCOL = [
 ]
 
 const steps = [
-  { icon: Camera, title: 'Vous montrez votre jardin.', text: 'Quelques photos de votre gazon et cinq questions. Nous faisons le point sur le sol, la densité, l’exposition et vos habitudes.' },
-  { icon: CalendarDays, title: 'Vous recevez votre protocole.', text: 'Votre plan zone par zone et un calendrier sur douze mois : quoi appliquer, à quelle date et à quelle dose.' },
-  { icon: MessageCircle, title: 'Vous avancez. On ajuste.', text: 'Un doute, une météo qui change ou une zone qui jaunit : nous adaptons le protocole ensemble, toute l’année.' },
+  { title: 'Vous montrez votre jardin.', text: 'Quelques photos de votre gazon et cinq questions. Nous faisons le point sur le sol, la densité, l’exposition et vos habitudes.' },
+  { title: 'Vous recevez votre protocole.', text: 'Votre plan zone par zone et un calendrier sur douze mois : quoi appliquer, à quelle date et à quelle dose.' },
+  { title: 'Vous avancez. On ajuste.', text: 'Un doute, une météo qui change ou une zone qui jaunit : nous adaptons le protocole ensemble, toute l’année.' },
 ]
 
 function TrialButton({ location, light = false }: { location: string; light?: boolean }) {
@@ -33,11 +33,11 @@ export default function CoachingContent() {
         <div className={styles.heroCopy} data-reveal>
           <p className={styles.eyebrow}>Coaching gazon · Partout en France</p>
           <a href="#coaching-offre" className={styles.annualHighlight} onClick={() => track('cta_click', { location: 'coaching_hero_offer', page: window.location.pathname })}>
-            <span><strong>Offre de lancement</strong><span>Votre première rénovation guidée offerte · 2 mois de coaching</span></span>
+            <span><strong>Offre de lancement</strong><span>Deux mois de coaching offerts pour commencer</span></span>
             <ArrowUpRight size={22} aria-hidden="true" />
           </a>
-          <h1 id="coaching-title">Rénover votre gazon.<br /><em>Le coaching est offert.</em></h1>
-          <p className={styles.intro}>Quoi faire, avec quel produit, comment et quand : je prépare votre première rénovation de A à Z. Vous réalisez les gestes, je vous guide pendant deux mois.</p>
+          <h1 id="coaching-title">Améliorer votre gazon.<br /><em>Deux mois offerts.</em></h1>
+          <p className={styles.intro}>Quoi faire, avec quel produit, comment et quand : je prépare les premières actions adaptées à votre gazon et à la saison. Vous réalisez les gestes, je vous guide pendant deux mois.</p>
           <p className={styles.heroOffer}><strong>0&nbsp;€</strong><span>pendant 2 mois</span><span>Puis à partir de {PRICING_DISPLAY.coachingMois}&nbsp;€ / mois TTC ou de {PRICING_DISPLAY.coachingAnnuel}&nbsp;€ / an TTC</span></p>
           <div className={styles.actions}>
             <TrialButton location="coaching_hero" />
@@ -70,14 +70,14 @@ export default function CoachingContent() {
           <article className={styles.guidanceValue}>
             <p className={styles.valueLabel}>Réaliser les gestes avec Hanami</p>
             <p className={styles.valueAmount}>0&nbsp;€<span>de coaching pendant 2 mois</span></p>
-            <p>Pour votre première rénovation, le diagnostic, le protocole personnalisé et l’accompagnement sont offerts dans le cadre du lancement.</p>
+            <p>Pendant deux mois, le diagnostic, le protocole personnalisé et l’accompagnement sont offerts dans le cadre du lancement.</p>
             <ul>{['Quoi faire, étape par étape', 'Quels produits choisir et à quelle dose', 'Comment appliquer et quand intervenir', 'Quoi observer et comment ajuster'].map(item => <li key={item}><Check size={16} aria-hidden="true" />{item}</li>)}</ul>
             <p className={styles.valueDetail}>Vous réalisez les travaux. Les semences, produits et le matériel restent à votre charge.</p>
           </article>
         </div>
         <div className={styles.launchReason}>
           <div><p className={styles.eyebrow}>Le temps d’agir, puis de prendre du recul</p><h3>Pourquoi deux mois,<br />plutôt qu’un ?</h3></div>
-          <div><p>Un mois permet déjà de se lancer. Nous avons choisi d’en offrir deux pour vous laisser le temps d’appliquer les premières étapes, d’observer la reprise du gazon et d’ajuster ce qui doit l’être.</p><p>Préparer, rénover, observer, ajuster : vous découvrez l’accompagnement sur une vraie séquence de rénovation. La pousse et les résultats dépendent de la saison, de la météo, du sol et de la réalisation des gestes.</p></div>
+          <div><p>Un mois permet déjà de se lancer. Nous avons choisi d’en offrir deux pour vous laisser le temps d’appliquer les premières étapes, d’observer la reprise du gazon et d’ajuster ce qui doit l’être.</p><p>Vous commencez par les actions utiles maintenant. Lorsque les conditions permettent un semis ou un regarnissage, nous le préparons ensemble. La pousse et les résultats dépendent de la saison, de la météo, du sol et de la réalisation des gestes.</p></div>
         </div>
         <div className={styles.launchAction}><TrialButton location="coaching_launch_value" /><p>Une offre de lancement temporaire,<br />pour les nouveaux abonnés en mensuel comme en annuel.</p></div>
       </div>
@@ -90,8 +90,8 @@ export default function CoachingContent() {
           <h2 id="coaching-price-title">Votre jardin.<br /><em>Un accompagnement continu.</em></h2>
           <div id="coaching-offre" className={styles.annualOffer} aria-labelledby="coaching-offer-title">
             <p className={styles.annualLabel}>Offre de lancement · 2 mois de coaching offerts</p>
-            <h3 id="coaching-offer-title">Votre première rénovation,<br />guidée de A à Z.</h3>
-            <p className={styles.annualPromise}>Du diagnostic aux ajustements : je vous dis quoi faire, avec quels produits, comment les appliquer et quand intervenir. Vous réalisez votre rénovation avec un cap précis.</p>
+            <h3 id="coaching-offer-title">Deux mois pour agir,<br />observer et ajuster.</h3>
+            <p className={styles.annualPromise}>Du diagnostic aux ajustements : je vous dis quoi faire, avec quels produits, comment les appliquer et quand intervenir. Vous améliorez votre gazon avec un cap précis et des conseils adaptés à la saison.</p>
             <p className={styles.annualSaving}>Cette offre de lancement est temporaire et n’a pas vocation à rester permanente. Réservée aux nouveaux abonnés, en mensuel comme en annuel. Les produits sont proposés séparément.</p>
             <TrialButton location="coaching_offer" />
             <p className={styles.offerTiming}>Les deux mois offerts commencent à l’envoi du premier protocole et s’écoulent en continu, même si vous reportez les actions.</p>
@@ -129,7 +129,7 @@ export default function CoachingContent() {
     <section className={styles.process} aria-labelledby="coaching-process-title">
       <div className={styles.container}>
         <div className={styles.sectionHeading} data-reveal><div><p className={styles.eyebrow}>Comment ça marche</p><h2 id="coaching-process-title">Vous faites le premier pas.<br /><em>On prépare la suite.</em></h2></div><p>Le coaching se déroule entièrement à distance. Pour une intervention réalisée par Hanami, découvrez les <a href="/interventions-locales">offres locales</a>.</p></div>
-        <ol className={styles.processGrid}>{steps.map((step, index) => <li key={step.title} data-reveal><div className={styles.stepTop}><step.icon size={24} strokeWidth={1.4} aria-hidden="true" /><span className={styles.number}>0{index + 1}</span></div><h3>{step.title}</h3><p>{step.text}</p></li>)}</ol>
+        <ol className={styles.processGrid}>{steps.map((step, index) => <li key={step.title} data-reveal><span className={styles.number}>0{index + 1}</span><div><h3>{step.title}</h3><p>{step.text}</p></div></li>)}</ol>
         <div className={styles.processAction}><TrialButton location="coaching_steps" /></div>
       </div>
     </section>

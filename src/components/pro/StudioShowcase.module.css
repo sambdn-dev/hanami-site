@@ -30,7 +30,7 @@
 .imageWrap,.viewer { position: relative; height: clamp(320px,34vw,490px); overflow: hidden; }
 .imageWrap { animation: studio-image-reveal .4s ease both; }
 .imageWrap img { object-fit: cover; object-position: center center; }
-.modelToggle { position: absolute; z-index: 3; left: 16px; bottom: 56px; display: inline-flex; align-items: center; gap: 12px; padding: 11px 14px; color: #153928; background: #f8f6efed; border: 1px solid #e2e8dc; backdrop-filter: blur(12px); box-shadow: 0 6px 24px #10251b29; font-size: 12px; font-weight: 700; cursor: pointer; transition: transform .2s,background .2s; }
+.modelToggle { position: absolute; z-index: 3; left: 16px; bottom: 56px; display: inline-flex; align-items: center; gap: 12px; padding: 11px 14px; color: #153928; background: #f8f6ef; border: 1px solid #e2e8dc;  box-shadow: 0 6px 24px #10251b29; font-size: 12px; font-weight: 700; cursor: pointer; transition: transform .2s,background .2s; }
 .modelToggle:hover { transform: translateY(-2px); background: #fffdf7; }
 .modelToggle:focus-visible { outline: 2px solid #153928; outline-offset: 3px; }
 .photo figcaption,.model figcaption { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 5px 16px; padding: 13px 15px; color: #4d6853; background: #e9ede4; font-family: var(--font-space-mono),monospace; font-size: 9px; letter-spacing: .03em; }
@@ -40,7 +40,7 @@
 .canvas { width: 100%; height: 100%; touch-action: none; }
 .canvas canvas { display: block; width: 100%; height: 100%; }
 .cameraControls { position: absolute; z-index: 2; top: 12px; left: 12px; right: 12px; display: flex; flex-wrap: wrap; gap: 5px; }
-.cameraControls button { padding: 8px 10px; color: #31563a; background: #f8f6efed; border: 1px solid #e2e8dc; backdrop-filter: blur(8px); font-size: 10px; font-weight: 700; cursor: pointer; }
+.cameraControls button { padding: 8px 10px; color: #31563a; background: #f8f6ef; border: 1px solid #e2e8dc;  font-size: 10px; font-weight: 700; cursor: pointer; }
 .cameraControls button.cameraActive { background: #153928; border-color: #153928; color: #f8f6ef; }
 .dragHint { position: absolute; z-index: 2; right: 12px; bottom: 12px; padding: 8px 10px; background: #f8f6efeb; color: #33583b; font-size: 10px; }
 .canvasFallback { position: absolute; inset: 0; display: grid; place-items: center; padding: 20px; text-align: center; color: #33583b; background: #e9e9df; }

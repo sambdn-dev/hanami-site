@@ -10,14 +10,14 @@
 
 'use client'
 
-import { Sprout, Sparkles, CalendarCheck, Shovel, type LucideIcon } from 'lucide-react'
+import { Sprout, RotateCcw, CalendarCheck, Shovel, type LucideIcon } from 'lucide-react'
 import StepNav from '../StepNav'
 import { OBJECTIFS } from '@/lib/chantier/objectifs'
 import type { ChantierFormState, ObjectifId } from '@/lib/chantier/types'
 
 const OBJECTIF_ICONS: Record<ObjectifId, LucideIcon> = {
   densifier: Sprout,
-  renover: Sparkles,
+  renover: RotateCcw,
   entretien: CalendarCheck,
   creation: Shovel,
 }

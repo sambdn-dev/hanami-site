@@ -14,7 +14,8 @@
 
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
-import { Plus, Trash2, AlertTriangle, Info, Download, ChevronLeft, ImageDown, Camera, Loader2, Share2, Sprout, Sparkles, Droplets, Mountain, Package, Settings, Lightbulb, Mail, Check, Globe, FlaskConical, Timer, Play, X } from 'lucide-react'
+import Link from 'next/link'
+import { Plus, Trash2, AlertTriangle, Info, Download, ChevronLeft, ImageDown, Camera, Loader2, Share2, Sprout, Leaf, Droplets, Mountain, Package, Settings, Lightbulb, Mail, Check, Globe, FlaskConical, Timer, Play, X } from 'lucide-react'
 import { compressPhoto } from '@/lib/photo-utils'
 import { track } from '@/lib/analytics'
 import { fmt, plural } from '@/lib/calculatrice/format'
@@ -1751,7 +1752,7 @@ export default function HanamiCalculator() {
                 <div className="grid grid-cols-2 gap-2.5">
                   {[
                     { type: 'seeds'       as const, icon: Sprout,   label: 'Semences',       desc: 'Création ou regarnissage',    product: 'Barenbrug RES+ Elite' },
-                    { type: 'fertilizer'  as const, icon: Sparkles, label: 'Engrais granulés', desc: 'Fertilisation & nutrition',  product: 'Floranid Twin Club'   },
+                    { type: 'fertilizer'  as const, icon: Leaf, label: 'Engrais granulés', desc: 'Fertilisation & nutrition',  product: 'Floranid Twin Club'   },
                     { type: 'liquid'      as const, icon: Droplets, label: 'Produit liquide', desc: 'Traitement, mouillant, fongicide', product: 'H2Pro Trismart' },
                     { type: 'topdressing' as const, icon: Mountain, label: 'Top dressing',    desc: 'Sable, terreau, nivellement', product: ''                    },
                   ].map(({ type, icon: TypeIcon, label, desc, product }) => (
@@ -1867,7 +1868,7 @@ export default function HanamiCalculator() {
               <div className="space-y-4">
                 <div>
                   <h2 className="text-base font-semibold text-stone-800" style={{ fontFamily: 'var(--font-fraunces)' }}>
-                    À quelle fréquence appliquez-vous de l'engrais ?
+                    À quelle fréquence appliquez-vous de l’engrais ?
                   </h2>
                   <p className="text-xs text-stone-400 mt-0.5">
                     Plus vous fractionnez, moins vous dosez à chaque passage.
@@ -2423,7 +2424,7 @@ export default function HanamiCalculator() {
 
                 {/* Depth */}
                 <div>
-                  <label className="block text-xs font-medium text-stone-500 mb-2">Profondeur d'application</label>
+                  <label className="block text-xs font-medium text-stone-500 mb-2">Profondeur d’application</label>
                   <div className="grid grid-cols-3 gap-2 mb-2">
                     {TD_DEPTHS.map((d) => (
                       <button
@@ -3029,7 +3030,7 @@ export default function HanamiCalculator() {
                       <div className="bg-amber-50 border border-amber-100 rounded-xl p-3 flex gap-2">
                         <Lightbulb className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
                         <p className="text-xs text-amber-800">
-                          Passez à l'aérateur ou au scarificateur avant application pour une meilleure pénétration.
+                          Passez à l’aérateur ou au scarificateur avant application pour une meilleure pénétration.
                         </p>
                       </div>
 
@@ -3134,7 +3135,8 @@ export default function HanamiCalculator() {
                 {/* ── Newsletter inline ── */}
                 <div className="no-print bg-hanami-100/40 border border-hanami-200 rounded-xl p-4">
                   <p className="text-xs font-semibold text-hanami-900 mb-0.5 flex items-center gap-1.5"><Mail className="w-3.5 h-3.5 shrink-0" /> Recevez nos protocoles saisonniers</p>
-                  <p className="text-xs text-stone-500 mb-3">Conseils d'entretien, moments clés, nouveaux produits.</p>
+                  <p className="text-xs text-stone-500 mb-3">Conseils d’entretien, moments clés, nouveaux produits.</p>
+                  <p className="text-xs text-stone-500 mb-3">Votre email sert à recevoir les conseils Hanami. Retrait possible à tout moment. <Link href="/confidentialite" className="underline underline-offset-4">Confidentialité</Link></p>
                   {newsletterSubmitted ? (
                     <p className="text-xs text-hanami-700 font-medium flex items-center gap-1.5"><Check className="w-3.5 h-3.5 shrink-0" /> Merci ! Vous êtes inscrit·e.</p>
                   ) : (
@@ -3146,18 +3148,18 @@ export default function HanamiCalculator() {
                         className={`flex-1 px-3 py-2 text-xs ${inputCls}`}
                       />
                       <button type="submit" className="px-3 py-2 bg-hanami-700 text-white text-xs font-medium rounded-lg hover:bg-hanami-900 transition-colors shrink-0">
-                        S'inscrire
+                        S’inscrire
                       </button>
                     </form>
                   )}
                 </div>
 
-                <a
+                <Link
                   href="/#contact"
                   className="no-print block text-center text-xs text-stone-400 hover:text-hanami-700 transition-colors underline underline-offset-2"
                 >
                   Vous voulez un protocole personnalisé ? Contactez-nous →
-                </a>
+                </Link>
 
                 {/* ── Retours en arrière — modifier sans repartir de zéro ──
                     L'état est conservé : on revient à l'étape, on ajuste

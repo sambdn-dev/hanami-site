@@ -111,14 +111,14 @@
 .sectionHeading { display: grid; grid-template-columns: 1.2fr 1fr; align-items: end; gap: 70px; margin-bottom: 47px; }
 .sectionHeading > p { max-width: 385px; color: var(--coaching-muted); font-size: 14px; line-height: 1.85; }
 .sectionHeading > p a { text-decoration: underline; text-underline-offset: 4px; }
-.pillars, .processGrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 34px; }
+.pillars { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 34px; }
+.processGrid { display: grid; gap: 0; border-top: 1px solid #15392826; }
 .pillars article { padding-top: 24px; border-top: 1px solid #15392840; }
 .number { color: #5d7b50; font: 400 11px/1.5 var(--font-space-mono), monospace; letter-spacing: normal; }
 .page h3 { font-family: var(--font-fraunces), serif; font-size: 27px; font-weight: 430; line-height: 1.15; letter-spacing: -.025em; }
 .pillars h3 { margin-top: 25px; }
 .pillars p, .processGrid p { margin-top: 15px; color: var(--coaching-muted); font-size: 13px; line-height: 1.9; }
-.processGrid li { min-width: 0; padding: 27px; border: 1px solid #15392826; background: var(--coaching-cream); }
-.stepTop { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin-bottom: 32px; color: #53704b; }
+.processGrid li { display: grid; grid-template-columns: 60px minmax(0, 1fr); gap: 24px; min-width: 0; padding: 28px 0; border-bottom: 1px solid #15392826; }
 .processAction { margin-top: 32px; }
 
 /* Presentation of shared blocks is scoped to coaching. */
@@ -156,8 +156,8 @@
   .hero h1 { font-size: clamp(44px, 5.8vw, 60px); }
   .pricingGrid { gap: 40px; }
   .sectionHeading { gap: 35px; }
-  .processGrid { gap: 18px; }
-  .processGrid li { padding: 22px; }
+  .processGrid { gap: 0; }
+  .processGrid li { padding: 24px 0; }
 }
 @media (max-width: 767px) {
   .container { width: calc(100% - 40px); }
@@ -207,12 +207,11 @@
   .priceFacts strong { font-size: 31px; }
   .sectionHeading { gap: 22px; margin-bottom: 32px; }
   .sectionHeading > p { font-size: 13px; }
-  .pillars, .processGrid { grid-template-columns: 1fr; gap: 26px; }
+  .pillars { grid-template-columns: 1fr; gap: 26px; }
   .pillars article { padding-top: 20px; }
   .pillars h3 { margin-top: 18px; }
   .page h3 { font-size: 26px; }
-  .processGrid li { padding: 25px; }
-  .stepTop { margin-bottom: 24px; }
+  .processGrid li { grid-template-columns: 30px minmax(0, 1fr); gap: 16px; padding: 24px 0; }
   .clientPreview > div, .support > section > div, .support > section:nth-child(2) > div { width: calc(100% - 40px); }
   .support :global(.text-base) { font-size: 14px; }
 }

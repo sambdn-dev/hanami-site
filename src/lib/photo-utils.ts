@@ -13,8 +13,6 @@
  * Résultat : ~80-150 KB par photo, conserve le ratio d'origine.
  */
 
-import { heicTo, isHeic } from 'heic-to'
-
 const MAX_DIMENSION = 1200      // Max côté long (px)
 const QUALITY = 0.78            // Qualité JPEG (0..1)
 const HEIC_QUALITY = 0.92       // Qualité de la conversion HEIC→JPEG (avant resize)
@@ -36,6 +34,9 @@ export interface CompressedPhoto {
  * @throws Error si le fichier n'est pas une image décodable
  */
 export async function compressPhoto(file: File): Promise<CompressedPhoto> {
+  // The converter is needed only after a photo is selected, never on page load.
+  const { heicTo, isHeic } = await import('heic-to')
+
   // ── 1. Conversion HEIC → JPEG si nécessaire ──────────────────────────────
   // Détection robuste : heic-to.isHeic lit les magic bytes du fichier (plus
   // fiable que le MIME type, qui peut être vide ou mal renseigné par iOS).

@@ -14,7 +14,7 @@ import { ChevronLeft } from 'lucide-react'
 
 export default function MobileAppBar() {
   return (
-    <header className="sm:hidden fixed top-0 left-0 right-0 h-14 z-50 bg-white/95 backdrop-blur-md border-b border-stone-100 flex items-center px-4">
+    <header className="sm:hidden fixed top-0 left-0 right-0 h-14 z-50 bg-brand-cream border-b border-stone-100 flex items-center px-4">
 
       {/* Lien retour */}
       <Link

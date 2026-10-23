@@ -15,9 +15,10 @@
 
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
+import { usePortalRoot } from '@/hooks/usePortalRoot'
 
 interface PhotoLightboxProps {
   /** dataUrl ou URL de l'image. null = lightbox fermé. */
@@ -34,8 +35,7 @@ interface PhotoLightboxProps {
  */
 export default function PhotoLightbox({ src, caption, onClose }: PhotoLightboxProps) {
   // Le portal cible body — initialisé côté client uniquement (SSR-safe)
-  const [portalRoot, setPortalRoot] = useState<HTMLElement | null>(null)
-  useEffect(() => { setPortalRoot(document.body) }, [])
+  const portalRoot = usePortalRoot()
 
   // Refs pour la gestion du focus (accessibilité clavier)
   const dialogRef   = useRef<HTMLDivElement>(null)
@@ -102,7 +102,7 @@ export default function PhotoLightbox({ src, caption, onClose }: PhotoLightboxPr
       aria-modal="true"
       aria-label="Photo de la zone"
       onClick={onClose}
-      className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-8 bg-black/85 backdrop-blur-md"
+      className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-8 bg-black/90"
     >
       {/* Bouton fermeture en haut à droite */}
       <button
@@ -110,7 +110,7 @@ export default function PhotoLightbox({ src, caption, onClose }: PhotoLightboxPr
         type="button"
         onClick={onClose}
         aria-label="Fermer"
-        className="absolute top-4 right-4 sm:top-6 sm:right-6 w-10 h-10 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white flex items-center justify-center hover:bg-white/20 transition-colors cursor-pointer z-10"
+        className="absolute top-4 right-4 sm:top-6 sm:right-6 w-10 h-10 rounded-full bg-stone-800 border border-white/20 text-white flex items-center justify-center hover:bg-white/20 transition-colors cursor-pointer z-10"
       >
         <X className="w-5 h-5" strokeWidth={2.2} />
       </button>

@@ -14,7 +14,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { ChevronDown, Sparkles } from 'lucide-react'
+import { ChevronDown, ListFilter } from 'lucide-react'
 
 export interface UsageOption {
   /** Identifiant stable (slug) */
@@ -54,7 +54,7 @@ export default function UsageSwitcher({ usages, selectedId, onChange }: UsageSwi
   if (usages.length <= 1) {
     return (
       <div className="flex items-center gap-1.5 text-[10px] text-stone-400 mt-1">
-        <Sparkles className="w-2.5 h-2.5 text-amber-500" />
+        <ListFilter className="w-2.5 h-2.5 text-amber-500" />
         <span>Usage : <span className="text-stone-600 font-medium">{selected.label}</span></span>
       </div>
     )
@@ -73,7 +73,7 @@ export default function UsageSwitcher({ usages, selectedId, onChange }: UsageSwi
         aria-expanded={open}
         aria-haspopup="listbox"
       >
-        <Sparkles className="w-3 h-3" />
+        <ListFilter className="w-3 h-3" />
         <span>Selon : {selected.label}</span>
         <ChevronDown className={`w-3 h-3 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>

@@ -13,9 +13,10 @@
 
 'use client'
 
-import { Check, Calendar, Mail, MessageCircle, Sparkles } from 'lucide-react'
+import { Check, Calendar, Mail, MessageCircle, Sprout } from 'lucide-react'
 import { PopupModal } from 'react-calendly'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { usePortalRoot } from '@/hooks/usePortalRoot'
 import { SERVICES } from '@/lib/chantier/services'
 import { computeEstimation, formatEstimation, formatPrice, PRICING_DISPLAY } from '@/lib/chantier/pricing'
 import { track } from '@/lib/analytics'
@@ -37,8 +38,7 @@ export default function StepResultat({ state, result, submissionStatus }: Props)
   const isCoaching = result.serviceId === 'coaching'
 
   const [calendlyOpen, setCalendlyOpen] = useState(false)
-  const [rootEl, setRootEl] = useState<HTMLElement | null>(null)
-  useEffect(() => { setRootEl(document.body) }, [])
+  const rootEl = usePortalRoot()
 
   const ctaLabel = isReconstruction
     ? 'Prendre RDV pour obtenir un devis gratuit'
@@ -86,7 +86,7 @@ export default function StepResultat({ state, result, submissionStatus }: Props)
       )}
 
       {/* ── Carte service recommandé ────────────────────────── */}
-      <div className="mt-8 rounded-2xl border-2 border-hanami-500 bg-white p-6 lg:p-8 shadow-lg relative overflow-hidden">
+      <div className="mt-8 rounded-lg border-2 border-hanami-500 bg-white p-6 lg:p-8 relative overflow-hidden">
         {/* Tag "Recommandé" */}
         <div className="absolute top-0 right-0 px-4 py-1.5 bg-hanami-700 text-white text-[10px] font-semibold tracking-widest uppercase rounded-bl-xl font-[family-name:var(--font-space-mono)]">
           Recommandé pour vous
@@ -184,9 +184,9 @@ export default function StepResultat({ state, result, submissionStatus }: Props)
 
       {/* ── Cross-sell Coaching (si Express) ──────────────── */}
       {altService && altService.id === 'coaching' && (
-        <div className="mt-10 p-6 rounded-2xl bg-hanami-100/40 border border-hanami-500/20">
+        <div className="mt-10 p-6 rounded-lg bg-hanami-100/40 border border-hanami-500/20">
           <div className="flex items-start gap-3 mb-3">
-            <Sparkles className="w-5 h-5 text-amber-500 shrink-0 mt-1" />
+            <Sprout className="w-5 h-5 text-amber-500 shrink-0 mt-1" />
             <div>
               <p className="font-[family-name:var(--font-space-mono)] text-[10px] font-semibold tracking-widest uppercase text-hanami-500">
                 Vous préférez faire vous-même ?
@@ -213,7 +213,7 @@ export default function StepResultat({ state, result, submissionStatus }: Props)
 
       {/* ── Cross-sell inverse : si Coaching, mention rénovation ── */}
       {isCoaching && result.zoneType !== 'out' && (
-        <div className="mt-10 p-6 rounded-2xl bg-stone-100 border border-stone-200">
+        <div className="mt-10 p-6 rounded-lg bg-stone-100 border border-stone-200">
           <p className="font-[family-name:var(--font-space-mono)] text-[10px] font-semibold tracking-widest uppercase text-stone-500">
             Vous préférez ne pas vous en occuper ?
           </p>

@@ -1,5 +1,5 @@
 .container { width: min(100% - 40px, 1280px); margin-inline: auto; }
-.productNav { position: relative; z-index: 3; display: flex; width: fit-content; max-width: 100%; gap: 5px; padding: 5px; border: 1px solid #c7d7b256; background: #f8f6ef15; backdrop-filter: blur(12px); }
+.productNav { position: relative; z-index: 3; display: flex; width: fit-content; max-width: 100%; gap: 5px; padding: 5px; border: 1px solid #c7d7b256; background: #f8f6ef15; }
 .productNav a { display: inline-flex; align-items: center; gap: 9px; min-height: 40px; padding: 8px 13px; color: #f8f6efc7; font-family: var(--font-fraunces), serif; font-size: 16px; white-space: nowrap; transition: background .25s, color .25s; }
 .productNav a:hover { color: #fff; }
 .productNav a.productActive { color: #183d29; background: #f8f6ef; }
@@ -12,9 +12,9 @@
 .sectionHeading h2 em, .studioTeaser h2 em, .studioExampleIntro h2 em { color: #72916b; font-weight: 350; }
 .sectionHeading > p { max-width: 425px; align-self: end; color: #536b59; font-size: 16px; line-height: 1.75; }
 .goldButton, .darkButton { display: inline-flex; min-height: 55px; align-items: center; justify-content: space-between; gap: 22px; width: fit-content; padding: 15px 19px; color: #173825; background: #f8f6ef; font-size: 13px; font-weight: 700; transition: transform .25s, background .25s; }
-.goldButton:hover { background: #e8f0e6; transform: translateY(-3px); }
+.goldButton:hover { background: #e8f0e6; }
 .darkButton { color: #f8f6ef; background: #173e2a; }
-.darkButton:hover { background: #2c6240; transform: translateY(-3px); }
+.darkButton:hover { background: #2c6240; }
 .lightLink, .studioTextLink { display: inline-flex; align-items: center; gap: 11px; min-height: 44px; width: fit-content; border-bottom: 1px solid #bbd1ad; color: #f8f6ef; font-size: 13px; font-weight: 700; transition: gap .25s; }
 .lightLink:hover, .studioTextLink:hover { gap: 18px; }
 
@@ -22,7 +22,7 @@
 .proHero { position: relative; overflow: hidden; isolation: isolate; padding: 127px 0 112px; background: #102f23; color: #f8f6ef; }
 .proHero::before { content: ''; position: absolute; z-index: -1; width: 800px; height: 800px; top: -330px; left: -350px; border-radius: 50%; background: radial-gradient(circle,#2c5b3a88,transparent 65%); }
 .proHeroGrid { display: grid; align-items: center; gap: 48px; margin-top: 52px; }
-.proHeroCopy { position: relative; z-index: 2; animation: pro-rise .9s cubic-bezier(.22,1,.36,1) both; }
+.proHeroCopy { position: relative; z-index: 2; }
 .proHeroCopy h1, .studioHeroCopy h1 { margin: 24px 0 27px; font-family: var(--font-fraunces),serif; font-size: clamp(58px,6.3vw,91px); line-height: .99; font-weight: 420; letter-spacing: -.064em; }
 .proHeroCopy h1 em { color: #c8d7ac; font-weight: 350; }
 .proHeroCopy > p:not(.kicker), .studioHeroCopy > p:not(.kicker) { max-width: 545px; color: #d5e4d0; font-size: 17px; line-height: 1.75; }
@@ -33,15 +33,15 @@
 @keyframes pro-rise { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: none; } }
 
 /* Captures du prototype Hanami Pro */
-.heroCaptureWrap { min-width: 0; position: relative; z-index: 1; animation: pro-rise 1s .13s cubic-bezier(.22,1,.36,1) both; }
+.heroCaptureWrap { min-width: 0; position: relative; z-index: 1; }
 .heroCaptureEyebrow { display: block; margin: 0 0 13px; color: #c2d5b9; font-family: var(--font-space-mono),monospace; font-size: 10px; letter-spacing: .1em; }
 .heroCapture { position: relative; padding: 8px; border: 1px solid #d9e8d054; border-radius: 18px; background: #e9eddd18; box-shadow: 0 32px 75px #07170e75; }
 .heroCapture .captureButton { border-radius: 11px; }
 .heroCapture figcaption { padding: 11px 5px 3px; color: #c9d9bf; font-size: 11px; }
 .captureButton { position: relative; display: block; width: 100%; padding: 0; overflow: hidden; border: 0; background: #e7e9df; text-align: left; cursor: zoom-in; }
 .captureButton img { display: block; width: 100%; height: auto; }
-.captureZoom { position: absolute; right: 15px; bottom: 15px; display: inline-flex; align-items: center; gap: 7px; padding: 9px 12px; border: 1px solid #d7e4d4a8; border-radius: 50px; background: #153b2de8; color: #f9f7ef; font-family: var(--font-dm-sans),sans-serif; font-size: 11px; font-weight: 700; backdrop-filter: blur(8px); transition: transform .25s, background .25s; }
-.captureButton:hover .captureZoom { transform: translateY(-3px); background: #24583c; }
+.captureZoom { position: absolute; right: 15px; bottom: 15px; display: inline-flex; align-items: center; gap: 7px; padding: 9px 12px; border: 1px solid #d7e4d4a8; border-radius: 50px; background: #153b2d; color: #f9f7ef; font-family: var(--font-dm-sans),sans-serif; font-size: 11px; font-weight: 700; transition: transform .25s, background .25s; }
+.captureButton:hover .captureZoom { background: #24583c; }
 .captureButton:focus-visible { outline: 3px solid #9bbd87; outline-offset: 3px; }
 .proDemo { scroll-margin-top: 95px; padding: 105px 0 110px; background: #f8f6ef; color: #173825; }
 .demoIntro { display: grid; gap: 20px; align-items: end; margin-bottom: 43px; }
@@ -63,7 +63,7 @@
 .demoFoot { margin: 24px 0 24px; color: #617865; font-size: 11px; line-height: 1.6; }
 
 /* Aperçu conceptuel du tableau de bord Pro */
-.dashboardWrap { position: relative; min-width: 0; padding-bottom: 54px; animation: pro-rise 1s .13s cubic-bezier(.22,1,.36,1) both; }
+.dashboardWrap { position: relative; min-width: 0; padding-bottom: 54px; }
 .dashboard { overflow: hidden; border: 1px solid #bfd5b838; border-radius: 10px; background: #eef2e9; color: #163c29; box-shadow: 0 30px 70px #06180d73; }
 .dashboardTop { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 46px; padding: 0 15px; color: #eaf0e2; background: #17412c; font-family: var(--font-fraunces),serif; font-size: 17px; }
 .dashboardTop b { color: #d4bb76; }
@@ -96,7 +96,7 @@
 .dashboardStatusMuted { background: #eef0ed; color: #6c786e; }
 .dashboardAlert { display: flex; align-items: center; gap: 8px; margin-top: 13px; padding: 10px 12px; background: #e3c879; color: #1d3e28; font-size: 10px; }
 .dashboardAlert strong { margin-left: auto; font-size: 9px; white-space: nowrap; }
-.phonePreview { position: absolute; right: -10px; bottom: 19px; width: 160px; padding: 10px; border: 5px solid #214934; border-radius: 18px; background: #f8f6ef; color: #193b29; box-shadow: 0 13px 35px #06180d85; transform: rotate(5deg); animation: phone-float 5.5s ease-in-out infinite; }
+.phonePreview { position: absolute; right: -10px; bottom: 19px; width: 160px; padding: 10px; border: 5px solid #214934; border-radius: 18px; background: #f8f6ef; color: #193b29; box-shadow: 0 13px 35px #06180d85; transform: rotate(5deg); }
 .phoneTop { display: flex; justify-content: space-between; gap: 5px; margin-bottom: 11px; font-family: var(--font-space-mono),monospace; font-size: 7px; color: #678269; }
 .phoneTop span:last-child { color: #6da86c; }
 .phonePreview > strong { display: block; font-family: var(--font-fraunces),serif; font-size: 18px; font-weight: 500; }
@@ -111,7 +111,7 @@
 .features { scroll-margin-top: 110px; padding: 105px 0; background: #f8f6ef; color: #153928; }
 .featureGrid { display: grid; gap: 17px; }
 .featureCard { display: flex; flex-direction: column; overflow: hidden; min-height: 330px; padding: 27px; background: #e9efe2; transition: background .25s, transform .25s; }
-.featureCard:hover { background: #dce9d5; transform: translateY(-4px); }
+.featureCard:hover { background: #dce9d5; }
 .featureHead { display: flex; justify-content: space-between; align-items: start; gap: 12px; margin-bottom: 33px; color: #507753; }
 .featureHead span { font-family: var(--font-space-mono),monospace; font-size: 10px; letter-spacing: .05em; }
 .featureCard h3 { font-family: var(--font-fraunces),serif; font-size: clamp(28px,2.7vw,39px); line-height: 1.08; font-weight: 440; letter-spacing: -.045em; }
@@ -166,7 +166,7 @@
 .studioTextLink { color: #173e2a; border-color: #173e2a; }
 .studioDevelopmentNote { color: #65806a; }
 .studioHeroImage { position: relative; min-height: 550px; overflow: hidden; background: #a5bd9c; box-shadow: 18px 18px 0 #cddac5; }
-.studioHeroImage img { object-fit: cover; animation: studio-zoom 16s ease-in-out infinite alternate; }
+.studioHeroImage img { object-fit: cover; }
 @keyframes studio-zoom { to { transform: scale(1.055); } }
 .studioImageBadge { position: absolute; top: 18px; left: 18px; display: flex; align-items: center; gap: 10px; padding: 11px 13px; background: #f8f6ef; font-family: var(--font-space-mono),monospace; font-size: 10px; }
 .studioHeroImage figcaption { position: absolute; bottom: 0; left: 0; right: 0; padding: 35px 18px 15px; background: linear-gradient(transparent,#102e23c5); color: #fff; font-size: 11px; }

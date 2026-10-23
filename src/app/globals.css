@@ -145,36 +145,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ─── Grain overlay ─────────────────────────────────────────── */
-/* NOTE : le grain est rendu par un <div> React dans layout.tsx
-   (classe .grain-overlay) plutôt que body::before.
-   Raison : pointer-events: none est buggé sur les pseudo-éléments
-   CSS dans iOS Safari — il bloque les clics sur toute la page.
-   Un vrai élément DOM est fiable partout. */
-.grain-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  pointer-events: none;
-  opacity: 0.028;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-size: 128px 128px;
-}
-
-html.motion-ready [data-reveal] {
-  opacity: 0;
-  transform: translateY(32px);
-  transition: opacity .8s cubic-bezier(.22,1,.36,1), transform .8s cubic-bezier(.22,1,.36,1);
-}
-html.motion-ready [data-reveal].is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-[data-reveal-delay="1"] { transition-delay: .1s !important; }
-[data-reveal-delay="2"] { transition-delay: .2s !important; }
-[data-reveal-delay="3"] { transition-delay: .3s !important; }
-
 .grass-field {
   --grass-0: #4d7950;
   --grass-1: #789b67;
@@ -199,7 +169,6 @@ html.motion-ready [data-reveal].is-visible {
   to { transform: rotate(7deg) skewX(1deg); }
 }
 @media (prefers-reduced-motion: reduce) {
-  html.motion-ready [data-reveal] { opacity: 1; transform: none; transition: none; }
   .grass-field__blade { animation: none; }
 }
 
@@ -260,18 +229,6 @@ html.motion-ready [data-reveal].is-visible {
   animation: carouselIn 0.35s ease forwards;
 }
 
-/* ─── Scroll-triggered fade-in ──────────────────────────────── */
-.fade-in {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.55s ease, transform 0.55s ease;
-}
-
-.fade-in.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
 /* ─── Ancres rehype-autolink-headings ───────────────────────── */
 /* h2 garde le soulignage (gros titre, lien de section notable).  */
 /* h3 : on supprime — trop chargé visuellement sur les sous-titres. */
@@ -295,12 +252,6 @@ h3 .anchor-heading {
 }
 @media (prefers-reduced-motion: reduce) {
   .float-3d { animation: none; }
-  /* Contenu directement visible, sans translation ni fondu */
-  .fade-in {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
   .carousel-enter { animation: none; }
 }
 

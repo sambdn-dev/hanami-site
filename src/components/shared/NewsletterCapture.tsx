@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { track } from '@/lib/analytics'
 
 const STORAGE_KEY = 'hanami-newsletter-email'
@@ -81,6 +82,10 @@ export default function NewsletterCapture({ variant = 'section' }: NewsletterCap
           Je m&apos;inscris
         </button>
       </div>
+      <p className={`mt-3 text-xs leading-relaxed ${isFooter ? 'text-brand-cream/80' : 'text-stone-500'}`}>
+        Votre email sert à recevoir les conseils Hanami. Retrait possible à tout moment.{' '}
+        <Link href="/confidentialite" className="underline underline-offset-4">Confidentialité</Link>
+      </p>
       {error && (
         <p className="mt-1.5 text-xs text-red-400">{error}</p>
       )}

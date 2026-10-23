@@ -19,7 +19,7 @@
 .hero { position: relative; overflow: hidden; isolation: isolate; padding-top: 143px; background: #103824; color: #f8f6ef; }
 .heroAura { position: absolute; width: 800px; height: 800px; border-radius: 50%; left: -350px; top: -400px; background: radial-gradient(circle, rgba(97,143,76,.25), transparent 68%); pointer-events: none; }
 .heroGrid { position: relative; display: grid; gap: 42px; z-index: 2; }
-.heroCopy { align-self: center; animation: hero-rise 1s cubic-bezier(.22,1,.36,1) both; }
+.heroCopy { align-self: center; }
 .heroEyebrow { display: flex; align-items: center; gap: 14px; margin-bottom: 35px; color: #c7d8b1; font-size: 11px; font-weight: 700; letter-spacing: .19em; text-transform: uppercase; }
 .heroEyebrowLine { display: block; width: 35px; height: 1px; background: #d5b76d; }
 .heroTitle { font-family: var(--font-fraunces), serif; font-size: clamp(45px, 5vw, 76px); line-height: 1.04; letter-spacing: -.06em; font-weight: 410; white-space: nowrap; }
@@ -27,17 +27,17 @@
 .heroDescription { max-width: 515px; margin-top: 34px; color: #e2e9d9; font-size: 17px; line-height: 1.75; }
 .heroActions { display: flex; align-items: center; flex-wrap: wrap; gap: 14px 26px; margin-top: 34px; }
 .heroButton, .buttonLight { display: inline-flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 57px; padding: 16px 22px; background: #f8f6ef; color: #173825; font-size: 14px; font-weight: 700; transition: background .25s, transform .25s; }
-.heroButton:hover, .buttonLight:hover { background: #e8f0e6; transform: translateY(-3px); }
+.heroButton:hover, .buttonLight:hover { background: #e8f0e6; }
 .heroTextLink { display: inline-flex; align-items: center; gap: 11px; min-height: 48px; font-size: 13px; font-weight: 600; border-bottom: 1px solid #a7c29a; transition: gap .25s; }
 .heroTextLink:hover { gap: 17px; }
 .heroMicroProof { display: flex; align-items: center; gap: 14px; margin-top: 45px; color: #bfceb9; font-size: 12px; line-height: 1.5; }
 .heroMicroMark { flex-shrink: 0; width: 42px; height: 42px; border-radius: 50%; box-shadow: 0 0 0 1px #a7c29a80; object-fit: contain; }
-.heroFigure { position: relative; min-width: 0; padding: 8px; border: 1px solid #e8f0e670; border-radius: 24px 24px 92px 24px; background: linear-gradient(135deg,#ffffff30,#ffffff05 45%,#ffffff1a); box-shadow: 0 28px 70px #071e1355,inset 0 0 18px #ffffff1c; backdrop-filter: blur(12px); animation: hero-rise 1.1s .16s cubic-bezier(.22,1,.36,1) both; }
+.heroFigure { position: relative; min-width: 0; padding: 8px; border: 1px solid #e8f0e670; border-radius: 24px 24px 92px 24px; background: linear-gradient(135deg,#ffffff30,#ffffff05 45%,#ffffff1a); box-shadow: 0 28px 70px #071e1355,inset 0 0 18px #ffffff1c; backdrop-filter: blur(12px); }
 .heroFigure::after { content: ''; position: absolute; z-index: -1; inset: 24px -14px -15px 24px; border: 1px solid #dfebd14f; border-radius: 24px 24px 95px 24px; pointer-events: none; }
 .heroPhoto { position: relative; overflow: hidden; height: 590px; border-radius: 18px 18px 84px 18px; background: #345c35; }
 .heroPhotoOpen { position: absolute; z-index: 2; inset: 0; width: 100%; height: 100%; cursor: zoom-in; }
 .heroPhotoOpen:focus-visible { outline: 3px solid #f8f6ef; outline-offset: -8px; }
-.coverPhoto { object-fit: cover; object-position: center 69%; animation: hero-photo 13s ease-in-out infinite alternate; }
+.coverPhoto { object-fit: cover; object-position: center 69%; }
 .heroPhotoShade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(15,42,26,.2), transparent 35%, rgba(11,37,25,.6)); pointer-events: none; }
 .heroPhotoTop { position: absolute; top: 24px; left: 27px; color: #f8f6ef; font-size: 10px; letter-spacing: .2em; font-weight: 700; text-transform: uppercase; }
 .heroPhotoZoom { position: absolute; top: 18px; right: 18px; display: inline-flex; align-items: center; gap: 7px; padding: 10px 12px; border: 1px solid #ffffff88; border-radius: 30px; background: #f8f6efca; color: #153928; backdrop-filter: blur(12px); font-size: 10px; font-weight: 700; pointer-events: none; }
@@ -85,7 +85,7 @@
 .buttonLight:hover { background: #e8f0e6; }
 .otherOffers { display: grid; gap: 20px; }
 .serviceCard { display: flex; flex-direction: column; min-height: 273px; padding: 26px; background: #e9eee2; transition: background .3s, transform .3s; }
-.serviceCard:hover { background: #dfe9d8; transform: translateY(-4px); }
+.serviceCard:hover { background: #dfe9d8; }
 .serviceCardTop { display: flex; justify-content: space-between; align-items: start; gap: 10px; margin-bottom: 17px; color: #476e48; }
 .serviceCardTop span { font-family: var(--font-space-mono), monospace; font-size: 10px; text-transform: uppercase; letter-spacing: .09em; }
 .serviceCard h3 { font-family: var(--font-fraunces), serif; font-size: clamp(25px, 2.3vw, 33px); line-height: 1.13; letter-spacing: -.04em; font-weight: 450; }
@@ -133,7 +133,7 @@
 .step p { max-width: 440px; color: var(--muted); font-size: 13px; line-height: 1.6; }
 .protocolScene { position: relative; display: grid; place-items: center; min-height: 610px; padding: 44px 25px; background: #dce8d5; }
 .protocolOrbit { position: absolute; width: 700px; height: 700px; border: 1px solid rgba(29,87,49,.18); border-radius: 50%; box-shadow: 0 0 0 60px rgba(255,255,255,.11), 0 0 0 120px rgba(255,255,255,.1); }
-.protocolCard { position: relative; width: min(100%, 495px); background: #f8f6ef; box-shadow: 0 28px 70px rgba(14,56,33,.15); transform: rotate(-2deg); animation: protocol-float 6s ease-in-out infinite; }
+.protocolCard { position: relative; width: min(100%, 495px); background: #f8f6ef; box-shadow: 0 28px 70px rgba(14,56,33,.15); transform: rotate(-2deg); }
 .protocolCardHead { display: flex; justify-content: space-between; align-items: center; padding: 18px 24px; border-bottom: 1px solid var(--line); color: #638261; font-family: var(--font-space-mono), monospace; font-size: 10px; letter-spacing: .08em; }
 .protocolCardTitle { padding: 27px 25px 18px; }
 .protocolCardTitle span, .protocolLine small { color: #789069; font-family: var(--font-space-mono), monospace; font-size: 10px; letter-spacing: .07em; }

@@ -15,8 +15,8 @@ import { useFadeIn } from '@/hooks/useFadeIn'
 
 // Les 3 données à afficher dans le bandeau
 const stats = [
-  { value: '10 000+', label: 'm² de gazon suivis' },
-  { value: '100%', label: 'de renouvellement coaching' },
+  { value: 'Sur mesure', label: 'un protocole pour votre jardin' },
+  { value: 'À distance', label: 'un accompagnement partout en France' },
   { value: 'Produits pro', label: 'inaccessibles en jardinerie' },
 ]
 

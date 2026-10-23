@@ -568,7 +568,7 @@ export default function ContactForm({
                 </div>
               </div>}
 
-              {/* Bouton submit — 3e enfant du grid : après champs et photos sur mobile,
+              {/* Bouton submit — après champs et photos sur mobile,
                   positionné en col 1 row 2 sur desktop grâce à l'auto-placement */}
               <button
                 type="submit"
@@ -579,6 +579,10 @@ export default function ContactForm({
               </button>
 
             </div>
+            <p className="mt-5 text-xs text-stone-500 leading-relaxed">
+              Hanami utilise vos coordonnées et les photos jointes pour répondre à votre demande et préparer votre accompagnement.{' '}
+              <a href="/confidentialite" className="underline underline-offset-4">Utilisation de vos données et vos droits</a>.
+            </p>
           </form>
         </div>
       </div>
@@ -713,23 +717,16 @@ function PhoneField({
   error?: { message?: string }
 }) {
   const [countryCode, setCountryCode] = useState('+33')
-  const [localNumber, setLocalNumber] = useState('')
-
-  // Sync local display when the parent resets the field to ''
-  useEffect(() => {
-    if (!value) setLocalNumber('')
-  }, [value])
+  const localNumber = value.startsWith(`${countryCode} `) ? value.slice(countryCode.length + 1) : value
 
   function handleNumberChange(e: React.ChangeEvent<HTMLInputElement>) {
     const formatted = formatPhoneNumber(e.target.value, countryCode)
-    setLocalNumber(formatted)
     onChange(formatted ? `${countryCode} ${formatted}` : '')
   }
 
   function handleCountryChange(newCode: string) {
     setCountryCode(newCode)
     const reformatted = formatPhoneNumber(localNumber, newCode)
-    setLocalNumber(reformatted)
     onChange(reformatted ? `${newCode} ${reformatted}` : '')
   }
 

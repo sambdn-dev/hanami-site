@@ -615,7 +615,7 @@ export const SOLID_CATALOG: SolidCatalogProduct[] = [
     category: 'fertilizer',
     defaultUsageId: 'creation',
     usages: [
-      { id: 'creation', label: 'Création (au semis)', doseG_m2: 35, doseRange: '25–35 g/m²', note: 'À épandre au moment du semis pour booster les jeunes racines' },
+      { id: 'creation', label: 'Création (au semis)', doseG_m2: 35, doseRange: '25–35 g/m²', note: 'À épandre au moment du semis pour accompagner le développement des jeunes racines' },
       { id: 'regarnissage', label: 'Regarnissage (sursemis)', doseG_m2: 35, doseRange: '25–35 g/m²', note: 'Post-scarif, après le sursemis' },
     ],
     note: 'NPK 20-20-8 riche en phosphore — Poly-S libération contrôlée 3 mois. Engrais de démarrage idéal création / rénovation (mai → octobre)',
@@ -742,7 +742,7 @@ export const LIQUID_CATALOG: LiquidCatalogProduct[] = [
     usages: [
       { id: 'standard', label: 'Pulvérisation foliaire', doseL_ha: 10, bouillieL_ha: 600, doseMl_L: 10, doseRange: '5–10 L/ha', note: 'Bouillie 400–1000 L/ha — toute l\'année hors gel et forte chaleur, intervalle 15 j mini' },
     ],
-    note: 'Concentré d\'algues marines — 10% Ascophyllum nodosum (acides aminés + oligo-éléments). Booster racinaire, accélère levée des semis, améliore résistance aux stress. Miscible avec Vitalnova Stressbuster / Silk',
+    note: 'Concentré d\'algues marines — 10% Ascophyllum nodosum (acides aminés + oligo-éléments). Soutien du développement racinaire, accélère levée des semis, améliore résistance aux stress. Miscible avec Vitalnova Stressbuster / Silk',
   },
   {
     id: 'h2pro-trismart',

@@ -53,9 +53,8 @@ export default function EspaceClientPreview() {
               Tout votre coaching, réuni au même endroit
             </h2>
             <p className="text-stone-500 leading-relaxed mt-4">
-              Pas un logiciel de plus : le moyen pour Hanami de vous suivre toute
-              l&apos;année sans se déplacer. Votre plan, votre sol, vos échanges —
-              du bureau comme du jardin.
+              Votre plan, votre sol, vos échanges et votre protocole sont réunis
+              pour suivre votre gazon au fil des saisons, du bureau comme du jardin.
             </p>
           </div>
 

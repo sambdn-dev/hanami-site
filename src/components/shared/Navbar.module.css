@@ -17,8 +17,8 @@
 .menuButton { display: grid; place-items: center; width: 48px; height: 48px; margin-left: auto; cursor: pointer; }
 .backdrop { position: fixed; z-index: 90; inset: 0; background: #061e1599; opacity: 0; pointer-events: none; transition: opacity .3s; }
 .backdropOpen { opacity: 1; pointer-events: auto; }
-.mobileMenu { position: fixed; z-index: 100; top: 0; right: 0; bottom: 0; display: flex; flex-direction: column; width: min(92vw,430px); overflow-y: auto; background: #f8f6ef; color: #173c29; box-shadow: -20px 0 60px #061e1540; transform: translateX(102%); transition: transform .35s cubic-bezier(.22,1,.36,1); }
-.mobileMenuOpen { transform: none; }
+.mobileMenu { position: fixed; z-index: 100; top: 0; right: 0; bottom: 0; display: flex; flex-direction: column; width: min(92vw,430px); overflow-y: auto; background: #f8f6ef; color: #173c29; box-shadow: -20px 0 60px #061e1540; transform: translateX(102%); visibility: hidden; transition: transform .25s cubic-bezier(.22,1,.36,1), visibility .25s; }
+.mobileMenuOpen { transform: none; visibility: visible; }
 .mobileTop { display: flex; align-items: center; justify-content: space-between; padding: 21px 23px; border-bottom: 1px solid #15392824; }
 .mobileTop img { width: 100px; height: auto; }
 .mobileTop button { display: grid; place-items: center; width: 44px; height: 44px; }

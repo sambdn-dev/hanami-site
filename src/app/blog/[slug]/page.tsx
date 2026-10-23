@@ -210,7 +210,7 @@ export default async function ArticlePage(
           </header>
 
           {article.cover && (
-            <div className="max-w-4xl mx-auto mb-14 rounded-2xl overflow-hidden border border-stone-200">
+            <div className="max-w-4xl mx-auto mb-14 rounded-lg overflow-hidden border border-stone-200">
               {/* Dimensions indicatives 16:9 — w-full h-auto préserve le ratio
                   réel du fichier, next/image fournit srcset + WebP/AVIF */}
               <Image

@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import { CloudRain, Droplets, MapPinned, Smartphone, Sparkles } from 'lucide-react'
+import { CloudRain, Droplets, MapPinned, Smartphone } from 'lucide-react'
 import IrrigationZoneMotion from './IrrigationZoneMotion'
 import IrrigationQuoteButton from './IrrigationQuoteButton'
 import styles from './IrrigationSection.module.css'
@@ -27,7 +27,7 @@ export default function IrrigationSection() {
             <Image src="/images/irrigation/irrisense2-lifestyle.webp" alt="Aiper IrriSense 2, système d’arrosage intelligent de surface, présenté au milieu du gazon" fill sizes="(max-width: 767px) 700px, (max-width: 1100px) 950px, 1080px" />
             <div className={styles.productShade} />
             <div className={styles.productHeader}><span>AIPER</span><span>IRRISENSE 2</span></div>
-            <span className={styles.productLabel}><Sparkles size={14} aria-hidden="true" /> Le jardin suit son rythme.</span>
+            <span className={styles.productLabel}>Le jardin suit son rythme.</span>
             <figcaption>Visuel officiel du fabricant · Arrosage de surface</figcaption>
           </figure>
         </div>

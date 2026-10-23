@@ -16,7 +16,7 @@ export interface FaqEntry {
 export const FAQS: FaqEntry[] = [
   {
     question: 'Combien ça coûte ?',
-    answer: `Pour votre première rénovation, deux mois de coaching à distance sont offerts, en formule mensuelle comme annuelle. Ils commencent à l’envoi du premier protocole et s’écoulent en continu, même si vous reportez les actions. Vous réalisez les gestes et les produits sont proposés séparément. Ensuite, à partir de ${PRICING_DISPLAY.coachingMois} €/mois TTC sans engagement ou à partir de ${PRICING_DISPLAY.coachingAnnuel} €/an TTC. Votre date de démarrage est confirmée ensemble selon les disponibilités. Les rénovations vont de 6 à 25 €/m² TTC selon l'état du terrain, estimation précise en 2 minutes avec la simulation gratuite.`,
+    answer: `Pour commencer à améliorer votre gazon, deux mois de coaching à distance sont offerts, en formule mensuelle comme annuelle. Ils commencent à l’envoi du premier protocole et s’écoulent en continu, même si vous reportez les actions. Vous réalisez les gestes et les produits sont proposés séparément. Ensuite, à partir de ${PRICING_DISPLAY.coachingMois} €/mois TTC sans engagement ou à partir de ${PRICING_DISPLAY.coachingAnnuel} €/an TTC. Votre date de démarrage est confirmée ensemble selon les disponibilités. Les rénovations vont de 6 à 25 €/m² TTC selon l'état du terrain, estimation précise en 2 minutes avec la simulation gratuite.`,
   },
   {
     question: `À partir de ${PRICING_DISPLAY.coachingMois} €/mois, c'est rentable ?`,

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 
 import SeasonalBanner from '@/components/shared/SeasonalBanner'
 import Navbar from '@/components/shared/Navbar'
@@ -139,7 +140,7 @@ export default function MentionsLegalesPage() {
                 Les données collectées via le formulaire de contact (nom, e-mail, description du projet) sont utilisées exclusivement pour répondre à votre demande et ne sont pas cédées à des tiers.
               </p>
               <p className="text-sm text-stone-700 leading-relaxed mt-3">
-                Le formulaire est traité par <strong>Formspree Inc.</strong> (San Francisco, États-Unis), soumis au Privacy Shield UE-USA. Les données sont conservées le temps nécessaire au traitement de votre demande.
+                Les messages et les photos que vous choisissez de joindre sont transmis à Hanami via <strong>Resend</strong>. Les données sont utilisées pour traiter votre demande et assurer le suivi de nos échanges. Consultez notre <Link href="/confidentialite" className="underline underline-offset-4">politique de confidentialité</Link> pour connaître les traitements, les prestataires et vos droits.
               </p>
               <p className="text-sm text-stone-700 leading-relaxed mt-3">
                 Conformément au Règlement Général sur la Protection des Données (RGPD — Règlement UE 2016/679), vous disposez des droits suivants :

@@ -230,7 +230,7 @@ export default function BeforeAfterSlider({
   return (
     <div
       ref={containerRef}
-      className={`relative w-full aspect-[4/3] overflow-hidden rounded-2xl shadow-lg select-none cursor-ew-resize ${className}`}
+      className={`relative w-full aspect-[4/3] overflow-hidden rounded-lg select-none cursor-ew-resize ${className}`}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
@@ -334,7 +334,7 @@ export default function BeforeAfterSlider({
       {/* Disparaissent discrètement quand le curseur passe sur eux */}
       <div className="absolute bottom-4 left-4 pointer-events-none">
         <span
-          className="font-[family-name:var(--font-space-mono)] text-xs px-2.5 py-1 rounded-full bg-black/40 text-white backdrop-blur-sm transition-opacity duration-200"
+          className="font-[family-name:var(--font-space-mono)] text-xs px-2.5 py-1 rounded-full bg-brand-forest text-white transition-opacity duration-200"
           style={{ opacity: position > 15 ? 1 : 0 }}
         >
           Avant
@@ -342,7 +342,7 @@ export default function BeforeAfterSlider({
       </div>
       <div className="absolute bottom-4 right-4 pointer-events-none">
         <span
-          className="font-[family-name:var(--font-space-mono)] text-xs px-2.5 py-1 rounded-full bg-black/40 text-white backdrop-blur-sm transition-opacity duration-200"
+          className="font-[family-name:var(--font-space-mono)] text-xs px-2.5 py-1 rounded-full bg-brand-forest text-white transition-opacity duration-200"
           style={{ opacity: position < 85 ? 1 : 0 }}
         >
           Après

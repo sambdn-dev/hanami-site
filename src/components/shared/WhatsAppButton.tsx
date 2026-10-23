@@ -13,7 +13,7 @@ export default function WhatsAppButton() {
       /* .whatsapp-float : classe stable ciblée par globals.css — remonte le
          bouton quand la MobileStickyCTA est visible (transition-all anime
          le changement de `bottom` en douceur) */
-      className="whatsapp-float fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95"
+      className="whatsapp-float fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 rounded-full shadow-sm transition-colors duration-200"
       style={{ backgroundColor: '#25D366' }}
     >
       <svg

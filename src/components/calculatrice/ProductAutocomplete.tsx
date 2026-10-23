@@ -18,7 +18,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Sparkles } from 'lucide-react'
+import { ListFilter } from 'lucide-react'
 
 interface ProductSuggestion {
   /** Identifiant unique pour key React */
@@ -57,20 +57,12 @@ export default function ProductAutocomplete<T extends ProductSuggestion>({
   inputClass,
   limit = 5,
 }: ProductAutocompleteProps<T>) {
-  const [suggestions, setSuggestions] = useState<T[]>([])
+  const suggestions = search(value, limit)
   const [open, setOpen] = useState(false)
   const [highlight, setHighlight] = useState(0)
 
   const containerRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-
-  // Filtre les suggestions à chaque changement de valeur — pas de debounce
-  // nécessaire car la recherche est locale (catalogue en mémoire).
-  useEffect(() => {
-    const list = search(value, limit)
-    setSuggestions(list)
-    setHighlight(0)
-  }, [value, search, limit])
 
   // Click extérieur → ferme le dropdown
   useEffect(() => {
@@ -112,7 +104,7 @@ export default function ProductAutocomplete<T extends ProductSuggestion>({
         ref={inputRef}
         type="text"
         value={value}
-        onChange={e => { onChange(e.target.value); setOpen(true) }}
+        onChange={e => { onChange(e.target.value); setHighlight(0); setOpen(true) }}
         onFocus={() => suggestions.length > 0 && setOpen(true)}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
@@ -129,7 +121,7 @@ export default function ProductAutocomplete<T extends ProductSuggestion>({
           aria-label="Voir les suggestions catalogue"
           className="absolute right-2 top-1/2 -translate-y-1/2 px-1.5 py-0.5 rounded-md bg-amber-100 text-amber-700 text-[10px] font-semibold flex items-center gap-1 hover:bg-amber-200 transition-colors cursor-pointer"
         >
-          <Sparkles className="w-3 h-3" />
+          <ListFilter className="w-3 h-3" />
           {suggestions.length}
         </button>
       )}
@@ -142,7 +134,7 @@ export default function ProductAutocomplete<T extends ProductSuggestion>({
         >
           {/* Petite header du catalogue */}
           <li className="px-3 py-1.5 bg-amber-50 border-b border-amber-100 flex items-center gap-1.5">
-            <Sparkles className="w-3 h-3 text-amber-600" />
+            <ListFilter className="w-3 h-3 text-amber-600" />
             <span className="text-[10px] font-semibold tracking-widest uppercase text-amber-700 font-[family-name:var(--font-space-mono)]">
               Catalogue Hanami · doses pré-calculées
             </span>

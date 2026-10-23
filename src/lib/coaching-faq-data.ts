@@ -30,15 +30,15 @@ export const COACHING_FAQS: FaqEntry[] = [
   },
   {
     question: 'Comment profiter des deux mois offerts ?',
-    answer: 'Dans le cadre de son offre de lancement temporaire, Hanami vous offre deux mois de coaching pour guider votre première rénovation de A à Z : diagnostic, protocole personnalisé, choix des produits, doses, méthode, calendrier et ajustements. Vous réalisez les travaux ; les produits et le matériel restent à votre charge. L’offre est réservée aux nouveaux abonnés, en mensuel comme en annuel. Envoyez votre demande : Hanami vous répond sous 24 h et confirme avec vous la date de démarrage selon les disponibilités.',
+    answer: 'Dans le cadre de son offre de lancement temporaire, Hanami vous offre deux mois de coaching pour améliorer votre gazon avec des actions adaptées à la saison : diagnostic, protocole personnalisé, choix des produits, doses, méthode, calendrier et ajustements. Vous réalisez les travaux ; les produits et le matériel restent à votre charge. L’offre est réservée aux nouveaux abonnés, en mensuel comme en annuel. Envoyez votre demande : Hanami vous répond sous 24 h et confirme avec vous la date de démarrage selon les disponibilités.',
   },
   {
     question: 'Pourquoi offrir deux mois plutôt qu’un seul ?',
-    answer: 'Un mois permet déjà de se lancer. Hanami en offre deux pour vous laisser le temps d’appliquer les premières étapes du protocole, d’observer la reprise du gazon et d’ajuster les gestes avec davantage de recul. L’objectif est de vous accompagner sur une vraie séquence de rénovation. La pousse et les résultats dépendent de la saison, de la météo, du sol et de la réalisation des actions ; un résultat définitif identique en deux mois ne peut pas être garanti pour tous les jardins.',
+    answer: 'Un mois permet déjà de se lancer. Hanami en offre deux pour vous laisser le temps d’appliquer les premières étapes du protocole, d’observer la reprise du gazon et d’ajuster les gestes avec davantage de recul. L’objectif est de réaliser les premières actions adaptées à votre jardin et de suivre leur évolution. La pousse et les résultats dépendent de la saison, de la météo, du sol et de la réalisation des actions ; un résultat définitif identique en deux mois ne peut pas être garanti pour tous les jardins.',
   },
   {
-    question: 'La rénovation et les produits sont-ils entièrement gratuits ?',
-    answer: 'L’offre porte sur deux mois de coaching à distance pour guider votre première rénovation : le diagnostic, le protocole et les conseils sont offerts. Vous réalisez les travaux et achetez les produits et le matériel nécessaires. Ce n’est pas une intervention gratuite réalisée à domicile.',
+    question: 'Que comprennent les deux mois offerts ?',
+    answer: 'L’offre porte sur deux mois de coaching à distance pour améliorer votre gazon : le diagnostic, le protocole et les conseils sont offerts. Vous réalisez les travaux et achetez les produits et le matériel nécessaires. Ce n’est pas une intervention gratuite réalisée à domicile.',
   },
   {
     question: 'Quel budget représente une rénovation réalisée par Hanami ?',

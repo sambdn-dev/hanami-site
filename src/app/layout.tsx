@@ -3,7 +3,6 @@ import { Fraunces, DM_Sans, Space_Mono } from 'next/font/google'
 import './globals.css'
 import AxeptioProvider from '@/components/shared/AxeptioProvider'
 import AnalyticsProvider from '@/components/shared/AnalyticsProvider'
-import ScrollReveal from '@/components/shared/ScrollReveal'
 import { organizationSchema } from '@/lib/structured-data'
 import { SITE_URL } from '@/lib/seo'
 import { cn } from "@/lib/utils";
@@ -97,11 +96,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema()) }}
         />
-        {/* Texture grain — élément DOM réel (pas body::before) pour que
-            pointer-events: none fonctionne correctement sur iOS Safari */}
-        <div className="grain-overlay" aria-hidden="true" />
         {children}
-        <ScrollReveal />
         <AxeptioProvider />
         <AnalyticsProvider />
       </body>

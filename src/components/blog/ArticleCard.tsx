@@ -18,12 +18,12 @@ export default function ArticleCard({ article, compact = false }: ArticleCardPro
   return (
     <Link
       href={`/blog/${article.slug}`}
-      className="group flex flex-col rounded-2xl border border-stone-200 bg-white overflow-hidden transition-all hover:border-hanami-300 hover:shadow-lg hover:-translate-y-0.5"
+      className="group flex flex-col rounded-lg border border-stone-200 bg-white overflow-hidden transition-colors hover:border-hanami-700"
     >
       {/* Visuel : cover si fournie, sinon dégradé par catégorie */}
       <div
         className={`relative aspect-[16/10] overflow-hidden ${
-          !article.cover ? 'bg-gradient-to-br from-hanami-100 via-hanami-200/60 to-amber-100' : ''
+          !article.cover ? 'bg-hanami-100' : ''
         }`}
       >
         {article.cover ? (
@@ -31,7 +31,7 @@ export default function ArticleCard({ article, compact = false }: ArticleCardPro
             src={article.cover}
             alt={article.title}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+            className="object-cover"
             sizes="(max-width: 768px) 100vw, 33vw"
           />
         ) : (
@@ -41,7 +41,7 @@ export default function ArticleCard({ article, compact = false }: ArticleCardPro
             </span>
           </div>
         )}
-        <span className="absolute top-3 left-3 inline-flex items-center px-2.5 py-1 rounded-full bg-white/90 backdrop-blur-sm text-[11px] font-semibold tracking-wide uppercase text-hanami-700 shadow-sm">
+        <span className="absolute top-3 left-3 inline-flex items-center px-2.5 py-1 rounded-full bg-brand-cream text-[11px] font-semibold tracking-wide uppercase text-hanami-700">
           {article.category}
         </span>
       </div>
@@ -68,8 +68,8 @@ export default function ArticleCard({ article, compact = false }: ArticleCardPro
         )}
 
         <div className="mt-auto pt-2 flex items-center gap-1.5 text-sm font-semibold text-hanami-700">
-          Lire l'article
-          <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+          Lire l’article
+          <ArrowUpRight className="w-4 h-4" />
         </div>
       </div>
     </Link>

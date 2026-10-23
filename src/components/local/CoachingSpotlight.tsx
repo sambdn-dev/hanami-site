@@ -15,8 +15,8 @@ export default function CoachingSpotlight() {
       </div>
       <div className={styles.offer}>
         <p className={styles.offerLabel}>Offre de lancement · 2 mois de coaching offerts</p>
-        <h3>Votre première rénovation,<br /><span>guidée gratuitement.</span></h3>
-        <p className={styles.offerIntro}>Quoi faire, avec quels produits, comment et quand : je vous accompagne de A à Z. Deux mois pour passer à l’action, observer et ajuster, selon la saison et votre terrain.</p>
+        <h3>Deux mois pour votre gazon,<br /><span>accompagnés gratuitement.</span></h3>
+        <p className={styles.offerIntro}>Quoi faire, avec quels produits, comment et quand : je vous aide à choisir les actions adaptées à votre jardin. Deux mois pour passer à l’action, observer et ajuster, selon la saison et votre terrain.</p>
         <ul>{['Un diagnostic à partir de vos photos', 'Votre protocole, zone par zone', 'Un échange direct pour ajuster vos gestes'].map(item => <li key={item}><Check size={16} aria-hidden="true" />{item}</li>)}</ul>
         <p className={styles.price}>Ensuite, à partir de <strong>{PRICING_DISPLAY.coachingMois} € / mois TTC</strong><br />ou à partir de <strong>{PRICING_DISPLAY.coachingAnnuel} € / an TTC.</strong></p>
         <Link href="/coaching#coaching-offre" className={styles.offerLink}>Voir l’offre et ses conditions<ArrowUpRight size={17} aria-hidden="true" /></Link>
