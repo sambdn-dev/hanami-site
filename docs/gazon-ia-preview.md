@@ -59,3 +59,11 @@ Le fournisseur, le modèle, la version d’instructions, les dates, empreintes e
 Le projet Admin de test est séparé du live : `hanami-gazon-ia-preview`. Le code Admin accessible part du checkpoint `2aef59d…`, alors que le déploiement live cite `f0ee3518…`, absent du dépôt distant. Il faudra intégrer explicitement ce patch au checkout Admin actuel avant toute production.
 
 Captures et preuves détaillées : `docs/evidence/gazon-ia/`. Les captures montrant un résultat sont marquées comme recette technique et ne représentent pas une génération IA validée.
+
+## Déploiements de revue
+
+- Site : https://hanami-site-cnwq8i1jt-sams-projects-67e025cc.vercel.app/simulateur-gazon (`staging`, source fonctionnelle `8448e13`).
+- Admin isolé : https://hanami-gazon-ia-preview-dy84k6gcf-sams-projects-67e025cc.vercel.app/admin/workspace (`staging`, source `ebe8f10`).
+- Les deux liens sont protégés par Vercel. Leur communication serveur n’est pas encore autorisée à travers cette protection ; aucune clé de contournement n’a été créée.
+- Vercel a automatiquement classé le premier amorçage du **nouveau projet isolé** comme Production, malgré la demande Preview. Un second déploiement explicitement `staging` est utilisé pour la revue. Aucun domaine live Hanami n’a été assigné au projet isolé.
+- La production du site existant reste `dpl_3QFFD2fZdK4soSSUz61S8sL49f6M`, commit `ede248b…`, vérifié après ces déploiements.

@@ -41,9 +41,15 @@ async function handle(request: Request, context: Context) {
   // authorized owner. The normal custom-domain API does not need this.
   if (process.env.HANAMI_SIMULATION_PROTECTION_BYPASS)
     headers['x-vercel-protection-bypass'] = process.env.HANAMI_SIMULATION_PROTECTION_BYPASS
-  const call = (route: string, init: RequestInit = {}) => fetch(`${backend}/api/gazon-simulations${route}`, {
-    ...init, headers: { ...headers, ...init.headers }, cache: 'no-store', redirect: 'error', signal: AbortSignal.timeout(25000),
-  })
+  const call = async (route: string, init: RequestInit = {}) => {
+    const response = await fetch(`${backend}/api/gazon-simulations${route}`, {
+      ...init, headers: { ...headers, ...init.headers }, cache: 'no-store', redirect: 'manual', signal: AbortSignal.timeout(25000),
+    })
+    if ((response.status >= 300 && response.status < 400) ||
+      ([401, 403].includes(response.status) && !response.headers.get('content-type')?.startsWith('application/json')))
+      throw new Error('SIMULATION_PREVIEW_ACCESS_REQUIRED')
+    return response
+  }
   try {
     if (path.endsWith('/contact')) {
       const raw = await boundedSimulationBody(request, 12000)
@@ -96,6 +102,8 @@ async function handle(request: Request, context: Context) {
     } })
   } catch (error) {
     if (error instanceof Error && error.message === 'FILE_TOO_LARGE') return failure('La photo est trop volumineuse. Choisissez une image plus légère.', 413)
+    if (error instanceof Error && error.message === 'SIMULATION_PREVIEW_ACCESS_REQUIRED')
+      return failure('Cette prévisualisation attend la configuration de son accès serveur sécurisé. Le traitement n’a pas été lancé.')
     // A lost response never triggers another generation. The client reloads persisted state.
     return failure('Connexion interrompue. Rechargez l’état de votre simulation avant de réessayer.')
   }
