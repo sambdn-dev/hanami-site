@@ -402,7 +402,7 @@ export default function BeforeAfterSlider({
     {expanded && portalRoot && createPortal(<dialog ref={dialogRef}
       aria-label="Comparaison avant/après en plein écran"
       className="fixed inset-0 m-0 h-[100dvh] max-h-none w-screen max-w-none border-0 bg-[#071b12] p-4 text-white backdrop:bg-black/90 sm:p-8"
-      onCancel={event => { event.preventDefault(); setExpanded(false) }} onClose={() => setExpanded(false)}>
+      onCancel={event => { event.preventDefault(); setExpanded(false) }}>
       <div className="flex h-full flex-col items-center justify-center gap-4">
         <div className="flex w-full items-center justify-between gap-4">
           <p className="text-sm">Avant / Après · Glissez pour comparer</p>
