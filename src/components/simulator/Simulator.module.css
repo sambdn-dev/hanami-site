@@ -1,0 +1,77 @@
+.page { flex: 1; background: #f8f6ef; color: #0f3d28; padding: 10rem 1.5rem 5rem; }
+.container { max-width: 1120px; margin: 0 auto; }
+.intro { max-width: 820px; padding-bottom: 3rem; }
+.eyebrow, .number { display: block; font-family: var(--font-space-mono), monospace; font-size: .66rem; line-height: 1.7; letter-spacing: .1em; text-transform: uppercase; }
+.eyebrow { margin-bottom: 1.25rem; color: #486b4b; }
+.intro h1 { font-family: var(--font-fraunces), Georgia, serif; font-size: clamp(2.6rem, 5.8vw, 4.7rem); line-height: 1.08; letter-spacing: -.04em; margin: 0 0 1.5rem; font-weight: 400; }
+.intro > p { max-width: 620px; font-size: 1.04rem; line-height: 1.8; color: #4b5d50; }
+.introNote { border-left: 2px solid #a7c29a; padding-left: 1rem; margin-top: 1.5rem; font-size: .8rem !important; }
+.simulator { border-top: 1px solid #d4dacb; padding-top: 2rem; }
+.stepHeading { margin-bottom: 1.4rem; }
+.number { color: #5b715c; margin-bottom: .6rem; }
+.stepHeading h2, .contact h2, .history h2 { font-family: var(--font-fraunces), Georgia, serif; font-size: clamp(1.65rem, 3vw, 2.3rem); line-height: 1.18; letter-spacing: -.025em; font-weight: 400; margin: 0 0 .7rem; }
+.stepHeading > p, .contact > div > p { max-width: 670px; color: #536452; font-size: .91rem; line-height: 1.8; }
+.import { display: flex; align-items: center; flex-wrap: wrap; gap: 1.3rem; border: 1px dashed #9cac94; padding: 1.6rem; background: #f1f2e9; position: relative; }
+.import > div:first-of-type { flex: 1 1 270px; }
+.import h3 { font-size: 1rem; font-weight: 600; margin-bottom: .4rem; }
+.import p { font-size: .77rem; color: #5e6b5a; line-height: 1.7; }
+.fileInput { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: .65rem; }
+.primary, .secondary, .textButton { display: inline-flex; align-items: center; justify-content: center; gap: .6rem; min-height: 44px; padding: .78rem 1.1rem; border: 1px solid transparent; font-size: .8rem; font-weight: 600; line-height: 1.4; cursor: pointer; text-align: center; }
+.primary { color: #f8f6ef; background: #0f3d28; border-color: #0f3d28; }
+.primary:hover { background: #1f5037; }
+.secondary { color: #0f3d28; background: transparent; border-color: #aebba8; }
+.secondary:hover { background: #e7ecde; }
+.textButton { color: #425c45; padding: .5rem .25rem; text-decoration: underline; text-underline-offset: 4px; background: transparent; }
+.primary:disabled, .secondary:disabled, .textButton:disabled, .historyItem:disabled { opacity: .46; cursor: not-allowed; }
+.primary:focus-visible, .secondary:focus-visible, .textButton:focus-visible, .historyItem:focus-visible, .keyboardHelp summary:focus-visible { outline: 3px solid #678653; outline-offset: 3px; }
+.selection, .result { margin-top: 3rem; }
+.editor { display: block; width: 100%; background: #dfe5d7; cursor: crosshair; touch-action: manipulation; border: 1px solid #c8d2bf; }
+.editor:focus-visible { outline: 3px solid #678653; outline-offset: 4px; }
+.keyboardCursor { visibility: hidden; }
+.editor:focus .keyboardCursor { visibility: visible; }
+.editorToolbar { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: .4rem 1rem; padding: .8rem 0; }
+.help, .privacy { color: #5d6c59; font-size: .78rem; line-height: 1.75; }
+.help { margin: .5rem 0 .8rem; }
+.privacy { margin-top: 1rem; max-width: 800px; }
+.privacy a { text-decoration: underline; text-underline-offset: 3px; }
+.keyboardHelp { max-width: 680px; color: #4b604c; font-size: .78rem; line-height: 1.75; }
+.keyboardHelp summary { cursor: pointer; text-decoration: underline; text-underline-offset: 4px; min-height: 44px; display: list-item; padding: .6rem 0; }
+.keyboardHelp p { margin-bottom: 1rem; }
+.consent { display: flex; align-items: flex-start; gap: .75rem; font-size: .8rem; line-height: 1.7; color: #475e48; max-width: 800px; margin-top: 1.5rem; cursor: pointer; }
+.consent input { flex: 0 0 auto; width: 20px; height: 20px; margin-top: 3px; accent-color: #0f3d28; }
+.launch { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem 1.2rem; margin-top: 1.5rem; }
+.launch > p { max-width: 400px; color: #5d6c59; font-size: .78rem; line-height: 1.75; }
+.status { display: flex; align-items: center; gap: .7rem; margin: 1.25rem 0; font-size: .9rem; }
+.error { border-left: 3px solid #9d3b32; background: #f8ece6; padding: .9rem 1rem; color: #742d25; font-size: .84rem; line-height: 1.7; margin: 1rem 0; overflow-wrap: anywhere; }
+.waitingPhoto { position: relative; background: #e8ede1; }
+.waitingPhoto > img { display: block; width: 100%; max-height: 650px; object-fit: contain; }
+.processing { display: flex; align-items: flex-start; gap: .9rem; padding: 1rem 1.2rem; background: #0f3d28; color: #f8f6ef; font-size: .87rem; line-height: 1.75; }
+.processing svg { flex-shrink: 0; margin-top: .2rem; }
+.comparison { border-radius: 0 !important; }
+.disclaimer { font-size: .8rem; line-height: 1.7; color: #294b35; margin: 1.2rem 0 .5rem; }
+.jobMeta { border-top: 1px solid #d4dacb; margin-top: 1.3rem; padding-top: .8rem; font-size: .72rem; line-height: 1.8; color: #62715c; overflow-wrap: anywhere; }
+.jobMeta > p > span { font-family: var(--font-space-mono), monospace; font-size: .64rem; }
+.contact { display: grid; grid-template-columns: .8fr 1.2fr; gap: 2.5rem; border-top: 1px solid #d4dacb; margin-top: 3rem; padding-top: 2.5rem; }
+.contactForm { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1rem; }
+.contactForm > label:not(.consent) { display: flex; flex-direction: column; gap: .5rem; font-size: .8rem; font-weight: 600; }
+.contactForm > label > span { font-weight: 400; }
+.contactForm input:not([type=checkbox]), .contactForm textarea { border: 1px solid #adbaa7; padding: .8rem; background: #fbfaf5; color: #0f3d28; font: inherit; font-size: 1rem; border-radius: 0; min-width: 0; width: 100%; }
+.contactForm input:focus-visible, .contactForm textarea:focus-visible { outline: 2px solid #678653; outline-offset: 2px; }
+.full { grid-column: 1 / -1; }
+.contactForm > .consent { margin-top: 0; }
+.contactForm .primary { grid-column: 1 / -1; justify-self: start; }
+.sent { display: flex; align-items: flex-start; gap: .7rem; line-height: 1.8; font-size: .9rem; }
+.sent svg { flex-shrink: 0; margin-top: .3rem; }
+.history { border-top: 1px solid #d4dacb; padding-top: 2rem; margin-top: 3rem; }
+.history h2 { font-size: 1.5rem; }
+.historyList { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: .8rem; margin-top: 1.25rem; }
+.historyItem { display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: .4rem 1rem; padding: 1rem; background: transparent; color: #0f3d28; border: 1px solid #bbc8b0; min-height: 60px; text-align: left; font-size: .8rem; cursor: pointer; }
+.historyItem[aria-pressed=true] { border-color: #0f3d28; background: #e7ecde; }
+.historyItem .help { margin: 0; }
+.spinner { animation: spin 1.1s linear infinite; flex-shrink: 0; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spinner { animation: none; } }
+@media (max-width: 800px) { .page { padding-top: 9rem; } .intro { padding-bottom: 2rem; } .contact { grid-template-columns: 1fr; gap: 1.3rem; } .historyList { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 540px) { .page { padding-left: 1.2rem; padding-right: 1.2rem; padding-bottom: 3rem; } .intro h1 { font-size: 2.55rem; } .intro > p { font-size: .96rem; } .import { padding: 1.2rem; gap: 1rem; } .import > .actions { width: 100%; flex-direction: column; align-items: stretch; } .import > svg { display: none; } .selection, .result { margin-top: 2.3rem; } .contactForm, .historyList { grid-template-columns: 1fr; } .editorToolbar > .actions { gap: .35rem; } .editorToolbar .secondary { font-size: .72rem; padding: .65rem .65rem; } .editorToolbar .textButton { width: 100%; justify-content: flex-start; } .launch > button, .contactForm .primary { width: 100%; } .processing { padding: .9rem; font-size: .8rem; } .contact { margin-top: 2rem; padding-top: 2rem; } }

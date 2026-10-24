@@ -82,6 +82,11 @@ interface BeforeAfterSliderProps {
    * restent en lazy loading natif.
    */
   priority?: boolean
+  /** Preserve an uploaded photo's framing; defaults to the existing 4:3 view. */
+  aspectRatio?: number
+  /** Private image routes require the visitor's session cookie. */
+  unoptimized?: boolean
+  onImageError?: () => void
   className?: string
 }
 
@@ -98,6 +103,9 @@ export default function BeforeAfterSlider({
   afterTransform,
   afterTransformOrigin = 'center 40%',
   priority = false,
+  aspectRatio = 4 / 3,
+  unoptimized = false,
+  onImageError,
   className = '',
 }: BeforeAfterSliderProps) {
   // Position du curseur en pourcentage (0 = tout à gauche, 100 = tout à droite)
@@ -234,7 +242,7 @@ export default function BeforeAfterSlider({
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
-      style={{ WebkitUserSelect: 'none', userSelect: 'none', ...(beforeCrop || afterCrop ? { containerType: 'size' } : {}) }}
+      style={{ WebkitUserSelect: 'none', userSelect: 'none', aspectRatio, ...(beforeCrop || afterCrop ? { containerType: 'size' } : {}) }}
       /* role="group" (pas "img") : un rôle image rendrait la poignée
          role="slider" invisible aux technologies d'assistance */
       role="group"
@@ -253,6 +261,7 @@ export default function BeforeAfterSlider({
       */}
       <Image
         src={afterSrc}
+        onError={onImageError}
         alt={afterAlt}
         fill
         className="object-cover pointer-events-none"
@@ -266,6 +275,7 @@ export default function BeforeAfterSlider({
         }}
         sizes="(max-width: 768px) 100vw, 50vw"
         priority={priority}
+        unoptimized={unoptimized}
       />
 
       {/* ── Photo AVANT — visible uniquement sur le côté GAUCHE ────────── */}
@@ -287,12 +297,14 @@ export default function BeforeAfterSlider({
       >
         <Image
           src={beforeSrc}
+          onError={onImageError}
           alt={beforeAlt}
           fill
           className="object-cover"
           style={{ objectPosition: beforeObjectPosition, ...(beforeCrop && cropStyle(beforeCrop)) }}
           sizes="(max-width: 768px) 100vw, 50vw"
           priority={priority}
+          unoptimized={unoptimized}
         />
       </div>
 

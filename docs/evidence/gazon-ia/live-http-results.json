@@ -1,0 +1,18 @@
+{
+  "verifiedAt": "2026-10-24T00:37:01.263Z",
+  "checks": [
+    "BFF initializes private session before upload",
+    "concurrent multipart submissions produce one durable job",
+    "ready state survives independent HTTP reload",
+    "private original displayed through complete BFF/API/Storage path",
+    "another browser session cannot retrieve the photo",
+    "changed session binding rejected before paid launch",
+    "cross-origin mutation rejected",
+    "missing OpenAI configuration fails honestly without claiming a generation",
+    "explicit deletion confirms both stored images and metadata removal"
+  ],
+  "passed": true,
+  "providerCalls": 0,
+  "emailsSent": 0,
+  "scope": "local public and Admin production build, real private Supabase service; no authenticated Admin browser session"
+}

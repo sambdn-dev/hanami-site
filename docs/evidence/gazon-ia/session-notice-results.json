@@ -1,0 +1,14 @@
+{
+  "scenario": "ACTUAL_unconfigured_session_notice_after_photo",
+  "device": "phone390",
+  "noticePersistsAfterPhotoSelection": true,
+  "launchDisabled": true,
+  "reloadActionAvailable": true,
+  "paidOperations": 0,
+  "overflow": {
+    "document": 390,
+    "viewport": 390
+  },
+  "errors": [],
+  "providerCalled": false
+}

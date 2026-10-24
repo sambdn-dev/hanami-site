@@ -1,0 +1,74 @@
+[
+  {
+    "scenario": "actual-photo-preparation-mask-and-unconfigured-launch-disabled",
+    "device": "desktop",
+    "errors": [],
+    "overflow": {
+      "doc": 1440,
+      "viewport": 1440
+    },
+    "providerCalled": false,
+    "selectedPolygonPoints": 4,
+    "photoPreparedLocallyAndLaunchDisabled": true
+  },
+  {
+    "scenario": "actual-photo-preparation-mask-and-unconfigured-launch-disabled",
+    "device": "phone",
+    "errors": [],
+    "overflow": {
+      "doc": 390,
+      "viewport": 390
+    },
+    "providerCalled": false,
+    "selectedPolygonPoints": 4,
+    "photoPreparedLocallyAndLaunchDisabled": true
+  },
+  {
+    "scenario": "actual-photo-preparation-mask-and-unconfigured-launch-disabled",
+    "device": "ipad",
+    "errors": [],
+    "overflow": {
+      "doc": 1024,
+      "viewport": 1024
+    },
+    "providerCalled": false,
+    "selectedPolygonPoints": 4,
+    "photoPreparedLocallyAndLaunchDisabled": true
+  },
+  {
+    "scenario": "TECHNICAL_API_FIXTURES_NOT_PROVIDER",
+    "device": "desktop",
+    "uploads": 1,
+    "starts": 1,
+    "polls": 2,
+    "contacts": 2,
+    "deleted": 1,
+    "errors": [],
+    "overflow": {
+      "doc": 1440,
+      "viewport": 1440
+    },
+    "reloadDidNotRestart": true,
+    "keyboardComparison": true,
+    "contactFalseSuccessPrevented": true,
+    "providerCalled": false
+  },
+  {
+    "scenario": "TECHNICAL_API_FIXTURES_NOT_PROVIDER",
+    "device": "phone",
+    "uploads": 1,
+    "starts": 1,
+    "polls": 2,
+    "contacts": 2,
+    "deleted": 1,
+    "errors": [],
+    "overflow": {
+      "doc": 390,
+      "viewport": 390
+    },
+    "reloadDidNotRestart": true,
+    "keyboardComparison": true,
+    "contactFalseSuccessPrevented": true,
+    "providerCalled": false
+  }
+]

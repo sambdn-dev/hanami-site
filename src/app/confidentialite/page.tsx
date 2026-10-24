@@ -33,6 +33,13 @@ export default function ConfidentialitePage() {
             <p>Les formulaires de contact et de simulation recueillent les informations que vous renseignez : identité, email, téléphone facultatif, commune ou code postal, surface, description du projet et photos facultatives. Nous les utilisons pour répondre à votre demande, établir un diagnostic ou préparer un devis, puis assurer le suivi de notre échange. Ces démarches préalables à une prestation sont réalisées à votre demande.</p>
             <p className="mt-3">Les messages et leurs photos sont transmis à Hanami par le service d’email Resend. Le site est hébergé par Vercel. Vos photos servent à comprendre votre jardin ; leur publication ou leur partage à des fins de communication nécessite votre accord. Évitez d’inclure des personnes, plaques d’immatriculation ou documents personnels dans vos photos.</p>
           </section>
+          {process.env.HANAMI_LAWN_SIMULATOR_ENABLED === '1' && <section aria-labelledby="privacy-lawn-simulation">
+            <h2 id="privacy-lawn-simulation" className={heading}>Votre simulation de pelouse par IA</h2>
+            <p>Le simulateur traite la photo que vous choisissez et les contours de pelouse que vous indiquez, à votre demande et après votre confirmation. La photo est préparée par votre navigateur, puis transmise au service d’édition d’image OpenAI pour produire une projection indicative. Cette image ne mesure pas une surface et ne constitue pas un diagnostic agronomique.</p>
+            <p className="mt-3">La photo, le masque et le résultat sont conservés dans un stockage privé Supabase. Un identifiant de session technique, placé dans un cookie du navigateur pendant sept jours, permet de retrouver vos simulations sans créer de compte. L’accès aux simulations anonymes expire après sept jours ; leurs fichiers sont supprimés lors du nettoyage périodique du service. Vous pouvez aussi les supprimer depuis le simulateur avant cette échéance. Des identifiants et empreintes techniques sont conservés pendant 90 jours pour éviter les abus et les traitements en double, sans conserver les photos supprimées.</p>
+            <p className="mt-3">Une simulation anonyme ne crée pas automatiquement de fiche prospect et n’est pas rapprochée d’un jardin ou d’une adresse existante. Si vous demandez un diagnostic ou un devis après le résultat, une confirmation distincte autorise Hanami à consulter la photo et la simulation ; vos coordonnées, votre message et leur référence sont alors transmis à Hanami via Resend.</p>
+            <p className="mt-3">Vos photos ne sont pas utilisées à des fins marketing sans autorisation distincte. Les données de l’API OpenAI ne servent pas à entraîner ses modèles par défaut ; des données peuvent néanmoins être conservées par ce prestataire pour la surveillance des abus, généralement jusqu’à trente jours. L’intervention d’OpenAI peut impliquer un traitement hors de l’Union européenne. Ne téléversez que des photos que vous êtes autorisé à utiliser, sans personnes ni informations personnelles inutiles.</p>
+          </section>}
           <section aria-labelledby="privacy-newsletter">
             <h2 id="privacy-newsletter" className={heading}>Les conseils par email</h2>
             <p>Lorsque vous demandez à recevoir les conseils Hanami, votre adresse email est transmise à Hanami via Resend. Cette inscription repose sur votre consentement. Vous pouvez le retirer à tout moment en nous contactant ou en répondant à un email reçu. Le navigateur mémorise également l’adresse saisie après une inscription réussie, dans son stockage local.</p>
@@ -52,7 +59,7 @@ export default function ConfidentialitePage() {
             <h2 id="privacy-rights" className={heading}>Vos droits</h2>
             <p>Vous pouvez demander l’accès à vos données, leur rectification, leur effacement, la limitation du traitement ou, selon la situation, vous y opposer et demander leur portabilité. Vous pouvez également retirer un consentement. Contactez Hanami par les coordonnées indiquées en haut de page, en précisant votre demande. Vous pouvez adresser une réclamation à la <a className="underline underline-offset-4" href="https://www.cnil.fr/fr/plaintes" target="_blank" rel="noopener noreferrer">CNIL</a>.</p>
           </section>
-          <p className="border-t border-stone-200 pt-5 text-xs text-stone-500">Dernière mise à jour : 23 octobre 2026.</p>
+          <p className="border-t border-stone-200 pt-5 text-xs text-stone-500">Dernière mise à jour : 24 octobre 2026.</p>
         </div>
       </div>
     </main>

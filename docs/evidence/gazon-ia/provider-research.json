@@ -1,0 +1,45 @@
+{
+  "verifiedAt": "2026-10-23",
+  "method": "Official OpenAI documentation opened through web tool; no paid provider request, no API credential read, no model-list request performed.",
+  "defaultModel": "gpt-image-2.5-sunburst-2026-09-08",
+  "allowedAlternative": "gpt-image-2.5-flare-2026-09-08",
+  "accountAvailability": "Not yet verified for the Hanami credential. Documentation lists these as available API models; project access, quota and organization-verification requirements require a real request.",
+  "endpoint": "https://api.openai.com/v1/images/edits",
+  "findings": {
+    "architecture": "Single-image edit through the Images API; no mainline Responses model or AI SDK required.",
+    "modelChoice": "Sunburst is documented for editing precision, Flare for fast everyday image generation. Pin dated snapshots and compare actual outputs before selecting speed over precision.",
+    "fileInput": "Multipart JPEG, PNG or WebP under 50 MB supported by API; Hanami deliberately limits incoming prepared photo to 2 MiB and decoded pixels to 40 million.",
+    "mask": "PNG alpha mask, same dimensions as input, transparent pixels edited. Reference specifies under 4 MB; general guide mentions under 50 MB. Use the stricter 4 MB limit. Masking guides the model and is not pixel-exact.",
+    "geometry": "Custom output dimensions must be multiples of 16, ratio at most 3:1, 655360 through 8294400 pixels, maximum edge3840; above2560x1440 experimental. Engine reversibly upscales small inputs and pads, then restores original dimensions.",
+    "preservation": "Guarantee original normalized RGB pixels remain unchanged outside the confirmed mask using lossless PNG server recomposition. An incorrect user mask can still include protected objects; prompt alone is not a preservation guarantee.",
+    "output": "GPT Image returns base64 image data. JPEG is used for provider latency; final recomposed storage is lossless PNG.",
+    "inputFidelity": "Omit input_fidelity for 2.x models. It is an older1.x control, not a generic detail-preservation flag.",
+    "retries": "Official SDK defaults to two retries and ten-minute timeout. Engine uses one direct fetch attempt and240-second timeout. No Images idempotency guarantee was located in official reference; app must claim jobs atomically and avoid automatic retries after ambiguous outcomes.",
+    "usage": "Record provider request ID, full usage, provider/model/prompt version/quality/size. Compute estimate from text/image input and image output tokens when provided. GPT Image2 calculator does not predict2.5 token consumption.",
+    "commercial": "OpenAI Services Agreement allows API integration into customer applications and assigns output rights subject to law and terms. Consumer ChatGPT subscriptions do not establish API access or credit.",
+    "data": "Images API inputs are not used for training by default. Default abuse-monitoring retention is30days; no application-state retention. Do not claim EU residency or Zero Data Retention unless account configuration is verified.",
+    "deprecated": "GPT Image1 was shut down on2026-10-23. Do not start this integration on gpt-image-1, DALL-E2 or DALL-E3."
+  },
+  "standardUsdPerMillionTokens": { "textInput": 5, "imageInput": 8, "imageOutput": 30 },
+  "priceCaveat": "Estimated standard rate excluding tax and negotiated discounts. Direct Images edit requests do not receive the documented Responses-only input-cache discount.",
+  "generationValidation": { "realCalls": 0, "timings": null, "actualCost": null, "qualityVerdict": "Unverified" },
+  "plannedEvaluation": [
+    "Authorized sparse-lawn photo: identical settings, instruction-only versus confirmed mask.",
+    "Repeat both methods on shade, complex borders and terrace-adjacent lawn (8calls for4cases).",
+    "If necessary compare Flare on the two hardest images to measure speed/quality tradeoff.",
+    "Measure upload, provider processing, postprocessing and display independently; record failures and token estimate.",
+    "Review crop/perspective, protected objects, shadows, edges and natural grass texture.",
+    "Treat fake HTTP tests as technical evidence only, never as provider-quality evidence."
+  ],
+  "sources": [
+    { "url": "https://developers.openai.com/api/docs/guides/image-generation", "supports": "Current model recommendations, API choice, masks as guidance, JPEG latency, usage and rates." },
+    { "url": "https://developers.openai.com/api/reference/resources/images/methods/edit", "supports": "Endpoint, model IDs, dimensions, output settings, usage and safety identifier." },
+    { "url": "https://developers.openai.com/api/reference/python/resources/images/methods/edit", "supports": "Multipart file formats/limits and4MB alpha mask requirements." },
+    { "url": "https://developers.openai.com/api/docs/models/gpt-image-2.5-sunburst", "supports": "Editing-precision positioning, snapshot, rates, API usage tiers." },
+    { "url": "https://developers.openai.com/api/docs/models/gpt-image-2.5-flare", "supports": "Faster-model positioning, snapshot and matching token rates." },
+    { "url": "https://developers.openai.com/api/docs/guides/image-prompting", "supports": "Current parameters, output dimensions, preservation instructions." },
+    { "url": "https://github.com/openai/openai-node#retries", "supports": "Official SDK retry and timeout defaults." },
+    { "url": "https://openai.com/policies/services-agreement/", "supports": "Commercial application integration and input/output ownership." },
+    { "url": "https://developers.openai.com/api/docs/guides/your-data", "supports": "Training default, Images retention and regional-processing prerequisites." }
+  ]
+}

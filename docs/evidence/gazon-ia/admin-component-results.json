@@ -1,0 +1,38 @@
+[
+  {
+    "scenario": "TECHNICAL_COMPONENT_FIXTURE_NOT_AUTH_OR_PROVIDER",
+    "device": "ipad",
+    "uploads": 1,
+    "starts": 1,
+    "polls": 1,
+    "deletes": 0,
+    "errors": [],
+    "overflow": {
+      "document": 1024,
+      "viewport": 1024
+    },
+    "maskTouch": true,
+    "reloadNoRestart": true,
+    "rangeKeyboard": true,
+    "incompleteUploadHonest": true,
+    "providerCalled": false
+  },
+  {
+    "scenario": "TECHNICAL_COMPONENT_FIXTURE_NOT_AUTH_OR_PROVIDER",
+    "device": "phone",
+    "uploads": 1,
+    "starts": 1,
+    "polls": 1,
+    "deletes": 0,
+    "errors": [],
+    "overflow": {
+      "document": 390,
+      "viewport": 390
+    },
+    "maskTouch": true,
+    "reloadNoRestart": true,
+    "rangeKeyboard": true,
+    "incompleteUploadHonest": true,
+    "providerCalled": false
+  }
+]

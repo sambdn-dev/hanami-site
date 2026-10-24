@@ -1,0 +1,38 @@
+[
+  {
+    "scenario": "TECHNICAL_public_image404",
+    "warningVisible": true,
+    "reloadNoPaidRestart": true,
+    "starts": 0,
+    "uploads": 0,
+    "listReads": 2,
+    "errors": [],
+    "providerCalled": false
+  },
+  {
+    "scenario": "TECHNICAL_public_queued_incomplete",
+    "honestCopy": true,
+    "noLaunch": true,
+    "imageReads": 0,
+    "starts": 0,
+    "providerCalled": false
+  },
+  {
+    "scenario": "TECHNICAL_public_delete200_empty",
+    "resultPreservedUntilConfirmed": true,
+    "deletes": 2,
+    "providerCalled": false
+  },
+  {
+    "scenario": "TECHNICAL_two_tab_bootstrap_WebLocks",
+    "maxConcurrentBootstrapFetches": 1,
+    "reads": 2,
+    "providerCalled": false
+  },
+  {
+    "scenario": "TECHNICAL_Admin_component_delete200_empty_NOT_AUTH",
+    "resultPreservedUntilConfirmed": true,
+    "deletes": 2,
+    "providerCalled": false
+  }
+]

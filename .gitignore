@@ -16,6 +16,7 @@
 # next.js
 /.next/
 /.next-location-*/
+/.next-gazon-*/
 /out/
 
 # production

@@ -1,0 +1,35 @@
+[
+  {
+    "scenario": "actual-unconfigured",
+    "device": "desktop",
+    "overflow": {
+      "doc": 1440,
+      "viewport": 1440
+    },
+    "alert": "Le simulateur est en cours de configuration. Réessayez plus tard.",
+    "errors": [],
+    "providerCalled": false
+  },
+  {
+    "scenario": "actual-unconfigured",
+    "device": "phone",
+    "overflow": {
+      "doc": 390,
+      "viewport": 390
+    },
+    "alert": "Le simulateur est en cours de configuration. Réessayez plus tard.",
+    "errors": [],
+    "providerCalled": false
+  },
+  {
+    "scenario": "actual-unconfigured",
+    "device": "ipad",
+    "overflow": {
+      "doc": 1024,
+      "viewport": 1024
+    },
+    "alert": "Le simulateur est en cours de configuration. Réessayez plus tard.",
+    "errors": [],
+    "providerCalled": false
+  }
+]

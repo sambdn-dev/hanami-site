@@ -1,0 +1,22 @@
+{
+  "verifiedAt": "2026-10-24T00:32:40.124Z",
+  "checks": [
+    "missing worker key rejected",
+    "anonymous job persisted without ERP prospect",
+    "duplicate create returns same durable job",
+    "foreign session cannot read job",
+    "real private Storage upload accepts worker header",
+    "missing mask blocks ready",
+    "real private Storage round trip retains original hash",
+    "anonymous Storage download rejected",
+    "concurrent real database claims admit exactly one worker",
+    "failed state survives a new database request",
+    "real Storage deletion and metadata purge completed",
+    "delayed retry after purge cannot recreate paid job"
+  ],
+  "providerCalls": 0,
+  "emailsSent": 0,
+  "erpProspectsCreated": 0,
+  "fixtures": "isolated private preview tables; generated plain-color PNGs only",
+  "passed": true
+}
