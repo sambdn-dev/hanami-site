@@ -65,21 +65,24 @@ button svg { pointer-events: none; }
 .scene-product .packshot img { width: 100%; height: 100%; object-fit: contain; }
 .scene-product .packshot.seed { overflow: hidden; }
 .scene-product .packshot.seed img { height: auto; object-fit: initial; }
-.scene-product > .scene-packshot { z-index: 2; filter: drop-shadow(-1px 1px 1px rgba(41,33,20,.09)); }
+.scene-product > .scene-packshot { z-index: 2; filter: saturate(.97) drop-shadow(1px 1px 1px rgba(41,33,20,.08)); }
 /* Shadows reuse the exact alpha silhouette; only these decorative layers are flattened. */
 .scene-shadow { position: absolute; inset: 0; z-index: 0; pointer-events: none; transform-origin: center bottom; }
-.cast-shadow { transform: matrix(1,0,.36,-.045,0,0); filter: brightness(0) blur(4px); opacity: .19; }
-.contact-shadow { z-index: 1; transform: matrix(1.02,0,0,-.012,0,-2); filter: brightness(0) blur(1.8px); opacity: .28; }
-.scene-product.pro { left: 54%; top: 57%; width: 9.6%; aspect-ratio: 1700/2924; z-index: 1; }
+.cast-shadow { transform: matrix(1,0,-.42,-.045,0,0); filter: brightness(0) blur(3px); opacity: .16; }
+.contact-shadow { inset: auto 6% -2px; z-index: 1; height: 4px; border-radius: 50%; background: #302b20; filter: blur(1.2px); opacity: .38; }
+.contact-shadow > .packshot { display: none; }
+.scene-product.pro { left: 54%; top: 56.9%; width: 9.6%; aspect-ratio: 1700/2924; z-index: 1; }
 .scene-product.pro .packshot.seed { aspect-ratio: 1700/2924; }
-.scene-product.active { left: 73.5%; top: 57%; width: 10.6%; aspect-ratio: 240/392; z-index: 1; }
-.scene-product.ferro { left: 91%; top: 57%; width: 10.6%; aspect-ratio: 392/640; z-index: 1; }
-.scene-product.res { left: 45.5%; top: 74.5%; width: 10.4%; aspect-ratio: 309/533; z-index: 3; }
+.scene-product.active { left: 73.5%; top: 56.9%; width: 10.6%; aspect-ratio: 240/392; z-index: 1; }
+.scene-product.active .packshot { transform: translateY(2%); }
+.scene-product.ferro { left: 91%; top: 56.9%; width: 10.6%; aspect-ratio: 392/640; z-index: 1; }
+.scene-product.res { left: 45.5%; top: 73.4%; width: 10.4%; aspect-ratio: 309/533; z-index: 3; }
 .scene-product.res .packshot.seed { aspect-ratio: 309/533; }
-.scene-product.racines { left: 65.5%; top: 74.5%; width: 12.2%; aspect-ratio: 392/640; z-index: 3; }
-.scene-product.liquid { left: 85.5%; top: 74.5%; width: 8.7%; aspect-ratio: 353/640; z-index: 3; }
+.scene-product.racines { left: 65.5%; top: 73.4%; width: 12.2%; aspect-ratio: 392/640; z-index: 3; }
+.scene-product.liquid { left: 85.5%; top: 73.4%; width: 9.2%; aspect-ratio: 1051/1496; z-index: 3; }
 /* The bottle stays upright, including hover: no rotation or perspective on the packshot. */
-.scene-product.liquid > .scene-packshot, .scene-product.liquid > .scene-packshot img { transform: none; }
+.scene-product.liquid .packshot { transform: translateY(.6%); }
+.scene-product.liquid .packshot img { transform: none; }
 .scene-dot { position: absolute; z-index: 3; bottom: 5%; left: 50%; display: flex; align-items: center; justify-content: center; width: 26px; height: 26px; border: 1px solid var(--color-line); border-radius: var(--radius-pill); background: var(--color-surface); color: var(--color-forest); box-shadow: var(--shadow-sm); opacity: 0; transform: translateX(-50%); transition: opacity .2s; }
 .scene-product:hover .scene-dot, .scene-product:focus-visible .scene-dot { opacity: 1; }
 .scene-hint { position: absolute; right: 4%; bottom: 20px; z-index: 4; display: flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid var(--color-line); border-radius: var(--radius-pill); background: var(--color-glass); backdrop-filter: blur(12px); color: var(--color-fg-soft); font-size: 13px; }
@@ -237,8 +240,8 @@ footer small { width: 100%; color: var(--color-muted); font-size: 13px; }
   .scene { position: relative; inset: auto; order: 0; width: 100%; --scene-width: min(169.23vw,800px); height: min(87.2vw,420px); }
   .scene-plane { top: 0; bottom: auto; left: calc(50% - var(--scene-width)*.66); width: var(--scene-width); transform: none; }
   .scene-product.pro { left: 52%; width: 10.2%; } .scene-product.active { left: 73%; width: 11.4%; } .scene-product.ferro { left: 89%; width: 10.6%; }
-  .scene-product.res { left: 44%; width: 11.4%; } .scene-product.racines { left: 65%; width: 12.2%; } .scene-product.liquid { left: 87%; width: 8.7%; }
-  .cast-shadow { filter: brightness(0) blur(2px); } .contact-shadow { filter: brightness(0) blur(1px); }
+  .scene-product.res { left: 44%; width: 11.4%; } .scene-product.racines { left: 65%; width: 12.2%; } .scene-product.liquid { left: 87%; width: 9.2%; }
+  .cast-shadow { filter: brightness(0) blur(2px); } .contact-shadow { filter: blur(.8px); }
   .scene-dot { width: 22px; height: 22px; opacity: 1; }
   .scene-hint { right: 50%; bottom: 12px; padding: 8px 12px; font-size: 12px; white-space: nowrap; transform: translateX(50%); }
   .hero-copy { order: 1; width: 100%; max-width: none; padding: 28px 24px 32px; }

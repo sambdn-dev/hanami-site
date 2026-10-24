@@ -20,9 +20,14 @@ const positions = {
   'resrpr-15': 'res', 'fl-racines-25': 'racines', 'pro12-15': 'pro',
   'sierrablen-3m-25': 'active', 'ferrotop-mini-25': 'ferro', 'basfoliar-ferrotop-10l': 'liquid'
 };
-function Packshot({ product, className = '', ...props }) {
+// Scene-only perspective retouches; product cards retain the manufacturer originals.
+const heroImages = {
+  'sierrablen-3m-25': '/assets/hero-sierrablen-front.png',
+  'basfoliar-ferrotop-10l': '/assets/hero-basfoliar-front.png'
+};
+function Packshot({ product, image = product.image, className = '', ...props }) {
   const pictured = products.find(p => p.id === (product.productId || product.id)) || product;
-  return !product.image ? <span className="packshot packshot-placeholder">Visuel à venir</span> : <span className={`packshot ${product.seed ? 'seed' : ''} ${className}`}><img src={assetURL(product.image)} alt={`${pictured.name}, visuel fabricant ${product.manufacturerPackaging || pictured.packaging}`} {...props} /></span>;
+  return !image ? <span className="packshot packshot-placeholder">Visuel à venir</span> : <span className={`packshot ${product.seed ? 'seed' : ''} ${className}`}><img src={assetURL(image)} alt={`${pictured.name}, visuel fabricant ${product.manufacturerPackaging || pictured.packaging}`} {...props} /></span>;
 }
 function Price({ product }) {
   const format = getVariant(product.id);
@@ -148,7 +153,7 @@ export function App() {
         <div className="scene" aria-label="Les six produits de la sélection présentés sur une terrasse d’automne">
           <div className="scene-plane">
             <img className="terrace" src={assetURL('/assets/hero-automne-background.png')} alt="Marches de pierre claire, lumière d’automne et quelques feuilles dorées" fetchPriority="high" />
-            {products.map(product => <button key={product.id} data-product-trigger className={`scene-product ${positions[product.id]} ${quick?.product.id === product.id ? 'is-active' : ''}`} aria-label={`Découvrir ${product.name}`} aria-haspopup="dialog" aria-expanded={quick?.product.id === product.id} onPointerEnter={e => { if (e.pointerType === 'mouse') openQuick(product, e.currentTarget); }} onPointerLeave={closeQuickLater} onClick={e => { openQuick(product, e.currentTarget, true); requestAnimationFrame(() => quickRef.current?.querySelector('button')?.focus()); }}><span className="scene-shadow cast-shadow" aria-hidden="true"><Packshot product={product} alt="" /></span><span className="scene-shadow contact-shadow" aria-hidden="true"><Packshot product={product} alt="" /></span><Packshot product={product} className="scene-packshot" /><span className="scene-dot"><Plus size={15} weight="light" /></span></button>)}
+            {products.map(product => <button key={product.id} data-product-trigger className={`scene-product ${positions[product.id]} ${quick?.product.id === product.id ? 'is-active' : ''}`} aria-label={`Découvrir ${product.name}`} aria-haspopup="dialog" aria-expanded={quick?.product.id === product.id} onPointerEnter={e => { if (e.pointerType === 'mouse') openQuick(product, e.currentTarget); }} onPointerLeave={closeQuickLater} onClick={e => { openQuick(product, e.currentTarget, true); requestAnimationFrame(() => quickRef.current?.querySelector('button')?.focus()); }}><span className="scene-shadow cast-shadow" aria-hidden="true"><Packshot product={product} image={heroImages[product.id]} alt="" /></span><span className="scene-shadow contact-shadow" aria-hidden="true"><Packshot product={product} image={heroImages[product.id]} alt="" /></span><Packshot product={product} image={heroImages[product.id]} className="scene-packshot" /><span className="scene-dot"><Plus size={15} weight="light" /></span></button>)}
           </div>
           <p className="scene-hint">Touchez un produit pour le découvrir <ArrowUpRight size={15} /></p>
         </div>
