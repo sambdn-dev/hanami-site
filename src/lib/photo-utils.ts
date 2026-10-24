@@ -1,17 +1,19 @@
 /**
  * photo-utils.ts — Compression et conversion de photos côté navigateur
  *
- * Utilisé par la calculatrice de dosages (photos par zone) et potentiellement
- * d'autres features futures.
+ * Partagé par le simulateur de gazon et la calculatrice de dosages.
  *
  * Pipeline :
- *   1. Si HEIC (iPhone), convertir en JPEG via heic-to (WASM, marche partout)
- *   2. Charger dans un ImageBitmap pour avoir width/height intrinsèques
+ *   1. Décodage natif, puis conversion HEIC via heic-to en secours
+ *   2. Vérifier les dimensions et conserver l’orientation du décodage
  *   3. Redimensionner via canvas (max côté = MAX_DIMENSION px)
  *   4. Réencoder en JPEG qualité QUALITY (~0.75 = bon compromis)
  *
- * Résultat : ~80-150 KB par photo, conserve le ratio d'origine.
+ * Conserve les proportions ; le poids final dépend du contenu de la photo.
  */
+
+export const MAX_PHOTO_INPUT_BYTES = 50 * 1024 * 1024
+const MAX_PHOTO_PIXELS = 64_000_000 // Includes ordinary 48 MP iPhone photographs.
 
 const MAX_DIMENSION = 1200      // Max côté long (px)
 const QUALITY = 0.78            // Qualité JPEG (0..1)
@@ -28,65 +30,55 @@ export interface CompressedPhoto {
 }
 
 /**
- * Compresse une photo prise par l'utilisateur. Gère HEIC (iPhone) sur
- * tous les navigateurs grâce à heic-to (WASM).
+ * Compresse une photo prise par l'utilisateur. Gère HEIC (iPhone) avec décodage natif
+ * et conversion heic-to (WASM) en secours. La compatibilité dépend du navigateur.
  *
  * @throws Error si le fichier n'est pas une image décodable
  */
 export async function compressPhoto(file: File): Promise<CompressedPhoto> {
-  // The converter is needed only after a photo is selected, never on page load.
-  const { heicTo, isHeic } = await import('heic-to')
+  if (!file.size) throw new Error('Cette photo est vide. Choisissez une autre photo.')
+  if (file.size > MAX_PHOTO_INPUT_BYTES) throw new Error('Cette photo dépasse 50 Mo. Choisissez une photo plus légère ou désactivez le mode RAW de votre appareil.')
 
-  // ── 1. Conversion HEIC → JPEG si nécessaire ──────────────────────────────
-  // Détection robuste : heic-to.isHeic lit les magic bytes du fichier (plus
-  // fiable que le MIME type, qui peut être vide ou mal renseigné par iOS).
-  let blob: Blob = file
-  const looksHeicByExt = /\.(heic|heif)$/i.test(file.name)
-  const looksHeicByMime = file.type === 'image/heic' || file.type === 'image/heif'
-
-  if (looksHeicByExt || looksHeicByMime || (await isHeic(file).catch(() => false))) {
+  // Prefer the native decoder, particularly Safari's HEIC support. Avoid loading
+  // the WASM converter (and a second full-resolution buffer) for ordinary photos.
+  async function prepare(blob: Blob): Promise<CompressedPhoto> {
+    const url = URL.createObjectURL(blob)
+    const image = new Image()
     try {
-      blob = await heicTo({ blob: file, type: 'image/jpeg', quality: HEIC_QUALITY })
-    } catch (err) {
-      // Fallback : si la conversion échoue, on tente quand même de charger
-      // le fichier original — certains navigateurs (Safari) gèrent HEIC nativement.
-      console.warn('[photo-utils] heic-to failed, fallback to direct decode', err)
-    }
+      image.src = url
+      await image.decode().catch(() => { throw new Error('PHOTO_DECODE_FAILED') })
+      const srcW = image.naturalWidth, srcH = image.naturalHeight
+      if (!srcW || !srcH || srcW * srcH > MAX_PHOTO_PIXELS) throw new Error('La résolution dépasse 64 mégapixels. Choisissez une photo en résolution standard.')
+      const scale = Math.min(1, MAX_DIMENSION / Math.max(srcW, srcH))
+      const width = Math.max(1, Math.round(srcW * scale)), height = Math.max(1, Math.round(srcH * scale))
+      const canvas = document.createElement('canvas')
+      canvas.width = width; canvas.height = height
+      const context = canvas.getContext('2d', {alpha: false})
+      if (!context) throw new Error('Votre navigateur ne peut pas préparer cette photo. Essayez Safari ou Chrome à jour.')
+      context.fillStyle = '#ffffff'; context.fillRect(0, 0, width, height)
+      context.imageSmoothingEnabled = true; context.imageSmoothingQuality = 'high'
+      // The browser applies the source photo's orientation when decoding it.
+      context.drawImage(image, 0, 0, width, height)
+      const dataUrl = canvas.toDataURL('image/jpeg', QUALITY)
+      return {dataUrl, width, height, bytesApprox: Math.ceil((dataUrl.length - dataUrl.indexOf(',') - 1) * .75)}
+    } finally { image.src = ''; URL.revokeObjectURL(url) }
   }
-
-  // ── 2. Décodage en bitmap pour obtenir les dimensions natives ────────────
-  const bitmap = await createImageBitmap(blob).catch((err) => {
-    throw new Error(`Image illisible (${err?.message ?? 'erreur inconnue'})`)
-  })
-
-  // ── 3. Resize via canvas, en préservant le ratio d'origine ───────────────
-  const { width: srcW, height: srcH } = bitmap
-  const scale = Math.min(1, MAX_DIMENSION / Math.max(srcW, srcH))
-  const dstW = Math.round(srcW * scale)
-  const dstH = Math.round(srcH * scale)
-
-  const canvas = document.createElement('canvas')
-  canvas.width = dstW
-  canvas.height = dstH
-  const ctx = canvas.getContext('2d', { alpha: false })
-  if (!ctx) throw new Error('Canvas 2D non disponible')
-  ctx.imageSmoothingEnabled = true
-  ctx.imageSmoothingQuality = 'high'
-  ctx.drawImage(bitmap, 0, 0, dstW, dstH)
-
-  // Important : libérer le bitmap (sinon fuite mémoire sur photos répétées)
-  bitmap.close()
-
-  // ── 4. Encodage final JPEG ────────────────────────────────────────────────
-  const dataUrl = canvas.toDataURL('image/jpeg', QUALITY)
-
-  return {
-    dataUrl,
-    width: dstW,
-    height: dstH,
-    // Approximation : base64 ≈ 1.37× taille binaire, dataUrl a un préfixe ~30 chars
-    bytesApprox: Math.ceil((dataUrl.length - 30) * 0.75),
+  try { return await prepare(file) }
+  catch (error) {
+    // A supported but oversized image is not a reason to allocate a HEIC decoder.
+    if (!(error instanceof Error) || error.message !== 'PHOTO_DECODE_FAILED') throw error
   }
+  const header = new Uint8Array(await file.slice(0, 64).arrayBuffer())
+  const brands = new TextDecoder('ascii').decode(header)
+  const looksHeic = /\.(heic|heif)$/i.test(file.name) || /^image\/(heic|heif)$/.test(file.type) ||
+    (brands.slice(4, 8) === 'ftyp' && /heic|heix|hevc|hevx|heim|heis|mif1|msf1/.test(brands.slice(8)))
+  if (looksHeic) {
+    try {
+      const {heicTo} = await import('heic-to')
+      return await prepare(await heicTo({blob: file, type: 'image/jpeg', quality: HEIC_QUALITY}))
+    } catch { throw new Error('Cette photo HEIC n’a pas pu être convertie sur cet appareil. Essayez de la sélectionner depuis Photos dans Safari, ou choisissez une copie JPEG.') }
+  }
+  throw new Error('Cette photo ne peut pas être lue. Choisissez une photo JPEG, PNG, WebP, AVIF ou HEIC. Les fichiers RAW/DNG ne sont pas pris en charge.')
 }
 
 /** Format human-readable d'un nombre d'octets : 1234 → "1.2 KB" */

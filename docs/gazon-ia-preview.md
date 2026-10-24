@@ -1,3 +1,9 @@
+## Photos iPhone volumineuses — 24 octobre 2026
+
+Import public jusqu’à 50 Mio, avec plafond de 64 mégapixels (couvre la résolution usuelle 48 MP iPhone). JPEG, PNG, WebP, AVIF, HEIC et HEIF proposés. Lecture native prioritaire, conversion HEIC via heic-to uniquement en cas d’échec ; plus d’import WASM pour un JPEG normal. Préparation locale en JPEG, côté long 1200 px, avant envoi. La limite de transport reste 2 Mio et la validation serveur ne change pas. RAW/DNG non pris en charge : aucune promesse d’accepter tous les codecs.
+
+Tests techniques avec décodeur/canvas simulés : fichier source de 24 Mio accepté, résolution 8064×6048 réduite à 1200×900, poids excessif refusé avant décodage, lecture HEIC native préférée, conversion en secours une fois, URL libérées même après échec. Ces tests ne prouvent pas le décodage d’un HEIC réel ni la mémoire disponible sur chaque iPhone. Recette matérielle toujours à faire. Aucune photo envoyée au fournisseur dans cette itération.
+
 ## Suite de l’audit Claude et chargement — 24 octobre 2026
 
 24 octobre 2026 — Suite audit Claude : recadrage fill/width corrigé sur le site (test SSR avec le vrai Next Image et accueil HTTP 200 en développement), anciens jobs sans faux réglages, légende illustration clarifiée, agrandissement retiré des mini-comparateurs. Attente enrichie dans les deux parcours : original étiqueté, indicateur indéterminé, étapes serveur génération/enregistrement, temps écoulé réel, conseils canoniques côté moteur avec pause et défilement hors annonces vocales. Preview isolée : refus serveur des mutations ERP hors simulation/auth, liste explicite de fiches de test (vide par défaut), aucune création de jardin depuis l’ancien module. Base partagée réellement confirmée par métadonnées Vercel ; aucun dossier client touché. Source live CLI SHA51ad9b7 toujours absente du GitHub accessible. Aucune génération fournisseur réelle ; clé preview absente. Recette navigateur actuelle bloquée, pas de production.

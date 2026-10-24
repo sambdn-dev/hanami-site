@@ -5,14 +5,14 @@ import { useCallback, useEffect, useRef, useState, type ChangeEvent, type FormEv
 import { Camera, Check, ImagePlus, LoaderCircle, Trash2, LockKeyhole, ArrowRight, Leaf, Sparkles } from 'lucide-react'
 import SimulationProcessing from './SimulationProcessing'
 import BeforeAfterSlider from '@/components/shared/BeforeAfterSlider'
-import { compressPhoto } from '@/lib/photo-utils'
+import { compressPhoto, MAX_PHOTO_INPUT_BYTES } from '@/lib/photo-utils'
 import { isSimulationJob, simulationImage, type LawnSimulationJob } from './types'
 import styles from './Simulator.module.css'
 
 const API = '/api/gazon-simulations'
-const MAX_INPUT = 10 * 1024 * 1024
+const MAX_INPUT = MAX_PHOTO_INPUT_BYTES
 const MAX_UPLOAD = 2 * 1024 * 1024
-const PHOTO_ACCEPT = 'image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif'
+const PHOTO_ACCEPT = 'image/jpeg,image/png,image/webp,image/avif,image/heic,image/heif,.heic,.heif'
 const DISCLAIMER = 'Simulation IA indicative — le résultat réel dépend du terrain et des travaux.'
 let sessionBinding: string | null = null
 
@@ -150,9 +150,9 @@ export default function LawnSimulator() {
     if (!file || actionLock.current || working) return
     const revision = ++selection.current
     setError('')
-    if (file.size > MAX_INPUT) { setError('Cette photo dépasse 10 Mo. Choisissez une version plus légère.'); return }
-    if (!/\.(jpe?g|png|webp|heic|heif)$/i.test(file.name) && !/^image\/(jpeg|png|webp|heic|heif)$/i.test(file.type)) {
-      setError('Choisissez une photo JPEG, PNG, WebP, HEIC ou HEIF.'); return
+    if (file.size > MAX_INPUT) { setError('Cette photo dépasse 50 Mo. Choisissez une photo en résolution standard.'); return }
+    if (!/\.(jpe?g|png|webp|avif|heic|heif)$/i.test(file.name) && !/^image\/(jpeg|png|webp|avif|heic|heif)$/i.test(file.type)) {
+      setError('Choisissez une photo JPEG, PNG, WebP, AVIF, HEIC ou HEIF.'); return
     }
     setPhase('preparing')
     try {
@@ -272,7 +272,7 @@ export default function LawnSimulator() {
           <input ref={libraryInput} type="file" accept={PHOTO_ACCEPT} onChange={choosePhoto} aria-label="Choisir une photo du jardin" className={styles.fileInput} tabIndex={-1} />
           <input ref={cameraInput} type="file" accept={PHOTO_ACCEPT} capture="environment" onChange={choosePhoto} aria-label="Photographier le jardin" className={styles.fileInput} tabIndex={-1} />
         </div>
-        <p className={styles.photoTips}>En journée, avec le gazon et ses bordures visibles.<br />JPEG, PNG, WebP, HEIC ou HEIF · 10 Mo maximum</p>
+        <p className={styles.photoTips}>En journée, avec le gazon et ses bordures visibles.<br />JPEG, PNG, WebP, AVIF, HEIC ou HEIF · 50 Mo maximum · Optimisation automatique</p>
         <p className={styles.trust}><LockKeyhole size={19} aria-hidden="true" /><span>Sans compte. Vos photos restent privées.<br />Vous choisissez ensuite de les partager avec Hanami.</span></p>
         {sessionError && <div className={styles.serviceNotice} role="status">La génération est momentanément indisponible. Vous pouvez préparer votre photo sans l’envoyer. <button type="button" className={styles.textButton} onClick={() => window.location.reload()}>Réessayer</button></div>}
         {error && !photo && !job && <div className={styles.error} role="alert">{error}</div>}
