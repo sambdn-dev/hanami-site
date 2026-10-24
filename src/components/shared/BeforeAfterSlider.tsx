@@ -52,7 +52,6 @@ function cropStyle(crop: PhotoCrop): CSSProperties {
     left: `calc(50% - ${cover(crop.x + crop.width / 2)})`,
     top: `calc(50% - ${cover(crop.y + crop.height / 2)})`,
     maxWidth: 'none',
-    objectFit: 'fill',
   }
 }
 
@@ -85,6 +84,7 @@ interface BeforeAfterSliderProps {
    * restent en lazy loading natif.
    */
   priority?: boolean
+  imageSizes?: string
   /** Preserve an uploaded photo's framing; defaults to the existing 4:3 view. */
   aspectRatio?: number
   /** Private image routes require the visitor's session cookie. */
@@ -109,6 +109,7 @@ export default function BeforeAfterSlider({
   afterTransform,
   afterTransformOrigin = 'center 40%',
   priority = false,
+  imageSizes = '(max-width: 768px) 100vw, 50vw',
   aspectRatio = 4 / 3,
   unoptimized = false,
   onImageError,
@@ -296,24 +297,14 @@ export default function BeforeAfterSlider({
           "center 40%" = ancrée en haut-centre → le zoom pousse les éléments
           du bas (premier plan) hors du cadre, tout en gardant le fond visible
       */}
-      <Image
-        src={afterSrc}
-        onError={onImageError}
-        alt={afterAlt}
-        fill
-        className="object-cover pointer-events-none"
-        style={{
-          objectPosition: afterObjectPosition,
-          ...(afterCrop && cropStyle(afterCrop)),
-          ...(afterTransform && {
-            transform: afterTransform,
-            transformOrigin: afterTransformOrigin,
-          }),
-        }}
-        sizes={allowFullscreen ? "(max-width: 768px) 100vw, 50vw" : "100vw"}
-        priority={priority}
-        unoptimized={unoptimized}
-      />
+      <div className={afterCrop ? 'absolute pointer-events-none' : 'absolute inset-0 pointer-events-none'} style={{
+        ...(afterCrop && cropStyle(afterCrop)),
+        ...(afterTransform && {transform: afterTransform, transformOrigin: afterTransformOrigin}),
+      }}>
+        <Image src={afterSrc} onError={onImageError} alt={afterAlt} fill
+          className={afterCrop ? 'object-fill' : 'object-cover'} style={{objectPosition: afterObjectPosition}}
+          sizes={imageSizes} priority={priority} unoptimized={unoptimized} />
+      </div>
 
       {/* ── Photo AVANT — visible uniquement sur le côté GAUCHE ────────── */}
       {/*
@@ -332,17 +323,11 @@ export default function BeforeAfterSlider({
         className="absolute inset-0 pointer-events-none"
         style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}
       >
-        <Image
-          src={beforeSrc}
-          onError={onImageError}
-          alt={beforeAlt}
-          fill
-          className="object-cover"
-          style={{ objectPosition: beforeObjectPosition, ...(beforeCrop && cropStyle(beforeCrop)) }}
-          sizes={allowFullscreen ? "(max-width: 768px) 100vw, 50vw" : "100vw"}
-          priority={priority}
-          unoptimized={unoptimized}
-        />
+        <div className={beforeCrop ? 'absolute' : 'absolute inset-0'} style={beforeCrop ? cropStyle(beforeCrop) : undefined}>
+          <Image src={beforeSrc} onError={onImageError} alt={beforeAlt} fill
+            className={beforeCrop ? 'object-fill' : 'object-cover'} style={{objectPosition: beforeObjectPosition}}
+            sizes={imageSizes} priority={priority} unoptimized={unoptimized} />
+        </div>
       </div>
 
       {/* ── Barre verticale séparatrice ───────────────────────────────── */}
@@ -413,7 +398,7 @@ export default function BeforeAfterSlider({
           <BeforeAfterSlider beforeSrc={beforeSrc} afterSrc={afterSrc} beforeAlt={beforeAlt} afterAlt={afterAlt}
             beforeCrop={beforeCrop} afterCrop={afterCrop} beforeObjectPosition={beforeObjectPosition} afterObjectPosition={afterObjectPosition}
             afterTransform={afterTransform} afterTransformOrigin={afterTransformOrigin} initialPosition={openingPosition.current}
-            aspectRatio={aspectRatio} priority unoptimized={unoptimized} onImageError={onImageError}
+            aspectRatio={aspectRatio} priority imageSizes="100vw" unoptimized={unoptimized} onImageError={onImageError}
             allowFullscreen={false} animateHint={false} onPositionChange={setPosition} className="!rounded-none" />
         </div>
         <p className="text-xs text-white/70">Utilisez les flèches du clavier sur le curseur. Échap pour fermer.</p>

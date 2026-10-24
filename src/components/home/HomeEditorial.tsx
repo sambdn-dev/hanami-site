@@ -123,7 +123,7 @@ export function HomeCaseStudies() {
         <div className={styles.moreCases}>
           {more.map((study, index) => (
             <article className={styles.miniCase} key={study.name} data-reveal data-reveal-delay={String(index + 1)}>
-              <div className={styles.miniSlider}><BeforeAfterSlider beforeSrc={study.before} afterSrc={study.after} beforeAlt={`Pelouse de ${study.name} avant`} afterAlt={`Pelouse de ${study.name} après`} /></div>
+              <div className={styles.miniSlider}><BeforeAfterSlider allowFullscreen={false} beforeSrc={study.before} afterSrc={study.after} beforeAlt={`Pelouse de ${study.name} avant`} afterAlt={`Pelouse de ${study.name} après`} /></div>
               <div className={styles.miniCaseInfo}><span>{study.name}<small>{study.place}</small></span><strong>{study.surface}</strong></div>
               <p>{study.text}</p>
             </article>

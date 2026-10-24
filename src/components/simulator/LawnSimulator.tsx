@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useCallback, useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 import { Camera, Check, ImagePlus, LoaderCircle, Trash2, LockKeyhole, ArrowRight, Leaf, Sparkles } from 'lucide-react'
+import SimulationProcessing from './SimulationProcessing'
 import BeforeAfterSlider from '@/components/shared/BeforeAfterSlider'
 import { compressPhoto } from '@/lib/photo-utils'
 import { isSimulationJob, simulationImage, type LawnSimulationJob } from './types'
@@ -282,7 +283,6 @@ export default function LawnSimulator() {
         <img src="/images/simulator/garden-illustration.webp" alt="Illustration d’un même jardin, avec une pelouse clairsemée à gauche et plus dense à droite" width={1400} height={1100} fetchPriority="high" />
 
         <figcaption>Exemple illustratif créé par IA — ce n’est pas votre simulation.</figcaption>
-        <p className={styles.help}>{DISCLAIMER}</p>
       </figure>
     </div>
     <ol className={styles.journey} aria-label="Les étapes de votre simulation">
@@ -323,13 +323,12 @@ export default function LawnSimulator() {
       {job.status === 'completed' ? <>
         <BeforeAfterSlider beforeSrc={simulationImage(job.id, 'original')} afterSrc={simulationImage(job.id, 'result')} beforeAlt="Votre jardin avant simulation" afterAlt="Projection IA de votre jardin avec une pelouse améliorée" aspectRatio={job.width && job.height ? job.width / job.height : 4 / 3} unoptimized onImageError={() => setImageErrorId(job.id)} className={styles.comparison} />
         <p className={styles.help}>Glissez la séparation, ou utilisez les flèches du clavier sur la poignée, pour comparer.</p>
-      </> : <div className={styles.waitingPhoto}>
+      </> : job.status === 'running' ? <SimulationProcessing key={job.id} originalSrc={simulationImage(job.id, 'original')} startedAt={job.startedAt} tips={job.tips} phase={job.processingPhase} connectionLost={!!pollError} onImageError={() => setImageErrorId(job.id)} /> : <div className={styles.waitingPhoto}>
         {/* Authenticated photos are served directly; the shared optimizer cannot forward the private session. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         {job.stage !== 'upload' && <img src={simulationImage(job.id, 'original')} alt="Votre photo de jardin enregistrée" onError={() => setImageErrorId(job.id)} />}
         <div className={styles.processing} role="status">
-          {job.status === 'running' && <LoaderCircle className={styles.spinner} size={22} aria-hidden="true" />}
-          <p>{job.status === 'running' ? 'Traitement en cours. Vous pouvez quitter cet écran et retrouver son état en revenant sur ce navigateur.' : job.status === 'queued' ? job.stage === 'ready' ? 'Votre photo est sauvegardée. Lancez le traitement lorsque vous êtes prêt.' : 'La photo n’a pas été entièrement enregistrée. Importez à nouveau votre photo pour préparer une nouvelle simulation. Aucun traitement IA n’a été lancé.' : job.error?.message || 'Aucun résultat n’a été enregistré. Contactez Hanami si le problème persiste.'}</p>
+          <p>{job.status === 'queued' ? job.stage === 'ready' ? 'Votre photo est sauvegardée. Lancez le traitement lorsque vous êtes prêt.' : 'La photo n’a pas été entièrement enregistrée. Importez à nouveau votre photo pour préparer une nouvelle simulation. Aucun traitement IA n’a été lancé.' : job.error?.message || 'Aucun résultat n’a été enregistré. Contactez Hanami si le problème persiste.'}</p>
         </div>
       </div>}
       {imageErrorId === job.id && <div className={styles.error} role="alert">L’image n’a pas pu être affichée. Elle peut avoir expiré ou la connexion a été interrompue. <button type="button" className={styles.textButton} onClick={() => window.location.reload()}>Actualiser l’affichage</button> Aucun nouveau traitement ne sera lancé.</div>}

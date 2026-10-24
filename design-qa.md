@@ -13,3 +13,7 @@
 final result: blocked
 
 Prochaine étape : capturer l’implémentation dans le navigateur aux trois tailles, comparer avec la maquette, tester import/caméra/réglages/erreurs et contrôler la console.
+
+## Suite audit Claude
+
+Le rendu serveur local répond HTTP 200 pour / et /simulateur-gazon. Tests réels Next Image du recadrage et tests SSR du panneau d’attente réussis. Ces preuves ne remplacent pas les captures, la géométrie et les interactions dans un navigateur ; verdict blocked conservé pour la nouvelle passe. Les captures/tests Chromium antérieurs fournis par Claude concernent les commits 968875f/3ea55a5 et une API simulée, pas ce nouveau panneau.
