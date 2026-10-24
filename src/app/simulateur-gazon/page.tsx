@@ -19,12 +19,6 @@ export default function LawnSimulatorPage() {
     <Navbar variant="light" localOffers />
     <main id="contenu" className={styles.page}>
       <div className={styles.container}>
-        <header className={styles.intro}>
-          <span className={styles.eyebrow}>LE GAZON, SOUS UN NOUVEAU JOUR</span>
-          <h1>Votre jardin.<br />Une pelouse à imaginer.</h1>
-          <p>Importez une photo et découvrez votre jardin avec une pelouse plus belle et plus dense. Le point de départ d’un projet à construire pour votre terrain.</p>
-          <p className={styles.introNote}>Aucun compte à créer. Vos photos restent privées ; vous choisissez ensuite de les transmettre à Hanami pour un diagnostic ou un devis.</p>
-        </header>
         <LawnSimulator />
       </div>
     </main>

@@ -2,6 +2,7 @@ export type LawnPoint = [number, number]
 export type LawnPolygon = LawnPoint[]
 
 export interface LawnSimulationJob {
+  options?: { finish: 'natural' | 'manicured'; height: 'source' | 'short' | 'comfortable' } | null
   id: string
   status: 'queued' | 'running' | 'completed' | 'failed'
   stage?: 'upload' | 'ready' | 'generation' | 'complete'

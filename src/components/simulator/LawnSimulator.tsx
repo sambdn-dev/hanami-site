@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useCallback, useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react'
-import { Camera, Check, ImagePlus, LoaderCircle, Trash2 } from 'lucide-react'
+import { Camera, Check, ImagePlus, LoaderCircle, Trash2, LockKeyhole, ArrowRight, Leaf, Sparkles } from 'lucide-react'
 import BeforeAfterSlider from '@/components/shared/BeforeAfterSlider'
 import { compressPhoto } from '@/lib/photo-utils'
 import { isSimulationJob, simulationImage, type LawnSimulationJob } from './types'
@@ -57,11 +57,14 @@ const dateLabel = (value: string) => {
 
 export default function LawnSimulator() {
   const [photo, setPhoto] = useState<PreparedPhoto | null>(null)
+  const [finish, setFinish] = useState<'natural' | 'manicured'>('natural')
+  const [height, setHeight] = useState<'source' | 'short' | 'comfortable'>('source')
   const [authorized, setAuthorized] = useState(false)
   const [job, setJob] = useState<LawnSimulationJob | null>(null)
   const [jobs, setJobs] = useState<LawnSimulationJob[]>([])
   const [phase, setPhase] = useState<'idle' | 'preparing' | 'uploading' | 'starting' | 'deleting'>('idle')
   const [error, setError] = useState('')
+  const [sessionError, setSessionError] = useState('')
   const [pollError, setPollError] = useState('')
   const [imageErrorId, setImageErrorId] = useState<string | null>(null)
   const [loadingHistory, setLoadingHistory] = useState(true)
@@ -75,6 +78,8 @@ export default function LawnSimulator() {
   const libraryInput = useRef<HTMLInputElement>(null)
   const cameraInput = useRef<HTMLInputElement>(null)
   const resultHeading = useRef<HTMLHeadingElement>(null)
+  const photoHeading = useRef<HTMLHeadingElement>(null)
+  const selectedPhotoSrc = photo?.src
 
   const busy = phase !== 'idle'
   const working = job?.status === 'running'
@@ -99,7 +104,7 @@ export default function LawnSimulator() {
         if (selection.current === 0) setJob(previous => previous ?? history[0] ?? null)
       })
       .catch((cause: unknown) => {
-        if (!controller.signal.aborted) setError(cause instanceof Error ? cause.message : 'Impossible de retrouver vos simulations.')
+        if (!controller.signal.aborted) setSessionError(cause instanceof Error ? cause.message : 'Impossible de retrouver vos simulations.')
       })
       .finally(() => { if (!controller.signal.aborted) setLoadingHistory(false) })
     return () => controller.abort()
@@ -129,6 +134,10 @@ export default function LawnSimulator() {
     timer = setTimeout(poll, 1000)
     return () => { controller.abort(); clearTimeout(timer) }
   }, [activeJobId, activeJobStatus, updateJob])
+
+  useEffect(() => {
+    if (selectedPhotoSrc) photoHeading.current?.focus()
+  }, [selectedPhotoSrc])
 
   useEffect(() => {
     if (job?.status === 'completed') resultHeading.current?.focus({ preventScroll: true })
@@ -191,6 +200,7 @@ export default function LawnSimulator() {
       form.append('original', photo.file)
       form.append('idempotencyKey', photo.requestId)
       form.append('photoAuthorization', 'true')
+      form.append('options', JSON.stringify({ finish, height }))
       const saved = readJob(await requestJson('', { method: 'POST', body: form }))
       updateJob(saved)
       setPhoto(null)
@@ -250,32 +260,52 @@ export default function LawnSimulator() {
   }
 
   return <div className={styles.simulator}>
-    <div className={styles.stepHeading}>
-      <span className={styles.number}>01 / VOTRE JARDIN</span>
-      <h2>Tout commence par votre photo.</h2>
-      <p>Une vue nette, en journée, avec le gazon et ses bordures visibles. Évitez les personnes, plaques et documents personnels.</p>
-    </div>
-
-    {error && <div className={styles.error} role="alert">{error}</div>}
-
-    <div className={styles.import}>
-      <ImagePlus size={30} strokeWidth={1.2} aria-hidden="true" />
-      <div><h3>{photo ? 'Changer de point de vue' : 'Ajoutez une photo réelle de votre jardin'}</h3><p>JPEG, PNG, WebP, HEIC ou HEIF · 10 Mo maximum</p></div>
-      <div className={styles.actions}>
-        <button type="button" className={styles.primary} onClick={() => libraryInput.current?.click()} disabled={busy || working}><ImagePlus size={17} aria-hidden="true" /> Choisir une photo</button>
-        <button type="button" className={styles.secondary} onClick={() => cameraInput.current?.click()} disabled={busy || working}><Camera size={17} aria-hidden="true" /> Prendre une photo</button>
+    <div className={styles.hero}>
+      <div className={styles.heroCopy}>
+        <span className={styles.eyebrow}>LE GAZON, SOUS UN NOUVEAU JOUR</span>
+        <h1>Et si votre gazon changeait tout ?</h1>
+        <p className={styles.heroLead}>Votre photo. Votre jardin.<br />Une pelouse à imaginer.</p>
+        <div className={styles.import}>
+          <button type="button" className={styles.primary} onClick={() => libraryInput.current?.click()} disabled={busy || working}><ImagePlus size={20} aria-hidden="true" /> {photo || job ? 'Choisir une autre photo' : 'Ajouter ma photo'} <ArrowRight size={18} aria-hidden="true" /></button>
+          <button type="button" className={styles.secondary} onClick={() => cameraInput.current?.click()} disabled={busy || working}><Camera size={20} aria-hidden="true" /> Prendre une photo</button>
+          <input ref={libraryInput} type="file" accept={PHOTO_ACCEPT} onChange={choosePhoto} aria-label="Choisir une photo du jardin" className={styles.fileInput} tabIndex={-1} />
+          <input ref={cameraInput} type="file" accept={PHOTO_ACCEPT} capture="environment" onChange={choosePhoto} aria-label="Photographier le jardin" className={styles.fileInput} tabIndex={-1} />
+        </div>
+        <p className={styles.photoTips}>En journée, avec le gazon et ses bordures visibles.<br />JPEG, PNG, WebP, HEIC ou HEIF · 10 Mo maximum</p>
+        <p className={styles.trust}><LockKeyhole size={19} aria-hidden="true" /><span>Sans compte. Vos photos restent privées.<br />Vous choisissez ensuite de les partager avec Hanami.</span></p>
+        {sessionError && <div className={styles.serviceNotice} role="status">La génération est momentanément indisponible. Vous pouvez préparer votre photo sans l’envoyer. <button type="button" className={styles.textButton} onClick={() => window.location.reload()}>Réessayer</button></div>}
+        {error && !photo && !job && <div className={styles.error} role="alert">{error}</div>}
       </div>
-      <input ref={libraryInput} type="file" accept={PHOTO_ACCEPT} onChange={choosePhoto} aria-label="Choisir une photo du jardin" className={styles.fileInput} tabIndex={-1} />
-      <input ref={cameraInput} type="file" accept={PHOTO_ACCEPT} capture="environment" onChange={choosePhoto} aria-label="Photographier le jardin" className={styles.fileInput} tabIndex={-1} />
+      <figure className={styles.heroVisual}>
+        {/* An illustrative asset, never substituted for a customer's actual result. */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/images/simulator/garden-illustration.webp" alt="Illustration d’un même jardin, avec une pelouse clairsemée à gauche et plus dense à droite" width={1400} height={1100} fetchPriority="high" />
+
+        <figcaption>Exemple illustratif créé par IA — ce n’est pas votre simulation.</figcaption>
+        <p className={styles.help}>{DISCLAIMER}</p>
+      </figure>
     </div>
+    <ol className={styles.journey} aria-label="Les étapes de votre simulation">
+      <li><ImagePlus size={24} aria-hidden="true" /><div><strong>Votre photo</strong><p>Le point de départ, c’est votre jardin.</p></div></li>
+      <li><Sparkles size={24} aria-hidden="true" /><div><strong>Votre simulation</strong><p>Une pelouse plus belle, sur votre photo.</p></div></li>
+      <li><Leaf size={24} aria-hidden="true" /><div><strong>Votre projet</strong><p>Les bons conseils pour passer à l’action.</p></div></li>
+    </ol>
 
     {phase === 'preparing' && <p className={styles.status} role="status"><LoaderCircle className={styles.spinner} size={18} aria-hidden="true" /> Préparation de votre photo…</p>}
 
     {photo && <section className={styles.selection} aria-labelledby="lawn-photo-heading">
-      <div className={styles.stepHeading}><span className={styles.number}>02 / VOTRE PHOTO</span><h2 id="lawn-photo-heading">Le même jardin, avec une belle pelouse.</h2></div>
+      <div className={styles.stepHeading}><span className={styles.number}>02 / VOTRE PHOTO</span><h2 id="lawn-photo-heading" ref={photoHeading} tabIndex={-1}>Le même jardin, avec une belle pelouse.</h2></div>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src={photo.src} width={photo.width} height={photo.height} alt="Votre photo avant la simulation" style={{width: '100%', height: 'auto', maxHeight: 650, objectFit: 'contain'}} />
+      <details className={styles.preferences}>
+        <summary>Personnaliser le rendu <span>Facultatif</span></summary>
+        <p>Choisissez l’aspect du gazon. La saison, la lumière et le reste du jardin restent ceux de votre photo.</p>
+        <fieldset disabled={busy}><legend>Finition du gazon</legend><div className={styles.optionRow}>{([['natural', 'Naturel'], ['manicured', 'Très soigné']] as const).map(([value, label]) => <label key={value}><input type="radio" name="finish" value={value} checked={finish === value} onChange={() => { setFinish(value); setPhoto(current => current ? { ...current, requestId: crypto.randomUUID() } : null) }} />{label}</label>)}</div></fieldset>
+        <fieldset disabled={busy}><legend>Hauteur de tonte</legend><div className={styles.optionRow}>{([['source', 'Selon ma photo'], ['short', 'Courte · 3–4 cm'], ['comfortable', 'Plus haute · 6–8 cm']] as const).map(([value, label]) => <label key={value}><input type="radio" name="height" value={value} checked={height === value} onChange={() => { setHeight(value); setPhoto(current => current ? { ...current, requestId: crypto.randomUUID() } : null) }} />{label}</label>)}</div></fieldset>
+        <p>Indications visuelles uniquement : la hauteur de tonte adaptée se choisit après un diagnostic.</p>
+      </details>
       <label className={styles.consent}><input type="checkbox" checked={authorized} onChange={event => setAuthorized(event.target.checked)} disabled={busy} /><span>Je suis autorisé à utiliser cette photo et je demande son traitement par IA pour cette simulation. Mes photos ne seront pas utilisées à des fins marketing.</span></label>
+      {error && <div className={styles.error} role="alert">{error}</div>}
       <div className={styles.launch}>
         <button type="button" className={styles.primary} onClick={generate} disabled={!canGenerate || busy}>{busy && <LoaderCircle className={styles.spinner} size={18} aria-hidden="true" />}{phase === 'uploading' ? 'Envoi de votre photo…' : phase === 'starting' ? 'Lancement du traitement…' : 'Visualiser mon gazon'}</button>
         <p>L’IA améliore la pelouse visible en conservant le cadrage et les autres éléments du jardin. La photo n’est envoyée qu’au lancement.</p>
@@ -289,6 +319,7 @@ export default function LawnSimulator() {
     {job && !photo && <section className={styles.result} aria-labelledby="simulation-result-heading">
       <div className={styles.stepHeading}><span className={styles.number}>03 / VOTRE PROJECTION</span><h2 id="simulation-result-heading" ref={resultHeading} tabIndex={-1}>{job.status === 'completed' ? 'Le même jardin. Un autre regard.' : job.status === 'failed' ? 'La simulation n’a pas abouti.' : job.status === 'queued' ? job.stage === 'ready' ? 'Votre photo est enregistrée.' : 'L’envoi de votre photo est incomplet.' : 'Votre projection prend forme.'}</h2></div>
 
+      {error && <div className={styles.error} role="alert">{error}</div>}
       {job.status === 'completed' ? <>
         <BeforeAfterSlider beforeSrc={simulationImage(job.id, 'original')} afterSrc={simulationImage(job.id, 'result')} beforeAlt="Votre jardin avant simulation" afterAlt="Projection IA de votre jardin avec une pelouse améliorée" aspectRatio={job.width && job.height ? job.width / job.height : 4 / 3} unoptimized onImageError={() => setImageErrorId(job.id)} className={styles.comparison} />
         <p className={styles.help}>Glissez la séparation, ou utilisez les flèches du clavier sur la poignée, pour comparer.</p>
@@ -303,6 +334,7 @@ export default function LawnSimulator() {
       </div>}
       {imageErrorId === job.id && <div className={styles.error} role="alert">L’image n’a pas pu être affichée. Elle peut avoir expiré ou la connexion a été interrompue. <button type="button" className={styles.textButton} onClick={() => window.location.reload()}>Actualiser l’affichage</button> Aucun nouveau traitement ne sera lancé.</div>}
       <p className={styles.disclaimer}>{DISCLAIMER}</p>
+      {job.options && <p className={styles.help}>Rendu : {job.options.finish === 'manicured' ? 'très soigné' : 'naturel'} · {({source: 'hauteur selon la photo', short: 'tonte courte', comfortable: 'tonte plus haute'})[job.options.height]}</p>}
       <p className={styles.help}>Cette image ne mesure pas la surface et ne remplace pas un diagnostic agronomique.</p>
       {pollError && <p className={styles.error} role="status">{pollError}</p>}
       {job.status === 'queued' && job.stage === 'ready' && <button type="button" className={styles.primary} disabled={busy} onClick={resume}>Lancer cette simulation</button>}

@@ -1,3 +1,7 @@
+## Atelier photographique et paramètres — 24 octobre 2026
+
+Maquette 1 sélectionnée par Sami. Nouvel import immédiat et illustration explicitement synthétique, sans remplacement des photos client. Deux paramètres facultatifs transmis au moteur commun : finition (`natural` / `manicured`), hauteur (`source` / `short` / `comfortable`). Défaut : naturel / selon la photo. La saison et la lumière ne changent pas. Les options de chaque job sont persistées dans son identité de prompt et restituées après rechargement. Pas de migration supplémentaire. Tests HTTP fournisseur simulé uniquement ; qualité IA réelle toujours non vérifiée.
+
 # Prévisualisation du gazon — état au 24 octobre 2026
 
 ## Correction du parcours — 24 octobre 2026
