@@ -27,6 +27,9 @@
 'use client'
 
 import Image from 'next/image'
+import { createPortal } from 'react-dom'
+import { Expand, X } from 'lucide-react'
+import { usePortalRoot } from '@/hooks/usePortalRoot'
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
 
 interface PhotoCrop {
@@ -88,6 +91,9 @@ interface BeforeAfterSliderProps {
   unoptimized?: boolean
   onImageError?: () => void
   className?: string
+  allowFullscreen?: boolean
+  animateHint?: boolean
+  onPositionChange?: (position: number) => void
 }
 
 export default function BeforeAfterSlider({
@@ -107,9 +113,33 @@ export default function BeforeAfterSlider({
   unoptimized = false,
   onImageError,
   className = '',
+  allowFullscreen = true,
+  animateHint = true,
+  onPositionChange,
 }: BeforeAfterSliderProps) {
   // Position du curseur en pourcentage (0 = tout à gauche, 100 = tout à droite)
   const [position, setPosition] = useState(initialPosition)
+  const [expanded, setExpanded] = useState(false)
+  const dialogRef = useRef<HTMLDialogElement>(null)
+  const expandButton = useRef<HTMLButtonElement>(null)
+  const openingPosition = useRef(initialPosition)
+  const portalRoot = usePortalRoot()
+
+  useEffect(() => { onPositionChange?.(position) }, [position, onPositionChange])
+  useEffect(() => {
+    if (!expanded || !portalRoot) return
+    const dialog = dialogRef.current
+    if (!dialog) return
+    const trigger = expandButton.current
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    dialog.showModal()
+    return () => {
+      dialog.close()
+      document.body.style.overflow = previousOverflow
+      trigger?.focus({ preventScroll: true })
+    }
+  }, [expanded, portalRoot])
 
   // Référence vers le conteneur pour calculer les coordonnées relatives
   const containerRef = useRef<HTMLDivElement>(null)
@@ -132,7 +162,7 @@ export default function BeforeAfterSlider({
   useEffect(() => {
     // Respecte la préférence système : pas d'oscillation d'amorce si
     // l'utilisateur a demandé de réduire les animations.
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!animateHint || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
     const startTime = performance.now()
     const PERIOD    = 6000  // ms — durée d'un aller-retour complet (lent)
@@ -158,7 +188,7 @@ export default function BeforeAfterSlider({
     return () => {
       if (hintRafRef.current) cancelAnimationFrame(hintRafRef.current)
     }
-  }, [initialPosition])
+  }, [initialPosition, animateHint])
 
   /**
    * Calcule la nouvelle position du curseur en % à partir d'une position X en pixels.
@@ -236,6 +266,7 @@ export default function BeforeAfterSlider({
   }, [updatePosition])
 
   return (
+    <>
     <div
       ref={containerRef}
       className={`relative w-full aspect-[4/3] overflow-hidden rounded-lg select-none cursor-ew-resize ${className}`}
@@ -248,6 +279,12 @@ export default function BeforeAfterSlider({
       role="group"
       aria-label={`Comparaison avant/après : ${beforeAlt} et ${afterAlt}`}
     >
+      {allowFullscreen && <button ref={expandButton} type="button" aria-label="Ouvrir la comparaison avant/après en plein écran" aria-haspopup="dialog"
+        className="absolute top-3 right-3 z-10 flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-full bg-brand-forest px-3 text-white shadow-md cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        onMouseDown={event => event.stopPropagation()} onTouchStart={event => event.stopPropagation()}
+        onClick={event => { event.stopPropagation(); cancelHint(); openingPosition.current = position; setExpanded(true) }}>
+        <Expand size={18} aria-hidden="true" /><span className="sr-only">Plein écran</span>
+      </button>}
 
       {/* ── Photo APRÈS — fond complet, toujours visible (côté droit) ─── */}
       {/*
@@ -273,7 +310,7 @@ export default function BeforeAfterSlider({
             transformOrigin: afterTransformOrigin,
           }),
         }}
-        sizes="(max-width: 768px) 100vw, 50vw"
+        sizes={allowFullscreen ? "(max-width: 768px) 100vw, 50vw" : "100vw"}
         priority={priority}
         unoptimized={unoptimized}
       />
@@ -302,7 +339,7 @@ export default function BeforeAfterSlider({
           fill
           className="object-cover"
           style={{ objectPosition: beforeObjectPosition, ...(beforeCrop && cropStyle(beforeCrop)) }}
-          sizes="(max-width: 768px) 100vw, 50vw"
+          sizes={allowFullscreen ? "(max-width: 768px) 100vw, 50vw" : "100vw"}
           priority={priority}
           unoptimized={unoptimized}
         />
@@ -362,5 +399,26 @@ export default function BeforeAfterSlider({
       </div>
 
     </div>
+    {expanded && portalRoot && createPortal(<dialog ref={dialogRef}
+      aria-label="Comparaison avant/après en plein écran"
+      className="fixed inset-0 m-0 h-[100dvh] max-h-none w-screen max-w-none border-0 bg-[#071b12] p-4 text-white backdrop:bg-black/90 sm:p-8"
+      onCancel={event => { event.preventDefault(); setExpanded(false) }} onClose={() => setExpanded(false)}>
+      <div className="flex h-full flex-col items-center justify-center gap-4">
+        <div className="flex w-full items-center justify-between gap-4">
+          <p className="text-sm">Avant / Après · Glissez pour comparer</p>
+          <button type="button" autoFocus onClick={() => setExpanded(false)} aria-label="Fermer la comparaison plein écran"
+            className="flex min-h-11 min-w-11 items-center justify-center rounded-full border border-white/40 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"><X size={22} aria-hidden="true" /></button>
+        </div>
+        <div style={{ width: `min(100%, calc((100dvh - 10rem) * ${aspectRatio}))`, aspectRatio }}>
+          <BeforeAfterSlider beforeSrc={beforeSrc} afterSrc={afterSrc} beforeAlt={beforeAlt} afterAlt={afterAlt}
+            beforeCrop={beforeCrop} afterCrop={afterCrop} beforeObjectPosition={beforeObjectPosition} afterObjectPosition={afterObjectPosition}
+            afterTransform={afterTransform} afterTransformOrigin={afterTransformOrigin} initialPosition={openingPosition.current}
+            aspectRatio={aspectRatio} priority unoptimized={unoptimized} onImageError={onImageError}
+            allowFullscreen={false} animateHint={false} onPositionChange={setPosition} className="!rounded-none" />
+        </div>
+        <p className="text-xs text-white/70">Utilisez les flèches du clavier sur le curseur. Échap pour fermer.</p>
+      </div>
+    </dialog>, portalRoot)}
+    </>
   )
 }
