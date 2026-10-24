@@ -1,0 +1,269 @@
+{
+  "observedAt": "2026-10-24",
+  "scope": "Public read-only fetch; no rankings or browser performance measurement",
+  "pages": [
+    {
+      "path": "/",
+      "status": 200,
+      "finalUrl": "https://www.hanami-gazon.fr/",
+      "title": "Entretien gazon au Vésinet & coaching à distance | Hanami",
+      "h1": [
+        "Votre gazon,entre de bonnes mains."
+      ],
+      "canonical": [
+        "https://www.hanami-gazon.fr"
+      ],
+      "description": [
+        "Interventions et arrosage au Vésinet et alentours, coaching gazon à distance partout en France. Découvrez les deux accompagnements Hanami et les 2 mois de coaching offerts."
+      ],
+      "robots": [
+        "index, follow",
+        "index, follow, max-image-preview:large"
+      ],
+      "schemaTypes": [
+        "Organization",
+        "ProfessionalService",
+        "Service",
+        "Service",
+        "Service",
+        "FAQPage"
+      ],
+      "imagesWithoutAlt": 0,
+      "xRobotsTag": null,
+      "fetchSeconds": 0.54
+    },
+    {
+      "path": "/coaching",
+      "status": 200,
+      "finalUrl": "https://www.hanami-gazon.fr/coaching",
+      "title": "Coaching gazon à distance — À partir de 29 €/mois | Hanami",
+      "h1": [
+        "Améliorer votre gazon.Deux mois offerts."
+      ],
+      "canonical": [
+        "https://www.hanami-gazon.fr/coaching"
+      ],
+      "description": [
+        "Offre de lancement : deux mois de coaching gazon offerts. Un protocole personnalisé et des conseils adaptés à votre jardin et à la saison. Partout en France."
+      ],
+      "robots": [
+        "index, follow",
+        "index, follow, max-image-preview:large"
+      ],
+      "schemaTypes": [
+        "Organization",
+        "ProfessionalService",
+        "Service",
+        "FAQPage"
+      ],
+      "imagesWithoutAlt": 0,
+      "xRobotsTag": null,
+      "fetchSeconds": 0.48
+    },
+    {
+      "path": "/renovation-express",
+      "status": 200,
+      "finalUrl": "https://www.hanami-gazon.fr/renovation-express",
+      "title": "Rénovation gazon sans retourner le sol au Vésinet | Hanami",
+      "h1": [
+        "Rénovation express.On ne retournepas le sol."
+      ],
+      "canonical": [
+        "https://www.hanami-gazon.fr/renovation-express"
+      ],
+      "description": [
+        "Rénover votre gazon sans retourner le sol. Environ 200 m² en une demi-journée à une journée selon le terrain. Diagnostic, semences adaptées et suivi au Vésinet et alentours."
+      ],
+      "robots": [
+        "index, follow",
+        "index, follow, max-image-preview:large"
+      ],
+      "schemaTypes": [
+        "Organization"
+      ],
+      "imagesWithoutAlt": 0,
+      "xRobotsTag": null,
+      "fetchSeconds": 0.74
+    },
+    {
+      "path": "/interventions-locales",
+      "status": 200,
+      "finalUrl": "https://www.hanami-gazon.fr/interventions-locales",
+      "title": "Entretien gazon & arrosage automatique au Vésinet | Hanami",
+      "h1": [
+        "Votre gazon,entre de bonnes mains."
+      ],
+      "canonical": [
+        "https://www.hanami-gazon.fr"
+      ],
+      "description": [
+        "Au Vésinet et alentours, Hanami entretient et rénove votre gazon : nutrition sur mesure, rénovation sans retourner le sol et installation d’arrosage intelligent."
+      ],
+      "robots": [
+        "index, follow",
+        "index, follow, max-image-preview:large"
+      ],
+      "schemaTypes": [
+        "Organization",
+        "ProfessionalService",
+        "Service",
+        "Service",
+        "Service",
+        "FAQPage"
+      ],
+      "imagesWithoutAlt": 0,
+      "xRobotsTag": null,
+      "fetchSeconds": 0.78
+    },
+    {
+      "path": "/pourquoi-hanami",
+      "status": 200,
+      "finalUrl": "https://www.hanami-gazon.fr/pourquoi-hanami",
+      "title": "Pourquoi Hanami ? | Hanami",
+      "h1": [
+        "Pourquoi Hanami ?"
+      ],
+      "canonical": [
+        "https://www.hanami-gazon.fr/pourquoi-hanami"
+      ],
+      "description": [
+        "5 ans de passion, de terrain et de formation auprès des plus grands agronomes. L'histoire derrière Hanami et pourquoi je me suis obsédé par le gazon parfait."
+      ],
+      "robots": [
+        "index, follow",
+        "index, follow, max-image-preview:large"
+      ],
+      "schemaTypes": [
+        "Organization"
+      ],
+      "imagesWithoutAlt": 0,
+      "xRobotsTag": null,
+      "fetchSeconds": 0.37
+    },
+    {
+      "path": "/blog",
+      "status": 200,
+      "finalUrl": "https://www.hanami-gazon.fr/blog",
+      "title": "Conseils gazon, entretien & arrosage | Journal Hanami",
+      "h1": [
+        "Le savoir-faire agronomique, mis à nu."
+      ],
+      "canonical": [
+        "https://www.hanami-gazon.fr/blog"
+      ],
+      "description": [
+        "Conseils Hanami pour entretenir votre pelouse : nutrition, regarnissage, préparation des saisons et arrosage automatique intelligent."
+      ],
+      "robots": [
+        "index, follow",
+        "index, follow, max-image-preview:large"
+      ],
+      "schemaTypes": [
+        "Organization"
+      ],
+      "imagesWithoutAlt": 0,
+      "xRobotsTag": null,
+      "fetchSeconds": 0.18
+    },
+    {
+      "path": "/mon-chantier",
+      "status": 200,
+      "finalUrl": "https://www.hanami-gazon.fr/mon-chantier",
+      "title": "Mon chantier — Estimation gratuite en 2 minutes | Hanami",
+      "h1": [
+        "Quelle est la surface de votre gazon ?"
+      ],
+      "canonical": [
+        "https://www.hanami-gazon.fr/mon-chantier"
+      ],
+      "description": [
+        "Décrivez votre gazon en 7 étapes et recevez une estimation chiffrée TTC adaptée à votre projet : Express, Reconstruction ou Coaching annuel."
+      ],
+      "robots": [
+        "index, follow",
+        "index, follow, max-image-preview:large"
+      ],
+      "schemaTypes": [
+        "Organization"
+      ],
+      "imagesWithoutAlt": 0,
+      "xRobotsTag": null,
+      "fetchSeconds": 0.07
+    },
+    {
+      "path": "/pro",
+      "status": 200,
+      "finalUrl": "https://www.hanami-gazon.fr/pro",
+      "title": "Hanami Pro — Expertise gazon et organisation pour paysagistes",
+      "h1": [
+        "L’expertise agronomique.Pour vos chantiers gazon."
+      ],
+      "canonical": [
+        "https://www.hanami-gazon.fr/pro"
+      ],
+      "description": [
+        "Accompagnement technique gazon pour paysagistes : semences, produits, doses et suivi des interventions. Découvrez aussi le prototype du logiciel métier Hanami Pro."
+      ],
+      "robots": [
+        "index, follow",
+        "index, follow, max-image-preview:large"
+      ],
+      "schemaTypes": [
+        "Organization"
+      ],
+      "imagesWithoutAlt": 0,
+      "xRobotsTag": null,
+      "fetchSeconds": 0.09
+    },
+    {
+      "path": "/pro/studio",
+      "status": 200,
+      "finalUrl": "https://www.hanami-gazon.fr/pro/studio",
+      "title": "Hanami Studio Pro — Du jardin réel au projet visualisé",
+      "h1": [
+        "Imaginez le jardin.Montrez-le."
+      ],
+      "canonical": [
+        "https://www.hanami-gazon.fr/pro/studio"
+      ],
+      "description": [
+        "La vision Hanami Studio Pro : photos du jardin, consignes du paysagiste, proposition photoréaliste puis vue 3D après validation."
+      ],
+      "robots": [
+        "index, follow",
+        "index, follow, max-image-preview:large"
+      ],
+      "schemaTypes": [
+        "Organization"
+      ],
+      "imagesWithoutAlt": 0,
+      "xRobotsTag": null,
+      "fetchSeconds": 0.25
+    },
+    {
+      "path": "/calculatrice",
+      "status": 200,
+      "finalUrl": "https://www.hanami-gazon.fr/calculatrice",
+      "title": "Calculatrice de dosage gazon — engrais, semences, liquides | Hanami",
+      "h1": [
+        "Dosage Intelligent · Hanami"
+      ],
+      "canonical": [
+        "https://www.hanami-gazon.fr/calculatrice"
+      ],
+      "description": [
+        "Calculez précisément vos dosages d'engrais, semences et produits liquides selon la surface de votre jardin. Outil gratuit Hanami, export PDF inclus."
+      ],
+      "robots": [
+        "index, follow",
+        "index, follow, max-image-preview:large"
+      ],
+      "schemaTypes": [
+        "Organization"
+      ],
+      "imagesWithoutAlt": 0,
+      "xRobotsTag": null,
+      "fetchSeconds": 0.18
+    }
+  ]
+}

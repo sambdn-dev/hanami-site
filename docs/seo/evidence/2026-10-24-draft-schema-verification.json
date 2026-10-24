@@ -1,0 +1,12 @@
+[
+  {
+    "page": "draft-renovation",
+    "serviceId": "https://www.hanami-gazon.fr/#service-renovation-express",
+    "providerPresent": true
+  },
+  {
+    "page": "draft-home",
+    "serviceId": "https://www.hanami-gazon.fr/#service-renovation-express",
+    "providerPresent": true
+  }
+]

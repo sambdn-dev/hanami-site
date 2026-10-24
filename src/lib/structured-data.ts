@@ -4,7 +4,7 @@
  * Organization  → identité de marque (layout, site entier)
  * LocalBusiness → SEO local Le Vésinet / Yvelines / Île-de-France (home)
  * Service       → les 3 offres, nourries par services.ts + pricing.ts (home)
- * FAQPage       → rich snippets FAQ Google (home)
+ * FAQPage       → questions/réponses visibles (sans garantie de rich result)
  *
  * Volontairement SANS aggregateRating : pas d'avis first-party on-site,
  * et re-marquer les avis Google Business est pénalisé (self-serving reviews).
@@ -154,5 +154,19 @@ export function faqPageSchema(faqs: FaqEntry[]) {
         text: faq.answer,
       },
     })),
+  }
+}
+
+/** Describe a real local service without inferring prices, reviews or availability. */
+export function localServiceSchema(service: {id: string; name: string; description: string; path: string}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    '@id': `${BASE_URL}/#service-${service.id}`,
+    name: service.name,
+    description: service.description,
+    areaServed: {'@type': 'City', name: 'Le Vésinet'},
+    provider: {'@id': `${BASE_URL}/#localbusiness`},
+    url: `${BASE_URL}${service.path}`,
   }
 }

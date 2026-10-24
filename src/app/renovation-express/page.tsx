@@ -1,3 +1,4 @@
+import { localBusinessSchema, localServiceSchema } from '@/lib/structured-data'
 import { pageMetadata } from '@/lib/seo'
 import Navbar from '@/components/shared/Navbar'
 import Footer from '@/components/shared/Footer'
@@ -18,5 +19,9 @@ export const metadata = pageMetadata({
 })
 
 export default function RenovationExpressPage() {
-  return <div className={styles.page}><a href="#contenu" className={styles.skip}>Aller au contenu</a><SeasonalBanner /><Navbar variant="dark" localOffers /><main id="contenu" tabIndex={-1}><RenovationLanding /><IrrigationSection /><BrandStrip /><LocalProof /><LocalContact express /></main><Footer localOffers /><WhatsAppButton /><HomeMobileCTA href="#contact" label="Parlons de votre rénovation" reassurance="Sans retourner le sol · Le Vésinet & alentours" /></div>
+  const schemas = [localBusinessSchema(), localServiceSchema({
+    id: 'renovation-express', name: 'Rénovation express du gazon', path: '/renovation-express',
+    description: 'Rénovation de la pelouse sans retourner le sol, avec diagnostic, semences adaptées et suivi au Vésinet et alentours.',
+  })]
+  return <div className={styles.page}>{schemas.map((schema, index) => <script key={index} type="application/ld+json" dangerouslySetInnerHTML={{__html: JSON.stringify(schema)}} />)}<a href="#contenu" className={styles.skip}>Aller au contenu</a><SeasonalBanner /><Navbar variant="dark" localOffers /><main id="contenu" tabIndex={-1}><RenovationLanding /><IrrigationSection /><BrandStrip /><LocalProof /><LocalContact express /></main><Footer localOffers /><WhatsAppButton /><HomeMobileCTA href="#contact" label="Parlons de votre rénovation" reassurance="Sans retourner le sol · Le Vésinet & alentours" /></div>
 }

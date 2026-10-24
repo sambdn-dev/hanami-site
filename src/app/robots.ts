@@ -4,15 +4,9 @@ import { SITE_URL } from '@/lib/seo'
 const BASE_URL = SITE_URL
 
 /**
- * Crawlers des moteurs IA (GEO — Generative Engine Optimization).
- *
- * On les autorise EXPLICITEMENT plutôt que de compter sur la règle `*` :
- * certains de ces bots (crawl d'entraînement comme GPTBot, Google-Extended
- * ou CCBot) sont massivement bloqués sur le web, et une autorisation nommée
- * est un signal clair que Hanami veut être lu ET cité par ChatGPT,
- * Perplexity, Claude, Google AI Overviews, Meta et Mistral. Être présent
- * dans leurs index/corpus, c'est apparaître dans leurs réponses quand un
- * utilisateur demande un coach gazon.
+ * Existing crawler policy, preserved deliberately. Allowing a bot does not
+ * guarantee indexing or AI citations. Training crawlers (e.g. GPTBot) and
+ * search/retrieval crawlers have different purposes; robots.txt is access policy.
  */
 const AI_CRAWLERS = [
   // OpenAI — entraînement, recherche ChatGPT, navigation utilisateur
