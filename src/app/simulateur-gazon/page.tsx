@@ -22,7 +22,7 @@ export default function LawnSimulatorPage() {
         <header className={styles.intro}>
           <span className={styles.eyebrow}>LE GAZON, SOUS UN NOUVEAU JOUR</span>
           <h1>Votre jardin.<br />Une pelouse à imaginer.</h1>
-          <p>Importez une photo, indiquez les contours de votre pelouse et découvrez une projection avec un gazon plus dense. Le point de départ d’un projet à construire pour votre terrain.</p>
+          <p>Importez une photo et découvrez votre jardin avec une pelouse plus belle et plus dense. Le point de départ d’un projet à construire pour votre terrain.</p>
           <p className={styles.introNote}>Aucun compte à créer. Vos photos restent privées ; vous choisissez ensuite de les transmettre à Hanami pour un diagnostic ou un devis.</p>
         </header>
         <LawnSimulator />

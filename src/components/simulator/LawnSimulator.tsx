@@ -5,8 +5,7 @@ import { useCallback, useEffect, useRef, useState, type ChangeEvent, type FormEv
 import { Camera, Check, ImagePlus, LoaderCircle, Trash2 } from 'lucide-react'
 import BeforeAfterSlider from '@/components/shared/BeforeAfterSlider'
 import { compressPhoto } from '@/lib/photo-utils'
-import LawnZoneEditor from './LawnZoneEditor'
-import { isSimulationJob, simulationImage, type LawnPolygon, type LawnSimulationJob } from './types'
+import { isSimulationJob, simulationImage, type LawnSimulationJob } from './types'
 import styles from './Simulator.module.css'
 
 const API = '/api/gazon-simulations'
@@ -56,16 +55,8 @@ const dateLabel = (value: string) => {
   return Number.isNaN(date.getTime()) ? '' : date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })
 }
 
-function area(polygon: LawnPolygon) {
-  return Math.abs(polygon.reduce((sum, [x, y], index) => {
-    const [nextX, nextY] = polygon[(index + 1) % polygon.length]
-    return sum + x * nextY - nextX * y
-  }, 0) / 2)
-}
-
 export default function LawnSimulator() {
   const [photo, setPhoto] = useState<PreparedPhoto | null>(null)
-  const [polygons, setPolygons] = useState<LawnPolygon[]>([])
   const [authorized, setAuthorized] = useState(false)
   const [job, setJob] = useState<LawnSimulationJob | null>(null)
   const [jobs, setJobs] = useState<LawnSimulationJob[]>([])
@@ -89,11 +80,8 @@ export default function LawnSimulator() {
   const working = job?.status === 'running'
   const activeJobId = job?.id
   const activeJobStatus = job?.status
-  const validPolygons = polygons.filter(polygon => polygon.length >= 3)
-  const canGenerate = !loadingHistory && sessionReady && !!photo && authorized && validPolygons.length > 0
-    && polygons.every(polygon => polygon.length === 0 || polygon.length >= 3)
-    && validPolygons.every(polygon => area(polygon) >= 0.001)
-    && validPolygons.reduce((sum, polygon) => sum + area(polygon), 0) < 0.95
+  const canGenerate = !loadingHistory && sessionReady && !!photo && authorized
+
 
   const updateJob = useCallback((next: LawnSimulationJob) => {
     setJob(next)
@@ -164,7 +152,6 @@ export default function LawnSimulator() {
       if (blob.size > MAX_UPLOAD) throw new Error('Cette photo reste trop lourde après préparation. Essayez une autre photo ou une résolution plus petite.')
       if (compressed.width < 320 || compressed.height < 320) throw new Error('Cette photo est trop petite. Utilisez une photo d’au moins 320 pixels de côté, nette et bien éclairée.')
       setPhoto({ src: compressed.dataUrl, file: new File([blob], 'jardin.jpg', { type: 'image/jpeg' }), width: compressed.width, height: compressed.height, requestId: crypto.randomUUID() })
-      setPolygons([])
       setAuthorized(false)
       setJob(null)
       setContactSent(false)
@@ -202,7 +189,6 @@ export default function LawnSimulator() {
     try {
       const form = new FormData()
       form.append('original', photo.file)
-      form.append('polygons', JSON.stringify(validPolygons))
       form.append('idempotencyKey', photo.requestId)
       form.append('photoAuthorization', 'true')
       const saved = readJob(await requestJson('', { method: 'POST', body: form }))
@@ -285,13 +271,14 @@ export default function LawnSimulator() {
 
     {phase === 'preparing' && <p className={styles.status} role="status"><LoaderCircle className={styles.spinner} size={18} aria-hidden="true" /> Préparation de votre photo…</p>}
 
-    {photo && <section className={styles.selection} aria-labelledby="lawn-zone-heading">
-      <div className={styles.stepHeading}><span className={styles.number}>02 / LA ZONE À AMÉLIORER</span><h2 id="lawn-zone-heading">Dessinez les limites de votre pelouse.</h2></div>
-      <LawnZoneEditor src={photo.src} width={photo.width} height={photo.height} polygons={polygons} onChange={setPolygons} disabled={busy} />
+    {photo && <section className={styles.selection} aria-labelledby="lawn-photo-heading">
+      <div className={styles.stepHeading}><span className={styles.number}>02 / VOTRE PHOTO</span><h2 id="lawn-photo-heading">Le même jardin, avec une belle pelouse.</h2></div>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={photo.src} width={photo.width} height={photo.height} alt="Votre photo avant la simulation" style={{width: '100%', height: 'auto', maxHeight: 650, objectFit: 'contain'}} />
       <label className={styles.consent}><input type="checkbox" checked={authorized} onChange={event => setAuthorized(event.target.checked)} disabled={busy} /><span>Je suis autorisé à utiliser cette photo et je demande son traitement par IA pour cette simulation. Mes photos ne seront pas utilisées à des fins marketing.</span></label>
       <div className={styles.launch}>
         <button type="button" className={styles.primary} onClick={generate} disabled={!canGenerate || busy}>{busy && <LoaderCircle className={styles.spinner} size={18} aria-hidden="true" />}{phase === 'uploading' ? 'Envoi de votre photo…' : phase === 'starting' ? 'Lancement du traitement…' : 'Visualiser mon gazon'}</button>
-        <p>Seules les zones tracées seront améliorées. La photo n’est envoyée qu’au lancement.</p>
+        <p>L’IA améliore la pelouse visible en conservant le cadrage et les autres éléments du jardin. La photo n’est envoyée qu’au lancement.</p>
       </div>
       {!loadingHistory && !sessionReady && <p className={styles.error} role="status">Le service n’a pas encore confirmé votre session. <button type="button" className={styles.textButton} onClick={() => window.location.reload()}>Actualiser le suivi</button> Le lancement reste désactivé jusqu’à cette confirmation.</p>}
       <p className={styles.privacy}>Votre photo n’est pas encore envoyée. Après le lancement, votre simulation privée reste accessible 7 jours ; vous pouvez la supprimer ici. <Link href="/confidentialite">En savoir plus sur vos données</Link>.</p>
@@ -311,7 +298,7 @@ export default function LawnSimulator() {
         {job.stage !== 'upload' && <img src={simulationImage(job.id, 'original')} alt="Votre photo de jardin enregistrée" onError={() => setImageErrorId(job.id)} />}
         <div className={styles.processing} role="status">
           {job.status === 'running' && <LoaderCircle className={styles.spinner} size={22} aria-hidden="true" />}
-          <p>{job.status === 'running' ? 'Traitement en cours. Vous pouvez quitter cet écran et retrouver son état en revenant sur ce navigateur.' : job.status === 'queued' ? job.stage === 'ready' ? 'La photo et la zone sont sauvegardées. Lancez le traitement lorsque vous êtes prêt.' : 'La photo et sa zone n’ont pas été entièrement enregistrées. Importez à nouveau votre photo pour préparer une nouvelle simulation. Aucun traitement IA n’a été lancé.' : job.error?.message || 'Aucun résultat n’a été enregistré. Contactez Hanami si le problème persiste.'}</p>
+          <p>{job.status === 'running' ? 'Traitement en cours. Vous pouvez quitter cet écran et retrouver son état en revenant sur ce navigateur.' : job.status === 'queued' ? job.stage === 'ready' ? 'Votre photo est sauvegardée. Lancez le traitement lorsque vous êtes prêt.' : 'La photo n’a pas été entièrement enregistrée. Importez à nouveau votre photo pour préparer une nouvelle simulation. Aucun traitement IA n’a été lancé.' : job.error?.message || 'Aucun résultat n’a été enregistré. Contactez Hanami si le problème persiste.'}</p>
         </div>
       </div>}
       {imageErrorId === job.id && <div className={styles.error} role="alert">L’image n’a pas pu être affichée. Elle peut avoir expiré ou la connexion a été interrompue. <button type="button" className={styles.textButton} onClick={() => window.location.reload()}>Actualiser l’affichage</button> Aucun nouveau traitement ne sera lancé.</div>}

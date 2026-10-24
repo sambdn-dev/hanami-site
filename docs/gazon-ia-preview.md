@@ -1,14 +1,18 @@
 # Prévisualisation du gazon — état au 24 octobre 2026
 
+## Correction du parcours — 24 octobre 2026
+
+La photo seule suffit : import → lancement → comparaison. Aucun contour, masque ou confirmation de zone demandé au client ou à l’Admin. Le moteur envoie directement la photographie à l’édition IA avec des instructions de rénovation automatique de la pelouse et de conservation du jardin. Les anciens jobs déjà munis d’un masque restent lisibles et traitables avec leurs instructions historiques. La conservation visuelle du reste du jardin doit être vérifiée avec de vrais rendus ; aucune garantie pixel par pixel n’est annoncée pour ce nouveau mode. Cinq tests moteur techniques passent, dont un appel HTTP simulé sans champ masque. Génération fournisseur réelle toujours non vérifiée. Les captures de l’ancien tracé restent des archives et ne représentent plus le parcours courant.
+
 Statut : parcours et moteur implémentés, contrôles techniques et stockage réels vérifiés, **génération OpenAI non vérifiée**. Ce document ne constitue pas une validation du rendu ni de sa durée. Aucune publication sur les domaines Hanami de production.
 
 ## Architecture
 
-- Site : `/simulateur-gazon`, comparaison existante, sélection de 1 à 4 contours au toucher/clavier, photo optimisée à 1 200 px, autorisation photo distincte du contact.
+- Site : `/simulateur-gazon`, comparaison existante, photo optimisée à 1 200 px, autorisation photo distincte du contact.
 - `/api/gazon-simulations/[[...path]]` est un BFF. Il conserve une session opaque HttpOnly et transmet une empreinte de session ; aucun secret serveur n’est envoyé au navigateur. Une liaison de session et Web Locks évitent les courses d’initialisation entre onglets.
 - Moteur unique dans `sambdn-dev/hanami-platform`, `apps/admin/src/lib/gazon-simulation/`. L’Admin et ce BFF utilisent ses mêmes routes, états, instructions, règles de stockage et mécanismes de déduplication. Aucun appel OpenAI direct depuis le site.
 - Job durable PostgreSQL, fichiers privés Supabase, acquisition atomique avant l’unique appel Images API. Une réponse perdue ou une expiration ne déclenche aucune nouvelle facturation automatique.
-- Le masque PNG est généré côté serveur à partir de coordonnées validées. Après édition, la recomposition PNG garde exactement les pixels de l’original optimisé hors masque. Les éléments inclus par erreur dans le contour ne sont pas protégés : la sélection doit exclure arbres, massifs et objets.
+- Les nouvelles photos sont envoyées sans masque. Le modèle identifie la pelouse et reçoit des instructions de conservation du cadrage et des autres éléments du jardin.
 
 ## Configuration serveur du site
 
@@ -29,7 +33,7 @@ Réponses de données : `{jobs: [...]}` pour la collection, `{job: ...}` pour un
 | Méthode et chemin | Comportement |
 | --- | --- |
 | `GET /api/gazon-simulations` | Initialise/retrouve la session et ses 20 dernières simulations ; renvoie l’en-tête de liaison de session. |
-| `POST /api/gazon-simulations` | Multipart `original`, `polygons`, `idempotencyKey`, `photoAuthorization=true`. JPEG/PNG/WebP préparé ≤2 Mio ; le client accepte aussi HEIC/HEIF avant conversion. |
+| `POST /api/gazon-simulations` | Multipart `original`, `idempotencyKey`, `photoAuthorization=true`. JPEG/PNG/WebP préparé ≤2 Mio ; le client accepte aussi HEIC/HEIF avant conversion. |
 | `POST /:id/start` | Lance uniquement un job sauvegardé `queued/ready`. Une seule acquisition atomique gagne. |
 | `GET /:id` | Relit l’état durable, sans déclencher de génération. |
 | `GET /:id/image?kind=original\|result` | Image privée, contrôlée à chaque requête. Le résultat est indisponible avant `completed`. |
