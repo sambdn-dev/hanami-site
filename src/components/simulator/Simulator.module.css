@@ -113,3 +113,42 @@
 @media (max-width: 640px) { .page { padding-top: 8.5rem; } .hero { display: flex; flex-direction: column; gap: 1.8rem; } .heroCopy h1 { font-size: 3.1rem; max-width: 10em; margin: 1rem 0; } .heroCopy { width: 100%; } .hero .import { margin-top: 1.4rem; } .heroVisual { width: 100%; } .heroVisual > img { aspect-ratio: 1.15; } .journey { grid-template-columns: 1fr; gap: 1.4rem; margin-top: 1.7rem; } .photoTips { font-size: .76rem; } }
 
 .serviceNotice { background: #f1e8cf; color: #5b4820; border-left: 2px solid #ac8740; padding: .85rem 1rem; margin-top: 1.3rem; font-size: .84rem; line-height: 1.7; }
+
+/* After import, the photo supports the choices instead of pushing them below the fold. */
+.compactHero { display: block; }
+.compactHero .heroCopy { padding-top: 0; }
+.compactHero .heroCopy h1 { font-size: clamp(1.9rem, 3vw, 2.7rem); max-width: none; margin: .6rem 0; }
+.compactHero .heroLead, .compactHero .photoTips, .compactHero .trust { display: none; }
+.compactHero .import { display: flex; flex-wrap: wrap; margin-top: 1rem; }
+.compactHero .import button { min-height: 44px; padding: .65rem .9rem; font-size: .8rem; }
+.selectionGrid { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: clamp(1.5rem, 3vw, 3rem); align-items: start; }
+.selectedPhoto { margin: 0; padding: .8rem; border: 1px solid #d4dacb; background: #efeee5; }
+.selectedPhoto > img { display: block; width: 100%; height: auto; max-height: 360px; object-fit: contain; background: #e5e8df; }
+.selectedPhoto figcaption { font-size: .75rem; font-weight: 600; margin-top: .8rem; }
+.selectedPhoto > p { font-size: .77rem; line-height: 1.7; color: #536452; margin-top: .6rem; }
+.selectionControls { min-width: 0; }
+.selectionControls .preferences { margin-top: 0; border: 0; padding: 0; }
+.preferencesHeading { display: flex; align-items: baseline; justify-content: space-between; gap: .7rem; }
+.preferencesHeading h3 { margin: 0; font-family: var(--font-fraunces), Georgia, serif; font-size: 1.6rem; font-weight: 400; }
+.preferencesHeading > span { font-size: .72rem; color: #607064; }
+.finishOptions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; }
+.optionCard { display: flex; align-items: flex-start; gap: .6rem; border: 1px solid #aebba8; padding: 1rem; cursor: pointer; }
+.optionCard:has(input:checked) { background: #e4ebdc; border-color: #0f3d28; }
+.optionCard:has(input:focus-visible), .optionRow label:has(input:focus-visible) { outline: 3px solid #678653; outline-offset: 3px; }
+.optionCard input { flex: 0 0 auto; accent-color: #0f3d28; width: 18px; height: 18px; margin-top: .15rem; }
+.optionCard > span { display: grid; gap: .4rem; }
+.optionCard strong { font-size: .88rem; }
+.optionCard > span > span { font-size: .77rem; color: #536452; line-height: 1.6; }
+.preferences .optionsNote { font-size: .74rem; margin-bottom: 0; }
+.selectionControls .launch { display: block; }
+.selectionControls .launch > button { width: 100%; min-height: 52px; font-size: .95rem; }
+.selectionControls .launch > p { margin-top: .7rem; max-width: none; }
+.selectionControls .consent { border-top: 1px solid #d4dacb; padding-top: 1rem; margin-top: 1.2rem; }
+.serviceNotice > strong { display: block; }
+.serviceNotice p { margin-top: .35rem; }
+@media (max-width: 760px) {
+  .selectionGrid { grid-template-columns: 1fr; gap: 1.4rem; }
+  .selectedPhoto > img { max-height: 220px; }
+  .selection { margin-top: 1.6rem; }
+}
+@media (max-width: 380px) { .finishOptions { grid-template-columns: 1fr; } }

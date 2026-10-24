@@ -10,8 +10,8 @@ export const dynamic = 'force-dynamic'
 export const maxDuration = 60
 type Context = { params: Promise<{ path?: string[] }> }
 
-function failure(message: string, status = 503) {
-  return Response.json({ error: { message } }, { status, headers: SIMULATION_HEADERS })
+function failure(message: string, status = 503, code?: string) {
+  return Response.json({ error: { message, ...(code ? { code } : {}) } }, { status, headers: SIMULATION_HEADERS })
 }
 
 async function handle(request: Request, context: Context) {
@@ -21,7 +21,7 @@ async function handle(request: Request, context: Context) {
   if (!simulationOriginAllowed(request)) return failure('Cette demande doit être lancée depuis le site Hanami.', 403)
   const backend = simulationBackend(process.env.HANAMI_SIMULATION_API_ORIGIN, process.env.NODE_ENV === 'development')
   const key = process.env.HANAMI_SIMULATION_WORKER_KEY
-  if (!backend || !key || key.length < 32) return failure('Le simulateur est en cours de configuration. Réessayez plus tard.')
+  if (!backend || !key || key.length < 32) return failure('Le serveur de simulation n’est pas encore configuré. Votre photo peut être préparée, mais aucun traitement ne peut démarrer.', 503, 'SIMULATION_CONFIGURATION_REQUIRED')
   const jar = await cookies()
   const identity = simulationIdentity(jar.get(SIMULATION_COOKIE)?.value,
     request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown', key)
@@ -103,7 +103,7 @@ async function handle(request: Request, context: Context) {
   } catch (error) {
     if (error instanceof Error && error.message === 'FILE_TOO_LARGE') return failure('La photo est trop volumineuse. Choisissez une image plus légère.', 413)
     if (error instanceof Error && error.message === 'SIMULATION_PREVIEW_ACCESS_REQUIRED')
-      return failure('Cette prévisualisation attend la configuration de son accès serveur sécurisé. Le traitement n’a pas été lancé.')
+      return failure('L’accès sécurisé au serveur de génération n’est pas encore configuré pour cette URL de test. Actualiser la page ne suffit pas. Aucune photo n’a été envoyée au générateur.', 503, 'SIMULATION_PREVIEW_ACCESS_REQUIRED')
     // A lost response never triggers another generation. The client reloads persisted state.
     return failure('Connexion interrompue. Rechargez l’état de votre simulation avant de réessayer.')
   }

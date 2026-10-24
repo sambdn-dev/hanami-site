@@ -1,3 +1,13 @@
+## Import unique, hiérarchie et panne de prévisualisation — 24 octobre 2026
+
+Un seul bouton ouvre le sélecteur système (photothèque/appareil photo selon appareil et navigateur), sans capture forcée. La validation des formats et la limite de 50 Mio restent actives. Après import, l’illustration d’exemple et les étapes introductives disparaissent ; l’aperçu est limité à 360 px de haut sur ordinateur et 220 px sur mobile. Les réglages sont immédiatement visibles : finition puis hauteur, suivis du consentement et du lancement. Aucun nouveau paramètre n’est ajouté au moteur.
+
+Panne reproduite sur le déploiement d85a251 : GET /api/gazon-simulations renvoie réellement HTTP 503 (accès serveur protégé). Métadonnées Vercel revérifiées : OPENAI_API_KEY absente du projet isolé hanami-gazon-ia-preview. Ce sont deux blocages de configuration ; aucun simple rechargement ne les répare. Les réponses BFF possèdent maintenant un code d’erreur explicite, affiché avec le vrai message ; aucune boucle d’actualisation n’est proposée pour une configuration manquante. Pour une panne transitoire, la reconnexion réinitialise la session sans recharger la page ni perdre la photo préparée.
+
+Vérifications : 7 tests de service/UI (vraie route BFF, amont HTTP simulé ; rendu React serveur des réglages et de l’import unique), 5 préparation photo (décodeur/canvas simulés), 5 attente, 5 proxy, 3 recadrage Next, 9 moteur avec fournisseur simulé. TypeScript, ESLint ciblé et compilation passent. Ni ces tests ni les anciens essais Supabase ne valident une génération fournisseur. Aucun appel réel au fournisseur, aucune nouvelle capture navigateur ni recette iPhone effectuée : outils navigateur indisponibles dans cette session. Aucun déploiement sur les domaines Hanami de production.
+
+Prochaine action de configuration : autoriser le lien sécurisé entre cette prévisualisation et son serveur isolé, puis y rendre la clé OpenAI existante disponible via Vercel. La clé Production sensible n’est pas exportable par le connecteur ; ne jamais coller de secret dans la conversation. Ne présenter le parcours comme opérationnel qu’après un vrai essai photo → stockage → génération → comparaison.
+
 ## Photos iPhone volumineuses — 24 octobre 2026
 
 Import public jusqu’à 50 Mio, avec plafond de 64 mégapixels (couvre la résolution usuelle 48 MP iPhone). JPEG, PNG, WebP, AVIF, HEIC et HEIF proposés. Lecture native prioritaire, conversion HEIC via heic-to uniquement en cas d’échec ; plus d’import WASM pour un JPEG normal. Préparation locale en JPEG, côté long 1200 px, avant envoi. La limite de transport reste 2 Mio et la validation serveur ne change pas. RAW/DNG non pris en charge : aucune promesse d’accepter tous les codecs.
